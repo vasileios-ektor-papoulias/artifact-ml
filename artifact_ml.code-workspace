@@ -1,13 +1,38 @@
 {
     "folders": [
-      { "path": "artifact-core" },
-      { "path": "artifact-experiment" },
-      { "path": "artifact-torch" }
+      { 
+        "path": "artifact-core",
+        "settings": {
+          "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+          "ruff.path": ["${workspaceFolder}/.venv/Scripts/ruff"],
+          "python.testing.pytestPath": "${workspaceFolder}/.venv/Scripts/pytest",
+        }
+       },
+      { 
+        "path": "artifact-experiment",
+        "settings": {
+          "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+          "ruff.path": ["${workspaceFolder}/.venv/Scripts/ruff"],
+          "python.testing.pytestPath": "${workspaceFolder}/.venv/Scripts/pytest",
+        }
+      },
+      { 
+        "path": "artifact-torch" ,
+        "settings": {
+          "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+          "ruff.path": ["${workspaceFolder}/.venv/Scripts/ruff"],
+          "python.testing.pytestPath": "${workspaceFolder}/.venv/Scripts/pytest",
+        }
+      },
     ],
     "settings": {
+
+      "python.terminal.activateEnvironment": false,
+      
       "python.analysis.typeCheckingMode": "standard",
       "python.formatting.provider": "none",
       "python.linting.enabled": false,
+      
       "ruff.lint.extendSelect": ["I"],
       "editor.defaultFormatter": "charliermarsh.ruff",
       "editor.formatOnSave": true,
