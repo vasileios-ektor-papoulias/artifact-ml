@@ -1,0 +1,22 @@
+[project]
+name = "artifact-torch"
+version = "0.1.0"
+description = "PyTorch integration for the Artifact framework. Provides model abstractions and training utilities that trigger validation plans during training."
+authors = [
+    {name = "vasileios-ektor-papoulias",email = "hector.papoulias@gmail.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.11.4"
+pytest = "^8.3.5"
+pytest-mock = "^3.14.0"
+

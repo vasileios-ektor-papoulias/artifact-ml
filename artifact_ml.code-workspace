@@ -1,0 +1,43 @@
+{
+    "folders": [
+      { "path": "artifact-core" },
+      { "path": "artifact-experiment" },
+      { "path": "artifact-torch" }
+    ],
+    "settings": {
+      "python.analysis.typeCheckingMode": "standard",
+      "python.formatting.provider": "none",
+      "python.linting.enabled": false,
+      "ruff.lint.extendSelect": ["I"],
+      "editor.defaultFormatter": "charliermarsh.ruff",
+      "editor.formatOnSave": true,
+      "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit",
+        "source.organizeImports": "explicit"
+      },
+      "notebook.formatOnSave.enabled": true,
+      "notebook.codeActionsOnSave": {
+        "notebook.source.fixAll": "explicit",
+        "notebook.source.organizeImports": "explicit"
+      },
+      "python.testing.pytestArgs": [
+        "tests"
+      ],
+      "python.testing.unittestEnabled": false,
+      "python.testing.pytestEnabled": true,
+      "github-actions.workflows.pinned.workflows": [
+        "CI_ON_PUSH",
+        "LINT_PR_TITLE",
+        "LINT_MERGE_COMMIT_MESSAGE",
+        "BUMP_VERSION_ON_COMMIT_MESSAGE"
+      ]
+    },
+    "extensions": {
+      "recommendations": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
+        "github.vscode-github-actions"
+      ]
+    }
+  }
