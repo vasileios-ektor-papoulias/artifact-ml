@@ -1,0 +1,183 @@
+name: ENFORCE_CHANGE_DIRS
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+
+jobs:
+
+  enforce-change-dirs-from-dev-core-to-main:
+    if: github.head_ref == 'dev-core' && github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    env:
+      COMPONENT: artifact-core
+      DIRECTORY: artifact-core
+    steps:
+      - name: Debug info
+        run: |
+          echo "Base ref: ${{ github.base_ref }}"
+          echo "Head ref: ${{ github.head_ref }}"
+          echo "Event name: ${{ github.event_name }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "This job should run for PRs targeting dev-core"
+      
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
+
+      - name: Ensure scripts are executable
+        run: chmod +x .github/scripts/enforce_path/*.sh
+        
+      - name: Check changed files
+        run: |
+          echo "Enforcing changes only in ${{ env.DIRECTORY }} directory for ${{ env.COMPONENT }} component"
+          # Check if all changed files are within the component directory
+          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}" "${{ github.head_ref }}"
+    
+  enforce-change-dirs-from-dev-experiment-to-main:
+    if: github.head_ref == 'dev-experiment' && github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    env:
+      COMPONENT: artifact-experiment
+      DIRECTORY: artifact-experiment
+    steps:
+      - name: Debug info
+        run: |
+          echo "Base ref: ${{ github.base_ref }}"
+          echo "Head ref: ${{ github.head_ref }}"
+          echo "Event name: ${{ github.event_name }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "This job should run for PRs targeting dev-experiment"
+      
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
+
+      - name: Ensure scripts are executable
+        run: chmod +x .github/scripts/enforce_path/*.sh
+        
+      - name: Check changed files
+        run: |
+          echo "Enforcing changes only in ${{ env.DIRECTORY }} directory for ${{ env.COMPONENT }} component"
+          # Check if all changed files are within the component directory
+          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}" "${{ github.head_ref }}"
+  
+  enforce-change-dirs-from-dev-torch-to-main:
+    if: github.head_ref == 'dev-torch' && github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    env:
+      COMPONENT: artifact-torch
+      DIRECTORY: artifact-torch
+    steps:
+      - name: Debug info
+        run: |
+          echo "Base ref: ${{ github.base_ref }}"
+          echo "Head ref: ${{ github.head_ref }}"
+          echo "Event name: ${{ github.event_name }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "This job should run for PRs targeting dev-torch"
+      
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
+
+      - name: Ensure scripts are executable
+        run: chmod +x .github/scripts/enforce_path/*.sh
+        
+      - name: Check changed files
+        run: |
+          echo "Enforcing changes only in ${{ env.DIRECTORY }} directory for ${{ env.COMPONENT }} component"
+          # Check if all changed files are within the component directory
+          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}" "${{ github.head_ref }}"
+
+  enforce-change-dirs-from-hotfix-core-to-main:
+    if: startsWith(github.head_ref, 'hotfix-core/') && github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    env:
+      COMPONENT: artifact-core
+      DIRECTORY: artifact-core
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
+
+      - name: Ensure scripts are executable
+        run: chmod +x .github/scripts/enforce_path/*.sh
+        
+      - name: Check changed files
+        run: |
+          echo "Enforcing changes only in ${{ env.DIRECTORY }} directory for ${{ env.COMPONENT }} component"
+          # Check if all changed files are within the component directory
+          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}" "${{ github.head_ref }}"
+  
+  enforce-change-dirs-from-hotfix-experiment-to-main:
+    if: startsWith(github.head_ref, 'hotfix-experiment/') && github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    env:
+      COMPONENT: artifact-experiment
+      DIRECTORY: artifact-experiment
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
+
+      - name: Ensure scripts are executable
+        run: chmod +x .github/scripts/enforce_path/*.sh
+        
+      - name: Check changed files
+        run: |
+          echo "Enforcing changes only in ${{ env.DIRECTORY }} directory for ${{ env.COMPONENT }} component"
+          # Check if all changed files are within the component directory
+          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}" "${{ github.head_ref }}"
+  
+  enforce-change-dirs-from-hotfix-torch-to-main:
+    if: startsWith(github.head_ref, 'hotfix-torch/') && github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    env:
+      COMPONENT: artifact-torch
+      DIRECTORY: artifact-torch
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
+
+      - name: Ensure scripts are executable
+        run: chmod +x .github/scripts/enforce_path/*.sh
+        
+      - name: Check changed files
+        run: |
+          echo "Enforcing changes only in ${{ env.DIRECTORY }} directory for ${{ env.COMPONENT }} component"
+          # Check if all changed files are within the component directory
+          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}" "${{ github.head_ref }}"
+
+  enforce-change-dirs-root_to_main:
+    if: contains(github.head_ref, '-root/') && github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        directory: [artifact-core, artifact-experiment, artifact-torch]
+    env:
+      COMPONENT: root
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
+
+      - name: Ensure scripts are executable
+        run: chmod +x .github/scripts/enforce_path/*.sh
+
+      - name: Check changed files
+        run: |
+          echo "Enforcing changes outside of directory: ${{ matrix.directory }} for ${{ env.COMPONENT }} component"
+          # Check if all changed files are outside the specified directory
+          .github/scripts/enforce_path/ensure_changed_files_outside_dirs.sh "${{ github.base_ref }}" "${{ github.head_ref }}" "${{ matrix.directory }}"
+

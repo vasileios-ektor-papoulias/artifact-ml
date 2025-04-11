@@ -1,0 +1,27 @@
+name: LINT_PR_TITLE
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+    branches:
+      - main
+
+jobs:
+  lint-pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Ensure scripts are executable
+        run: chmod +x .github/scripts/linting/*.sh
+        
+      - name: Check PR Title
+        id: check_pr_title
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          BRANCH_NAME="${{ github.head_ref }}"
+          
+          # Lint the PR title, passing the branch name to check for root component
+          BUMP_TYPE=$(.github/scripts/linting/lint_pr_title.sh "$PR_TITLE" "$BRANCH_NAME")
+          echo "Bump type: $BUMP_TYPE"

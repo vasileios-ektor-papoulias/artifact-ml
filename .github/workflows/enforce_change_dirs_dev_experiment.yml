@@ -1,0 +1,38 @@
+name: ENFORCE_CHANGE_DIRS
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - dev-experiment
+
+jobs:
+
+  enforce-change-dirs-to-dev-experiment:
+    if: ${{ github.base_ref == 'dev-experiment' && github.head_ref != 'main' }}
+    runs-on: ubuntu-latest
+    env:
+      COMPONENT: artifact-experiment
+      DIRECTORY: artifact-experiment
+    steps:
+      - name: Debug info
+        run: |
+          echo "Base ref: ${{ github.base_ref }}"
+          echo "Head ref: ${{ github.head_ref }}"
+          echo "Event name: ${{ github.event_name }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "This job should run for PRs targeting dev-experiment"
+      
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches and tags
+
+      - name: Ensure scripts are executable
+        run: chmod +x .github/scripts/enforce_path/*.sh
+        
+      - name: Check changed files
+        run: |
+          echo "Enforcing changes only in ${{ env.DIRECTORY }} directory for ${{ env.COMPONENT }} component"
+          # Check if all changed files are within the component directory
+          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}" "${{ github.head_ref }}"

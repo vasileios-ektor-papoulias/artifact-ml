@@ -1,0 +1,35 @@
+name: BUMP_COMPONENT_VERSION
+
+on:
+  workflow_run:
+    workflows: ["CI_MAIN"]
+    types:
+      - completed
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  bump-component-version:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 2  # Need at least 2 commits to get the merge commit
+
+      - name: Run Version Bump Job
+        run: |
+          # Ensure all scripts are executable
+          chmod +x .github/scripts/version_bump/*.sh
+          
+          # Run the version bump job script
+          .github/scripts/version_bump/job.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
