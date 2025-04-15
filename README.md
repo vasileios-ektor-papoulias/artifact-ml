@@ -21,7 +21,7 @@ The upshot is:
 - the **elimination of varaince** in validation results arising from unwanted minor discrepancies in validation logic,
 - the reduction of friction in the research process as researchers become able to iterate on new ideas that are fairly evaluated with minimal high-level specifications.
 
-To illustrate: in the context of tabular synthetic data generation, models will ultimately produce pandas dataframes. This restriction is sufficient to produce general validation plans---applicable to any tabular synthesizer---customizable by selecting abstract enumerations associated to common validation artifacts (e.g. mean JS divergence).
+To illustrate: in the context of tabular synthetic data generation, models will ultimately produce pandas dataframes. This restriction is sufficient to produce general validation plans that are applicable to any tabular synthesizer and easily customizable by selecting abstract enumerations associated to common validation artifacts (e.g. mean JS divergence).
 
 <p align="center">
   <img src="assets/artifact_ml_logo.svg" width="600" alt="Overview Diagram">
