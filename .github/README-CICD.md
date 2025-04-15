@@ -1,31 +1,14 @@
-# Artifact ML CICD
-CI/CD pipeline configuration for the Artifact ML monorepo based on GitHub Actions
+# Artifact-ML CI/CD
 
-## GitHub Workflows
+## Overview
 
-This repository contains the following GitHub workflows:
+CI/CD for Artifact-ML relies on GitHub workflows.
 
-- `ci_core.yml` (workflow name: CI_CORE_ON_PUSH), `ci_experiment.yml` (workflow name: CI_EXPERIMENT_ON_PUSH), `ci_torch.yml` (workflow name: CI_TORCH_ON_PUSH) - Runs CI checks when changes are made to files in the respective component directories (artifact-core, artifact-experiment, artifact-torch) on branches other than main and their dev branches
-- `ci_dev_core.yml` (workflow name: CI_DEV_CORE), `ci_dev_experiment.yml` (workflow name: CI_DEV_EXPERIMENT), `ci_dev_torch.yml` (workflow name: CI_DEV_TORCH) - Runs CI checks when changes are made to the dev-core, dev-experiment, or dev-torch branches respectively
-- `ci_main.yml` (workflow name: CI_MAIN) - Runs CI checks when changes are made to the main branch
-- `lint_pr_title_main.yml` (workflow name: LINT_PR_TITLE) - Ensures PR titles to main follow the convention (patch:, minor:, major:, no-bump:) and enforces that PRs from root component branches must use "no-bump:" prefix
-- `lint_merge_commit_message.yml` (workflow name: LINT_MERGE_COMMIT_MESSAGE) - Verifies merge commits follow the branch naming convention (dev-<component_name>, hotfix-<component_name>/<some_other_name>, or setup-<component_name>/<some_other_name>)
-- `lint_merge_commit_description.yml` (workflow name: LINT_MERGE_COMMIT_DESCRIPTION) - Checks merge commit descriptions for version bump type
-- `bump_component_version.yml` (workflow name: BUMP_COMPONENT_VERSION) - Automatically bumps component versions based on commit descriptions (skips for no-bump)
-- `enforce_change_dirs_dev_core.yml`, `enforce_change_dirs_dev_experiment.yml`, `enforce_change_dirs_dev_torch.yml` (workflow name: ENFORCE_CHANGE_DIRS) - Ensures PRs to the respective dev branches only modify files in their corresponding directories
-- `enforce_change_dirs_main.yml` (workflow name: ENFORCE_CHANGE_DIRS) - Ensures:
-  - PRs from dev-core to main only modify files in the artifact-core directory
-  - PRs from dev-experiment to main only modify files in the artifact-experiment directory
-  - PRs from dev-torch to main only modify files in the artifact-torch directory
-  - PRs from hotfix-core/* branches to main only modify files in the artifact-core directory
-  - PRs from hotfix-experiment/* branches to main only modify files in the artifact-experiment directory
-  - PRs from hotfix-torch/* branches to main only modify files in the artifact-torch directory
-  - PRs from hotfix-root/* or setup-root/* branches to main only modify files outside of the component directories
-- `enforce_branch_naming.yml` (workflow name: ENFORCE_BRANCH_NAMING) - Ensures that branches being PR'd to main follow the naming convention:
-  - Only allows branches named `dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`
-  - Components are configured in the workflow file
+The present details:
 
-## CI/CD Pipeline Mechanics
+- the rules and conventions enforced by these workflows,
+- the standard process for contributing to the project,
+- CI/CD pipeline implementation details.
 
 ### Branch Naming Conventions
 
@@ -115,7 +98,7 @@ PRs to development branches (e.g., dev-core, dev-experiment, dev-torch) do not n
 
 ### Contributing to the Project
 
-To contribute to this project, follow these steps:
+To contribute to Artifact-ML, follow these steps:
 
 1. **For Regular Development**:
    - Create a feature branch (e.g., `feature/add-login`) from the appropriate dev branch (dev-core, dev-experiment, or dev-torch)
@@ -153,11 +136,37 @@ To contribute to this project, follow these steps:
    - Ensure the PR passes all CI checks
    - When merged, no version bump will occur
 
-## Script Organization
+## Implementation
 
-The scripts are organized into a modular structure under the `.github/scripts` directory:
+The workflows enforcing our CI/CD conventions are powered by shell scripts. These are organized into a modular structure under the `.github/scripts` directory.
 
-### Linting Scripts (`.github/scripts/linting/`)
+All scripts are unit-tested using the [Bats](https://github.com/bats-core/bats-core) framework. Tests are organized in `.github/tests`. Their directory structure mirrors that of `.github/scripts`.
+
+### GitHub Workflows
+
+Our CI/CD pipeline utilizes the following workflows:
+
+- `ci_core.yml` (workflow name: CI_CORE_ON_PUSH), `ci_experiment.yml` (workflow name: CI_EXPERIMENT_ON_PUSH), `ci_torch.yml` (workflow name: CI_TORCH_ON_PUSH) - Runs CI checks when changes are made to files in the respective component directories (artifact-core, artifact-experiment, artifact-torch) on branches other than main and their dev branches
+- `ci_dev_core.yml` (workflow name: CI_DEV_CORE), `ci_dev_experiment.yml` (workflow name: CI_DEV_EXPERIMENT), `ci_dev_torch.yml` (workflow name: CI_DEV_TORCH) - Runs CI checks when changes are made to the dev-core, dev-experiment, or dev-torch branches respectively
+- `ci_main.yml` (workflow name: CI_MAIN) - Runs CI checks when changes are made to the main branch
+- `lint_pr_title_main.yml` (workflow name: LINT_PR_TITLE) - Ensures PR titles to main follow the convention (patch:, minor:, major:, no-bump:) and enforces that PRs from root component branches must use "no-bump:" prefix
+- `lint_merge_commit_message.yml` (workflow name: LINT_MERGE_COMMIT_MESSAGE) - Verifies merge commits follow the branch naming convention (dev-<component_name>, hotfix-<component_name>/<some_other_name>, or setup-<component_name>/<some_other_name>)
+- `lint_merge_commit_description.yml` (workflow name: LINT_MERGE_COMMIT_DESCRIPTION) - Checks merge commit descriptions for version bump type
+- `bump_component_version.yml` (workflow name: BUMP_COMPONENT_VERSION) - Automatically bumps component versions based on commit descriptions (skips for no-bump)
+- `enforce_change_dirs_dev_core.yml`, `enforce_change_dirs_dev_experiment.yml`, `enforce_change_dirs_dev_torch.yml` (workflow name: ENFORCE_CHANGE_DIRS) - Ensures PRs to the respective dev branches only modify files in their corresponding directories
+- `enforce_change_dirs_main.yml` (workflow name: ENFORCE_CHANGE_DIRS) - Ensures:
+  - PRs from dev-core to main only modify files in the artifact-core directory
+  - PRs from dev-experiment to main only modify files in the artifact-experiment directory
+  - PRs from dev-torch to main only modify files in the artifact-torch directory
+  - PRs from hotfix-core/* branches to main only modify files in the artifact-core directory
+  - PRs from hotfix-experiment/* branches to main only modify files in the artifact-experiment directory
+  - PRs from hotfix-torch/* branches to main only modify files in the artifact-torch directory
+  - PRs from hotfix-root/* or setup-root/* branches to main only modify files outside of the component directories
+- `enforce_branch_naming.yml` (workflow name: ENFORCE_BRANCH_NAMING) - Ensures that branches being PR'd to main follow the naming convention: `dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`
+
+### Scripts
+
+#### Linting Scripts (`.github/scripts/linting/`)
 
 - `check_is_merge_commit.sh` - Checks if a commit is a merge commit
 - `detect_bump_pattern.sh` - Detects version bump patterns in text
@@ -169,7 +178,7 @@ The scripts are organized into a modular structure under the `.github/scripts` d
 - `lint_merge_commit_description.sh` - Higher-level script that only lints merge commit descriptions
 - `lint_merge_commit_message.sh` - Higher-level script that only lints merge commit messages
 
-### Path Enforcement Scripts (`.github/scripts/enforce_path/`)
+#### Path Enforcement Scripts (`.github/scripts/enforce_path/`)
 
 - `ensure_changed_files_in_dir.sh` - Ensures all changed files are within a specified directory
 - `ensure_changed_files_outside_dirs.sh` - Ensures all changed files are outside specified directories
@@ -186,7 +195,7 @@ The scripts are organized into a modular structure under the `.github/scripts` d
 - `update_pyproject.sh` - Updates version in pyproject.toml
 - `push_version_update.sh` - Handles git operations (commit, tag, push)
 
-### Version Bump Flow
+#### Version Bump Flow
 
 The version bump process follows this flow:
 
@@ -210,23 +219,9 @@ The version bump process follows this flow:
    - Creates a git tag
    - Pushes the changes and tags to the remote repository
 
-This modular approach allows for better maintainability and separation of concerns. Each script follows the Single Responsibility Principle, handling a specific aspect of the CI/CD process. Additionally, the scripts use per-command git configuration rather than modifying global git settings, ensuring they don't interfere with the user's git configuration.
+### Tests
 
-## Path Structure and Execution Context
-
-All scripts and workflows are designed to run from the repository root. This means:
-
-- Workflow files (`.github/workflows/*.yml`) execute scripts using paths relative to the repository root (e.g., `.github/scripts/linting/check_is_merge_commit.sh`)
-- Scripts reference other scripts using paths relative to the repository root (e.g., `.github/scripts/linting/lint_commit_description.sh`)
-- Test files run scripts from the repository root context
-
-This approach follows GitHub Actions' standard execution context, where workflows run from the repository root. It makes the paths more intuitive and consistent, eliminating confusing double references to `.github` in paths.
-
-## Testing
-
-The repository includes comprehensive unit tests for all scripts using the [Bats](https://github.com/bats-core/bats-core) testing framework. Tests are organized in the `.github/tests` directory, mirroring the structure of the scripts directory:
-
-### Linting Tests (`.github/tests/linting/`)
+#### Linting Tests (`.github/tests/linting/`)
 
 - `test_extract_branch_info.bats` - Tests for the branch info extraction script
 - `test_lint_branch_name.bats` - Tests for the branch name linting script
@@ -238,7 +233,7 @@ The repository includes comprehensive unit tests for all scripts using the [Bats
 - `test_lint_merge_commit_message.bats` - Tests for the higher-level merge commit message linting
 - `test_lint_pr_title.bats` - Tests for PR title linting
 
-### Version Bump Tests (`.github/tests/version_bump/`)
+#### Version Bump Tests (`.github/tests/version_bump/`)
 
 - `test_get_bump_type.bats` - Tests for extracting bump type from commit descriptions
 - `test_get_component_name.bats` - Tests for extracting component name from merge commit messages
@@ -250,14 +245,17 @@ The repository includes comprehensive unit tests for all scripts using the [Bats
 - `test_bump_component_version.bats` - Tests for the version bumping process
 - `test_job.bats` - Tests for the main orchestration script
 
-The tests use mocking to isolate each script and test it independently, making the tests more reliable and faster to run. Each test follows the same pattern:
+#### Test Structure
+Unit-tests for the CI/CD scripts follow the pattern:
 
-1. Sets up a fake environment with mocked dependencies
-2. Runs the script under test
-3. Verifies the script's behavior through assertions
-4. Cleans up the test environment
+1. Sets up a fake environment with mocked dependencies.
+2. Run the script under test.
+3. Verify the script's behavior through assertions.
+4. Clean up the test environment.
 
-To run the tests, use the following command:
+#### Running the Tests
+
+To run the tests, use the following command (from the monorepo root):
 
 ```bash
 # Run all tests
@@ -270,3 +268,15 @@ bats -r .github/tests/version_bump
 # Run a specific test file
 bats .github/tests/linting/test_lint_pr_title.bats
 ```
+
+### A Note on Execution Context
+
+All scripts and workflows are designed to run from the repository root.
+
+This means:
+
+- Workflow files (`.github/workflows/*.yml`) execute scripts using paths relative to the repository root (e.g., `.github/scripts/linting/check_is_merge_commit.sh`)
+- Scripts reference other scripts using paths relative to the repository root (e.g., `.github/scripts/linting/lint_commit_description.sh`)
+- Test files run scripts from the repository root context
+
+This approach follows GitHub Actions' standard execution context, where workflows run from the repository root. It makes the paths more intuitive and consistent, eliminating confusing double references to `.github` in paths.
