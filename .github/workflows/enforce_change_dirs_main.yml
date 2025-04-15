@@ -158,7 +158,7 @@ jobs:
           # Check if all changed files are within the component directory
           .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}" "${{ github.head_ref }}"
 
-  enforce-change-dirs-root_to_main:
+  enforce-change-dirs-root-to-main:
     if: contains(github.head_ref, '-root/') && github.base_ref == 'main'
     runs-on: ubuntu-latest
     strategy:
