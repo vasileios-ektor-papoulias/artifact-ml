@@ -11,6 +11,13 @@ from artifact_core.libs.implementation.descriptive_statistics.calculator import 
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonArrayCollection,
 )
+from artifact_core.table_comparison.registries.array_collections.registry import (
+    TableComparisonArrayCollectionRegistry,
+    TableComparisonArrayCollectionType,
+)
+
+
+@TableComparisonArrayCollectionRegistry.register_artifact(TableComparisonArrayCollectionType.MEANS)
 class ContinuousFeatureMeansJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
@@ -22,6 +29,9 @@ class ContinuousFeatureMeansJuxtaposition(TableComparisonArrayCollection[NoArtif
             stat=DescriptiveStatistic.MEAN,
         )
         return result
+
+
+@TableComparisonArrayCollectionRegistry.register_artifact(TableComparisonArrayCollectionType.STDS)
 class ContinuousFeatureSTDsJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
@@ -33,6 +43,11 @@ class ContinuousFeatureSTDsJuxtaposition(TableComparisonArrayCollection[NoArtifa
             stat=DescriptiveStatistic.STD,
         )
         return result
+
+
+@TableComparisonArrayCollectionRegistry.register_artifact(
+    TableComparisonArrayCollectionType.VARIANCES
+)
 class ContinuousFeatureVariancesJuxtaposition(
     TableComparisonArrayCollection[NoArtifactHyperparams]
 ):
@@ -46,6 +61,11 @@ class ContinuousFeatureVariancesJuxtaposition(
             stat=DescriptiveStatistic.VARIANCE,
         )
         return result
+
+
+@TableComparisonArrayCollectionRegistry.register_artifact(
+    TableComparisonArrayCollectionType.MEDIANS
+)
 class ContinuousFeatureMediansJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
@@ -57,6 +77,11 @@ class ContinuousFeatureMediansJuxtaposition(TableComparisonArrayCollection[NoArt
             stat=DescriptiveStatistic.MEDIAN,
         )
         return result
+
+
+@TableComparisonArrayCollectionRegistry.register_artifact(
+    TableComparisonArrayCollectionType.FIRST_QUARTILES
+)
 class ContinuousFeatureFirstQuartilesJuxtaposition(
     TableComparisonArrayCollection[NoArtifactHyperparams]
 ):
@@ -70,6 +95,11 @@ class ContinuousFeatureFirstQuartilesJuxtaposition(
             stat=DescriptiveStatistic.Q1,
         )
         return result
+
+
+@TableComparisonArrayCollectionRegistry.register_artifact(
+    TableComparisonArrayCollectionType.THIRD_QUARTILES
+)
 class ContinuousFeatureThirdQuartilesJuxtaposition(
     TableComparisonArrayCollection[NoArtifactHyperparams]
 ):
@@ -83,6 +113,9 @@ class ContinuousFeatureThirdQuartilesJuxtaposition(
             stat=DescriptiveStatistic.Q3,
         )
         return result
+
+
+@TableComparisonArrayCollectionRegistry.register_artifact(TableComparisonArrayCollectionType.MINIMA)
 class ContinuousFeatureMinimaJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
@@ -94,6 +127,9 @@ class ContinuousFeatureMinimaJuxtaposition(TableComparisonArrayCollection[NoArti
             stat=DescriptiveStatistic.MIN,
         )
         return result
+
+
+@TableComparisonArrayCollectionRegistry.register_artifact(TableComparisonArrayCollectionType.MAXIMA)
 class ContinuousFeatureMaximaJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame

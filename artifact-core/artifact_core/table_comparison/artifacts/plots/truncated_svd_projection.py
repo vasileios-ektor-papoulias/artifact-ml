@@ -14,9 +14,23 @@ from artifact_core.libs.implementation.projections.truncated_svd import (
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonPlot,
 )
+from artifact_core.table_comparison.registries.plots.registry import (
+    TableComparisonPlotRegistry,
+    TableComparisonPlotType,
+)
+
+
+@TableComparisonPlotRegistry.register_artifact_config(
+    TableComparisonPlotType.TRUNCATED_SVD_PROJECTION_PLOT
+)
 @dataclass(frozen=True)
 class TruncatedSVDProjectionComparisonPlotConfig(ArtifactHyperparams):
     use_categorical: bool
+
+
+@TableComparisonPlotRegistry.register_artifact(
+    TableComparisonPlotType.TRUNCATED_SVD_PROJECTION_PLOT
+)
 class TruncatedSVDProjectionComparisonPlot(
     TableComparisonPlot[TruncatedSVDProjectionComparisonPlotConfig]
 ):
