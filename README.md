@@ -18,7 +18,7 @@ It thereby offers data scientists and ML engineers working in the same applicati
 The upshot is:
 
 - the **reduction of duplicated code** (no model-specific validation plans),
-- the **elimination of varaince** in validation results arising from unwanted minor discrepancies in validation logic,
+- the **elimination of varaince** in validation results arising from unwanted discrepancies in validation logic,
 - the reduction of friction in the research process as researchers become able to iterate on new ideas that are fairly evaluated with minimal high-level specifications.
 
 To illustrate: in the context of tabular synthetic data generation, models will ultimately produce pandas dataframes. This restriction is sufficient to produce general validation plans that are applicable to any tabular synthesizer and easily customizable by selecting abstract enumerations associated to common validation artifacts (e.g. mean JS divergence).
@@ -68,7 +68,7 @@ ML research projects focusing on the same application domain can utilize shared 
 Capitalizing on this can facilitate:
 
 - the elimination of code duplication arising from tailoring a fixed high-level validation plan to a multiple model interfaces,
-- the elimination of varaince in validation results arising from unwanted minor discrepancies in validation logic,
+- the elimination of varaince in validation results arising from unwanted discrepancies in validation logic,
 - the reduction of unnecessary coupling between research and engineering code---thereby freeing researchers to rapidly iterate on new ideas/ architectures.
 
 Making this happen comes down to designing, writing and deploying general validation plans requiring only the ***minimal structure shared by a given family of thematically related models***.
