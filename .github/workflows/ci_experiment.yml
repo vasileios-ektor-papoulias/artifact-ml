@@ -1,4 +1,4 @@
-name: CI_COMPONENT_ON_PUSH
+name: CI_EXPERIMENT_ON_PUSH
 
 on:
   push:

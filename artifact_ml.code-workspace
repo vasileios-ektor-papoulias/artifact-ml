@@ -48,10 +48,19 @@
       "python.testing.unittestEnabled": false,
       "python.testing.pytestEnabled": true,
       "github-actions.workflows.pinned.workflows": [
-        "CI_ON_PUSH",
+        "CI_CORE_ON_PUSH",
+        "CI_EXPERIMENT_ON_PUSH",
+        "CI_TORCH_ON_PUSH",
+        "CI_DEV_CORE",
+        "CI_DEV_EXPERIMENT",
+        "CI_DEV_TORCH",
+        "CI_MAIN",
         "LINT_PR_TITLE",
         "LINT_MERGE_COMMIT_MESSAGE",
-        "BUMP_VERSION_ON_COMMIT_MESSAGE"
+        "LINT_MERGE_COMMIT_DESCRIPTION",
+        "BUMP_COMPONENT_VERSION",
+        "ENFORCE_BRANCH_NAMING",
+        "ENFORCE_CHANGE_DIRS"
       ]
     },
     "extensions": {
