@@ -1,4 +1,4 @@
-name: CI_DEV_SUBREPO
+name: CI_DEV_EXPERIMENT
 
 on:
   push:
