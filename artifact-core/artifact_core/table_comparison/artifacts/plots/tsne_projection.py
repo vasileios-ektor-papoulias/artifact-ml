@@ -1,0 +1,44 @@
+from dataclasses import dataclass
+
+import pandas as pd
+from matplotlib.figure import Figure
+
+from artifact_core.base.artifact_dependencies import ArtifactHyperparams
+from artifact_core.libs.data_spec.tabular.protocol import (
+    TabularDataSpecProtocol,
+)
+from artifact_core.libs.implementation.projections.tsne import (
+    TSNEHyperparams,
+    TSNEProjector,
+)
+from artifact_core.table_comparison.artifacts.base import (
+    TableComparisonPlot,
+)
+@dataclass(frozen=True)
+class TSNEProjectionComparisonPlotConfig(ArtifactHyperparams):
+    use_categorical: bool
+    perplexity: float
+    learning_rate: float | str
+    n_iter: int
+class TSNEProjectionComparisonPlot(TableComparisonPlot[TSNEProjectionComparisonPlotConfig]):
+    def __init__(
+        self,
+        data_spec: TabularDataSpecProtocol,
+        hyperparams: TSNEProjectionComparisonPlotConfig,
+    ):
+        self._data_spec = data_spec
+        self._hyperparams = hyperparams
+
+    def _compare_datasets(
+        self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
+    ) -> Figure:
+        projector_config = TSNEHyperparams(use_categorical=self._hyperparams.use_categorical)
+        projector = TSNEProjector.build(
+            ls_cat_features=self._data_spec.ls_cat_features,
+            ls_cts_features=self._data_spec.ls_cts_features,
+            projector_config=projector_config,
+        )
+        plot = projector.compute_projection_comparison_plot(
+            dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
+        )
+        return plot
