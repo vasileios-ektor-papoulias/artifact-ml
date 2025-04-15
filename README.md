@@ -1,8 +1,6 @@
 # ⚙️ Artifact
 
-> Artifact is a modular framework for reusable, standardized validation across machine learning experiments.
-
-It enables the design of generic validation plans that work across models, datasets, and training frameworks.
+> Artifact is a modular framework for reusable, standardized validation across machine learning experiments. It enables the design of generic validation plans that work across models, datasets, and training frameworks.
 
 ![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
 ![License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-core)
