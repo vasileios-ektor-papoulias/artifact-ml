@@ -1,4 +1,4 @@
-# ⚙️ Artifact
+# ⚙️ Artifact-ML
 
 > Artifact is a modular framework for reusable, standardized validation across machine learning experiments. It enables the design of generic validation plans that work across models, datasets, and training frameworks.
 
