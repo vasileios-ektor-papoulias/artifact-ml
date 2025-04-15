@@ -1,0 +1,40 @@
+{
+    "scores": {
+        "MEAN_JS_DISTANCE": {
+            "n_bins_cts_histogram": 100,
+            "categorical_only": false
+        },
+        "PAIRWISE_CORRELATION_DISTANCE": {
+            "categorical_association_type": "CRAMERS_V",
+            "continuous_association_type": "PEARSON",
+            "vector_distance_metric": "RMSE"
+        }
+    },
+    "arrays": {},
+    "plots": {
+        "PAIRWISE_CORRELATION_COMPARISON_HEATMAP": {
+            "categorical_association_type": "CRAMERS_V",
+            "continuous_association_type": "PEARSON"
+        },
+        "PCA_PROJECTION_PLOT": {
+            "use_categorical": true
+        },
+        "TRUNCATED_SVD_PROJECTION_PLOT": {
+            "use_categorical": true
+        },
+        "TSNE_PROJECTION_PLOT": {
+            "use_categorical": true,
+            "perplexity": 30,
+            "learning_rate": "auto",
+            "n_iter": 1000
+        }
+    },
+    "score_collections": {
+        "JS_DISTANCE": {
+            "n_bins_cts_histogram": 100,
+            "categorical_only": false
+        }
+    },
+    "array_collections": {},
+    "plot_collections": {}
+}
