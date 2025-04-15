@@ -17,6 +17,15 @@ from artifact_core.libs.implementation.pairwsie_correlation.plotter import (
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonPlot,
 )
+from artifact_core.table_comparison.registries.plots.registry import (
+    TableComparisonPlotRegistry,
+    TableComparisonPlotType,
+)
+
+
+@TableComparisonPlotRegistry.register_artifact_config(
+    TableComparisonPlotType.PAIRWISE_CORRELATION_COMPARISON_HEATMAP
+)
 @dataclass(frozen=True)
 class CorrelationComparisonHeatmapConfig(ArtifactHyperparams):
     categorical_association_type: CategoricalAssociationType
@@ -35,6 +44,11 @@ class CorrelationComparisonHeatmapConfig(ArtifactHyperparams):
                 "continuous_association_type",
                 ContinuousAssociationType[self.continuous_association_type],
             )
+
+
+@TableComparisonPlotRegistry.register_artifact(
+    TableComparisonPlotType.PAIRWISE_CORRELATION_COMPARISON_HEATMAP
+)
 class CorrelationComparisonCombinedPlot(TableComparisonPlot[CorrelationComparisonHeatmapConfig]):
     def __init__(
         self,

@@ -10,10 +10,20 @@ from artifact_core.libs.implementation.js.js import JSDistanceCalculator
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonScore,
 )
+from artifact_core.table_comparison.registries.scores.registry import (
+    TableComparisonScoreRegistry,
+    TableComparisonScoreType,
+)
+
+
+@TableComparisonScoreRegistry.register_artifact_config(TableComparisonScoreType.MEAN_JS_DISTANCE)
 @dataclass(frozen=True)
 class MeanJSDistanceHyperparams(ArtifactHyperparams):
     n_bins_cts_histogram: int
     categorical_only: bool
+
+
+@TableComparisonScoreRegistry.register_artifact(TableComparisonScoreType.MEAN_JS_DISTANCE)
 class MeanJSDistance(TableComparisonScore[MeanJSDistanceHyperparams]):
     def __init__(
         self,

@@ -17,6 +17,15 @@ from artifact_core.libs.utils.vector_distance_calculator import (
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonScore,
 )
+from artifact_core.table_comparison.registries.scores.registry import (
+    TableComparisonScoreRegistry,
+    TableComparisonScoreType,
+)
+
+
+@TableComparisonScoreRegistry.register_artifact_config(
+    TableComparisonScoreType.PAIRWISE_CORRELATION_DISTANCE
+)
 @dataclass(frozen=True)
 class PairwiseCorrelationDistanceConfig(ArtifactHyperparams):
     categorical_association_type: CategoricalAssociationType
@@ -42,6 +51,11 @@ class PairwiseCorrelationDistanceConfig(ArtifactHyperparams):
                 "vector_distance_metric",
                 VectorDistanceMetric[self.vector_distance_metric],
             )
+
+
+@TableComparisonScoreRegistry.register_artifact(
+    TableComparisonScoreType.PAIRWISE_CORRELATION_DISTANCE
+)
 class PairwiseCorrelationDistance(TableComparisonScore[PairwiseCorrelationDistanceConfig]):
     def __init__(
         self,

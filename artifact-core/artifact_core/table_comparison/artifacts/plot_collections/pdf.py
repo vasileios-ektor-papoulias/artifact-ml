@@ -10,6 +10,15 @@ from artifact_core.libs.implementation.pdf.overlaid_plotter import (
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonPlotCollection,
 )
+from artifact_core.table_comparison.registries.plot_collections.registry import (
+    TableComparisonPlotCollectionRegistry,
+    TableComparisonPlotCollectionType,
+)
+
+
+@TableComparisonPlotCollectionRegistry.register_artifact(
+    TableComparisonPlotCollectionType.PDF_PLOTS
+)
 class PDFComparisonPlotCollection(TableComparisonPlotCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame

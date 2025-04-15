@@ -14,12 +14,22 @@ from artifact_core.libs.implementation.projections.tsne import (
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonPlot,
 )
+from artifact_core.table_comparison.registries.plots.registry import (
+    TableComparisonPlotRegistry,
+    TableComparisonPlotType,
+)
+
+
+@TableComparisonPlotRegistry.register_artifact_config(TableComparisonPlotType.TSNE_PROJECTION_PLOT)
 @dataclass(frozen=True)
 class TSNEProjectionComparisonPlotConfig(ArtifactHyperparams):
     use_categorical: bool
     perplexity: float
     learning_rate: float | str
     n_iter: int
+
+
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.TSNE_PROJECTION_PLOT)
 class TSNEProjectionComparisonPlot(TableComparisonPlot[TSNEProjectionComparisonPlotConfig]):
     def __init__(
         self,

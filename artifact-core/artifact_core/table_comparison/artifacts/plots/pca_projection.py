@@ -14,9 +14,19 @@ from artifact_core.libs.implementation.projections.pca import (
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonPlot,
 )
+from artifact_core.table_comparison.registries.plots.registry import (
+    TableComparisonPlotRegistry,
+    TableComparisonPlotType,
+)
+
+
+@TableComparisonPlotRegistry.register_artifact_config(TableComparisonPlotType.PCA_PROJECTION_PLOT)
 @dataclass(frozen=True)
 class PCAProjectionComparisonPlotConfig(ArtifactHyperparams):
     use_categorical: bool
+
+
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.PCA_PROJECTION_PLOT)
 class PCAProjectionComparisonPlot(TableComparisonPlot[PCAProjectionComparisonPlotConfig]):
     def __init__(
         self,
