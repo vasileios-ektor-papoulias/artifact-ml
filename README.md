@@ -34,28 +34,26 @@ The Artifact framework consists of three main repositories:
 The core framework providing the foundation for reusable validation. It defines the base abstractions and interfaces for creating validation artifacts, as well as concrete implementations for common validation tasks.
 
 Key features:
-- Modular architecture with pluggable components
-- Type-safe interfaces using Python generics
-- Extensible registry system for artifacts
-- Configurable validation plans
+- A **flexible minimal interface** for the computation of heterogeneous validation artifacts in thematically related ML experiments.
+- Modular architecture with pluggable components.
+- Type-safe interfaces using Python generics.
 
 ### 2. artifact-experiment-tracking
 
 A repository for experiment tracking with the Artifact framework. It introduces executable validation plan abstractions that utilize artifact-core and export to various experiment tracking backends.
 
 Key features:
-- Executable validation plan abstractions
-- Integration with popular experiment tracking tools
-- Standardized reporting and visualization
+- Executable validation plan abstractions.
+- Integration with popular experiment tracking tools.
+- Standardized reporting and visualization.
 
 ### 3. artifact-torch
 
-A deep learning framework built on top of artifact-core, providing implementations for common deep learning models and validation workflows.
+A deep learning framework built on top of artifact-core, providing implementations for common deep learning tasks.
 
 Key features:
-- Pre-built training and validation plans for common architectures
-- Integration with PyTorch
-- Model-agnostic validation workflows
+- Integration with PyTorch: lightweight PyTorch extension to ensure type-safety and compatibility with Artifact's validation plans.
+- Extendible/ customizable trainer abstraction covering the full training/ validation pipeline for thematically related neural networks (e.g. tabular synthesizers).
 
 ## 🎯 Design Philosophy
 
@@ -85,9 +83,9 @@ This idea is central to the project's philosophy.
 
 Our goal is to provide unified validation plans for thematically related ML models. If our attempt is to be successful, these plans shouldn't be framework dependent.
 
-- If you already have calculation units in your project, you can subclass them to utilize an artifact engine with resources that fit your specific needs
-- The generic resource type allows for seamless integration with different data structures and formats
-- Artifacts can be extended and customized without modifying the core engine
+- If you already have calculation units in your project, you can subclass them to utilize an artifact engine with resources that fit your specific needs.
+- The generic resource type allows for seamless integration with different data structures and formats.
+- Artifacts can be extended and customized without modifying the core engine.
 
 ## 🚀 Getting Started
 
@@ -113,11 +111,11 @@ Future work will focus on:
 
 We plan to continue expanding the framework by releasing engines tailored to other types of ML experiments:
 
-- Synthetic tabular time-series generation
-- Synthetic image generation
-- Text generation
-- Binary classification
-- Multiclass classification
+- synthetic tabular time-series generation,
+- synthetic image generation,
+- text generation,
+- binary classification,
+- multiclass classification.
 
 These extensions will maintain the same core philosophy of decoupling validation logic from model implementation, allowing researchers to focus on innovation while ensuring consistent evaluation practices.
 
@@ -125,9 +123,9 @@ These extensions will maintain the same core philosophy of decoupling validation
 
 Future versions will provide deeper integration with popular ML frameworks and tools:
 
-- Integration with other machine learning frameworks (e.g. TensorFlow)
-- Support for distributed validation on large datasets (e.g. integration with PySpark)
-- Cloud-native deployment options
+- integration with other machine learning frameworks (e.g. TensorFlow),
+- support for distributed validation on large datasets (e.g. integration with PySpark),
+- cloud-native deployment options.
 
 ## 🤝 Contributing
 
@@ -135,28 +133,28 @@ Contributions are welcome! Please follow our structured contribution process:
 
 ### For Regular Development
 
-1. Create a feature branch (e.g., `feature/add-login`) from the appropriate dev branch (`dev-core`, `dev-experiment`, or `dev-torch`)
-2. Make your changes (only modify files within one component directory)
-3. Create a PR to the corresponding dev branch
-4. Designated reviewers will handle merging dev branches to main with appropriate version bump prefixes
+1. Create a feature branch (e.g., `feature/add-login`) from the appropriate dev branch (`dev-core`, `dev-experiment`, or `dev-torch`).
+2. Make your changes (only modify files within one component directory).
+3. Create a PR to the corresponding dev branch.
+4. Designated reviewers will handle merging dev branches to main with appropriate version bump prefixes.
 
 ### For Urgent Hotfixes
 
-1. Create a branch named `hotfix-<component_name>/<descriptive-name>` from main (e.g., `hotfix-core/fix-critical-bug`)
-2. Make your changes (only modify files within the specified component directory)
-3. Create a PR directly to main with a title that starts with "patch:" or "no-bump:"
+1. Create a branch named `hotfix-<component_name>/<descriptive-name>` from main (e.g., `hotfix-core/fix-critical-bug`).
+2. Make your changes (only modify files within the specified component directory).
+3. Create a PR directly to main with a title that starts with "patch:" or "no-bump:".
 
 ### For Setup and Configuration
 
-1. Create a branch named `setup-<component_name>/<descriptive-name>` from main (e.g., `setup-experiment/update-docs`)
-2. Make your changes (only modify files within the specified component directory)
-3. Create a PR directly to main with a title that starts with "no-bump:"
+1. Create a branch named `setup-<component_name>/<descriptive-name>` from main (e.g., `setup-experiment/update-docs`).
+2. Make your changes (only modify files within the specified component directory).
+3. Create a PR directly to main with a title that starts with "no-bump:".
 
 ### For Monorepo Root Changes
 
-1. Create a branch named `hotfix-root/<descriptive-name>` or `setup-root/<descriptive-name>` from main
-2. Make your changes (only modify files outside of the artifact-core, artifact-experiment, and artifact-torch directories)
-3. Create a PR directly to main with a title that starts with "no-bump:"
+1. Create a branch named `hotfix-root/<descriptive-name>` or `setup-root/<descriptive-name>` from main.
+2. Make your changes (only modify files outside of the artifact-core, artifact-experiment, and artifact-torch directories).
+3. Create a PR directly to main with a title that starts with "no-bump:".
 
 For more detailed information about our CI/CD pipeline and contribution guidelines, please see the [CICD README](.github/README-CICD.md).
 
