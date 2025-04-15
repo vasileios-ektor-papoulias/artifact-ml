@@ -1,0 +1,41 @@
+from dataclasses import dataclass
+
+import pandas as pd
+from matplotlib.figure import Figure
+
+from artifact_core.base.artifact_dependencies import ArtifactHyperparams
+from artifact_core.libs.data_spec.tabular.protocol import (
+    TabularDataSpecProtocol,
+)
+from artifact_core.libs.implementation.projections.pca import (
+    PCAHyperparams,
+    PCAProjector,
+)
+from artifact_core.table_comparison.artifacts.base import (
+    TableComparisonPlot,
+)
+@dataclass(frozen=True)
+class PCAProjectionComparisonPlotConfig(ArtifactHyperparams):
+    use_categorical: bool
+class PCAProjectionComparisonPlot(TableComparisonPlot[PCAProjectionComparisonPlotConfig]):
+    def __init__(
+        self,
+        data_spec: TabularDataSpecProtocol,
+        hyperparams: PCAProjectionComparisonPlotConfig,
+    ):
+        self._data_spec = data_spec
+        self._hyperparams = hyperparams
+
+    def _compare_datasets(
+        self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
+    ) -> Figure:
+        projector_config = PCAHyperparams(use_categorical=self._hyperparams.use_categorical)
+        projector = PCAProjector.build(
+            ls_cat_features=self._data_spec.ls_cat_features,
+            ls_cts_features=self._data_spec.ls_cts_features,
+            projector_config=projector_config,
+        )
+        plot = projector.compute_projection_comparison_plot(
+            dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
+        )
+        return plot
