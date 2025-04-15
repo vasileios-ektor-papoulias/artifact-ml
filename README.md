@@ -157,7 +157,7 @@ Contributions are welcome! Please follow our structured contribution process:
 2. Make your changes (only modify files outside of the artifact-core, artifact-experiment, and artifact-torch directories)
 3. Create a PR directly to main with a title that starts with "no-bump:"
 
-For more detailed information about our CI/CD pipeline and contribution guidelines, please see the [CICD README](.github/README.md).
+For more detailed information about our CI/CD pipeline and contribution guidelines, please see the [CICD README](.github/README-CICD.md).
 
 ## 📄 License
 
