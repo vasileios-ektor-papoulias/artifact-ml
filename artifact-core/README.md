@@ -319,7 +319,7 @@ pca_plot = engine.produce_dataset_comparison_plot(
 ```
 
 <p align="center">
-  <img src="assets/pca_comparison.png" width="700" alt="PCA Projection Plot">
+  <img src="../assets/pca_comparison.png" width="700" alt="PCA Projection Plot">
 </p>
 
 #### Probability Density Function (PDF) Comparison
@@ -334,7 +334,7 @@ pdf_plots = engine.produce_dataset_comparison_plot(
 ```
 
 <p align="center">
-  <img src="assets/pdf_comparison.png" width="700" alt="PDF Comparison Plot">
+  <img src="../assets/pdf_comparison.png" width="700" alt="PDF Comparison Plot">
 </p>
 
 ## 🔧 Extending and Configuring the Framework
