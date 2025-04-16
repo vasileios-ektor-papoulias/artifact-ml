@@ -1,11 +1,11 @@
 import pytest
 
-from tests.core.dummy.artifact_dependencies import (
+from tests.core.dataset_comparison.dummy.artifact_dependencies import (
     DummyDataset,
     DummyDatasetComparisonArtifactResources,
     DummyDataSpec,
 )
-from tests.core.dummy.artifacts import (
+from tests.core.dataset_comparison.dummy.artifacts import (
     DummyDatasetComparisonScore,
     DummyDatasetComparisonScoreHyperparams,
 )
