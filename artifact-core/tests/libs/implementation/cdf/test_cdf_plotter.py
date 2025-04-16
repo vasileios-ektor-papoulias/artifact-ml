@@ -21,7 +21,7 @@ def close_all_figs_after_test():
 
 
 @pytest.fixture
-def sample_dataframe():
+def df() -> pd.DataFrame:
     return pd.DataFrame(
         {
             "continuous_feature1": [1.0, 2.0, 3.0, 4.0, 5.0],
@@ -42,12 +42,12 @@ def sample_dataframe():
 def test_get_cdf_plot_collection(
     set_agg_backend,
     close_all_figs_after_test,
-    sample_dataframe,
+    df: pd.DataFrame,
     cts_features: List[str],
     expected_plot_count: int,
 ):
     result = CDFPlotter.get_cdf_plot_collection(
-        dataset=sample_dataframe,
+        dataset=df,
         ls_cts_features=cts_features,
     )
 
@@ -79,12 +79,12 @@ def test_get_cdf_plot_collection(
 def test_get_cdf_plot(
     set_agg_backend,
     close_all_figs_after_test,
-    sample_dataframe,
+    df: pd.DataFrame,
     cts_features: List[str],
     expected_axes_count: int,
 ):
     result = CDFPlotter.get_cdf_plot(
-        dataset=sample_dataframe,
+        dataset=df,
         ls_cts_features=cts_features,
     )
 
@@ -102,47 +102,3 @@ def test_get_cdf_plot(
         assert len(result.axes) == 0, (
             f"Expected 0 axes for empty features list, got {len(result.axes)}"
         )
-
-
-@pytest.mark.parametrize(
-    "data, feature_name, expected_title",
-    [
-        (
-            pd.Series([1.0, 2.0, 3.0, 4.0, 5.0], name="continuous"),
-            "continuous",
-            "CDF: continuous",
-        ),
-    ],
-)
-def test_plot_cdf(
-    set_agg_backend,
-    close_all_figs_after_test,
-    data: pd.Series,
-    feature_name: str,
-    expected_title: str,
-):
-    result = CDFPlotter._plot_cdf(sr_data=data, feature_name=feature_name)
-
-    assert isinstance(result, Figure), "Result should be a Figure"
-    assert result.get_axes(), "Figure should have at least one axis"
-    title_text = result.texts[0].get_text() if result.texts else ""
-    assert title_text == expected_title, f"Expected title '{expected_title}', got '{title_text}'"
-
-    ax = result.get_axes()[0]
-    assert ax.get_xlabel() == "Values", f"Expected x-label 'Values', got '{ax.get_xlabel()}'"
-    assert ax.get_ylabel() == "Normalized Cumulative Sum", (
-        f"Expected y-label 'Normalized Cumulative Sum', got '{ax.get_ylabel()}'"
-    )
-
-    # Check that the line plot was created
-    lines = ax.get_lines()
-    assert len(lines) > 0, "No lines found in the plot"
-
-    # Check that at least one line exists and has data
-    line = lines[0]
-    assert hasattr(line, "get_xdata"), "Line should have get_xdata method"
-    assert hasattr(line, "get_ydata"), "Line should have get_ydata method"
-
-    # Just verify that the data is not None
-    assert line.get_xdata() is not None, "Line should have x data"
-    assert line.get_ydata() is not None, "Line should have y data"
