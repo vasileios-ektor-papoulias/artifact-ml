@@ -7,7 +7,7 @@ from artifact_core.base.artifact_dependencies import (
 )
 from artifact_core.core.dataset_comparison.artifact import DatasetComparisonArtifact
 
-from tests.core.dummy.artifact_dependencies import DummyDataset, DummyDataSpec
+from tests.core.dataset_comparison.dummy.artifact_dependencies import DummyDataset, DummyDataSpec
 
 artifactHyperparamsT = TypeVar("artifactHyperparamsT", bound=ArtifactHyperparams)
 artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)

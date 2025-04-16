@@ -7,7 +7,7 @@ from artifact_core.core.dataset_comparison.registry import (
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-from tests.core.dummy.artifact_dependencies import DummyDataset, DummyDataSpec
+from tests.core.dataset_comparison.dummy.artifact_dependencies import DummyDataset, DummyDataSpec
 
 
 class DummyDatasetComparisonScoreType(ArtifactType):
