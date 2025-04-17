@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Type, TypeVar
 
 import numpy as np
 import pandas as pd
@@ -16,6 +16,8 @@ from artifact_core.libs.implementation.projections.base.projector import (
     ProjectorHyperparams,
 )
 
+truncatedSVDProjectorType = TypeVar("truncatedSVDProjectorType", bound="TruncatedSVDProjector")
+
 
 @dataclass(frozen=True)
 class TruncatedSVDHyperparams(ProjectorHyperparams):
@@ -25,12 +27,12 @@ class TruncatedSVDHyperparams(ProjectorHyperparams):
 class TruncatedSVDProjector(ProjectorBase[TruncatedSVDHyperparams]):
     @classmethod
     def build(
-        cls,
+        cls: Type[truncatedSVDProjectorType],
         ls_cat_features: List[str],
         ls_cts_features: List[str],
         projector_config: Optional[TruncatedSVDHyperparams] = None,
         plotter_config: Optional[ProjectionPlotterConfig] = None,
-    ) -> "TruncatedSVDProjector":
+    ) -> truncatedSVDProjectorType:
         if projector_config is None:
             projector_config = TruncatedSVDHyperparams()
         if plotter_config is None:
