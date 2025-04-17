@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, Type, TypeVar
 
 import numpy as np
 import pandas as pd
@@ -16,6 +16,8 @@ from artifact_core.libs.implementation.projections.base.projector import (
     ProjectorHyperparams,
 )
 
+tsneProjectorType = TypeVar("tsneProjectorType", bound="TSNEProjector")
+
 
 @dataclass(frozen=True)
 class TSNEHyperparams(ProjectorHyperparams):
@@ -28,12 +30,12 @@ class TSNEHyperparams(ProjectorHyperparams):
 class TSNEProjector(ProjectorBase[TSNEHyperparams]):
     @classmethod
     def build(
-        cls,
+        cls: Type[tsneProjectorType],
         ls_cat_features: List[str],
         ls_cts_features: List[str],
         projector_config: Optional[TSNEHyperparams] = None,
         plotter_config: Optional[ProjectionPlotterConfig] = None,
-    ) -> "TSNEProjector":
+    ) -> tsneProjectorType:
         if projector_config is None:
             projector_config = TSNEHyperparams()
         if plotter_config is None:

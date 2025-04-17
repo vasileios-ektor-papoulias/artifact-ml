@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import List, Optional, Type, TypeVar
 
 import numpy as np
 import pandas as pd
@@ -15,6 +15,8 @@ from artifact_core.libs.implementation.projections.base.projector import (
     ProjectorHyperparams,
 )
 
+pcaProjectorType = TypeVar("pcaProjectorType", bound="PCAProjector")
+
 
 @dataclass(frozen=True)
 class PCAHyperparams(ProjectorHyperparams):
@@ -24,12 +26,12 @@ class PCAHyperparams(ProjectorHyperparams):
 class PCAProjector(ProjectorBase[PCAHyperparams]):
     @classmethod
     def build(
-        cls,
+        cls: Type[pcaProjectorType],
         ls_cat_features: List[str],
         ls_cts_features: List[str],
         projector_config: Optional[PCAHyperparams] = None,
         plotter_config: Optional[ProjectionPlotterConfig] = None,
-    ) -> "PCAProjector":
+    ) -> pcaProjectorType:
         if projector_config is None:
             projector_config = PCAHyperparams()
         if plotter_config is None:
