@@ -43,23 +43,23 @@ class ProjectorBase(ABC, Generic[projectorHyperparamsT]):
     @abstractmethod
     def project(self, dataset: pd.DataFrame) -> Optional[np.ndarray]: ...
 
-    def compute_projection_plot(self, dataset: pd.DataFrame) -> Figure:
+    def produce_projection_plot(self, dataset: pd.DataFrame) -> Figure:
         dataset_projection = self.project(dataset=dataset)
-        fig_projection = self._plotter.get_projection_plot(
+        fig_projection = self._plotter.produce_projection_plot(
             dataset_projection_2d=dataset_projection,
-            method_name=self.projection_name,
+            projection_name=self.projection_name,
         )
         return fig_projection
 
-    def compute_projection_comparison_plot(
+    def produce_projection_comparison_plot(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
         dataset_projection_real = self.project(dataset=dataset_real)
         dataset_projection_synthetic = self.project(dataset=dataset_synthetic)
-        fig_projection_comparison = self._plotter.get_projection_comparison_plot(
+        fig_projection_comparison = self._plotter.produce_projection_comparison_plot(
             dataset_projection_2d_real=dataset_projection_real,
             dataset_projection_2d_synthetic=dataset_projection_synthetic,
-            method_name=self.projection_name,
+            projection_name=self.projection_name,
         )
         return fig_projection_comparison
 
