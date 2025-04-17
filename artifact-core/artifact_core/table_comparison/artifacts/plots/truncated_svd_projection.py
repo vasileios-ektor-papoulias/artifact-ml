@@ -53,7 +53,7 @@ class TruncatedSVDProjectionComparisonPlot(
             ls_cts_features=self._data_spec.ls_cts_features,
             projector_config=projector_config,
         )
-        plot = projector.compute_projection_comparison_plot(
+        plot = projector.produce_projection_comparison_plot(
             dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
         )
         return plot

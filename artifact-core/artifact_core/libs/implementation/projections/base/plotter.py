@@ -42,19 +42,19 @@ class ProjectionPlotter:
             config = ProjectionPlotterConfig()
         self._config = config
 
-    def get_projection_comparison_plot(
+    def produce_projection_comparison_plot(
         self,
         dataset_projection_2d_real: Optional[np.ndarray],
         dataset_projection_2d_synthetic: Optional[np.ndarray],
-        method_name: str,
+        projection_name: str,
     ) -> Figure:
-        fig_real = self.get_projection_plot(
+        fig_real = self.produce_projection_plot(
             dataset_projection_2d=dataset_projection_2d_real,
-            method_name=method_name,
+            projection_name=projection_name,
         )
-        fig_synth = self.get_projection_plot(
+        fig_synth = self.produce_projection_plot(
             dataset_projection_2d=dataset_projection_2d_synthetic,
-            method_name=method_name,
+            projection_name=projection_name,
         )
         dict_plots = {
             self._config.combined_plot_real_key: fig_real,
@@ -65,19 +65,19 @@ class ProjectionPlotter:
         )
         general_title = self._config.combined_config.combined_title
         combined_fig.suptitle(
-            t=f"{general_title}: {method_name}",
+            t=f"{general_title}: {projection_name}",
             y=self._config.combined_config.combined_title_vertical_position,
         )
         return combined_fig
 
-    def get_projection_plot(
-        self, dataset_projection_2d: Optional[np.ndarray], method_name: str
+    def produce_projection_plot(
+        self, dataset_projection_2d: Optional[np.ndarray], projection_name: str
     ) -> Figure:
         self._validate_projection(dataset_projection=dataset_projection_2d)
         fig, ax = plt.subplots(figsize=self._config.figsize)
         plt.close(fig=fig)
         if dataset_projection_2d is None:
-            ax.set_title(label=f"{method_name}: {self._config.failed_suffix}")
+            ax.set_title(label=f"{projection_name}: {self._config.failed_suffix}")
             ax.axis("off")
         else:
             sns.scatterplot(
@@ -88,7 +88,7 @@ class ProjectionPlotter:
             )
             ax.set_xlabel("Dim 1")
             ax.set_ylabel("Dim 2")
-            fig.suptitle(f"{self._config.title_prefix}: {method_name}")
+            fig.suptitle(f"{self._config.title_prefix}: {projection_name}")
         return fig
 
     @staticmethod
