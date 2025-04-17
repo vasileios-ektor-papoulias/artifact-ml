@@ -50,8 +50,7 @@ class TSNEProjector(ProjectorBase[TSNEHyperparams]):
         )
         return projector
 
-    def project(self, dataset: pd.DataFrame) -> np.ndarray | None:
-        combined = self._prepare_data(dataset=dataset)
+    def _project(self, dataset_preprocessed: pd.DataFrame) -> np.ndarray | None:
         try:
             tsne_model = TSNE(
                 n_components=self._hyperparams.n_components,
@@ -59,7 +58,7 @@ class TSNEProjector(ProjectorBase[TSNEHyperparams]):
                 learning_rate=self._hyperparams.learning_rate,
                 n_iter=self._hyperparams.n_iter,
             )
-            return tsne_model.fit_transform(X=combined)
+            return tsne_model.fit_transform(X=dataset_preprocessed)
         except (ValueError, LinAlgError, NotFittedError):
             return None
 

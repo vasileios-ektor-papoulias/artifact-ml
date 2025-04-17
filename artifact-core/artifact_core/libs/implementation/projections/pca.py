@@ -45,11 +45,10 @@ class PCAProjector(ProjectorBase[PCAHyperparams]):
         )
         return projector
 
-    def project(self, dataset: pd.DataFrame) -> np.ndarray | None:
-        combined = self._prepare_data(dataset=dataset)
+    def _project(self, dataset_preprocessed: pd.DataFrame) -> Optional[np.ndarray]:
         try:
             pca_model = PCA(n_components=self._hyperparams.n_components)
-            return pca_model.fit_transform(X=combined)
+            return pca_model.fit_transform(X=dataset_preprocessed)
         except (ValueError, np.linalg.LinAlgError, NotFittedError):
             return None
 
