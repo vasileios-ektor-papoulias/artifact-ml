@@ -19,15 +19,6 @@ from tests.libs.implementation.projections.base.dummy.projector import (
 def mock_plotter_factory(
     mocker: MockerFixture,
 ) -> Callable[[], MagicMock]:
-    """Factory for creating mock plotter objects.
-
-    Args:
-        mocker: The pytest mocker fixture
-
-    Returns:
-        A factory function that creates a mock plotter
-    """
-
     def factory() -> MagicMock:
         mock_plotter = mocker.Mock(spec=ProjectionPlotter)
         mock_plotter.produce_projection_plot.return_value = mocker.Mock(spec=Figure)
