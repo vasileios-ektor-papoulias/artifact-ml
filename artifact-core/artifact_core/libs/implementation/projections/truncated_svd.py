@@ -46,11 +46,10 @@ class TruncatedSVDProjector(ProjectorBase[TruncatedSVDHyperparams]):
             plotter=plotter,
         )
 
-    def project(self, dataset: pd.DataFrame) -> np.ndarray | None:
-        combined = self._prepare_data(dataset=dataset)
+    def _project(self, dataset_preprocessed: pd.DataFrame) -> np.ndarray | None:
         try:
             tsvd_model = TruncatedSVD(n_components=self._hyperparams.n_components)
-            return tsvd_model.fit_transform(X=combined)
+            return tsvd_model.fit_transform(X=dataset_preprocessed)
         except (ValueError, LinAlgError, NotFittedError):
             return None
 

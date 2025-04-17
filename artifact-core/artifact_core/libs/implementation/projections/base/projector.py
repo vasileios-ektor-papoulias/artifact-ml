@@ -37,12 +37,17 @@ class ProjectorBase(ABC, Generic[projectorHyperparamsT]):
     def projection_name(self) -> str:
         return self._projection_name
 
+    def project(self, dataset: pd.DataFrame) -> Optional[np.ndarray]:
+        dataset_preprocessed = self._preprocess(dataset=dataset)
+        projection = self._project(dataset_preprocessed=dataset_preprocessed)
+        return projection
+
     @classmethod
     @abstractmethod
     def _get_projection_name(cls) -> str: ...
 
     @abstractmethod
-    def project(self, dataset: pd.DataFrame) -> Optional[np.ndarray]: ...
+    def _project(self, dataset_preprocessed: pd.DataFrame) -> Optional[np.ndarray]: ...
 
     def produce_projection_plot(self, dataset: pd.DataFrame) -> Figure:
         dataset_projection = self.project(dataset=dataset)
@@ -64,13 +69,15 @@ class ProjectorBase(ABC, Generic[projectorHyperparamsT]):
         )
         return fig_projection_comparison
 
-    def _prepare_data(self, dataset: pd.DataFrame) -> pd.DataFrame:
+    def _preprocess(self, dataset: pd.DataFrame) -> pd.DataFrame:
         cts_data = dataset[self._ls_cts_features]
         if self._hyperparams.use_categorical and self._ls_cat_features:
             cat_data = dataset[self._ls_cat_features]
             cat_data_encoded = pd.get_dummies(cat_data, drop_first=False)
-            combined = pd.concat([cts_data, cat_data_encoded], axis=1)
+            dataset_preprocessed = pd.concat([cts_data, cat_data_encoded], axis=1)
         else:
+            dataset_preprocessed = cts_data
+        return dataset_preprocessed
 
     @staticmethod
     def _validate_data_spec(ls_cat_features: List[str], ls_cts_features: List[str]):
