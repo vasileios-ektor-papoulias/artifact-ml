@@ -26,6 +26,7 @@ class ProjectorBase(ABC, Generic[projectorHyperparamsT]):
         hyperparams: projectorHyperparamsT,
         plotter: ProjectionPlotter,
     ):
+        self._validate_data_spec(ls_cat_features=ls_cat_features, ls_cts_features=ls_cts_features)
         self._ls_cat_features = ls_cat_features
         self._ls_cts_features = ls_cts_features
         self._hyperparams = hyperparams
@@ -70,5 +71,11 @@ class ProjectorBase(ABC, Generic[projectorHyperparamsT]):
             cat_data_encoded = pd.get_dummies(cat_data, drop_first=False)
             combined = pd.concat([cts_data, cat_data_encoded], axis=1)
         else:
-            combined = cts_data
-        return combined
+
+    @staticmethod
+    def _validate_data_spec(ls_cat_features: List[str], ls_cts_features: List[str]):
+        if not ls_cat_features and not ls_cts_features:
+            raise ValueError("Both categorical and continuous feature lists are empty.")
+        overlap = set(ls_cat_features).intersection(ls_cts_features)
+        if overlap:
+            raise ValueError(f"Categorical and continuous features overlap: {overlap}")
