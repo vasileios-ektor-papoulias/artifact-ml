@@ -395,6 +395,254 @@ def test_build(
         ),
         (
             "simple_df",
+            ["nonexistent"],
+            None,
+            ValueError("Prescribed features {'nonexistent'} not found in dataset columns"),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        ),
+        (
+            "simple_df",
+            None,
+            ["nonexistent"],
+            ValueError("Prescribed features {'nonexistent'} not found in dataset columns"),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        ),
+        # Test with complex_df, auto-detection
+        (
+            "complex_df",
+            None,
+            None,
+            None,
+            ["int_col", "float_col", "str_col", "bool_col", "date_col", "cat_col"],
+            6,
+            ["int_col", "float_col", "bool_col"],
+            3,
+            {"int_col": np.int64, "float_col": np.float64, "bool_col": np.bool},
+            ["str_col", "date_col", "cat_col"],
+            3,
+            {
+                "str_col": np.object_,
+                "date_col": np.datetime64,
+                "cat_col": pd.CategoricalDtype.type,
+            },
+            {
+                "str_col": ["A", "B", "C", "D", "E"],
+                "date_col": ["2023-01-01", "2023-01-02", "2023-01-03", "2023-01-04", "2023-01-05"],
+                "cat_col": ["X", "Y", "Z"],
+            },
+            {"str_col": 5, "date_col": 5, "cat_col": 3},
+            [5, 5, 3],
+        ),
+    ],
+    indirect=["df_dispatcher"],
+)
+def test_fit(
+    df_dispatcher: pd.DataFrame,
+    ls_cts_features: Optional[List[str]],
+    ls_cat_features: Optional[List[str]],
+    expected_exception: Optional[BaseException],
+    expected_ls_features: Optional[List[str]],
+    expected_n_features: Optional[int],
+    expected_ls_cts_features: Optional[List[str]],
+    expected_n_cts_features: Optional[int],
+    expected_dict_cts_dtypes: Optional[Dict[str, TabularDataDType]],
+    expected_ls_cat_features: Optional[List[str]],
+    expected_n_cat_features: Optional[int],
+    expected_dict_cat_dtypes: Optional[Dict[str, TabularDataDType]],
+    expected_cat_unique_map: Optional[Dict[str, List[str]]],
+    expected_cat_unique_count_map: Optional[Dict[str, int]],
+    expected_ls_n_cat: Optional[List[int]],
+):
+    spec = TabularDataSpec.build(
+        ls_cts_features=ls_cts_features,
+        ls_cat_features=ls_cat_features,
+    )
+    if expected_exception is not None:
+        expected_exception_type = type(expected_exception)
+        expected_exception_message = expected_exception.args[0]
+        with pytest.raises(
+            expected_exception_type,
+            match=expected_exception_message,
+        ):
+            spec.fit(df=df_dispatcher)
+    else:
+        spec.fit(df=df_dispatcher)
+        assert spec.ls_features == expected_ls_features, (
+            f"Expected ls_features: {expected_ls_features} got {spec.ls_features}"
+        )
+        assert spec.n_features == expected_n_features, (
+            f"Expected n_features: {expected_n_features} got {spec.n_features}"
+        )
+        assert spec.ls_cts_features == expected_ls_cts_features, (
+            f"Expected ls_cts_features: {expected_ls_cts_features} got {spec.ls_cts_features}"
+        )
+        assert spec.n_cts_features == expected_n_cts_features, (
+            f"Expected n_cts_features: {expected_n_cts_features} got {spec.n_cts_features}"
+        )
+        assert spec.dict_cts_dtypes == expected_dict_cts_dtypes, (
+            f"Expected dict_cts_dtypes: {expected_dict_cts_dtypes} got {spec.dict_cts_dtypes}"
+        )
+        assert spec.ls_cat_features == expected_ls_cat_features, (
+            f"Expected ls_cat_features: {expected_ls_cat_features} got {spec.ls_cat_features}"
+        )
+        assert spec.n_cat_features == expected_n_cat_features, (
+            f"Expected n_cat_features: {expected_n_cat_features} got {spec.n_cat_features}"
+        )
+        assert spec.dict_cat_dtypes == expected_dict_cat_dtypes, (
+            f"Expected dict_cat_dtypes: {expected_dict_cat_dtypes} got {spec.dict_cat_dtypes}"
+        )
+        assert spec.cat_unique_map == expected_cat_unique_map, (
+            f"Expected cat_unique_map: {expected_cat_unique_map} got {spec.cat_unique_map}"
+        )
+        assert spec.cat_unique_count_map == expected_cat_unique_count_map, (
+            f"Expected cat_unique_count_map: {expected_cat_unique_count_map}"
+            + f"got {spec.cat_unique_count_map}"
+        )
+        assert spec.ls_n_cat == expected_ls_n_cat, (
+            f"Expected ls_n_cat: {expected_ls_n_cat} got {spec.ls_n_cat}"
+        )
+
+
+@pytest.mark.parametrize(
+    "df_dispatcher, ls_cts_features, ls_cat_features, "
+    + "expected_exception, "
+    + "expected_ls_features, expected_n_features, "
+    + "expected_ls_cts_features, expected_n_cts_features, expected_dict_cts_dtypes, "
+    + "expected_ls_cat_features, expected_n_cat_features, expected_dict_cat_dtypes, "
+    + "expected_cat_unique_map, expected_cat_unique_count_map, expected_ls_n_cat",
+    [
+        (
+            "simple_df",
+            None,
+            None,
+            None,
+            ["num1", "num2", "cat1", "cat2"],
+            4,
+            ["num1", "num2"],
+            2,
+            {"num1": np.float64, "num2": np.float64},
+            ["cat1", "cat2"],
+            2,
+            {"cat1": np.object_, "cat2": np.object_},
+            {"cat1": ["A", "B", "C"], "cat2": ["X", "Y", "Z"]},
+            {"cat1": 3, "cat2": 3},
+            [3, 3],
+        ),
+        (
+            "simple_df",
+            ["num1"],
+            None,
+            None,
+            ["num1", "num2", "cat1", "cat2"],
+            4,
+            ["num1", "num2"],
+            2,
+            {"num1": np.float64, "num2": np.float64},
+            ["cat1", "cat2"],
+            2,
+            {"cat1": np.object_, "cat2": np.object_},
+            {"cat1": ["A", "B", "C"], "cat2": ["X", "Y", "Z"]},
+            {"cat1": 3, "cat2": 3},
+            [3, 3],
+        ),
+        (
+            "simple_df",
+            None,
+            ["cat1"],
+            None,
+            ["num1", "num2", "cat1", "cat2"],
+            4,
+            ["num1", "num2"],
+            2,
+            {"num1": np.float64, "num2": np.float64},
+            ["cat1", "cat2"],
+            2,
+            {"cat1": np.object_, "cat2": np.object_},
+            {"cat1": ["A", "B", "C"], "cat2": ["X", "Y", "Z"]},
+            {"cat1": 3, "cat2": 3},
+            [3, 3],
+        ),
+        (
+            "simple_df",
+            ["num1"],
+            ["cat1"],
+            None,
+            ["num1", "num2", "cat1", "cat2"],
+            4,
+            ["num1", "num2"],
+            2,
+            {"num1": np.float64, "num2": np.float64},
+            ["cat1", "cat2"],
+            2,
+            {"cat1": np.object_, "cat2": np.object_},
+            {"cat1": ["A", "B", "C"], "cat2": ["X", "Y", "Z"]},
+            {"cat1": 3, "cat2": 3},
+            [3, 3],
+        ),
+        (
+            "simple_df",
+            None,
+            ["num1"],
+            None,
+            ["num1", "num2", "cat1", "cat2"],
+            4,
+            ["num2"],
+            1,
+            {"num2": np.float64},
+            ["num1", "cat1", "cat2"],
+            3,
+            {"num1": np.float64, "cat1": np.object_, "cat2": np.object_},
+            {
+                "num1": ["1.0", "2.0", "3.0", "4.0", "5.0"],
+                "cat1": ["A", "B", "C"],
+                "cat2": ["X", "Y", "Z"],
+            },
+            {"num1": 5, "cat1": 3, "cat2": 3},
+            [5, 3, 3],
+        ),
+        (
+            "simple_df",
+            ["cat1"],
+            None,
+            None,
+            ["num1", "num2", "cat1", "cat2"],
+            4,
+            ["num1", "num2", "cat1"],
+            3,
+            {
+                "num1": np.float64,
+                "num2": np.float64,
+                "cat1": np.object_,
+            },
+            ["cat2"],
+            1,
+            {"cat2": np.object_},
+            {"cat2": ["X", "Y", "Z"]},
+            {"cat2": 3},
+            [3],
+        ),
+        (
+            "simple_df",
             ["num1", "cat1"],
             ["cat1"],
             ValueError("Categorical and continuous features overlap: {'cat1'}"),
