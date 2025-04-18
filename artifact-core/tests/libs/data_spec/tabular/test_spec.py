@@ -1,6 +1,6 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Callable, Dict, List, Optional
+from typing import Dict, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -45,28 +45,6 @@ def df_dispatcher(request: pytest.FixtureRequest) -> pd.DataFrame:
             f"Data fixture not found: fixture param should be one of: {ls_df_fixture_names}"
         )
     return request.getfixturevalue(request.param)
-
-
-@pytest.fixture
-def spec_factory() -> Callable[
-    [Optional[pd.DataFrame], Optional[List[str]], Optional[List[str]]], TabularDataSpec
-]:
-    def _factory(
-        df: Optional[pd.DataFrame] = None,
-        ls_cts_features: Optional[List[str]] = None,
-        ls_cat_features: Optional[List[str]] = None,
-    ) -> TabularDataSpec:
-        if df is None:
-            spec = TabularDataSpec.build()
-        else:
-            spec = TabularDataSpec.from_df(
-                df=df,
-                ls_cts_features=ls_cts_features,
-                ls_cat_features=ls_cat_features,
-            )
-        return spec
-
-    return _factory
 
 
 @pytest.mark.parametrize(
