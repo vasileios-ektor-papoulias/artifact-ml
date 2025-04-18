@@ -29,6 +29,6 @@ class PDFComparisonPlotCollection(TableComparisonPlotCollection[NoArtifactHyperp
             ls_features_order=self._data_spec.ls_features,
             ls_cts_features=self._data_spec.ls_cts_features,
             ls_cat_features=self._data_spec.ls_cat_features,
-            cat_unique_map=self._data_spec.categorical_unique_map,
+            cat_unique_map=self._data_spec.cat_unique_map,
         )
         return dict_plots
