@@ -187,7 +187,7 @@ class TabularDataSpec(TabularDataSpecProtocol):
             raise ValueError(f"Feature '{feature_name}' is not a categorical feature.")
         return self._categorical[feature_name]["unique_categories"]
 
-    def get_num_unique_categories(self, feature_name: str) -> int:
+    def get_n_unique_categories(self, feature_name: str) -> int:
         return len(self.get_unique_categories(feature_name))
 
     def set_unique_categories(self, feature_name: str, unique_categories: List[str]) -> None:
