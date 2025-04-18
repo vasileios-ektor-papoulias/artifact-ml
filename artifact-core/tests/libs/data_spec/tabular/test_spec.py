@@ -1151,9 +1151,9 @@ def test_set_unique_categories(
             f"Expected unique categories for {feature_name}: {expected_categories} "
             f"got {spec.get_unique_categories(feature_name)}"
         )
-        assert spec.get_num_unique_categories(feature_name) == expected_count, (
+        assert spec.get_n_unique_categories(feature_name) == expected_count, (
             f"Expected unique count for {feature_name}: {expected_count} "
-            f"got {spec.get_num_unique_categories(feature_name)}"
+            f"got {spec.get_n_unique_categories(feature_name)}"
         )
         assert spec.cat_unique_map[feature_name] == expected_categories, (
             f"Expected cat_unique_map[{feature_name}]: {expected_categories} "
