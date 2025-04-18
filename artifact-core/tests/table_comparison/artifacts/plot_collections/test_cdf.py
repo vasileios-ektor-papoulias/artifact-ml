@@ -1,5 +1,5 @@
 from types import SimpleNamespace
-from typing import Callable, List, cast
+from typing import Callable, Dict, List, cast
 from unittest.mock import ANY
 
 import pandas as pd
@@ -18,7 +18,7 @@ from pytest_mock import MockerFixture
 
 @pytest.fixture
 def tabular_spec_factory():
-    def _factory(ls_cts_features: list, ls_cat_features: list):
+    def _factory(ls_cts_features: List[str], ls_cat_features: List[str]):
         ls_features = ls_cts_features + ls_cat_features
         spec = SimpleNamespace(
             ls_features=ls_features,
@@ -54,7 +54,7 @@ def test_compute(
     df_synth: pd.DataFrame,
 ):
     spec = tabular_spec_factory(["c1", "c2"], [])
-    fake_plots: dict[str, Figure] = {
+    fake_plots: Dict[str, Figure] = {
         "c1": Figure(),
         "c2": Figure(),
     }
