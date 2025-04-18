@@ -21,21 +21,24 @@ tabular_dataset_types: Dict[str, TabularDataDType] = {
     "datetime.date": datetime.date,
     "datetime.datetime": datetime.datetime,
     # NumPy types
-    "object_": np.object_,
-    "int8": np.int8,
-    "int16": np.int16,
-    "int32": np.int32,
-    "int64": np.int64,
-    "uint8": np.uint8,
-    "uint16": np.uint16,
-    "uint32": np.uint32,
-    "uint64": np.uint64,
-    "float16": np.float16,
-    "float32": np.float32,
-    "float64": np.float64,
-    "bool_": np.bool_,
-    "str_": np.str_,
+    "numpy.object_": np.object_,
+    "numpy.int8": np.int8,
+    "numpy.int16": np.int16,
+    "numpy.int32": np.int32,
+    "numpy.int64": np.int64,
+    "numpy.uint8": np.uint8,
+    "numpy.uint16": np.uint16,
+    "numpy.uint32": np.uint32,
+    "numpy.uint64": np.uint64,
+    "numpy.float16": np.float16,
+    "numpy.float32": np.float32,
+    "numpy.float64": np.float64,
+    "numpy.bool": np.bool,
+    "numpy.bool_": np.bool_,
+    "numpy.str_": np.str_,
+    "numpy.datetime64": np.datetime64,
     # Pandas types
+    "pandas.CategoricalDtypeType": pd.CategoricalDtype.type,
     "pandas.CategoricalDtype": pd.CategoricalDtype.type,
     "pandas.DatetimeTZDtype": pd.DatetimeTZDtype.type,
     "pandas.PeriodDtype": pd.PeriodDtype.type,
@@ -219,32 +222,6 @@ class TabularDataSpec(TabularDataSpecProtocol):
         return cls(internal_spec=internal_spec)
 
     @classmethod
-    def _convert_to_serializable(cls, obj: Any) -> Any:
-        if isinstance(obj, dict):
-            return {k: cls._convert_to_serializable(v) for k, v in obj.items()}
-        elif isinstance(obj, list):
-            return [cls._convert_to_serializable(item) for item in obj]
-        elif isinstance(obj, type):
-            return obj.__name__
-        else:
-            return obj
-
-    @classmethod
-    def _convert_from_serializable(cls, obj: Any) -> Any:
-        if isinstance(obj, dict):
-            new_obj = {}
-            for k, v in obj.items():
-                if k == "dtype" and isinstance(v, str):
-                    new_obj[k] = cls._types.get(v, v)
-                else:
-                    new_obj[k] = cls._convert_from_serializable(v)
-            return new_obj
-        elif isinstance(obj, list):
-            return [cls._convert_from_serializable(item) for item in obj]
-        else:
-            return obj
-
-    @classmethod
     def _partition_features(
         cls,
         df: pd.DataFrame,
@@ -331,6 +308,47 @@ class TabularDataSpec(TabularDataSpecProtocol):
 
     @staticmethod
     def _validate(ls_cat_features: List[str], ls_cts_features: List[str]):
-        overlap = set(sorted(list(set(ls_cat_features).intersection(ls_cts_features))))
+        overlap = set(ls_cat_features).intersection(ls_cts_features)
         if overlap:
             raise ValueError(f"Categorical and continuous features overlap: {overlap}")
+
+    @classmethod
+    def _convert_to_serializable(cls, obj: Any) -> Any:
+        if isinstance(obj, dict):
+            return {k: cls._convert_to_serializable(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [cls._convert_to_serializable(item) for item in obj]
+        elif isinstance(obj, type):
+            return cls._serialize_type(obj)
+        else:
+            return obj
+
+    @classmethod
+    def _convert_from_serializable(cls, obj: Any) -> Any:
+        if isinstance(obj, dict):
+            new_obj = {}
+            for k, v in obj.items():
+                if k == "dtype" and isinstance(v, str):
+                    new_obj[k] = cls._deserialize_type(v)
+                else:
+                    new_obj[k] = cls._convert_from_serializable(v)
+            return new_obj
+        elif isinstance(obj, list):
+            return [cls._convert_from_serializable(item) for item in obj]
+        else:
+            return obj
+
+    @classmethod
+    def _serialize_type(cls, type_obj: type) -> str:
+        if type_obj.__module__ == "numpy":
+            return f"numpy.{type_obj.__name__}"
+        elif type_obj.__module__.startswith("pandas"):
+            return f"pandas.{type_obj.__name__}"
+        else:
+            return type_obj.__name__
+
+    @classmethod
+    def _deserialize_type(cls, type_str: str) -> Any:
+        if type_str in cls._types:
+            return cls._types[type_str]
+        return type_str
