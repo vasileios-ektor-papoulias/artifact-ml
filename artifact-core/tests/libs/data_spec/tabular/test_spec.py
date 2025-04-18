@@ -931,6 +931,141 @@ def test_cat_unique_map_setter(
 
 
 @pytest.mark.parametrize(
+    "df_dispatcher, ls_cts_features, ls_cat_features, feature_name, "
+    + "expected_exception, expected_categories",
+    [
+        (
+            "simple_df",
+            None,
+            None,
+            "cat1",
+            None,
+            ["A", "B", "C"],
+        ),
+        (
+            "complex_df",
+            None,
+            None,
+            "str_col",
+            None,
+            ["A", "B", "C", "D", "E"],
+        ),
+        (
+            "simple_df",
+            None,
+            None,
+            "num1",
+            ValueError("Feature 'num1' is not a categorical feature."),
+            None,
+        ),
+        (
+            "simple_df",
+            None,
+            None,
+            "nonexistent",
+            ValueError("Feature 'nonexistent' is not a categorical feature."),
+            None,
+        ),
+    ],
+    indirect=["df_dispatcher"],
+)
+def test_get_unique_categories(
+    df_dispatcher: pd.DataFrame,
+    ls_cts_features: Optional[List[str]],
+    ls_cat_features: Optional[List[str]],
+    feature_name: str,
+    expected_exception: BaseException,
+    expected_categories: Optional[List[str]],
+):
+    spec = TabularDataSpec.from_df(
+        df=df_dispatcher,
+        ls_cts_features=ls_cts_features,
+        ls_cat_features=ls_cat_features,
+    )
+    if expected_exception is not None:
+        expected_exception_type = type(expected_exception)
+        expected_exception_message = expected_exception.args[0]
+        with pytest.raises(
+            expected_exception_type,
+            match=expected_exception_message,
+        ):
+            spec.get_unique_categories(feature_name)
+    else:
+        ls_unique_categories = spec.get_unique_categories(feature_name)
+        assert ls_unique_categories == expected_categories, (
+            f"Expected unique categories for {feature_name}: {expected_categories} "
+            f"got {ls_unique_categories}"
+        )
+
+
+@pytest.mark.parametrize(
+    "df_dispatcher, ls_cts_features, ls_cat_features, feature_name, "
+    + "expected_exception, expected_count",
+    [
+        (
+            "simple_df",
+            None,
+            None,
+            "cat1",
+            None,
+            3,
+        ),
+        (
+            "complex_df",
+            None,
+            None,
+            "str_col",
+            None,
+            5,
+        ),
+        (
+            "simple_df",
+            None,
+            None,
+            "num1",
+            ValueError("Feature 'num1' is not a categorical feature."),
+            None,
+        ),
+        (
+            "simple_df",
+            None,
+            None,
+            "nonexistent",
+            ValueError("Feature 'nonexistent' is not a categorical feature."),
+            None,
+        ),
+    ],
+    indirect=["df_dispatcher"],
+)
+def test_get_n_unique_categories(
+    df_dispatcher: pd.DataFrame,
+    ls_cts_features: Optional[List[str]],
+    ls_cat_features: Optional[List[str]],
+    feature_name: str,
+    expected_exception: BaseException,
+    expected_count: Optional[int],
+):
+    spec = TabularDataSpec.from_df(
+        df=df_dispatcher,
+        ls_cts_features=ls_cts_features,
+        ls_cat_features=ls_cat_features,
+    )
+    if expected_exception is not None:
+        expected_exception_type = type(expected_exception)
+        expected_exception_message = expected_exception.args[0]
+        with pytest.raises(
+            expected_exception_type,
+            match=expected_exception_message,
+        ):
+            spec.get_unique_categories(feature_name)
+    else:
+        n_unique_categories = spec.get_n_unique_categories(feature_name)
+        assert n_unique_categories == expected_count, (
+            f"Expected unique count for {feature_name}: {expected_count} got {n_unique_categories}"
+        )
+
+
+@pytest.mark.parametrize(
     "df_dispatcher, ls_cts_features, ls_cat_features, feature_name, new_categories, "
     + "expected_exception, expected_categories, expected_count",
     [
