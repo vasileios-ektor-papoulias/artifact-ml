@@ -22,25 +22,24 @@ tabular_dataset_types: Dict[str, TabularDataDType] = {
     "datetime.datetime": datetime.datetime,
     # NumPy types
     "object_": np.object_,
-    "numpy.int8": np.int8,
-    "numpy.int16": np.int16,
-    "numpy.int32": np.int32,
-    "numpy.int64": np.int64,
-    "numpy.uint8": np.uint8,
-    "numpy.uint16": np.uint16,
-    "numpy.uint32": np.uint32,
-    "numpy.uint64": np.uint64,
-    "numpy.float16": np.float16,
-    "numpy.float32": np.float32,
-    "numpy.float64": np.float64,
-    "numpy.bool_": np.bool_,
-    "numpy.object_": np.object_,
-    "numpy.str_": np.str_,
+    "int8": np.int8,
+    "int16": np.int16,
+    "int32": np.int32,
+    "int64": np.int64,
+    "uint8": np.uint8,
+    "uint16": np.uint16,
+    "uint32": np.uint32,
+    "uint64": np.uint64,
+    "float16": np.float16,
+    "float32": np.float32,
+    "float64": np.float64,
+    "bool_": np.bool_,
+    "str_": np.str_,
     # Pandas types
-    "pandas.CategoricalDtype": pd.CategoricalDtype,
-    "pandas.DatetimeTZDtype": pd.DatetimeTZDtype,
-    "pandas.PeriodDtype": pd.PeriodDtype,
-    "pandas.StringDtype": pd.StringDtype,
+    "pandas.CategoricalDtype": pd.CategoricalDtype.type,
+    "pandas.DatetimeTZDtype": pd.DatetimeTZDtype.type,
+    "pandas.PeriodDtype": pd.PeriodDtype.type,
+    "pandas.StringDtype": pd.StringDtype.type,
     "pandas.Timestamp": pd.Timestamp,
     "pandas.DatetimeIndex": pd.DatetimeIndex,
     "pandas.Timedelta": pd.Timedelta,
@@ -67,7 +66,7 @@ class TabularDataSpec(TabularDataSpecProtocol):
 
     @property
     def ls_cts_features(self) -> List[str]:
-        return list(self._continuous.keys())
+        return [feat for feat in self._ls_features if feat in self._continuous]
 
     @property
     def n_cts_features(self) -> int:
@@ -75,11 +74,11 @@ class TabularDataSpec(TabularDataSpecProtocol):
 
     @property
     def dict_cts_dtypes(self) -> Dict[str, TabularDataDType]:
-        return {feat: info["dtype"] for feat, info in self._continuous.items()}
+        return {feat: self._continuous[feat]["dtype"] for feat in self.ls_cts_features}
 
     @property
     def ls_cat_features(self) -> List[str]:
-        return list(self._categorical.keys())
+        return [feat for feat in self._ls_features if feat in self._categorical]
 
     @property
     def n_cat_features(self) -> int:
@@ -87,14 +86,14 @@ class TabularDataSpec(TabularDataSpecProtocol):
 
     @property
     def dict_cat_dtypes(self) -> Dict[str, TabularDataDType]:
-        return {feat: info["dtype"] for feat, info in self._categorical.items()}
+        return {feat: self._categorical[feat]["dtype"] for feat in self.ls_cat_features}
 
     @property
-    def categorical_unique_map(self) -> Dict[str, List[str]]:
-        return {feat: info["unique_categories"] for feat, info in self._categorical.items()}
+    def cat_unique_map(self) -> Dict[str, List[str]]:
+        return {feat: self._categorical[feat]["unique_categories"] for feat in self.ls_cat_features}
 
-    @categorical_unique_map.setter
-    def categorical_unique_map(self, unique_map: Dict[str, List[str]]) -> None:
+    @cat_unique_map.setter
+    def cat_unique_map(self, unique_map: Dict[str, List[str]]) -> None:
         if not isinstance(unique_map, dict):
             raise ValueError("categorical_unique_map must be a dictionary.")
         for key, value in unique_map.items():
@@ -109,12 +108,14 @@ class TabularDataSpec(TabularDataSpecProtocol):
             self._categorical[key]["unique_categories"] = value
 
     @property
-    def categorical_unique_count_map(self) -> Dict[str, int]:
-        return {feat: len(info["unique_categories"]) for feat, info in self._categorical.items()}
+    def cat_unique_count_map(self) -> Dict[str, int]:
+        return {
+            feat: len(self._categorical[feat]["unique_categories"]) for feat in self.ls_cat_features
+        }
 
     @property
     def ls_n_cat(self) -> List[int]:
-        return [len(info["unique_categories"]) for info in self._categorical.values()]
+        return [len(self._categorical[feat]["unique_categories"]) for feat in self.ls_cat_features]
 
     @property
     def _ls_features(self) -> List[str]:
@@ -152,6 +153,11 @@ class TabularDataSpec(TabularDataSpecProtocol):
         ls_cts_features: Optional[List[str]] = None,
         ls_cat_features: Optional[List[str]] = None,
     ) -> tabularDataSpecT:
+        if ls_cts_features is None:
+            ls_cts_features = []
+        if ls_cat_features is None:
+            ls_cat_features = []
+        cls._validate(ls_cat_features=ls_cat_features, ls_cts_features=ls_cts_features)
         internal_spec = cls._build_internal_spec(
             ls_cts_features=ls_cts_features,
             ls_cat_features=ls_cat_features,
@@ -271,7 +277,7 @@ class TabularDataSpec(TabularDataSpecProtocol):
 
     @staticmethod
     def _get_categorical_feature_spec(sr_data: pd.Series) -> Dict[str, Any]:
-        cats: List[str] = sr_data.astype(str).dropna().unique().tolist()
+        cats = sr_data.astype(str).dropna().unique().tolist()
         spec = {
             "dtype": sr_data.dtype.type,
             "unique_categories": cats,
@@ -304,8 +310,27 @@ class TabularDataSpec(TabularDataSpecProtocol):
         if intersection:
             raise ValueError(f"Features cannot be both continuous and categorical: {intersection}")
         internal_spec: Dict[str, Any] = {
-            "continuous": {feat: {} for feat in ls_cts_features},
-            "categorical": {feat: {} for feat in ls_cat_features},
-            "features_order": [],
+            "continuous": {feat: cls._get_default_cts_spec() for feat in ls_cts_features},
+            "categorical": {feat: cls._get_default_cat_spec() for feat in ls_cat_features},
+            "features_order": ls_cts_features + ls_cat_features,
         }
         return internal_spec
+
+    @staticmethod
+    def _get_default_cts_spec() -> Dict[str, Any]:
+        spec = {"dtype": float}
+        return spec
+
+    @staticmethod
+    def _get_default_cat_spec() -> Dict[str, Any]:
+        spec = {
+            "dtype": str,
+            "unique_categories": [],
+        }
+        return spec
+
+    @staticmethod
+    def _validate(ls_cat_features: List[str], ls_cts_features: List[str]):
+        overlap = set(sorted(list(set(ls_cat_features).intersection(ls_cts_features))))
+        if overlap:
+            raise ValueError(f"Categorical and continuous features overlap: {overlap}")
