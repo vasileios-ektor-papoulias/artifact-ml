@@ -190,9 +190,9 @@ def spec_factory() -> Callable[
             None,
         ),
         (
-            ["cts_1", "cts_2", "cts_3", "cat_1", "cat_2"],
+            ["cts_1", "cts_2", "cts_3", "cat_1"],
             ["cat_1", "cat_2", "cat_3"],
-            ValueError("Categorical and continuous features overlap: {'cat_1', 'cat_2'}"),
+            ValueError("Categorical and continuous features overlap: {'cat_1'}"),
             None,
             None,
             None,
@@ -785,13 +785,11 @@ def test_set_unique_categories(
 @pytest.mark.parametrize(
     "df_dispatcher, ls_cts_features, ls_cat_features",
     [
-        # Test with simple_df
         (
             "simple_df",
             None,
             None,
         ),
-        # Test with complex_df
         (
             "complex_df",
             None,
@@ -805,30 +803,27 @@ def test_serialization_deserialization(
     ls_cts_features: Optional[List[str]],
     ls_cat_features: Optional[List[str]],
 ):
-    """Test serializing and deserializing a TabularDataSpec."""
-    # Create a spec from the DataFrame
     spec = TabularDataSpec.from_df(
         df=df_dispatcher,
         ls_cts_features=ls_cts_features,
         ls_cat_features=ls_cat_features,
     )
-
-    # Serialize the spec
     json_str = spec.serialize()
     assert isinstance(json_str, str)
-
-    # Deserialize the spec
     deserialized_spec = TabularDataSpec.deserialize(json_str=json_str)
-
-    # Check that the deserialized spec has the same properties
     assert deserialized_spec.ls_features == spec.ls_features
     assert deserialized_spec.n_features == spec.n_features
     assert deserialized_spec.ls_cts_features == spec.ls_cts_features
     assert deserialized_spec.n_cts_features == spec.n_cts_features
-    assert deserialized_spec.dict_cts_dtypes == spec.dict_cts_dtypes
+    assert set(deserialized_spec.dict_cts_dtypes.keys()) == set(spec.dict_cts_dtypes.keys())
+    for key in spec.dict_cts_dtypes:
+        assert deserialized_spec.dict_cts_dtypes[key] == spec.dict_cts_dtypes[key]
     assert deserialized_spec.ls_cat_features == spec.ls_cat_features
     assert deserialized_spec.n_cat_features == spec.n_cat_features
-    assert deserialized_spec.dict_cat_dtypes == spec.dict_cat_dtypes
+    assert set(deserialized_spec.dict_cat_dtypes.keys()) == set(spec.dict_cat_dtypes.keys())
+    for key in spec.dict_cat_dtypes:
+        assert deserialized_spec.dict_cat_dtypes[key] == spec.dict_cat_dtypes[key]
+
     assert deserialized_spec.cat_unique_map == spec.cat_unique_map
     assert deserialized_spec.cat_unique_count_map == spec.cat_unique_count_map
     assert deserialized_spec.ls_n_cat == spec.ls_n_cat
@@ -837,9 +832,13 @@ def test_serialization_deserialization(
 @pytest.mark.parametrize(
     "df_dispatcher, ls_cts_features, ls_cat_features",
     [
-        # Test with simple_df
         (
             "simple_df",
+            None,
+            None,
+        ),
+        (
+            "complex_df",
             None,
             None,
         ),
@@ -865,10 +864,16 @@ def test_export_load(
         assert loaded_spec.n_features == spec.n_features
         assert loaded_spec.ls_cts_features == spec.ls_cts_features
         assert loaded_spec.n_cts_features == spec.n_cts_features
-        assert loaded_spec.dict_cts_dtypes == spec.dict_cts_dtypes
+        assert set(loaded_spec.dict_cts_dtypes.keys()) == set(spec.dict_cts_dtypes.keys())
+        for key in spec.dict_cts_dtypes:
+            assert loaded_spec.dict_cts_dtypes[key] == spec.dict_cts_dtypes[key]
+
         assert loaded_spec.ls_cat_features == spec.ls_cat_features
         assert loaded_spec.n_cat_features == spec.n_cat_features
-        assert loaded_spec.dict_cat_dtypes == spec.dict_cat_dtypes
+        assert set(loaded_spec.dict_cat_dtypes.keys()) == set(spec.dict_cat_dtypes.keys())
+        for key in spec.dict_cat_dtypes:
+            assert loaded_spec.dict_cat_dtypes[key] == spec.dict_cat_dtypes[key]
+
         assert loaded_spec.cat_unique_map == spec.cat_unique_map
         assert loaded_spec.cat_unique_count_map == spec.cat_unique_count_map
         assert loaded_spec.ls_n_cat == spec.ls_n_cat
