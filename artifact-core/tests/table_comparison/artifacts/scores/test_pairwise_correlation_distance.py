@@ -26,7 +26,7 @@ def hyperparams() -> PairwiseCorrelationDistanceConfig:
     )
 
 
-def test_compute(
+def test_call(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,

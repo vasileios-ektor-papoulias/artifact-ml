@@ -21,7 +21,7 @@ def hyperparams() -> PCAProjectionComparisonPlotConfig:
     return hyperparams
 
 
-def test_pca_projection_plot(
+def test_call(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,

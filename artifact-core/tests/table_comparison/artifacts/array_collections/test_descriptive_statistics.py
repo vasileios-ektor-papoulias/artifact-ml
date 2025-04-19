@@ -39,7 +39,7 @@ from pytest_mock import MockerFixture
         (ContinuousFeatureMaximaJuxtaposition, DescriptiveStatistic.MAX),
     ],
 )
-def test_compute(
+def test_call(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,

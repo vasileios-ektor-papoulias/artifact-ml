@@ -22,7 +22,7 @@ def hyperparams() -> TruncatedSVDProjectionComparisonPlotConfig:
     return hyperparams
 
 
-def test_truncated_svd_projection_comparison_plot(
+def test_call(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
