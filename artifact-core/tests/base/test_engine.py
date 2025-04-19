@@ -12,7 +12,7 @@ from tests.base.dummy.engine import DummyArtifactEngine
 
 
 @pytest.fixture
-def mock_artifact_factory(
+def mock_dependency_factory(
     mocker: MockerFixture,
 ) -> Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]]:
     def factory(return_value: ArtifactResult) -> Tuple[MagicMock, MagicMock, MagicMock]:
@@ -37,12 +37,12 @@ def mock_artifact_factory(
     ],
 )
 def test_produce_score(
-    mock_artifact_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
+    mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
     data_spec: DummyDataSpec,
     resources: DummyArtifactResources,
     expected_result: float,
 ):
-    artifact_type, artifact, registry = mock_artifact_factory(expected_result)
+    artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
     engine = DummyArtifactEngine(data_spec=data_spec)
     engine._score_registry = registry  # type: ignore
@@ -62,12 +62,12 @@ def test_produce_score(
     ],
 )
 def test_produce_array(
-    mock_artifact_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
+    mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
     data_spec: DummyDataSpec,
     resources: DummyArtifactResources,
     expected_result: np.ndarray,
 ):
-    artifact_type, artifact, registry = mock_artifact_factory(expected_result)
+    artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
     engine = DummyArtifactEngine(data_spec=data_spec)
     engine._array_registry = registry  # type: ignore
@@ -87,12 +87,12 @@ def test_produce_array(
     ],
 )
 def test_produce_plot(
-    mock_artifact_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
+    mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
     data_spec: DummyDataSpec,
     resources: DummyArtifactResources,
     expected_result: Figure,
 ):
-    artifact_type, artifact, registry = mock_artifact_factory(expected_result)
+    artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
     engine = DummyArtifactEngine(data_spec=data_spec)
     engine._plot_registry = registry  # type: ignore
@@ -112,12 +112,12 @@ def test_produce_plot(
     ],
 )
 def test_produce_score_collection(
-    mock_artifact_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
+    mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
     data_spec: DummyDataSpec,
     resources: DummyArtifactResources,
     expected_result: Dict[str, float],
 ):
-    artifact_type, artifact, registry = mock_artifact_factory(expected_result)
+    artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
     engine = DummyArtifactEngine(data_spec=data_spec)
     engine._score_collection_registry = registry  # type: ignore
@@ -143,12 +143,12 @@ def test_produce_score_collection(
     ],
 )
 def test_produce_array_collection(
-    mock_artifact_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
+    mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
     data_spec: DummyDataSpec,
     resources: DummyArtifactResources,
     expected_result: Dict[str, np.ndarray],
 ):
-    artifact_type, artifact, registry = mock_artifact_factory(expected_result)
+    artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
     engine = DummyArtifactEngine(data_spec=data_spec)
     engine._array_collection_registry = registry  # type: ignore
@@ -171,12 +171,12 @@ def test_produce_array_collection(
     ],
 )
 def test_produce_plot_collection(
-    mock_artifact_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
+    mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
     data_spec: DummyDataSpec,
     resources: DummyArtifactResources,
     expected_result: Dict[str, Figure],
 ):
-    artifact_type, artifact, registry = mock_artifact_factory(expected_result)
+    artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
     engine = DummyArtifactEngine(data_spec=data_spec)
     engine._plot_collection_registry = registry  # type: ignore
