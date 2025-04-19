@@ -1,9 +1,11 @@
 from abc import ABC
 from dataclasses import dataclass
-from typing import Dict, Protocol, Union
+from typing import Dict, Protocol, Type, TypeVar, Union
 
 from matplotlib.figure import Figure
 from numpy import ndarray
+
+artifactHyperparamsT = TypeVar("artifactHyperparamsT", bound="ArtifactHyperparams")
 
 
 class DataSpecProtocol(Protocol):
@@ -16,7 +18,9 @@ class NoDataSpec(DataSpecProtocol):
 
 @dataclass(frozen=True)
 class ArtifactHyperparams(ABC):
-    pass
+    @classmethod
+    def build(cls: Type[artifactHyperparamsT], *args, **kwargs) -> artifactHyperparamsT:
+        return cls(*args, **kwargs)
 
 
 @dataclass(frozen=True)
