@@ -19,7 +19,7 @@ from tests.core.dataset_comparison.dummy.engine import DummyDatasetComparisonEng
 def mock_dependency_factory(
     mocker: MockerFixture,
 ) -> Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]]:
-    def factory(return_value: ArtifactResult) -> Tuple[MagicMock, MagicMock, MagicMock]:
+    def _factory(return_value: ArtifactResult) -> Tuple[MagicMock, MagicMock, MagicMock]:
         artifact_type = mocker.Mock(name="dummy_artifact_type")
         artifact = mocker.Mock(name="dummy_artifact")
         artifact.compute.return_value = return_value
@@ -29,7 +29,7 @@ def mock_dependency_factory(
 
         return artifact_type, artifact, registry
 
-    return factory
+    return _factory
 
 
 @pytest.mark.parametrize(
