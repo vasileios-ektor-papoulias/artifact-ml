@@ -26,7 +26,7 @@ def hyperparams() -> PairwiseCorrelationDistanceConfig:
     )
 
 
-def test_call(
+def test_compute(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
@@ -34,17 +34,17 @@ def test_call(
     hyperparams: PairwiseCorrelationDistanceConfig,
 ):
     fake_score: float = 0.314
-    patcher = mocker.patch.object(
-        PairwiseCorrelationCalculator,
-        "compute_correlation_distance",
+    patch_compute_correlation_distance = mocker.patch.object(
+        target=PairwiseCorrelationCalculator,
+        attribute="compute_correlation_distance",
         return_value=fake_score,
     )
     artifact = PairwiseCorrelationDistance(data_spec=data_spec, hyperparams=hyperparams)
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
-    result = artifact(resources=resources)
-    patcher.assert_called_once_with(
+    result = artifact.compute(resources=resources)
+    patch_compute_correlation_distance.assert_called_once_with(
         categorical_correlation_type=hyperparams.categorical_association_type,
         continuous_correlation_type=hyperparams.continuous_association_type,
         distance_metric=hyperparams.vector_distance_metric,
@@ -52,7 +52,7 @@ def test_call(
         dataset_synthetic=ANY,
         ls_cat_features=data_spec.ls_cat_features,
     )
-    _, kwargs = patcher.call_args
+    _, kwargs = patch_compute_correlation_distance.call_args
     pd.testing.assert_frame_equal(kwargs["dataset_real"], df_real)
     pd.testing.assert_frame_equal(kwargs["dataset_synthetic"], df_synthetic)
     assert result == fake_score

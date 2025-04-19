@@ -39,7 +39,7 @@ from pytest_mock import MockerFixture
         (ContinuousFeatureMaximaJuxtaposition, DescriptiveStatistic.MAX),
     ],
 )
-def test_call(
+def test_compute(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
@@ -48,9 +48,9 @@ def test_call(
     statistic: DescriptiveStatistic,
 ):
     fake_result = {"f1": np.array([0.1, 0.2]), "f2": np.array([0.3, 0.4])}
-    mock_compute = mocker.patch.object(
-        DescriptiveStatisticsCalculator,
-        "compute_juxtaposition",
+    patch_compute = mocker.patch.object(
+        target=DescriptiveStatisticsCalculator,
+        attribute="compute_juxtaposition",
         return_value=fake_result,
     )
     artifact = artifact_class(
@@ -59,14 +59,14 @@ def test_call(
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
-    result = artifact(resources=resources)
-    mock_compute.assert_called_once_with(
+    result = artifact.compute(resources=resources)
+    patch_compute.assert_called_once_with(
         df_real=ANY,
         df_synthetic=ANY,
         ls_cts_features=data_spec.ls_cts_features,
         stat=statistic,
     )
-    _, kwargs = mock_compute.call_args
+    _, kwargs = patch_compute.call_args
     passed_real = kwargs["df_real"]
     passed_synth = kwargs["df_synthetic"]
     pd.testing.assert_frame_equal(passed_real, df_real)

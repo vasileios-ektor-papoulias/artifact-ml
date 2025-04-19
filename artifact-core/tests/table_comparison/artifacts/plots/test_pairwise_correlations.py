@@ -20,7 +20,7 @@ from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
-def test_call(
+def test_compute(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
@@ -32,9 +32,9 @@ def test_call(
     )
 
     fake_plot = Figure()
-    mock_get_combined_correlation_plot = mocker.patch.object(
-        PairwiseCorrelationHeatmapPlotter,
-        "get_combined_correlation_plot",
+    patch_get_combined_correlation_plot = mocker.patch.object(
+        target=PairwiseCorrelationHeatmapPlotter,
+        attribute="get_combined_correlation_plot",
         return_value=fake_plot,
     )
 
@@ -46,9 +46,9 @@ def test_call(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
 
-    result = artifact(resources=resources)
+    result = artifact.compute(resources=resources)
 
-    mock_get_combined_correlation_plot.assert_called_once_with(
+    patch_get_combined_correlation_plot.assert_called_once_with(
         categorical_correlation_type=hyperparams.categorical_association_type,
         continuous_correlation_type=hyperparams.continuous_association_type,
         dataset_real=ANY,
@@ -56,7 +56,7 @@ def test_call(
         ls_cat_features=data_spec.ls_cat_features,
     )
 
-    _, kwargs = mock_get_combined_correlation_plot.call_args
+    _, kwargs = patch_get_combined_correlation_plot.call_args
     pd.testing.assert_frame_equal(kwargs["dataset_real"], df_real)
     pd.testing.assert_frame_equal(kwargs["dataset_synthetic"], df_synthetic)
     assert result == fake_plot

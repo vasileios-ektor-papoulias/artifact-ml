@@ -21,7 +21,7 @@ def hyperparams() -> PCAProjectionComparisonPlotConfig:
     return hyperparams
 
 
-def test_call(
+def test_compute(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
@@ -31,7 +31,9 @@ def test_call(
     fake_plot = Figure()
     mock_projector = mocker.Mock()
     mock_projector.produce_projection_comparison_plot.return_value = fake_plot
-    mock_build = mocker.patch.object(PCAProjector, "build", return_value=mock_projector)
+    patch_build = mocker.patch.object(
+        target=PCAProjector, attribute="build", return_value=mock_projector
+    )
     artifact = PCAProjectionComparisonPlot(
         data_spec=data_spec,
         hyperparams=hyperparams,
@@ -39,13 +41,13 @@ def test_call(
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
-    result = artifact(resources=resources)
-    mock_build.assert_called_once_with(
+    result = artifact.compute(resources=resources)
+    patch_build.assert_called_once_with(
         ls_cat_features=data_spec.ls_cat_features,
         ls_cts_features=data_spec.ls_cts_features,
         projector_config=ANY,
     )
-    _, kwargs = mock_build.call_args
+    _, kwargs = patch_build.call_args
     assert isinstance(kwargs["projector_config"], PCAHyperparams)
     assert kwargs["projector_config"].use_categorical == hyperparams.use_categorical
     mock_projector.produce_projection_comparison_plot.assert_called_once()
