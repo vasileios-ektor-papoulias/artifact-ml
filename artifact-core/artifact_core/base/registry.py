@@ -111,13 +111,11 @@ class ArtifactRegistry(
     @classmethod
     def _build_artifact_hyperparams(
         cls,
-        artifact_hyperparams_class: Optional[Type[ArtifactHyperparams]],
+        artifact_hyperparams_class: Type[ArtifactHyperparams],
         artifact_config: Optional[Dict[str, Any]],
-    ) -> Optional[ArtifactHyperparams]:
-        if artifact_hyperparams_class is None:
-            artifact_hyperparams = None
-        elif artifact_hyperparams_class == NoArtifactHyperparams:
-            artifact_hyperparams = None
+    ) -> ArtifactHyperparams:
+        if artifact_hyperparams_class == NoArtifactHyperparams:
+            artifact_hyperparams = NoArtifactHyperparams()
         elif artifact_config is None:
             raise ValueError(
                 f"Missing config for hyperparams type {artifact_hyperparams_class.__name__}"
@@ -125,18 +123,20 @@ class ArtifactRegistry(
         else:
             try:
                 artifact_hyperparams = artifact_hyperparams_class.build(**artifact_config)
-            except TypeError as err:
+            except TypeError as e:
                 raise ValueError(
                     f"Error instantiating '{artifact_hyperparams_class.__name__}'"
-                    f"with argumentss {artifact_config}: {err}"
-                ) from err
+                    f"with argumentss {artifact_config}: {e}"
+                ) from e
         return artifact_hyperparams
 
     @classmethod
     def _get_artifact_hyperparams_class(
         cls, artifact_type: artifactTypeT
-    ) -> Optional[Type[ArtifactHyperparams]]:
-        artifact_hyperparams_class = cls._artifact_config_registry.get(artifact_type, None)
+    ) -> Type[ArtifactHyperparams]:
+        artifact_hyperparams_class = cls._artifact_config_registry.get(
+            artifact_type, NoArtifactHyperparams
+        )
         return artifact_hyperparams_class
 
     @classmethod

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Generic, Optional, TypeVar
+from typing import Generic, TypeVar
 
 from artifact_core.base.artifact_dependencies import (
     ArtifactHyperparams,
@@ -25,11 +25,19 @@ class Artifact(
 ):
     def __init__(
         self,
-        data_spec: Optional[dataSpecProtocolT] = None,
-        hyperparams: Optional[artifactHyperparamsT] = None,
+        data_spec: dataSpecProtocolT,
+        hyperparams: artifactHyperparamsT,
     ):
         self._data_spec = data_spec
         self._hyperparams = hyperparams
+
+    @property
+    def hyperparams(self) -> artifactHyperparamsT:
+        return self._hyperparams
+
+    @property
+    def data_spec(self) -> dataSpecProtocolT:
+        return self._data_spec
 
     def __call__(self, resources: artifactResourcesT) -> artifactResultT:
         return self.compute(resources=resources)

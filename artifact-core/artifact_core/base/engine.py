@@ -42,6 +42,58 @@ class ArtifactEngine(
         self._array_collection_registry = self._get_array_collection_registry()
         self._plot_collection_registry = self._get_plot_collection_registry()
 
+    @property
+    def data_spec(self) -> dataSpecProtocolT:
+        return self._data_spec
+
+    @property
+    def score_registry(
+        self,
+    ) -> Type[ArtifactRegistry[scoreTypeT, artifactResourcesT, float, dataSpecProtocolT]]:
+        return self._score_registry
+
+    @property
+    def array_registry(
+        self,
+    ) -> Type[ArtifactRegistry[arrayTypeT, artifactResourcesT, ndarray, dataSpecProtocolT]]:
+        return self._array_registry
+
+    @property
+    def plot_registry(
+        self,
+    ) -> Type[ArtifactRegistry[plotTypeT, artifactResourcesT, Figure, dataSpecProtocolT]]:
+        return self._plot_registry
+
+    @property
+    def score_collection_registry(
+        self,
+    ) -> Type[
+        ArtifactRegistry[
+            scoreCollectionTypeT, artifactResourcesT, Dict[str, float], dataSpecProtocolT
+        ]
+    ]:
+        return self._score_collection_registry
+
+    @property
+    def array_collection_registry(
+        self,
+    ) -> Type[
+        ArtifactRegistry[
+            arrayCollectionTypeT, artifactResourcesT, Dict[str, ndarray], dataSpecProtocolT
+        ]
+    ]:
+        return self._array_collection_registry
+
+    @property
+    def plot_collection_registry(
+        self,
+    ) -> Type[
+        ArtifactRegistry[
+            plotCollectionTypeT, artifactResourcesT, Dict[str, Figure], dataSpecProtocolT
+        ]
+    ]:
+        return self._plot_collection_registry
+
     @classmethod
     @abstractmethod
     def _get_score_registry(
