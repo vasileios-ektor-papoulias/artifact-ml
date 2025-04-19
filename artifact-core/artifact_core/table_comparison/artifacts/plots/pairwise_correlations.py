@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Literal, Type, TypeVar, Union
 
 import pandas as pd
 from matplotlib.figure import Figure
@@ -22,6 +23,10 @@ from artifact_core.table_comparison.registries.plots.registry import (
     TableComparisonPlotType,
 )
 
+correlationComparisonHeatmapConfigT = TypeVar(
+    "correlationComparisonHeatmapConfigT", bound="CorrelationComparisonHeatmapConfig"
+)
+
 
 @TableComparisonPlotRegistry.register_artifact_config(
     TableComparisonPlotType.PAIRWISE_CORRELATION_COMPARISON_HEATMAP
@@ -31,19 +36,25 @@ class CorrelationComparisonHeatmapConfig(ArtifactHyperparams):
     categorical_association_type: CategoricalAssociationType
     continuous_association_type: ContinuousAssociationType
 
-    def __post_init__(self):
-        if isinstance(self.categorical_association_type, str):
-            object.__setattr__(
-                self,
-                "categorical_association_type",
-                CategoricalAssociationType[self.categorical_association_type],
-            )
-        if isinstance(self.continuous_association_type, str):
-            object.__setattr__(
-                self,
-                "continuous_association_type",
-                ContinuousAssociationType[self.continuous_association_type],
-            )
+    @classmethod
+    def build(
+        cls: Type[correlationComparisonHeatmapConfigT],
+        categorical_association_type: Union[
+            CategoricalAssociationType, Literal["THEILS_U"], Literal["CRAMERS_V"]
+        ],
+        continuous_association_type: Union[
+            ContinuousAssociationType, Literal["PEARSON"], Literal["SPEARMAN"], Literal["KENDALL"]
+        ],
+    ) -> correlationComparisonHeatmapConfigT:
+        if isinstance(categorical_association_type, str):
+            categorical_association_type = CategoricalAssociationType[categorical_association_type]
+        if isinstance(continuous_association_type, str):
+            continuous_association_type = ContinuousAssociationType[continuous_association_type]
+        correlation_comparison_heatmap_hyperparams = cls(
+            categorical_association_type=categorical_association_type,
+            continuous_association_type=continuous_association_type,
+        )
+        return correlation_comparison_heatmap_hyperparams
 
 
 @TableComparisonPlotRegistry.register_artifact(
