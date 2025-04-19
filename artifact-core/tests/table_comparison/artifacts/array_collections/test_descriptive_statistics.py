@@ -1,5 +1,4 @@
-from types import SimpleNamespace
-from typing import Callable, List, Type, cast
+from typing import Type
 from unittest.mock import ANY
 
 import numpy as np
@@ -27,40 +26,6 @@ from artifact_core.table_comparison.artifacts.base import (
 from pytest_mock import MockerFixture
 
 
-@pytest.fixture
-def tabular_spec_factory() -> Callable[[List[str], List[str]], TabularDataSpecProtocol]:
-    def _factory(
-        ls_cts_features: List[str],
-        ls_cat_feaetures: List[str],
-    ) -> TabularDataSpecProtocol:
-        ls_features = ls_cts_features + ls_cat_feaetures
-        spec = SimpleNamespace(
-            ls_features=ls_features,
-            n_features=len(ls_features),
-            ls_cts_features=ls_cts_features,
-            n_cts_features=len(ls_cts_features),
-            dict_cts_dtypes={},
-            ls_cat_features=ls_cat_feaetures,
-            n_cat_features=len(ls_cat_feaetures),
-            dict_cat_dtypes={},
-            cat_unique_map={},
-            cat_unique_count_map={},
-        )
-        return cast(TabularDataSpecProtocol, spec)
-
-    return _factory
-
-
-@pytest.fixture
-def df_real() -> pd.DataFrame:
-    return pd.DataFrame({"c1": [1, 2], "c2": [3, 4]})
-
-
-@pytest.fixture
-def df_synth() -> pd.DataFrame:
-    return pd.DataFrame({"c1": [5, 6], "c2": [7, 8]})
-
-
 @pytest.mark.parametrize(
     "artifact_class, statistic",
     [
@@ -76,13 +41,12 @@ def df_synth() -> pd.DataFrame:
 )
 def test_compute(
     mocker: MockerFixture,
-    tabular_spec_factory: Callable[[List[str], List[str]], TabularDataSpecProtocol],
+    data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
     df_synth: pd.DataFrame,
     artifact_class: Type[TableComparisonArrayCollection],
     statistic: DescriptiveStatistic,
 ):
-    data_spec = tabular_spec_factory(["c1", "c2"], [])
     fake_result = {"f1": np.array([0.1, 0.2]), "f2": np.array([0.3, 0.4])}
     mock_compute = mocker.patch.object(
         DescriptiveStatisticsCalculator,
