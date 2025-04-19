@@ -43,7 +43,7 @@ def test_call(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
-    df_synth: pd.DataFrame,
+    df_synthetic: pd.DataFrame,
     artifact_class: Type[TableComparisonArrayCollection],
     statistic: DescriptiveStatistic,
 ):
@@ -56,7 +56,9 @@ def test_call(
     artifact = artifact_class(
         data_spec=data_spec,
     )
-    resources = DatasetComparisonArtifactResources(dataset_real=df_real, dataset_synthetic=df_synth)
+    resources = DatasetComparisonArtifactResources(
+        dataset_real=df_real, dataset_synthetic=df_synthetic
+    )
     result = artifact(resources=resources)
     mock_compute.assert_called_once_with(
         df_real=ANY,
@@ -68,5 +70,5 @@ def test_call(
     passed_real = kwargs["df_real"]
     passed_synth = kwargs["df_synthetic"]
     pd.testing.assert_frame_equal(passed_real, df_real)
-    pd.testing.assert_frame_equal(passed_synth, df_synth)
+    pd.testing.assert_frame_equal(passed_synth, df_synthetic)
     assert result == fake_result

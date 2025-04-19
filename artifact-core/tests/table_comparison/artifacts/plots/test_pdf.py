@@ -14,7 +14,7 @@ def test_call(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
-    df_synth: pd.DataFrame,
+    df_synthetic: pd.DataFrame,
 ):
     fake_fig = Figure()
     mock_get = mocker.patch.object(
@@ -28,7 +28,7 @@ def test_call(
     )
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real,
-        dataset_synthetic=df_synth,
+        dataset_synthetic=df_synthetic,
     )
     result = artifact(resources=resources)
     mock_get.assert_called_once_with(
@@ -41,5 +41,5 @@ def test_call(
     )
     _, kwargs = mock_get.call_args
     pd.testing.assert_frame_equal(kwargs["dataset_real"], df_real)
-    pd.testing.assert_frame_equal(kwargs["dataset_synthetic"], df_synth)
+    pd.testing.assert_frame_equal(kwargs["dataset_synthetic"], df_synthetic)
     assert result is fake_fig

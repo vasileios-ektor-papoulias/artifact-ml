@@ -30,7 +30,7 @@ def test_call(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
-    df_synth: pd.DataFrame,
+    df_synthetic: pd.DataFrame,
     hyperparams: PairwiseCorrelationDistanceConfig,
 ):
     fake_score: float = 0.314
@@ -40,7 +40,9 @@ def test_call(
         return_value=fake_score,
     )
     artifact = PairwiseCorrelationDistance(data_spec=data_spec, hyperparams=hyperparams)
-    resources = DatasetComparisonArtifactResources(dataset_real=df_real, dataset_synthetic=df_synth)
+    resources = DatasetComparisonArtifactResources(
+        dataset_real=df_real, dataset_synthetic=df_synthetic
+    )
     result = artifact(resources=resources)
     patcher.assert_called_once_with(
         categorical_correlation_type=hyperparams.categorical_association_type,
@@ -52,5 +54,5 @@ def test_call(
     )
     _, kwargs = patcher.call_args
     pd.testing.assert_frame_equal(kwargs["dataset_real"], df_real)
-    pd.testing.assert_frame_equal(kwargs["dataset_synthetic"], df_synth)
+    pd.testing.assert_frame_equal(kwargs["dataset_synthetic"], df_synthetic)
     assert result == fake_score

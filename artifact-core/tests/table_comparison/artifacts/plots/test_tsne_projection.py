@@ -28,7 +28,7 @@ def test_call(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
-    df_synth: pd.DataFrame,
+    df_synthetic: pd.DataFrame,
     hyperparams: TSNEProjectionComparisonPlotConfig,
 ):
     fake_fig = Figure()
@@ -45,7 +45,7 @@ def test_call(
     )
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real,
-        dataset_synthetic=df_synth,
+        dataset_synthetic=df_synthetic,
     )
     result = artifact(resources=resources)
     mock_build.assert_called_once_with(
@@ -62,5 +62,5 @@ def test_call(
     mock_proj.produce_projection_comparison_plot.assert_called_once()
     _, plot_kwargs = mock_proj.produce_projection_comparison_plot.call_args
     pd.testing.assert_frame_equal(plot_kwargs["dataset_real"], df_real)
-    pd.testing.assert_frame_equal(plot_kwargs["dataset_synthetic"], df_synth)
+    pd.testing.assert_frame_equal(plot_kwargs["dataset_synthetic"], df_synthetic)
     assert result is fake_fig
