@@ -150,5 +150,5 @@ def test_get(
     else:
         artifact = artifact_registry.get(artifact_type=artifact_type, data_spec=data_spec)
         assert isinstance(artifact, expected_artifact_class)
-        assert artifact._data_spec == data_spec
-        assert artifact._hyperparams == expected_hyperparams
+        assert artifact.data_spec == data_spec
+        assert artifact.hyperparams == expected_hyperparams
