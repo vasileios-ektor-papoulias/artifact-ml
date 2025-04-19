@@ -1,8 +1,9 @@
-from typing import Any, Optional, Type
+from typing import Any, Type, Union
 
 import pytest
 from artifact_core.base.artifact_dependencies import (
     ArtifactResult,
+    NoArtifactHyperparams,
 )
 
 from tests.base.dummy.artifacts import (
@@ -53,7 +54,7 @@ from tests.base.dummy.registries import (
             DummyScoreType.NO_HYPERPARAMS_ARTIFACT,
             DummyDataSpec(scale=1),
             NoHyperparamsArtifact,
-            None,
+            NoArtifactHyperparams(),
             False,
             False,
             False,
@@ -63,7 +64,7 @@ from tests.base.dummy.registries import (
             DummyScoreType.IN_ALTERNATIVE_REGISTRY,
             DummyDataSpec(scale=1),
             AlternativeRegistryArtifact,
-            None,
+            NoArtifactHyperparams(),
             False,
             False,
             False,
@@ -127,7 +128,7 @@ def test_get(
     artifact_type: DummyScoreType,
     data_spec: DummyDataSpec,
     expected_artifact_class: Type[DummyArtifact[ArtifactResult, Any]],
-    expected_hyperparams: Optional[DummyScoreHyperparams],
+    expected_hyperparams: Union[DummyScoreHyperparams, NoArtifactHyperparams],
     expect_raise_unregistered_artifact: bool,
     expect_raise_missing_config: bool,
     expect_raise_missing_param: bool,
