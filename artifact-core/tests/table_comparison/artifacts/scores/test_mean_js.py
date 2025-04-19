@@ -17,7 +17,7 @@ def hyperparams() -> MeanJSDistanceHyperparams:
     return MeanJSDistanceHyperparams(n_bins_cts_histogram=8, categorical_only=True)
 
 
-def test_compute(
+def test_call(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,

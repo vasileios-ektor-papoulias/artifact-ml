@@ -24,7 +24,7 @@ def hyperparams() -> TSNEProjectionComparisonPlotConfig:
     return hyperparams
 
 
-def test_tsne_projection_comparison_plot(
+def test_call(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,

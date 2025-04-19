@@ -10,7 +10,7 @@ from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
-def test_pdf_comparison_combined_plot(
+def test_call(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,

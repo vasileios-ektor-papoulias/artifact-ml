@@ -20,7 +20,7 @@ def hyperparams() -> JSDistanceHyperparams:
     return JSDistanceHyperparams(n_bins_cts_histogram=5, categorical_only=False)
 
 
-def test_compute(
+def test_call(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
