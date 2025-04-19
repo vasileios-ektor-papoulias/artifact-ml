@@ -78,3 +78,4 @@ def test_get(
 ):
     artifact = TableComparisonPlotRegistry.get(artifact_type=artifact_type, data_spec=data_spec)
     assert isinstance(artifact, artifact_class)
+    assert artifact.data_spec == data_spec
