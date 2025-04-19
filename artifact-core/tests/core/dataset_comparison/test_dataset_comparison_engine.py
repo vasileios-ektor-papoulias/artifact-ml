@@ -16,7 +16,7 @@ from tests.core.dataset_comparison.dummy.engine import DummyDatasetComparisonEng
 
 
 @pytest.fixture
-def mock_artifact_factory(
+def mock_dependency_factory(
     mocker: MockerFixture,
 ) -> Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]]:
     def factory(return_value: ArtifactResult) -> Tuple[MagicMock, MagicMock, MagicMock]:
@@ -50,13 +50,13 @@ def mock_artifact_factory(
     ],
 )
 def test_produce_dataset_comparison_score(
-    mock_artifact_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
+    mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
     data_spec: DummyDataSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: float,
 ):
-    artifact_type, artifact, registry = mock_artifact_factory(expected_result)
+    artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
     engine = DummyDatasetComparisonEngine(data_spec=data_spec)
     engine._score_registry = registry  # type: ignore
@@ -84,13 +84,13 @@ def test_produce_dataset_comparison_score(
     ],
 )
 def test_produce_dataset_comparison_array(
-    mock_artifact_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
+    mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
     data_spec: DummyDataSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: float,
 ):
-    artifact_type, artifact, registry = mock_artifact_factory(expected_result)
+    artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
     engine = DummyDatasetComparisonEngine(data_spec=data_spec)
     engine._array_registry = registry  # type: ignore
@@ -118,13 +118,13 @@ def test_produce_dataset_comparison_array(
     ],
 )
 def test_produce_dataset_comparison_plot(
-    mock_artifact_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
+    mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
     data_spec: DummyDataSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: float,
 ):
-    artifact_type, artifact, registry = mock_artifact_factory(expected_result)
+    artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
     engine = DummyDatasetComparisonEngine(data_spec=data_spec)
     engine._plot_registry = registry  # type: ignore
@@ -157,13 +157,13 @@ def test_produce_dataset_comparison_plot(
     ],
 )
 def test_produce_dataset_comparison_score_collection(
-    mock_artifact_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
+    mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
     data_spec: DummyDataSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: float,
 ):
-    artifact_type, artifact, registry = mock_artifact_factory(expected_result)
+    artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
     engine = DummyDatasetComparisonEngine(data_spec=data_spec)
     engine._score_collection_registry = registry  # type: ignore
@@ -193,13 +193,13 @@ def test_produce_dataset_comparison_score_collection(
     ],
 )
 def test_produce_dataset_comparison_array_collection(
-    mock_artifact_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
+    mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
     data_spec: DummyDataSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: float,
 ):
-    artifact_type, artifact, registry = mock_artifact_factory(expected_result)
+    artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
     engine = DummyDatasetComparisonEngine(data_spec=data_spec)
     engine._array_collection_registry = registry  # type: ignore
@@ -229,13 +229,13 @@ def test_produce_dataset_comparison_array_collection(
     ],
 )
 def test_produce_dataset_comparison_plot_collection(
-    mock_artifact_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
+    mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
     data_spec: DummyDataSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: float,
 ):
-    artifact_type, artifact, registry = mock_artifact_factory(expected_result)
+    artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
     engine = DummyDatasetComparisonEngine(data_spec=data_spec)
     engine._plot_collection_registry = registry  # type: ignore
