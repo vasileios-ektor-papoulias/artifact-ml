@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Literal, Type, TypeVar, Union
 
 import pandas as pd
 
@@ -22,6 +23,10 @@ from artifact_core.table_comparison.registries.scores.registry import (
     TableComparisonScoreType,
 )
 
+pairwiseCorrelationDistanceConfigT = TypeVar(
+    "pairwiseCorrelationDistanceConfigT", bound="PairwiseCorrelationDistanceConfig"
+)
+
 
 @TableComparisonScoreRegistry.register_artifact_config(
     TableComparisonScoreType.PAIRWISE_CORRELATION_DISTANCE
@@ -32,25 +37,35 @@ class PairwiseCorrelationDistanceConfig(ArtifactHyperparams):
     continuous_association_type: ContinuousAssociationType
     vector_distance_metric: VectorDistanceMetric
 
-    def __post_init__(self):
-        if isinstance(self.categorical_association_type, str):
-            object.__setattr__(
-                self,
-                "categorical_association_type",
-                CategoricalAssociationType[self.categorical_association_type],
-            )
-        if isinstance(self.continuous_association_type, str):
-            object.__setattr__(
-                self,
-                "continuous_association_type",
-                ContinuousAssociationType[self.continuous_association_type],
-            )
-        if isinstance(self.vector_distance_metric, str):
-            object.__setattr__(
-                self,
-                "vector_distance_metric",
-                VectorDistanceMetric[self.vector_distance_metric],
-            )
+    @classmethod
+    def build(
+        cls: Type[pairwiseCorrelationDistanceConfigT],
+        categorical_association_type: Union[
+            CategoricalAssociationType, Literal["THEILS_U"], Literal["CRAMERS_V"]
+        ],
+        continuous_association_type: Union[
+            ContinuousAssociationType, Literal["PEARSON"], Literal["SPEARMAN"], Literal["KENDALL"]
+        ],
+        vector_distance_metric: Union[
+            VectorDistanceMetric,
+            Literal["L2"],
+            Literal["MAE"],
+            Literal["RMSE"],
+            Literal["COSINE_SIMILARITY"],
+        ],
+    ) -> pairwiseCorrelationDistanceConfigT:
+        if isinstance(categorical_association_type, str):
+            categorical_association_type = CategoricalAssociationType[categorical_association_type]
+        if isinstance(continuous_association_type, str):
+            continuous_association_type = ContinuousAssociationType[continuous_association_type]
+        if isinstance(vector_distance_metric, str):
+            vector_distance_metric = VectorDistanceMetric[vector_distance_metric]
+        correlation_comparison_heatmap_hyperparams = cls(
+            categorical_association_type=categorical_association_type,
+            continuous_association_type=continuous_association_type,
+            vector_distance_metric=vector_distance_metric,
+        )
+        return correlation_comparison_heatmap_hyperparams
 
 
 @TableComparisonScoreRegistry.register_artifact(
