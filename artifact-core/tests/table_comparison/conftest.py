@@ -41,7 +41,7 @@ def df_real() -> pd.DataFrame:
 
 
 @pytest.fixture
-def df_synth() -> pd.DataFrame:
+def df_synthetic() -> pd.DataFrame:
     return pd.DataFrame(
         {
             "cts_1": [4.0, 5.0, 6.0],

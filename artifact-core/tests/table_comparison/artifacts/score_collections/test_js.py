@@ -24,7 +24,7 @@ def test_call(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
-    df_synth: pd.DataFrame,
+    df_synthetic: pd.DataFrame,
     hyperparams: JSDistanceHyperparams,
 ):
     fake_scores: Dict[str, float] = {"c1": 0.123, "cat": 0.456}
@@ -34,7 +34,9 @@ def test_call(
         return_value=fake_scores,
     )
     artifact = JSDistance(data_spec=data_spec, hyperparams=hyperparams)
-    resources = DatasetComparisonArtifactResources(dataset_real=df_real, dataset_synthetic=df_synth)
+    resources = DatasetComparisonArtifactResources(
+        dataset_real=df_real, dataset_synthetic=df_synthetic
+    )
     result = artifact(resources=resources)
     patcher.assert_called_once_with(
         df_real=ANY,
@@ -47,5 +49,5 @@ def test_call(
     )
     _, kwargs = patcher.call_args
     pd.testing.assert_frame_equal(kwargs["df_real"], df_real)
-    pd.testing.assert_frame_equal(kwargs["df_synthetic"], df_synth)
+    pd.testing.assert_frame_equal(kwargs["df_synthetic"], df_synthetic)
     assert result == fake_scores
