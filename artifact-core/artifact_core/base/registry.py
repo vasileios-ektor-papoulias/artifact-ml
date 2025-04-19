@@ -124,7 +124,7 @@ class ArtifactRegistry(
             )
         else:
             try:
-                artifact_hyperparams = artifact_hyperparams_class(**artifact_config)
+                artifact_hyperparams = artifact_hyperparams_class.build(**artifact_config)
             except TypeError as err:
                 raise ValueError(
                     f"Error instantiating '{artifact_hyperparams_class.__name__}'"
