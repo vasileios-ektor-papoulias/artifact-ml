@@ -8,14 +8,6 @@ from numpy import ndarray
 artifactHyperparamsT = TypeVar("artifactHyperparamsT", bound="ArtifactHyperparams")
 
 
-class DataSpecProtocol(Protocol):
-    pass
-
-
-class NoDataSpec(DataSpecProtocol):
-    pass
-
-
 @dataclass(frozen=True)
 class ArtifactHyperparams(ABC):
     @classmethod
@@ -26,6 +18,20 @@ class ArtifactHyperparams(ABC):
 @dataclass(frozen=True)
 class NoArtifactHyperparams(ArtifactHyperparams):
     pass
+
+
+NO_ARTIFACT_HYPERPARAMS = NoArtifactHyperparams()
+
+
+class DataSpecProtocol(Protocol):
+    pass
+
+
+class NoDataSpec(DataSpecProtocol):
+    pass
+
+
+NO_DATA_SPEC = NoDataSpec()
 
 
 @dataclass(frozen=True)
