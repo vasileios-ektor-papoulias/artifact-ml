@@ -2,6 +2,7 @@ from typing import Any, Type, Union
 
 import pytest
 from artifact_core.base.artifact_dependencies import (
+    NO_ARTIFACT_HYPERPARAMS,
     ArtifactResult,
     NoArtifactHyperparams,
 )
@@ -54,7 +55,7 @@ from tests.base.dummy.registries import (
             DummyScoreType.NO_HYPERPARAMS_ARTIFACT,
             DummyDataSpec(scale=1),
             NoHyperparamsArtifact,
-            NoArtifactHyperparams(),
+            NO_ARTIFACT_HYPERPARAMS,
             False,
             False,
             False,
@@ -64,7 +65,7 @@ from tests.base.dummy.registries import (
             DummyScoreType.IN_ALTERNATIVE_REGISTRY,
             DummyDataSpec(scale=1),
             AlternativeRegistryArtifact,
-            NoArtifactHyperparams(),
+            NO_ARTIFACT_HYPERPARAMS,
             False,
             False,
             False,
