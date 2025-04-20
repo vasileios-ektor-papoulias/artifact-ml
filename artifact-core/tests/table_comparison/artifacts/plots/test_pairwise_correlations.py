@@ -30,14 +30,12 @@ def test_compute(
         categorical_association_type=CategoricalAssociationType.CRAMERS_V,
         continuous_association_type=ContinuousAssociationType.PEARSON,
     )
-
     fake_plot = Figure()
     patch_get_combined_correlation_plot = mocker.patch.object(
         target=PairwiseCorrelationHeatmapPlotter,
         attribute="get_combined_correlation_plot",
         return_value=fake_plot,
     )
-
     artifact = CorrelationComparisonCombinedPlot(
         data_spec=data_spec,
         hyperparams=hyperparams,
