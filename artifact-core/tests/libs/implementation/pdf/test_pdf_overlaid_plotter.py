@@ -176,7 +176,8 @@ def test_get_overlaid_pdf_plot(
         )
         assert result.texts, "Figure should have title text"
         assert "Probability Density Function Comparison" in result.texts[0].get_text(), (
-            f"Expected title to contain 'Probability Density Function Comparison', got {result.texts[0].get_text()}"
+            "Expected title to contain 'Probability Density Function Comparison', "
+            + "got {result.texts[0].get_text()}"
         )
     else:
         assert len(result.axes) == 0, (

@@ -157,7 +157,8 @@ def test_get_pdf_plot(
         )
         assert result.texts, "Figure should have title text"
         assert "Probability Density Functions" in result.texts[0].get_text(), (
-            f"Expected title to contain 'Probability Density Functions', got {result.texts[0].get_text()}"
+            "Expected title to contain 'Probability Density Functions', "
+            + "got {result.texts[0].get_text()}"
         )
     else:
         assert len(result.axes) == 0, (
