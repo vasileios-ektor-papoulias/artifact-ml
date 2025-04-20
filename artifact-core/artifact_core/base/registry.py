@@ -4,6 +4,7 @@ from typing import Any, Callable, Dict, Generic, Optional, Type, TypeVar
 
 from artifact_core.base.artifact import Artifact
 from artifact_core.base.artifact_dependencies import (
+    NO_ARTIFACT_HYPERPARAMS,
     ArtifactHyperparams,
     ArtifactResources,
     ArtifactResult,
@@ -115,7 +116,7 @@ class ArtifactRegistry(
         artifact_config: Optional[Dict[str, Any]],
     ) -> ArtifactHyperparams:
         if artifact_hyperparams_class == NoArtifactHyperparams:
-            artifact_hyperparams = NoArtifactHyperparams()
+            artifact_hyperparams = NO_ARTIFACT_HYPERPARAMS
         elif artifact_config is None:
             raise ValueError(
                 f"Missing config for hyperparams type {artifact_hyperparams_class.__name__}"
