@@ -24,7 +24,7 @@ class DatasetComparisonArtifactResources(ArtifactResources, Generic[datasetT]):
 
 class DatasetComparisonArtifact(
     Artifact[
-        DatasetComparisonArtifactResources[datasetT],
+        DatasetComparisonArtifactResources,
         artifactResultT,
         artifactHyperparamsT,
         dataSpecProtocolT,
