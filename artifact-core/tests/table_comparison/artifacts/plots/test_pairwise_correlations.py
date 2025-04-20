@@ -1,6 +1,7 @@
 from unittest.mock import ANY
 
 import pandas as pd
+import pytest
 from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.libs.implementation.pairwsie_correlation.calculator import (
     CategoricalAssociationType,
@@ -20,16 +21,22 @@ from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
+@pytest.fixture
+def hyperparams() -> CorrelationComparisonHeatmapConfig:
+    hyperparams = CorrelationComparisonHeatmapConfig(
+        categorical_association_type=CategoricalAssociationType.CRAMERS_V,
+        continuous_association_type=ContinuousAssociationType.PEARSON,
+    )
+    return hyperparams
+
+
 def test_compute(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
+    hyperparams: CorrelationComparisonHeatmapConfig,
 ):
-    hyperparams = CorrelationComparisonHeatmapConfig(
-        categorical_association_type=CategoricalAssociationType.CRAMERS_V,
-        continuous_association_type=ContinuousAssociationType.PEARSON,
-    )
     fake_plot = Figure()
     patch_get_combined_correlation_plot = mocker.patch.object(
         target=PairwiseCorrelationHeatmapPlotter,

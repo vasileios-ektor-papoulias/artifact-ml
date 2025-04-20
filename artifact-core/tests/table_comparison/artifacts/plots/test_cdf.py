@@ -1,6 +1,7 @@
 from unittest.mock import ANY
 
 import pandas as pd
+from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
 from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.libs.implementation.cdf.overlaid_plotter import OverlaidCDFPlotter
 from artifact_core.table_comparison.artifacts.base import (
@@ -25,7 +26,7 @@ def test_compute(
         attribute="get_overlaid_cdf_plot",
         return_value=fake_plot,
     )
-    artifact = CDFComparisonCombinedPlot(data_spec=data_spec)
+    artifact = CDFComparisonCombinedPlot(data_spec=data_spec, hyperparams=NO_ARTIFACT_HYPERPARAMS)
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )

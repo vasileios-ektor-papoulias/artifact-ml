@@ -4,6 +4,7 @@ from unittest.mock import ANY
 import numpy as np
 import pandas as pd
 import pytest
+from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
 from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.libs.implementation.descriptive_statistics.calculator import (
     DescriptiveStatistic,
@@ -53,9 +54,7 @@ def test_compute(
         attribute="compute_juxtaposition",
         return_value=fake_result,
     )
-    artifact = artifact_class(
-        data_spec=data_spec,
-    )
+    artifact = artifact_class(data_spec=data_spec, hyperparams=NO_ARTIFACT_HYPERPARAMS)
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
