@@ -95,7 +95,8 @@ def test_get_cdf_plot(
         )
         assert result.texts, "Figure should have title text"
         assert "Cumulative Density Functions" in result.texts[0].get_text(), (
-            f"Expected title to contain 'Cumulative Density Functions', got {result.texts[0].get_text()}"
+            "Expected title to contain 'Cumulative Density Functions', "
+            + "got {result.texts[0].get_text()}"
         )
     else:
         # For empty features list, we should still get a figure but with no axes
