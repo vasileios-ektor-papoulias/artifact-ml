@@ -30,7 +30,7 @@ from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
-def test_compute(
+def test_combined_stat_comparison_plot(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
@@ -73,7 +73,7 @@ def test_compute(
         (ContinuousFeatureMaximaComparisonPlot, DescriptiveStatistic.MAX),
     ],
 )
-def test_continuous_feature_stat_comparison_plot(
+def test_continuous_feature_stat_comparison_plots(
     mocker: MockerFixture,
     data_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
@@ -91,7 +91,7 @@ def test_continuous_feature_stat_comparison_plot(
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
-    result = artifact(resources=resources)
+    result = artifact.compute(resources=resources)
     mock_get_stat_comparison_plot.assert_called_once_with(
         dataset_real=ANY,
         dataset_synthetic=ANY,
