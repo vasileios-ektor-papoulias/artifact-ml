@@ -24,6 +24,9 @@ class TableValidator:
     ) -> pd.DataFrame:
         if df.empty:
             raise ValueError("DataFrame must not be empty.")
+        missing_features = [feature for feature in ls_features if feature not in df.columns]
+        if missing_features:
+            raise ValueError(f"Features {missing_features} not found in DataFrame")
         return df[ls_features]
 
     @staticmethod
