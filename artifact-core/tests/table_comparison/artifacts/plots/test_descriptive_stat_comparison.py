@@ -3,6 +3,7 @@ from unittest.mock import ANY
 
 import pandas as pd
 import pytest
+from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
 from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.libs.implementation.descriptive_statistics.calculator import (
     DescriptiveStatistic,
@@ -41,7 +42,9 @@ def test_compute(
         attribute="get_combined_stat_comparison_plot",
         return_value=fake_plot,
     )
-    artifact = ContinuousFeatureDescriptiveStatsComparisonPlot(data_spec=data_spec)
+    artifact = ContinuousFeatureDescriptiveStatsComparisonPlot(
+        data_spec=data_spec, hyperparams=NO_ARTIFACT_HYPERPARAMS
+    )
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
@@ -84,7 +87,7 @@ def test_continuous_feature_stat_comparison_plot(
         "get_stat_comparison_plot",
         return_value=fake_plot,
     )
-    artifact = artifact_class(data_spec=data_spec)
+    artifact = artifact_class(data_spec=data_spec, hyperparams=NO_ARTIFACT_HYPERPARAMS)
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )

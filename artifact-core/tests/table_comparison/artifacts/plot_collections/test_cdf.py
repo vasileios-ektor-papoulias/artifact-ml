@@ -2,6 +2,7 @@ from typing import Dict
 from unittest.mock import ANY
 
 import pandas as pd
+from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
 from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.libs.implementation.cdf.overlaid_plotter import OverlaidCDFPlotter
 from artifact_core.table_comparison.artifacts.base import (
@@ -29,7 +30,7 @@ def test_compute(
         attribute="get_overlaid_cdf_plot_collection",
         return_value=fake_plots,
     )
-    artifact = CDFComparisonPlotCollection(data_spec=data_spec)
+    artifact = CDFComparisonPlotCollection(data_spec=data_spec, hyperparams=NO_ARTIFACT_HYPERPARAMS)
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
