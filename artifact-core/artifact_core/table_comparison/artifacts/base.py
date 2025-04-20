@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Dict, Generic, Optional, Tuple, TypeVar
+from typing import Dict, Generic, Tuple, TypeVar
 
 import pandas as pd
 from matplotlib.figure import Figure
@@ -33,14 +33,6 @@ class TableComparisonArtifact(
     ],
     Generic[artifactResultT, artifactHyperparamsT],
 ):
-    def __init__(
-        self,
-        data_spec: TabularDataSpecProtocol,
-        hyperparams: Optional[artifactHyperparamsT] = None,
-    ):
-        self._data_spec = data_spec
-        self._hyperparams = hyperparams
-
     @abstractmethod
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
