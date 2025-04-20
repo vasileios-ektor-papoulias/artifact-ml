@@ -71,9 +71,9 @@ def test_get_cdf_plot_collection(
         (
             ["continuous_feature1", "continuous_feature2"],
             3,
-        ),  # 2 features with 3 cols = 3 axes (1 will be empty)
-        (["continuous_feature1"], 3),  # 1 feature with 3 cols = 3 axes (2 will be empty)
-        ([], 0),  # No features = no axes
+        ),
+        (["continuous_feature1"], 3),
+        ([], 0),
     ],
 )
 def test_get_cdf_plot(
@@ -99,7 +99,6 @@ def test_get_cdf_plot(
             + "got {result.texts[0].get_text()}"
         )
     else:
-        # For empty features list, we should still get a figure but with no axes
         assert len(result.axes) == 0, (
             f"Expected 0 axes for empty features list, got {len(result.axes)}"
         )
