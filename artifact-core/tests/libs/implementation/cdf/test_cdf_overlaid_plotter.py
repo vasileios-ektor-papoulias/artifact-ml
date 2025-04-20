@@ -84,9 +84,9 @@ def test_get_overlaid_cdf_plot_collection(
         (
             ["continuous_feature1", "continuous_feature2"],
             3,
-        ),  # 2 features with 3 cols = 3 axes (1 will be empty)
-        (["continuous_feature1"], 3),  # 1 feature with 3 cols = 3 axes (2 will be empty)
-        ([], 0),  # No features = no axes
+        ),
+        (["continuous_feature1"], 3),
+        ([], 0),
     ],
 )
 def test_get_overlaid_cdf_plot(

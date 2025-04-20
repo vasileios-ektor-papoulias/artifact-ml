@@ -36,8 +36,6 @@ def projection_2d_synthetic() -> np.ndarray:
 
 @pytest.fixture
 def plotter_factory() -> Callable[[str], ProjectionPlotter]:
-    """Factory fixture that returns a ProjectionPlotter with the specified configuration."""
-
     def _factory(plotter_type: str = "default") -> ProjectionPlotter:
         if plotter_type == "custom":
             config = ProjectionPlotterConfig(
@@ -52,7 +50,7 @@ def plotter_factory() -> Callable[[str], ProjectionPlotter]:
                 ),
             )
             return ProjectionPlotter(config=config)
-        else:  # default
+        else:
             return ProjectionPlotter(config=None)
 
     return _factory

@@ -127,25 +127,25 @@ def test_get_overlaid_pdf_plot_collection(
             ["continuous_feature", "categorical_feature"],
             ["continuous_feature"],
             ["categorical_feature"],
-            3,  # 2 features with 3 cols = 3 axes (1 will be empty)
+            3,
         ),
         (
             ["continuous_feature"],
             ["continuous_feature"],
             [],
-            3,  # 1 feature with 3 cols = 3 axes (2 will be empty)
+            3,
         ),
         (
             ["categorical_feature"],
             [],
             ["categorical_feature"],
-            3,  # 1 feature with 3 cols = 3 axes (2 will be empty)
+            3,
         ),
         (
             [],
             ["continuous_feature"],
             ["categorical_feature"],
-            0,  # No features in order = no axes
+            0,
         ),
     ],
 )

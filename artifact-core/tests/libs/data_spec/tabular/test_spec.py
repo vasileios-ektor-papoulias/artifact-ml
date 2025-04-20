@@ -405,7 +405,6 @@ def test_build(
             None,
             None,
         ),
-        # Test with complex_df, auto-detection
         (
             "complex_df",
             None,
@@ -670,7 +669,6 @@ def test_fit(
             None,
             None,
         ),
-        # Test with complex_df, auto-detection
         (
             "complex_df",
             None,

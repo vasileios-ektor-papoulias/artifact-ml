@@ -219,15 +219,13 @@ def test_get_combined_correlation_plot_with_custom_config(
         plot_combiner_config=custom_config,
     )
 
-    # Check basic figure properties
     assert isinstance(result, Figure), "Result should be a Figure"
-
-    # Check title
     assert len(result.texts) >= 1, "Figure should have at least one text element (title)"
     title_text = result.texts[0].get_text() if result.texts else ""
-    assert custom_config.combined_title in title_text, (
+    expected_title = (
+        custom_config.combined_title if custom_config.combined_title is not None else ""
+    )
+    assert expected_title in title_text, (
         f"Expected title to contain '{custom_config.combined_title}', got '{title_text}'"
     )
-
-    # Check DPI
     assert result.dpi == custom_config.dpi, f"Expected DPI {custom_config.dpi}, got {result.dpi}"
