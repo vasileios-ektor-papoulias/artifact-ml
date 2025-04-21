@@ -4,7 +4,7 @@ from unittest.mock import ANY
 import pandas as pd
 from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
 from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.libs.implementation.cdf.overlaid_plotter import OverlaidCDFPlotter
+from artifact_core.libs.implementation.tabular.cdf.overlaid_plotter import OverlaidCDFPlotter
 from artifact_core.table_comparison.artifacts.base import (
     DatasetComparisonArtifactResources,
 )

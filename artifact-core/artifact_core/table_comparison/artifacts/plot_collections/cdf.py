@@ -4,7 +4,7 @@ import pandas as pd
 from matplotlib.figure import Figure
 
 from artifact_core.base.artifact_dependencies import NoArtifactHyperparams
-from artifact_core.libs.implementation.cdf.overlaid_plotter import (
+from artifact_core.libs.implementation.tabular.cdf.overlaid_plotter import (
     OverlaidCDFPlotter,
 )
 from artifact_core.table_comparison.artifacts.base import (

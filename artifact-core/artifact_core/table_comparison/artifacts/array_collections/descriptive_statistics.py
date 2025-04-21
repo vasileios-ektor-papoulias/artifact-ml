@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 from artifact_core.base.artifact_dependencies import NoArtifactHyperparams
-from artifact_core.libs.implementation.descriptive_statistics.calculator import (
+from artifact_core.libs.implementation.tabular.descriptive_statistics.calculator import (
     DescriptiveStatistic,
     DescriptiveStatisticsCalculator,
 )

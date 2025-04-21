@@ -3,7 +3,7 @@ from unittest.mock import ANY
 import pandas as pd
 import pytest
 from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.libs.implementation.pairwsie_correlation.calculator import (
+from artifact_core.libs.implementation.tabular.pairwise_correlation.calculator import (
     CategoricalAssociationType,
     ContinuousAssociationType,
     PairwiseCorrelationCalculator,

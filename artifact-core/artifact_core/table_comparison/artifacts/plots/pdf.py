@@ -2,7 +2,7 @@ import pandas as pd
 from matplotlib.figure import Figure
 
 from artifact_core.base.artifact_dependencies import NoArtifactHyperparams
-from artifact_core.libs.implementation.pdf.overlaid_plotter import (
+from artifact_core.libs.implementation.tabular.pdf.overlaid_plotter import (
     OverlaidPDFPlotter,
 )
 from artifact_core.table_comparison.artifacts.base import (

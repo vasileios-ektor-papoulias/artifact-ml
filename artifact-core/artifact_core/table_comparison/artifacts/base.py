@@ -16,7 +16,7 @@ from artifact_core.core.dataset_comparison.artifact import (
 from artifact_core.libs.data_spec.tabular.protocol import (
     TabularDataSpecProtocol,
 )
-from artifact_core.libs.validation.table_validator import (
+from artifact_core.libs.validation.tabular.table_validator import (
     TableValidator,
 )
 

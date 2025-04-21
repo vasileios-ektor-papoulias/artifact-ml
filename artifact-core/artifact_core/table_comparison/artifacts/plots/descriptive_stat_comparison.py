@@ -2,10 +2,10 @@ import pandas as pd
 from matplotlib.figure import Figure
 
 from artifact_core.base.artifact_dependencies import NoArtifactHyperparams
-from artifact_core.libs.implementation.descriptive_statistics.calculator import (
+from artifact_core.libs.implementation.tabular.descriptive_statistics.calculator import (
     DescriptiveStatistic,
 )
-from artifact_core.libs.implementation.descriptive_statistics.comparison_plots import (
+from artifact_core.libs.implementation.tabular.descriptive_statistics.comparison_plots import (
     DescriptiveStatComparisonPlotter,
 )
 from artifact_core.table_comparison.artifacts.base import (

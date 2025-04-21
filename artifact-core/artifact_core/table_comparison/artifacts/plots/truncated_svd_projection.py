@@ -7,7 +7,7 @@ from artifact_core.base.artifact_dependencies import ArtifactHyperparams
 from artifact_core.libs.data_spec.tabular.protocol import (
     TabularDataSpecProtocol,
 )
-from artifact_core.libs.implementation.projections.truncated_svd import (
+from artifact_core.libs.implementation.tabular.projections.truncated_svd import (
     TruncatedSVDHyperparams,
     TruncatedSVDProjector,
 )

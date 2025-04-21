@@ -7,7 +7,7 @@ from artifact_core.base.artifact_dependencies import ArtifactHyperparams
 from artifact_core.libs.data_spec.tabular.protocol import (
     TabularDataSpecProtocol,
 )
-from artifact_core.libs.implementation.projections.pca import (
+from artifact_core.libs.implementation.tabular.projections.pca import (
     PCAHyperparams,
     PCAProjector,
 )
