@@ -5,10 +5,10 @@ import pandas as pd
 import pytest
 from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
 from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.libs.implementation.descriptive_statistics.calculator import (
+from artifact_core.libs.implementation.tabular.descriptive_statistics.calculator import (
     DescriptiveStatistic,
 )
-from artifact_core.libs.implementation.descriptive_statistics.comparison_plots import (
+from artifact_core.libs.implementation.tabular.descriptive_statistics.comparison_plots import (
     DescriptiveStatComparisonPlotter,
 )
 from artifact_core.table_comparison.artifacts.base import (

@@ -3,7 +3,7 @@ from unittest.mock import ANY
 import pandas as pd
 import pytest
 from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.libs.implementation.projections.pca import PCAHyperparams, PCAProjector
+from artifact_core.libs.implementation.tabular.projections.pca import PCAHyperparams, PCAProjector
 from artifact_core.table_comparison.artifacts.base import (
     DatasetComparisonArtifactResources,
 )
