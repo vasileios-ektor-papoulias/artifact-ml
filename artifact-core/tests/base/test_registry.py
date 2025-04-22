@@ -27,8 +27,9 @@ from tests.base.dummy.registries import (
 
 
 @pytest.mark.parametrize(
-    "artifact_registry, artifact_type, resource_spec, expected_artifact_class, expected_hyperparams, "
-    + "expect_raise_unregistered_artifact, expect_raise_missing_config, expect_raise_missing_param",
+    "artifact_registry, artifact_type, resource_spec, expected_artifact_class, "
+    + "expected_hyperparams, expect_raise_unregistered_artifact, expect_raise_missing_config, "
+    + "expect_raise_missing_param",
     [
         (
             DummyScoreRegistry,
