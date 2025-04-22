@@ -1,6 +1,6 @@
 from artifact_core.base.engine import ArtifactEngine
 
-from tests.base.dummy.artifact_dependencies import DummyArtifactResources, DummyDataSpec
+from tests.base.dummy.artifact_dependencies import DummyArtifactResources, DummyResourceSpec
 from tests.base.dummy.registries import (
     DummyArrayCollectionRegistry,
     DummyArrayCollectionType,
@@ -20,7 +20,7 @@ from tests.base.dummy.registries import (
 class DummyArtifactEngine(
     ArtifactEngine[
         DummyArtifactResources,
-        DummyDataSpec,
+        DummyResourceSpec,
         DummyScoreType,
         DummyArrayType,
         DummyPlotType,

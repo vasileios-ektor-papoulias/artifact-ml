@@ -2,12 +2,12 @@ from dataclasses import dataclass
 
 from artifact_core.core.dataset_comparison.artifact import (
     DatasetComparisonArtifactResources,
-    DataSpecProtocol,
+    ResourceSpecProtocol,
 )
 
 
 @dataclass
-class DummyDataSpec(DataSpecProtocol):
+class DummyResourceSpec(ResourceSpecProtocol):
     scale: float
 
 

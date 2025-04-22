@@ -1,7 +1,7 @@
 from typing import Type
 
 import pytest
-from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonPlot,
 )
@@ -72,10 +72,12 @@ from artifact_core.table_comparison.registries.plots.registry import (
     ],
 )
 def test_get(
-    data_spec: TabularDataSpecProtocol,
+    resource_spec: TabularDataSpecProtocol,
     artifact_type: TableComparisonPlotType,
     artifact_class: Type[TableComparisonPlot],
 ):
-    artifact = TableComparisonPlotRegistry.get(artifact_type=artifact_type, data_spec=data_spec)
+    artifact = TableComparisonPlotRegistry.get(
+        artifact_type=artifact_type, resource_spec=resource_spec
+    )
     assert isinstance(artifact, artifact_class)
-    assert artifact.data_spec == data_spec
+    assert artifact.resource_spec == resource_spec

@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple, Type, TypeVar
 import numpy as np
 import pandas as pd
 
-from artifact_core.libs.data_spec.tabular.protocol import (
+from artifact_core.libs.resource_spec.tabular.protocol import (
     TabularDataDType,
     TabularDataSpecProtocol,
 )
@@ -143,12 +143,12 @@ class TabularDataSpec(TabularDataSpecProtocol):
         ls_cts_features: Optional[List[str]] = None,
         ls_cat_features: Optional[List[str]] = None,
     ) -> tabularDataSpecT:
-        data_spec = cls.build(
+        spec = cls.build(
             ls_cts_features=ls_cts_features,
             ls_cat_features=ls_cat_features,
         )
-        data_spec.fit(df=df)
-        return data_spec
+        spec.fit(df=df)
+        return spec
 
     @classmethod
     def build(
@@ -165,8 +165,8 @@ class TabularDataSpec(TabularDataSpecProtocol):
             ls_cts_features=ls_cts_features,
             ls_cat_features=ls_cat_features,
         )
-        data_spec = cls(internal_spec=internal_spec)
-        return data_spec
+        spec = cls(internal_spec=internal_spec)
+        return spec
 
     def fit(self, df: pd.DataFrame) -> None:
         set_cts_features, set_cat_features = self._partition_features(

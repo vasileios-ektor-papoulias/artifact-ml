@@ -3,11 +3,11 @@ from typing import cast
 
 import pandas as pd
 import pytest
-from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 
 
 @pytest.fixture
-def data_spec() -> TabularDataSpecProtocol:
+def resource_spec() -> TabularDataSpecProtocol:
     ls_cts = ["cts_1", "cts_2"]
     ls_cat = ["cat_1", "cat_2"]
     ls_features = ls_cts + ls_cat

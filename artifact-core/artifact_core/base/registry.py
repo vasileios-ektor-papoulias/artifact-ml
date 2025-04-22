@@ -8,11 +8,11 @@ from artifact_core.base.artifact_dependencies import (
     ArtifactHyperparams,
     ArtifactResources,
     ArtifactResult,
-    DataSpecProtocol,
     NoArtifactHyperparams,
+    ResourceSpecProtocol,
 )
 
-dataSpecProtocolT = TypeVar("dataSpecProtocolT", bound="DataSpecProtocol")
+resourceSpecProtocol = TypeVar("resourceSpecProtocol", bound="ResourceSpecProtocol")
 artifactHyperparamsT = TypeVar("artifactHyperparamsT", bound="ArtifactHyperparams")
 artifactResourcesT = TypeVar("artifactResourcesT", bound="ArtifactResources")
 artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
@@ -25,7 +25,7 @@ class ArtifactType(Enum):
 
 
 class ArtifactRegistry(
-    Generic[artifactTypeT, artifactResourcesT, artifactResultT, dataSpecProtocolT]
+    Generic[artifactTypeT, artifactResourcesT, artifactResultT, resourceSpecProtocol]
 ):
     _artifact_registry: Dict[
         artifactTypeT,
@@ -34,7 +34,7 @@ class ArtifactRegistry(
                 artifactResourcesT,
                 artifactResultT,
                 ArtifactHyperparams,
-                dataSpecProtocolT,
+                resourceSpecProtocol,
             ]
         ],
     ] = {}
@@ -75,12 +75,12 @@ class ArtifactRegistry(
 
     @classmethod
     def get(
-        cls, artifact_type: artifactTypeT, data_spec: dataSpecProtocolT
+        cls, artifact_type: artifactTypeT, resource_spec: resourceSpecProtocol
     ) -> Artifact[
         artifactResourcesT,
         artifactResultT,
         ArtifactHyperparams,
-        dataSpecProtocolT,
+        resourceSpecProtocol,
     ]:
         artifact_class = cls._get_artifact_class(artifact_type=artifact_type)
         artifact_hyperparams_class = cls._get_artifact_hyperparams_class(
@@ -90,7 +90,7 @@ class ArtifactRegistry(
         hyperparams = cls._build_artifact_hyperparams(
             artifact_hyperparams_class=artifact_hyperparams_class, artifact_config=artifact_config
         )
-        artifact = artifact_class(data_spec=data_spec, hyperparams=hyperparams)
+        artifact = artifact_class(resource_spec=resource_spec, hyperparams=hyperparams)
         return artifact
 
     @classmethod
@@ -101,7 +101,7 @@ class ArtifactRegistry(
             artifactResourcesT,
             artifactResultT,
             ArtifactHyperparams,
-            dataSpecProtocolT,
+            resourceSpecProtocol,
         ]
     ]:
         artifact_class = cls._artifact_registry.get(artifact_type, None)

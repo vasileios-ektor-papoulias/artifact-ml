@@ -8,7 +8,7 @@ from artifact_core.base.artifact_dependencies import (
     NoArtifactHyperparams,
 )
 
-from tests.base.dummy.artifact_dependencies import DummyArtifactResources, DummyDataSpec
+from tests.base.dummy.artifact_dependencies import DummyArtifactResources, DummyResourceSpec
 from tests.base.dummy.registries import (
     AlternativeDummyScoreRegistry,
     DummyScoreRegistry,
@@ -22,12 +22,12 @@ artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
 
 
 class DummyArtifact(
-    Artifact[DummyArtifactResources, artifactResultT, artifactHyperparamsT, DummyDataSpec]
+    Artifact[DummyArtifactResources, artifactResultT, artifactHyperparamsT, DummyResourceSpec]
 ):
     def __init__(
-        self, data_spec: DummyDataSpec, hyperparams: Optional[artifactHyperparamsT] = None
+        self, resource_spec: DummyResourceSpec, hyperparams: Optional[artifactHyperparamsT] = None
     ):
-        self._data_spec = data_spec
+        self._resource_spec = resource_spec
         self._hyperparams = hyperparams
 
 
@@ -51,8 +51,8 @@ class DummyScoreHyperparams(ArtifactHyperparams):
 @AlternativeDummyScoreRegistry.register_artifact(artifact_type=DummyScoreType.DUMMY_SCORE_ARTIFACT)
 @DummyScoreRegistry.register_artifact(artifact_type=DummyScoreType.DUMMY_SCORE_ARTIFACT)
 class DummyScoreArtifact(DummyArtifact[float, DummyScoreHyperparams]):
-    def __init__(self, data_spec: DummyDataSpec, hyperparams: DummyScoreHyperparams):
-        self._data_spec = data_spec
+    def __init__(self, resource_spec: DummyResourceSpec, hyperparams: DummyScoreHyperparams):
+        self._resource_spec = resource_spec
         self._hyperparams = hyperparams
 
     def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
@@ -64,7 +64,7 @@ class DummyScoreArtifact(DummyArtifact[float, DummyScoreHyperparams]):
         _ = resources
         result = resources.x
         if self._hyperparams.adjust_scale:
-            result = result * self._data_spec.scale
+            result = result * self._resource_spec.scale
         return result
 
 
@@ -77,7 +77,7 @@ class NoHyperparamsArtifact(DummyArtifact[float, NoArtifactHyperparams]):
 
     def _compute(self, resources: DummyArtifactResources) -> float:
         _ = resources
-        result = resources.x * self._data_spec.scale
+        result = resources.x * self._resource_spec.scale
         return result
 
 
@@ -92,5 +92,5 @@ class AlternativeRegistryArtifact(DummyArtifact[float, NoArtifactHyperparams]):
 
     def _compute(self, resources: DummyArtifactResources) -> float:
         _ = resources
-        result = resources.x * self._data_spec.scale
+        result = resources.x * self._resource_spec.scale
         return result

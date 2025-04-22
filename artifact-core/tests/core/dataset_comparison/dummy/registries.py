@@ -7,7 +7,10 @@ from artifact_core.core.dataset_comparison.registry import (
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-from tests.core.dataset_comparison.dummy.artifact_dependencies import DummyDataset, DummyDataSpec
+from tests.core.dataset_comparison.dummy.artifact_dependencies import (
+    DummyDataset,
+    DummyResourceSpec,
+)
 
 
 class DummyDatasetComparisonScoreType(ArtifactType):
@@ -16,7 +19,7 @@ class DummyDatasetComparisonScoreType(ArtifactType):
 
 class DummyDatasetComparisonScoreRegistry(
     DatasetComparisonArtifactRegistry[
-        DummyDatasetComparisonScoreType, DummyDataset, float, DummyDataSpec
+        DummyDatasetComparisonScoreType, DummyDataset, float, DummyResourceSpec
     ]
 ):
     @classmethod
@@ -30,7 +33,7 @@ class DummyDatasetComparisonArrayType(ArtifactType):
 
 class DummyDatasetComparisonArrayRegistry(
     DatasetComparisonArtifactRegistry[
-        DummyDatasetComparisonArrayType, DummyDataset, ndarray, DummyDataSpec
+        DummyDatasetComparisonArrayType, DummyDataset, ndarray, DummyResourceSpec
     ]
 ):
     @classmethod
@@ -44,7 +47,7 @@ class DummyDatasetComparisonPlotType(ArtifactType):
 
 class DummyDatasetComparisonPlotRegistry(
     DatasetComparisonArtifactRegistry[
-        DummyDatasetComparisonPlotType, DummyDataset, Figure, DummyDataSpec
+        DummyDatasetComparisonPlotType, DummyDataset, Figure, DummyResourceSpec
     ]
 ):
     @classmethod
@@ -58,7 +61,7 @@ class DummyDatasetComparisonScoreCollectionType(ArtifactType):
 
 class DummyDatasetComparisonScoreCollectionRegistry(
     DatasetComparisonArtifactRegistry[
-        DummyDatasetComparisonScoreCollectionType, DummyDataset, Dict[str, float], DummyDataSpec
+        DummyDatasetComparisonScoreCollectionType, DummyDataset, Dict[str, float], DummyResourceSpec
     ]
 ):
     @classmethod
@@ -72,7 +75,10 @@ class DummyDatasetComparisonArrayCollectionType(ArtifactType):
 
 class DummyDatasetComparisonArrayCollectionRegistry(
     DatasetComparisonArtifactRegistry[
-        DummyDatasetComparisonArrayCollectionType, DummyDataset, Dict[str, ndarray], DummyDataSpec
+        DummyDatasetComparisonArrayCollectionType,
+        DummyDataset,
+        Dict[str, ndarray],
+        DummyResourceSpec,
     ]
 ):
     @classmethod
@@ -86,7 +92,7 @@ class DummyDatasetComparisonPlotCollectionType(ArtifactType):
 
 class DummyDatasetComparisonPlotCollectionRegistry(
     DatasetComparisonArtifactRegistry[
-        DummyDatasetComparisonPlotCollectionType, DummyDataset, Dict[str, Figure], DummyDataSpec
+        DummyDatasetComparisonPlotCollectionType, DummyDataset, Dict[str, Figure], DummyResourceSpec
     ]
 ):
     @classmethod

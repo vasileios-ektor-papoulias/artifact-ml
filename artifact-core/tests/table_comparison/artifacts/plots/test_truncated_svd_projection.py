@@ -2,11 +2,11 @@ from unittest.mock import ANY
 
 import pandas as pd
 import pytest
-from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.libs.implementation.tabular.projections.truncated_svd import (
     TruncatedSVDHyperparams,
     TruncatedSVDProjector,
 )
+from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.base import DatasetComparisonArtifactResources
 from artifact_core.table_comparison.artifacts.plots.truncated_svd_projection import (
     TruncatedSVDProjectionComparisonPlot,
@@ -24,7 +24,7 @@ def hyperparams() -> TruncatedSVDProjectionComparisonPlotConfig:
 
 def test_compute(
     mocker: MockerFixture,
-    data_spec: TabularDataSpecProtocol,
+    resource_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
     hyperparams: TruncatedSVDProjectionComparisonPlotConfig,
@@ -38,7 +38,7 @@ def test_compute(
         return_value=mock_proj,
     )
     artifact = TruncatedSVDProjectionComparisonPlot(
-        data_spec=data_spec,
+        resource_spec=resource_spec,
         hyperparams=hyperparams,
     )
     resources = DatasetComparisonArtifactResources(
@@ -47,8 +47,8 @@ def test_compute(
     )
     result = artifact.compute(resources=resources)
     patch_build.assert_called_once_with(
-        ls_cat_features=data_spec.ls_cat_features,
-        ls_cts_features=data_spec.ls_cts_features,
+        ls_cat_features=resource_spec.ls_cat_features,
+        ls_cts_features=resource_spec.ls_cts_features,
         projector_config=ANY,
     )
     _, build_kwargs = patch_build.call_args

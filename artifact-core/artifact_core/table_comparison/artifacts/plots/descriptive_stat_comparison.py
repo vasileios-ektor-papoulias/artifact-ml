@@ -27,7 +27,7 @@ class ContinuousFeatureDescriptiveStatsComparisonPlot(TableComparisonPlot[NoArti
         plot = DescriptiveStatComparisonPlotter.get_combined_stat_comparison_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
         )
         return plot
 
@@ -40,7 +40,7 @@ class ContinuousFeatureMeanComparisonPlot(TableComparisonPlot[NoArtifactHyperpar
         plot = DescriptiveStatComparisonPlotter.get_stat_comparison_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
             stat=DescriptiveStatistic.MEAN,
         )
         return plot
@@ -54,7 +54,7 @@ class ContinuousFeatureSTDComparisonPlot(TableComparisonPlot[NoArtifactHyperpara
         plot = DescriptiveStatComparisonPlotter.get_stat_comparison_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
             stat=DescriptiveStatistic.STD,
         )
         return plot
@@ -68,7 +68,7 @@ class ContinuousFeatureVarianceComparisonPlot(TableComparisonPlot[NoArtifactHype
         plot = DescriptiveStatComparisonPlotter.get_stat_comparison_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
             stat=DescriptiveStatistic.VARIANCE,
         )
         return plot
@@ -82,7 +82,7 @@ class ContinuousFeatureMedianComparisonPlot(TableComparisonPlot[NoArtifactHyperp
         plot = DescriptiveStatComparisonPlotter.get_stat_comparison_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
             stat=DescriptiveStatistic.MEDIAN,
         )
         return plot
@@ -98,7 +98,7 @@ class ContinuousFeatureFirstQuartileComparisonPlot(TableComparisonPlot[NoArtifac
         plot = DescriptiveStatComparisonPlotter.get_stat_comparison_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
             stat=DescriptiveStatistic.Q1,
         )
         return plot
@@ -114,7 +114,7 @@ class ContinuousFeatureThirdQuartileComparisonPlot(TableComparisonPlot[NoArtifac
         plot = DescriptiveStatComparisonPlotter.get_stat_comparison_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
             stat=DescriptiveStatistic.Q3,
         )
         return plot
@@ -128,7 +128,7 @@ class ContinuousFeatureMaximaComparisonPlot(TableComparisonPlot[NoArtifactHyperp
         plot = DescriptiveStatComparisonPlotter.get_stat_comparison_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
             stat=DescriptiveStatistic.MAX,
         )
         return plot
@@ -142,7 +142,7 @@ class ContinuousFeatureMinimaComparisonPlot(TableComparisonPlot[NoArtifactHyperp
         plot = DescriptiveStatComparisonPlotter.get_stat_comparison_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
             stat=DescriptiveStatistic.MIN,
         )
         return plot

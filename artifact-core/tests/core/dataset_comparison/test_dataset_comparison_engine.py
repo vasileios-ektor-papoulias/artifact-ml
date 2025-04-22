@@ -10,7 +10,7 @@ from pytest_mock import MockerFixture
 from tests.core.dataset_comparison.dummy.artifact_dependencies import (
     DatasetComparisonArtifactResources,
     DummyDataset,
-    DummyDataSpec,
+    DummyResourceSpec,
 )
 from tests.core.dataset_comparison.dummy.engine import DummyDatasetComparisonEngine
 
@@ -33,16 +33,16 @@ def mock_dependency_factory(
 
 
 @pytest.mark.parametrize(
-    "data_spec, dataset_real, dataset_synthetic, expected_result",
+    "resource_spec, dataset_real, dataset_synthetic, expected_result",
     [
         (
-            DummyDataSpec(scale=1),
+            DummyResourceSpec(scale=1),
             DummyDataset(x=1),
             DummyDataset(x=1),
             1,
         ),
         (
-            DummyDataSpec(scale=2),
+            DummyResourceSpec(scale=2),
             DummyDataset(x=2),
             DummyDataset(x=2),
             2,
@@ -51,14 +51,14 @@ def mock_dependency_factory(
 )
 def test_produce_dataset_comparison_score(
     mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
-    data_spec: DummyDataSpec,
+    resource_spec: DummyResourceSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: float,
 ):
     artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
-    engine = DummyDatasetComparisonEngine(data_spec=data_spec)
+    engine = DummyDatasetComparisonEngine(resource_spec=resource_spec)
     engine._score_registry = registry  # type: ignore
     result = engine.produce_dataset_comparison_score(
         score_type=artifact_type, dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
@@ -66,33 +66,33 @@ def test_produce_dataset_comparison_score(
     resources = DatasetComparisonArtifactResources(
         dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
     )
-    registry.get.assert_called_once_with(artifact_type=artifact_type, data_spec=data_spec)
+    registry.get.assert_called_once_with(artifact_type=artifact_type, resource_spec=resource_spec)
     artifact.compute.assert_called_once_with(resources=resources)
     assert result == expected_result
 
 
 @pytest.mark.parametrize(
-    "data_spec, dataset_real, dataset_synthetic, expected_result",
+    "resource_spec, dataset_real, dataset_synthetic, expected_result",
     [
         (
-            DummyDataSpec(scale=1),
+            DummyResourceSpec(scale=1),
             DummyDataset(x=1),
             DummyDataset(x=1),
             np.array([1]),
         ),
-        (DummyDataSpec(scale=2), DummyDataset(x=2), DummyDataset(x=2), np.array([2])),
+        (DummyResourceSpec(scale=2), DummyDataset(x=2), DummyDataset(x=2), np.array([2])),
     ],
 )
 def test_produce_dataset_comparison_array(
     mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
-    data_spec: DummyDataSpec,
+    resource_spec: DummyResourceSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: float,
 ):
     artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
-    engine = DummyDatasetComparisonEngine(data_spec=data_spec)
+    engine = DummyDatasetComparisonEngine(resource_spec=resource_spec)
     engine._array_registry = registry  # type: ignore
     result = engine.produce_dataset_comparison_array(
         array_type=artifact_type, dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
@@ -100,33 +100,33 @@ def test_produce_dataset_comparison_array(
     resources = DatasetComparisonArtifactResources(
         dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
     )
-    registry.get.assert_called_once_with(artifact_type=artifact_type, data_spec=data_spec)
+    registry.get.assert_called_once_with(artifact_type=artifact_type, resource_spec=resource_spec)
     artifact.compute.assert_called_once_with(resources=resources)
     assert result == expected_result
 
 
 @pytest.mark.parametrize(
-    "data_spec, dataset_real, dataset_synthetic, expected_result",
+    "resource_spec, dataset_real, dataset_synthetic, expected_result",
     [
         (
-            DummyDataSpec(scale=1),
+            DummyResourceSpec(scale=1),
             DummyDataset(x=1),
             DummyDataset(x=1),
             Figure(),
         ),
-        (DummyDataSpec(scale=2), DummyDataset(x=2), DummyDataset(x=2), Figure()),
+        (DummyResourceSpec(scale=2), DummyDataset(x=2), DummyDataset(x=2), Figure()),
     ],
 )
 def test_produce_dataset_comparison_plot(
     mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
-    data_spec: DummyDataSpec,
+    resource_spec: DummyResourceSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: float,
 ):
     artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
-    engine = DummyDatasetComparisonEngine(data_spec=data_spec)
+    engine = DummyDatasetComparisonEngine(resource_spec=resource_spec)
     engine._plot_registry = registry  # type: ignore
     result = engine.produce_dataset_comparison_plot(
         plot_type=artifact_type, dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
@@ -134,22 +134,22 @@ def test_produce_dataset_comparison_plot(
     resources = DatasetComparisonArtifactResources(
         dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
     )
-    registry.get.assert_called_once_with(artifact_type=artifact_type, data_spec=data_spec)
+    registry.get.assert_called_once_with(artifact_type=artifact_type, resource_spec=resource_spec)
     artifact.compute.assert_called_once_with(resources=resources)
     assert result == expected_result
 
 
 @pytest.mark.parametrize(
-    "data_spec, dataset_real, dataset_synthetic, expected_result",
+    "resource_spec, dataset_real, dataset_synthetic, expected_result",
     [
         (
-            DummyDataSpec(scale=1),
+            DummyResourceSpec(scale=1),
             DummyDataset(x=1),
             DummyDataset(x=1),
             {"item": 1},
         ),
         (
-            DummyDataSpec(scale=2),
+            DummyResourceSpec(scale=2),
             DummyDataset(x=2),
             DummyDataset(x=2),
             {"item": 2},
@@ -158,14 +158,14 @@ def test_produce_dataset_comparison_plot(
 )
 def test_produce_dataset_comparison_score_collection(
     mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
-    data_spec: DummyDataSpec,
+    resource_spec: DummyResourceSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: float,
 ):
     artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
-    engine = DummyDatasetComparisonEngine(data_spec=data_spec)
+    engine = DummyDatasetComparisonEngine(resource_spec=resource_spec)
     engine._score_collection_registry = registry  # type: ignore
     result = engine.produce_dataset_comparison_score_collection(
         score_collection_type=artifact_type,
@@ -175,33 +175,33 @@ def test_produce_dataset_comparison_score_collection(
     resources = DatasetComparisonArtifactResources(
         dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
     )
-    registry.get.assert_called_once_with(artifact_type=artifact_type, data_spec=data_spec)
+    registry.get.assert_called_once_with(artifact_type=artifact_type, resource_spec=resource_spec)
     artifact.compute.assert_called_once_with(resources=resources)
     assert result == expected_result
 
 
 @pytest.mark.parametrize(
-    "data_spec, dataset_real, dataset_synthetic, expected_result",
+    "resource_spec, dataset_real, dataset_synthetic, expected_result",
     [
         (
-            DummyDataSpec(scale=1),
+            DummyResourceSpec(scale=1),
             DummyDataset(x=1),
             DummyDataset(x=1),
             {"ïtem": np.array([1])},
         ),
-        (DummyDataSpec(scale=2), DummyDataset(x=2), DummyDataset(x=2), {"item": np.array([2])}),
+        (DummyResourceSpec(scale=2), DummyDataset(x=2), DummyDataset(x=2), {"item": np.array([2])}),
     ],
 )
 def test_produce_dataset_comparison_array_collection(
     mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
-    data_spec: DummyDataSpec,
+    resource_spec: DummyResourceSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: float,
 ):
     artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
-    engine = DummyDatasetComparisonEngine(data_spec=data_spec)
+    engine = DummyDatasetComparisonEngine(resource_spec=resource_spec)
     engine._array_collection_registry = registry  # type: ignore
     result = engine.produce_dataset_comparison_array_collection(
         array_collection_type=artifact_type,
@@ -211,33 +211,33 @@ def test_produce_dataset_comparison_array_collection(
     resources = DatasetComparisonArtifactResources(
         dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
     )
-    registry.get.assert_called_once_with(artifact_type=artifact_type, data_spec=data_spec)
+    registry.get.assert_called_once_with(artifact_type=artifact_type, resource_spec=resource_spec)
     artifact.compute.assert_called_once_with(resources=resources)
     assert result == expected_result
 
 
 @pytest.mark.parametrize(
-    "data_spec, dataset_real, dataset_synthetic, expected_result",
+    "resource_spec, dataset_real, dataset_synthetic, expected_result",
     [
         (
-            DummyDataSpec(scale=1),
+            DummyResourceSpec(scale=1),
             DummyDataset(x=1),
             DummyDataset(x=1),
             {"item": Figure()},
         ),
-        (DummyDataSpec(scale=2), DummyDataset(x=2), DummyDataset(x=2), {"item": Figure()}),
+        (DummyResourceSpec(scale=2), DummyDataset(x=2), DummyDataset(x=2), {"item": Figure()}),
     ],
 )
 def test_produce_dataset_comparison_plot_collection(
     mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
-    data_spec: DummyDataSpec,
+    resource_spec: DummyResourceSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: float,
 ):
     artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
-    engine = DummyDatasetComparisonEngine(data_spec=data_spec)
+    engine = DummyDatasetComparisonEngine(resource_spec=resource_spec)
     engine._plot_collection_registry = registry  # type: ignore
     result = engine.produce_dataset_comparison_plot_collection(
         plot_collection_type=artifact_type,
@@ -247,6 +247,6 @@ def test_produce_dataset_comparison_plot_collection(
     resources = DatasetComparisonArtifactResources(
         dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
     )
-    registry.get.assert_called_once_with(artifact_type=artifact_type, data_spec=data_spec)
+    registry.get.assert_called_once_with(artifact_type=artifact_type, resource_spec=resource_spec)
     artifact.compute.assert_called_once_with(resources=resources)
     assert result == expected_result

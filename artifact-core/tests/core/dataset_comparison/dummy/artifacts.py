@@ -7,7 +7,10 @@ from artifact_core.base.artifact_dependencies import (
 )
 from artifact_core.core.dataset_comparison.artifact import DatasetComparisonArtifact
 
-from tests.core.dataset_comparison.dummy.artifact_dependencies import DummyDataset, DummyDataSpec
+from tests.core.dataset_comparison.dummy.artifact_dependencies import (
+    DummyDataset,
+    DummyResourceSpec,
+)
 
 artifactHyperparamsT = TypeVar("artifactHyperparamsT", bound=ArtifactHyperparams)
 artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
@@ -20,13 +23,13 @@ class DummyDatasetComparisonScoreHyperparams(ArtifactHyperparams):
 
 class DummyDatasetComparisonScore(
     DatasetComparisonArtifact[
-        DummyDataset, float, DummyDatasetComparisonScoreHyperparams, DummyDataSpec
+        DummyDataset, float, DummyDatasetComparisonScoreHyperparams, DummyResourceSpec
     ]
 ):
     def __init__(
-        self, data_spec: DummyDataSpec, hyperparams: DummyDatasetComparisonScoreHyperparams
+        self, resource_spec: DummyResourceSpec, hyperparams: DummyDatasetComparisonScoreHyperparams
     ):
-        self._data_spec = data_spec
+        self._resource_spec = resource_spec
         self._hyperparams = hyperparams
 
     def _validate_datasets(
@@ -45,6 +48,6 @@ class DummyDatasetComparisonScore(
         real_synthetic = dataset_synthetic.x
         difference = real_total - real_synthetic
         if self._hyperparams.adjust_scale:
-            difference = self._data_spec.scale * difference
+            difference = self._resource_spec.scale * difference
         result = abs(difference)
         return result

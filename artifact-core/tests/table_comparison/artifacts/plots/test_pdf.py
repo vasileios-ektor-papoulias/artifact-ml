@@ -2,8 +2,8 @@ from unittest.mock import ANY
 
 import pandas as pd
 from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
-from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.libs.implementation.tabular.pdf.overlaid_plotter import OverlaidPDFPlotter
+from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.base import DatasetComparisonArtifactResources
 from artifact_core.table_comparison.artifacts.plots.pdf import PDFComparisonCombinedPlot
 from matplotlib.figure import Figure
@@ -12,7 +12,7 @@ from pytest_mock import MockerFixture
 
 def test_compute(
     mocker: MockerFixture,
-    data_spec: TabularDataSpecProtocol,
+    resource_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
 ):
@@ -23,7 +23,7 @@ def test_compute(
         return_value=fake_fig,
     )
     artifact = PDFComparisonCombinedPlot(
-        data_spec=data_spec,
+        resource_spec=resource_spec,
         hyperparams=NO_ARTIFACT_HYPERPARAMS,
     )
     resources = DatasetComparisonArtifactResources(
@@ -34,10 +34,10 @@ def test_compute(
     patch_get.assert_called_once_with(
         dataset_real=ANY,
         dataset_synthetic=ANY,
-        ls_features_order=data_spec.ls_features,
-        ls_cts_features=data_spec.ls_cts_features,
-        ls_cat_features=data_spec.ls_cat_features,
-        cat_unique_map=data_spec.cat_unique_map,
+        ls_features_order=resource_spec.ls_features,
+        ls_cts_features=resource_spec.ls_cts_features,
+        ls_cat_features=resource_spec.ls_cat_features,
+        cat_unique_map=resource_spec.cat_unique_map,
     )
     _, kwargs = patch_get.call_args
     pd.testing.assert_frame_equal(kwargs["dataset_real"], df_real)

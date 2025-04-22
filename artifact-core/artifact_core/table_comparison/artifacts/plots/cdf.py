@@ -22,6 +22,6 @@ class CDFComparisonCombinedPlot(TableComparisonPlot[NoArtifactHyperparams]):
         dict_plots = OverlaidCDFPlotter.get_overlaid_cdf_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
         )
         return dict_plots

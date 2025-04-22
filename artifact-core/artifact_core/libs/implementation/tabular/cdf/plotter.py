@@ -3,7 +3,7 @@ from typing import Dict, List
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from matplotlib.figure import Figure
+from matplotlib.figure import Figure, SubFigure
 
 from artifact_core.libs.utils.plot_combiner import (
     PlotCombinationConfig,
@@ -103,5 +103,9 @@ class CDFPlotter:
         ax.tick_params(axis="both", which="major", labelsize=8)
         ax.tick_params(axis="both", which="minor", labelsize=6)
         plot = ax.get_figure()
+        if plot is None:
+            return Figure()
+        if isinstance(plot, SubFigure):
+            return Figure()
         plot.suptitle(f"CDF: {feature_name}")
         return plot

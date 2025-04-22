@@ -3,8 +3,8 @@ from unittest.mock import ANY
 
 import pandas as pd
 import pytest
-from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.libs.implementation.tabular.js.js import JSDistanceCalculator
+from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.base import (
     DatasetComparisonArtifactResources,
 )
@@ -22,7 +22,7 @@ def hyperparams() -> JSDistanceHyperparams:
 
 def test_compute(
     mocker: MockerFixture,
-    data_spec: TabularDataSpecProtocol,
+    resource_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
     hyperparams: JSDistanceHyperparams,
@@ -33,7 +33,7 @@ def test_compute(
         attribute="compute_dict_js",
         return_value=fake_scores,
     )
-    artifact = JSDistance(data_spec=data_spec, hyperparams=hyperparams)
+    artifact = JSDistance(resource_spec=resource_spec, hyperparams=hyperparams)
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
@@ -41,9 +41,9 @@ def test_compute(
     patch_compute_dict_js.assert_called_once_with(
         df_real=ANY,
         df_synthetic=ANY,
-        ls_cts_features=data_spec.ls_cts_features,
-        ls_cat_features=data_spec.ls_cat_features,
-        cat_unique_map=data_spec.cat_unique_map,
+        ls_cts_features=resource_spec.ls_cts_features,
+        ls_cat_features=resource_spec.ls_cat_features,
+        cat_unique_map=resource_spec.cat_unique_map,
         n_bins_cts_histogram=hyperparams.n_bins_cts_histogram,
         categorical_only=hyperparams.categorical_only,
     )

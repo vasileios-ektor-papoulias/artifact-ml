@@ -128,8 +128,8 @@ class JSDistanceCalculator:
     ) -> pd.DataFrame:
         df = df.copy()
         for feat in ls_cts_features:
-            bins = dict_bins[feat]
-            df[feat] = pd.cut(df[feat], bins=bins, include_lowest=True)
+            bins = pd.Series(dict_bins[feat])
+            df[feat] = pd.cut(x=df[feat], bins=bins, include_lowest=True)
         return df
 
     @staticmethod
@@ -157,6 +157,8 @@ class JSDistanceCalculator:
             arr_real_values = sr_real.unique()
             arr_synthetic_values = sr_synth.unique()
             ls_unique_categories = np.union1d(arr_real_values, arr_synthetic_values).tolist()
+            if ls_unique_categories is None:
+                ls_unique_categories = []
         return ls_unique_categories
 
     @staticmethod

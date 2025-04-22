@@ -3,7 +3,7 @@ from typing import Dict, List
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from matplotlib.figure import Figure
+from matplotlib.figure import Figure, SubFigure
 
 from artifact_core.libs.utils.plot_combiner import (
     PlotCombinationConfig,
@@ -142,5 +142,9 @@ class OverlaidCDFPlotter:
         ax.tick_params(axis="both", which="minor", labelsize=6)
         ax.legend()
         fig = ax.get_figure()
+        if fig is None:
+            return Figure()
+        if isinstance(fig, SubFigure):
+            return Figure()
         fig.suptitle(f"CDF Comparison: {feature_name}")
         return fig

@@ -26,7 +26,9 @@ class ProjectorBase(ABC, Generic[projectorHyperparamsT]):
         hyperparams: projectorHyperparamsT,
         plotter: ProjectionPlotter,
     ):
-        self._validate_data_spec(ls_cat_features=ls_cat_features, ls_cts_features=ls_cts_features)
+        self._validate_resource_spec(
+            ls_cat_features=ls_cat_features, ls_cts_features=ls_cts_features
+        )
         self._ls_cat_features = ls_cat_features
         self._ls_cts_features = ls_cts_features
         self._hyperparams = hyperparams
@@ -80,7 +82,7 @@ class ProjectorBase(ABC, Generic[projectorHyperparamsT]):
         return dataset_preprocessed
 
     @staticmethod
-    def _validate_data_spec(ls_cat_features: List[str], ls_cts_features: List[str]):
+    def _validate_resource_spec(ls_cat_features: List[str], ls_cts_features: List[str]):
         if not ls_cat_features and not ls_cts_features:
             raise ValueError("Both categorical and continuous feature lists are empty.")
         overlap = set(ls_cat_features).intersection(ls_cts_features)
