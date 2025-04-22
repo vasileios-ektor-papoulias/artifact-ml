@@ -4,7 +4,7 @@ from typing import Dict
 import pandas as pd
 
 from artifact_core.base.artifact_dependencies import ArtifactHyperparams
-from artifact_core.libs.implementation.tabular.js.js import JSDistanceCalculator
+from artifact_core.libs.implementation.tabular.js.js_calculator import JSDistanceCalculator
 from artifact_core.libs.resource_spec.tabular.protocol import (
     TabularDataSpecProtocol,
 )
