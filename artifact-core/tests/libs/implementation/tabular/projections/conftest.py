@@ -27,9 +27,9 @@ def dataset_small() -> Tuple[pd.DataFrame, List[str], List[str]]:
 def dataset_large() -> Tuple[pd.DataFrame, List[str], List[str]]:
     np.random.seed(1)
     return (
-        pd.DataFrame(np.random.rand(50, 5), columns=["cts_1", "cts_2", "cts_3", "c4", "c5"]),
+        pd.DataFrame(np.random.rand(50, 5), columns=["cts_1", "cts_2", "cts_3", "cts_4", "cts_5"]),
         [],
-        ["cts_1", "cts_2", "cts_3", "c4", "c5"],
+        ["cts_1", "cts_2", "cts_3", "cts_4", "cts_5"],
     )
 
 
