@@ -4,7 +4,7 @@ from typing import Dict, List
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.js.js import JSDistanceCalculator
+from artifact_core.libs.implementation.tabular.js.js_calculator import JSDistanceCalculator
 
 
 @pytest.mark.parametrize(
