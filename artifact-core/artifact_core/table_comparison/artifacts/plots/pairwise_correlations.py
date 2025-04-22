@@ -5,15 +5,15 @@ import pandas as pd
 from matplotlib.figure import Figure
 
 from artifact_core.base.artifact_dependencies import ArtifactHyperparams
-from artifact_core.libs.data_spec.tabular.protocol import (
-    TabularDataSpecProtocol,
-)
 from artifact_core.libs.implementation.tabular.pairwise_correlation.calculator import (
     CategoricalAssociationType,
     ContinuousAssociationType,
 )
 from artifact_core.libs.implementation.tabular.pairwise_correlation.plotter import (
     PairwiseCorrelationHeatmapPlotter,
+)
+from artifact_core.libs.resource_spec.tabular.protocol import (
+    TabularDataSpecProtocol,
 )
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonPlot,
@@ -63,10 +63,10 @@ class CorrelationComparisonHeatmapConfig(ArtifactHyperparams):
 class CorrelationComparisonCombinedPlot(TableComparisonPlot[CorrelationComparisonHeatmapConfig]):
     def __init__(
         self,
-        data_spec: TabularDataSpecProtocol,
+        resource_spec: TabularDataSpecProtocol,
         hyperparams: CorrelationComparisonHeatmapConfig,
     ):
-        self._data_spec = data_spec
+        self._resource_spec = resource_spec
         self._hyperparams = hyperparams
 
     def _compare_datasets(
@@ -77,6 +77,6 @@ class CorrelationComparisonCombinedPlot(TableComparisonPlot[CorrelationCompariso
             continuous_correlation_type=self._hyperparams.continuous_association_type,
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cat_features=self._data_spec.ls_cat_features,
+            ls_cat_features=self._resource_spec.ls_cat_features,
         )
         return plot

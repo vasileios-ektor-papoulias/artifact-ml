@@ -7,7 +7,7 @@ from artifact_core.base.registry import (
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-from tests.base.dummy.artifact_dependencies import DummyArtifactResources, DummyDataSpec
+from tests.base.dummy.artifact_dependencies import DummyArtifactResources, DummyResourceSpec
 
 
 class DummyScoreType(ArtifactType):
@@ -18,7 +18,7 @@ class DummyScoreType(ArtifactType):
 
 
 class DummyScoreRegistry(
-    ArtifactRegistry[DummyScoreType, DummyArtifactResources, float, DummyDataSpec]
+    ArtifactRegistry[DummyScoreType, DummyArtifactResources, float, DummyResourceSpec]
 ):
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
@@ -28,7 +28,7 @@ class DummyScoreRegistry(
 
 
 class AlternativeDummyScoreRegistry(
-    ArtifactRegistry[DummyScoreType, DummyArtifactResources, float, DummyDataSpec]
+    ArtifactRegistry[DummyScoreType, DummyArtifactResources, float, DummyResourceSpec]
 ):
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
@@ -36,7 +36,7 @@ class AlternativeDummyScoreRegistry(
 
 
 class MissingParamDummyScoreRegistry(
-    ArtifactRegistry[DummyScoreType, DummyArtifactResources, float, DummyDataSpec]
+    ArtifactRegistry[DummyScoreType, DummyArtifactResources, float, DummyResourceSpec]
 ):
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
@@ -46,7 +46,7 @@ class MissingParamDummyScoreRegistry(
 
 
 class InvalidParamDummyScoreRegistry(
-    ArtifactRegistry[DummyScoreType, DummyArtifactResources, float, DummyDataSpec]
+    ArtifactRegistry[DummyScoreType, DummyArtifactResources, float, DummyResourceSpec]
 ):
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
@@ -60,7 +60,7 @@ class DummyArrayType(ArtifactType):
 
 
 class DummyArrayRegistry(
-    ArtifactRegistry[DummyArrayType, DummyArtifactResources, ndarray, DummyDataSpec]
+    ArtifactRegistry[DummyArrayType, DummyArtifactResources, ndarray, DummyResourceSpec]
 ):
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
@@ -72,7 +72,7 @@ class DummyPlotType(ArtifactType):
 
 
 class DummyPlotRegistry(
-    ArtifactRegistry[DummyPlotType, DummyArtifactResources, Figure, DummyDataSpec]
+    ArtifactRegistry[DummyPlotType, DummyArtifactResources, Figure, DummyResourceSpec]
 ):
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
@@ -85,7 +85,7 @@ class DummyScoreCollectionType(ArtifactType):
 
 class DummyScoreCollectionRegistry(
     ArtifactRegistry[
-        DummyScoreCollectionType, DummyArtifactResources, Dict[str, float], DummyDataSpec
+        DummyScoreCollectionType, DummyArtifactResources, Dict[str, float], DummyResourceSpec
     ]
 ):
     @classmethod
@@ -99,7 +99,7 @@ class DummyArrayCollectionType(ArtifactType):
 
 class DummyArrayCollectionRegistry(
     ArtifactRegistry[
-        DummyArrayCollectionType, DummyArtifactResources, Dict[str, ndarray], DummyDataSpec
+        DummyArrayCollectionType, DummyArtifactResources, Dict[str, ndarray], DummyResourceSpec
     ]
 ):
     @classmethod
@@ -113,7 +113,7 @@ class DummyPlotCollectionType(ArtifactType):
 
 class DummyPlotCollectionRegistry(
     ArtifactRegistry[
-        DummyPlotCollectionType, DummyArtifactResources, Dict[str, Figure], DummyDataSpec
+        DummyPlotCollectionType, DummyArtifactResources, Dict[str, Figure], DummyResourceSpec
     ]
 ):
     @classmethod

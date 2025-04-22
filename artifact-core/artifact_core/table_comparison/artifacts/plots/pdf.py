@@ -22,9 +22,9 @@ class PDFComparisonCombinedPlot(TableComparisonPlot[NoArtifactHyperparams]):
         dict_plots = OverlaidPDFPlotter.get_overlaid_pdf_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_features_order=self._data_spec.ls_features,
-            ls_cts_features=self._data_spec.ls_cts_features,
-            ls_cat_features=self._data_spec.ls_cat_features,
-            cat_unique_map=self._data_spec.cat_unique_map,
+            ls_features_order=self._resource_spec.ls_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
+            ls_cat_features=self._resource_spec.ls_cat_features,
+            cat_unique_map=self._resource_spec.cat_unique_map,
         )
         return dict_plots

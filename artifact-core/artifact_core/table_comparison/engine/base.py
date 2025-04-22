@@ -6,7 +6,7 @@ from artifact_core.base.registry import ArtifactType
 from artifact_core.core.dataset_comparison.engine import (
     DatasetComparisonEngine,
 )
-from artifact_core.libs.data_spec.tabular.protocol import (
+from artifact_core.libs.resource_spec.tabular.protocol import (
     TabularDataSpecProtocol,
 )
 

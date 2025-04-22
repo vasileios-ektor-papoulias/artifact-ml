@@ -1,4 +1,4 @@
-from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.engine.engine import (
     TableComparisonArrayCollectionRegistry,
     TableComparisonArrayRegistry,
@@ -11,10 +11,10 @@ from artifact_core.table_comparison.engine.engine import (
 
 
 def test_state(
-    data_spec: TabularDataSpecProtocol,
+    resource_spec: TabularDataSpecProtocol,
 ):
-    engine = TableComparisonEngine(data_spec=data_spec)
-    assert engine.data_spec == data_spec
+    engine = TableComparisonEngine(resource_spec=resource_spec)
+    assert engine.resource_spec == resource_spec
     assert engine.score_registry == TableComparisonScoreRegistry
     assert engine.array_registry == TableComparisonArrayRegistry
     assert engine.plot_registry == TableComparisonPlotRegistry

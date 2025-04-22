@@ -267,7 +267,7 @@ This is intended to serve research projects in synthetic tabular data generation
 
 ```python
 import pandas as pd
-from artifact_core.libs.data_spec.tabular.spec import TabularDataSpec
+from artifact_core.libs.resource_spec.tabular.spec import TabularDataSpec
 from artifact_core.table_comparison import (
     TableComparisonEngine,
     TableComparisonPlotType,
@@ -288,7 +288,7 @@ spec = TabularDataSpec.from_df(
 )
 
 # Create the engine
-engine = TableComparisonEngine(data_spec=spec)
+engine = TableComparisonEngine(resource_spec=spec)
 
 # Compute a plot artifact
 pca_plot = engine.produce_dataset_comparison_plot(
@@ -383,7 +383,7 @@ import pandas as pd
 from artifact_core.base.artifact import Artifact
 from artifact_core.table_comparison.registries.scores.registry import TableComparisonScoreRegistry
 from artifact_core.table_comparison.registries.scores.types import TableComparisonScoreType
-from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.core.dataset_comparison.artifact import DatasetComparisonResources
 
 
@@ -397,8 +397,8 @@ class NewTableComparisonScore(
         return resources
         
     def _compute(self, resources: DatasetComparisonResources) -> float:
-        real_data = resources.dataset_real[self._data_spec.ls_cts_features]
-        synthetic_data = resources.dataset_synthetic[self._data_spec.ls_cts_features]
+        real_data = resources.dataset_real[self._resource_spec.ls_cts_features]
+        synthetic_data = resources.dataset_synthetic[self._resource_spec.ls_cts_features]
         score = 1.0
         if score > self._hyperparams.threshold and self._hyperparams.use_weights:
             score = 2*score
@@ -430,7 +430,7 @@ import pandas as pd
 from artifact_core.table_comparison.artifacts.base import TableComparisonArtifactResources, TableComparisonScore
 from artifact_core.table_comparison.registries.scores.registry import TableComparisonScoreRegistry
 from artifact_core.table_comparison.registries.scores.types import TableComparisonScoreType
-from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.core.dataset_comparison.artifact import DatasetComparisonResources
 
 
@@ -438,8 +438,8 @@ from artifact_core.core.dataset_comparison.artifact import DatasetComparisonReso
 class NewTableComparisonScore(TableComparisonScore[CustomArtifactHyperparams]):
         
     def _compare_datasets(self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame) -> float:
-        dataset_real = dataset_real[self._data_spec.ls_cts_features]
-        dataset_synthetic = dataset_synthetic[self._data_spec.ls_cts_features]
+        dataset_real = dataset_real[self._resource_spec.ls_cts_features]
+        dataset_synthetic = dataset_synthetic[self._resource_spec.ls_cts_features]
         score = 1.0
         if score > self._hyperparams.threshold and self._hyperparams.use_weights:
             score = 2*score

@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 
 import pandas as pd
 import pytest
-from artifact_core.libs.validation.tabular.table_validator import TableValidator
+from artifact_core.libs.resource_validation.tabular.table_validator import TableValidator
 
 
 @pytest.mark.parametrize(

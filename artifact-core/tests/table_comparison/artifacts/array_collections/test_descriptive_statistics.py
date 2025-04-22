@@ -5,11 +5,11 @@ import numpy as np
 import pandas as pd
 import pytest
 from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
-from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.libs.implementation.tabular.descriptive_statistics.calculator import (
     DescriptiveStatistic,
     DescriptiveStatisticsCalculator,
 )
+from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.array_collections.descriptive_statistics import (
     ContinuousFeatureFirstQuartilesJuxtaposition,
     ContinuousFeatureMaximaJuxtaposition,
@@ -42,7 +42,7 @@ from pytest_mock import MockerFixture
 )
 def test_compute(
     mocker: MockerFixture,
-    data_spec: TabularDataSpecProtocol,
+    resource_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
     artifact_class: Type[TableComparisonArrayCollection],
@@ -54,7 +54,7 @@ def test_compute(
         attribute="compute_juxtaposition",
         return_value=fake_result,
     )
-    artifact = artifact_class(data_spec=data_spec, hyperparams=NO_ARTIFACT_HYPERPARAMS)
+    artifact = artifact_class(resource_spec=resource_spec, hyperparams=NO_ARTIFACT_HYPERPARAMS)
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
@@ -62,7 +62,7 @@ def test_compute(
     patch_compute.assert_called_once_with(
         df_real=ANY,
         df_synthetic=ANY,
-        ls_cts_features=data_spec.ls_cts_features,
+        ls_cts_features=resource_spec.ls_cts_features,
         stat=statistic,
     )
     _, kwargs = patch_compute.call_args

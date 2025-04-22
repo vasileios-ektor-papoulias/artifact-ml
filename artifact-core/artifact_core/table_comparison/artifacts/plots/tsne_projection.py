@@ -4,12 +4,12 @@ import pandas as pd
 from matplotlib.figure import Figure
 
 from artifact_core.base.artifact_dependencies import ArtifactHyperparams
-from artifact_core.libs.data_spec.tabular.protocol import (
-    TabularDataSpecProtocol,
-)
 from artifact_core.libs.implementation.tabular.projections.tsne import (
     TSNEHyperparams,
     TSNEProjector,
+)
+from artifact_core.libs.resource_spec.tabular.protocol import (
+    TabularDataSpecProtocol,
 )
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonPlot,
@@ -33,10 +33,10 @@ class TSNEProjectionComparisonPlotConfig(ArtifactHyperparams):
 class TSNEProjectionComparisonPlot(TableComparisonPlot[TSNEProjectionComparisonPlotConfig]):
     def __init__(
         self,
-        data_spec: TabularDataSpecProtocol,
+        resource_spec: TabularDataSpecProtocol,
         hyperparams: TSNEProjectionComparisonPlotConfig,
     ):
-        self._data_spec = data_spec
+        self._resource_spec = resource_spec
         self._hyperparams = hyperparams
 
     def _compare_datasets(
@@ -44,8 +44,8 @@ class TSNEProjectionComparisonPlot(TableComparisonPlot[TSNEProjectionComparisonP
     ) -> Figure:
         projector_config = TSNEHyperparams(use_categorical=self._hyperparams.use_categorical)
         projector = TSNEProjector.build(
-            ls_cat_features=self._data_spec.ls_cat_features,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cat_features=self._resource_spec.ls_cat_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
             projector_config=projector_config,
         )
         plot = projector.produce_projection_comparison_plot(

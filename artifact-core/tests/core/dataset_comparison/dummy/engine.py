@@ -1,6 +1,9 @@
 from artifact_core.core.dataset_comparison.engine import DatasetComparisonEngine
 
-from tests.core.dataset_comparison.dummy.artifact_dependencies import DummyDataset, DummyDataSpec
+from tests.core.dataset_comparison.dummy.artifact_dependencies import (
+    DummyDataset,
+    DummyResourceSpec,
+)
 from tests.core.dataset_comparison.dummy.registries import (
     DummyDatasetComparisonArrayCollectionRegistry,
     DummyDatasetComparisonArrayCollectionType,
@@ -20,7 +23,7 @@ from tests.core.dataset_comparison.dummy.registries import (
 class DummyDatasetComparisonEngine(
     DatasetComparisonEngine[
         DummyDataset,
-        DummyDataSpec,
+        DummyResourceSpec,
         DummyDatasetComparisonScoreType,
         DummyDatasetComparisonArrayType,
         DummyDatasetComparisonPlotType,

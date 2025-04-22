@@ -23,15 +23,15 @@ class NoArtifactHyperparams(ArtifactHyperparams):
 NO_ARTIFACT_HYPERPARAMS = NoArtifactHyperparams()
 
 
-class DataSpecProtocol(Protocol):
+class ResourceSpecProtocol(Protocol):
     pass
 
 
-class NoDataSpec(DataSpecProtocol):
+class NoResourceSpec(ResourceSpecProtocol):
     pass
 
 
-NO_DATA_SPEC = NoDataSpec()
+NO_RESOURCE_SPEC = NoResourceSpec()
 
 
 @dataclass(frozen=True)

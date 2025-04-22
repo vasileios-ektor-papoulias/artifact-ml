@@ -2,12 +2,12 @@ from unittest.mock import ANY
 
 import pandas as pd
 import pytest
-from artifact_core.libs.data_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.libs.implementation.tabular.pairwise_correlation.calculator import (
     CategoricalAssociationType,
     ContinuousAssociationType,
     PairwiseCorrelationCalculator,
 )
+from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.libs.utils.vector_distance_calculator import VectorDistanceMetric
 from artifact_core.table_comparison.artifacts.base import DatasetComparisonArtifactResources
 from artifact_core.table_comparison.artifacts.scores.pairwise_correlation_distance import (
@@ -28,7 +28,7 @@ def hyperparams() -> PairwiseCorrelationDistanceConfig:
 
 def test_compute(
     mocker: MockerFixture,
-    data_spec: TabularDataSpecProtocol,
+    resource_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
     hyperparams: PairwiseCorrelationDistanceConfig,
@@ -39,7 +39,7 @@ def test_compute(
         attribute="compute_correlation_distance",
         return_value=fake_score,
     )
-    artifact = PairwiseCorrelationDistance(data_spec=data_spec, hyperparams=hyperparams)
+    artifact = PairwiseCorrelationDistance(resource_spec=resource_spec, hyperparams=hyperparams)
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
@@ -50,7 +50,7 @@ def test_compute(
         distance_metric=hyperparams.vector_distance_metric,
         dataset_real=ANY,
         dataset_synthetic=ANY,
-        ls_cat_features=data_spec.ls_cat_features,
+        ls_cat_features=resource_spec.ls_cat_features,
     )
     _, kwargs = patch_compute_correlation_distance.call_args
     pd.testing.assert_frame_equal(kwargs["dataset_real"], df_real)

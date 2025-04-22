@@ -13,10 +13,10 @@ from artifact_core.core.dataset_comparison.artifact import (
     DatasetComparisonArtifact,
     DatasetComparisonArtifactResources,
 )
-from artifact_core.libs.data_spec.tabular.protocol import (
+from artifact_core.libs.resource_spec.tabular.protocol import (
     TabularDataSpecProtocol,
 )
-from artifact_core.libs.validation.tabular.table_validator import (
+from artifact_core.libs.resource_validation.tabular.table_validator import (
     TableValidator,
 )
 
@@ -43,21 +43,21 @@ class TableComparisonArtifact(
     ) -> Tuple[pd.DataFrame, pd.DataFrame]:
         ls_features = [
             feature
-            for feature in self._data_spec.ls_features
-            if feature in self._data_spec.ls_cat_features
-            or feature in self._data_spec.ls_cts_features
+            for feature in self._resource_spec.ls_features
+            if feature in self._resource_spec.ls_cat_features
+            or feature in self._resource_spec.ls_cts_features
         ]
         dataset_real_validated = TableValidator.validate(
             df=dataset_real,
             ls_features=ls_features,
-            ls_cat_features=self._data_spec.ls_cat_features,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cat_features=self._resource_spec.ls_cat_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
         )
         dataset_synthetic_validated = TableValidator.validate(
             df=dataset_synthetic,
             ls_features=ls_features,
-            ls_cat_features=self._data_spec.ls_cat_features,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cat_features=self._resource_spec.ls_cat_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
         )
         return dataset_real_validated, dataset_synthetic_validated
 

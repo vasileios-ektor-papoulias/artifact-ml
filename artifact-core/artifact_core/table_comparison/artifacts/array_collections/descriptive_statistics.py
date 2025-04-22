@@ -25,7 +25,7 @@ class ContinuousFeatureMeansJuxtaposition(TableComparisonArrayCollection[NoArtif
         result = DescriptiveStatisticsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
             stat=DescriptiveStatistic.MEAN,
         )
         return result
@@ -39,7 +39,7 @@ class ContinuousFeatureSTDsJuxtaposition(TableComparisonArrayCollection[NoArtifa
         result = DescriptiveStatisticsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
             stat=DescriptiveStatistic.STD,
         )
         return result
@@ -57,7 +57,7 @@ class ContinuousFeatureVariancesJuxtaposition(
         result = DescriptiveStatisticsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
             stat=DescriptiveStatistic.VARIANCE,
         )
         return result
@@ -73,7 +73,7 @@ class ContinuousFeatureMediansJuxtaposition(TableComparisonArrayCollection[NoArt
         result = DescriptiveStatisticsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
             stat=DescriptiveStatistic.MEDIAN,
         )
         return result
@@ -91,7 +91,7 @@ class ContinuousFeatureFirstQuartilesJuxtaposition(
         result = DescriptiveStatisticsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
             stat=DescriptiveStatistic.Q1,
         )
         return result
@@ -109,7 +109,7 @@ class ContinuousFeatureThirdQuartilesJuxtaposition(
         result = DescriptiveStatisticsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
             stat=DescriptiveStatistic.Q3,
         )
         return result
@@ -123,7 +123,7 @@ class ContinuousFeatureMinimaJuxtaposition(TableComparisonArrayCollection[NoArti
         result = DescriptiveStatisticsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
             stat=DescriptiveStatistic.MIN,
         )
         return result
@@ -137,7 +137,7 @@ class ContinuousFeatureMaximaJuxtaposition(TableComparisonArrayCollection[NoArti
         result = DescriptiveStatisticsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
-            ls_cts_features=self._data_spec.ls_cts_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
             stat=DescriptiveStatistic.MAX,
         )
         return result

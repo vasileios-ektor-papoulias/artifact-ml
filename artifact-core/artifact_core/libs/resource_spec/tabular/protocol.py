@@ -4,7 +4,7 @@ from typing import Dict, List, Protocol, Type, Union
 import numpy as np
 import pandas as pd
 
-from artifact_core.base.artifact_dependencies import DataSpecProtocol
+from artifact_core.base.artifact_dependencies import ResourceSpecProtocol
 
 TabularDataDType = Union[
     Type[int],
@@ -24,7 +24,7 @@ TabularDataDType = Union[
 ]
 
 
-class TabularDataSpecProtocol(DataSpecProtocol, Protocol):
+class TabularDataSpecProtocol(ResourceSpecProtocol, Protocol):
     @property
     def ls_features(self) -> List[str]: ...
 

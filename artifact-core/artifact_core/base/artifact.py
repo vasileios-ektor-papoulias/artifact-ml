@@ -5,10 +5,10 @@ from artifact_core.base.artifact_dependencies import (
     ArtifactHyperparams,
     ArtifactResources,
     ArtifactResult,
-    DataSpecProtocol,
+    ResourceSpecProtocol,
 )
 
-dataSpecProtocolT = TypeVar("dataSpecProtocolT", bound=DataSpecProtocol)
+resourceSpecProtocolT = TypeVar("resourceSpecProtocolT", bound=ResourceSpecProtocol)
 artifactHyperparamsT = TypeVar("artifactHyperparamsT", bound="ArtifactHyperparams")
 artifactResourcesT = TypeVar("artifactResourcesT", bound="ArtifactResources")
 artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
@@ -20,15 +20,15 @@ class Artifact(
         artifactResourcesT,
         artifactResultT,
         artifactHyperparamsT,
-        dataSpecProtocolT,
+        resourceSpecProtocolT,
     ],
 ):
     def __init__(
         self,
-        data_spec: dataSpecProtocolT,
+        resource_spec: resourceSpecProtocolT,
         hyperparams: artifactHyperparamsT,
     ):
-        self._data_spec = data_spec
+        self._resource_spec = resource_spec
         self._hyperparams = hyperparams
 
     @property
@@ -36,8 +36,8 @@ class Artifact(
         return self._hyperparams
 
     @property
-    def data_spec(self) -> dataSpecProtocolT:
-        return self._data_spec
+    def resource_spec(self) -> resourceSpecProtocolT:
+        return self._resource_spec
 
     def __call__(self, resources: artifactResourcesT) -> artifactResultT:
         return self.compute(resources=resources)
