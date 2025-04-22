@@ -20,10 +20,12 @@ pcaProjectorType = TypeVar("pcaProjectorType", bound="PCAProjector")
 
 @dataclass(frozen=True)
 class PCAHyperparams(ProjectorHyperparams):
-    n_components: int = 2
+    pass
 
 
 class PCAProjector(ProjectorBase[PCAHyperparams]):
+    _n_components = 2
+
     @classmethod
     def build(
         cls: Type[pcaProjectorType],
@@ -47,7 +49,7 @@ class PCAProjector(ProjectorBase[PCAHyperparams]):
 
     def _project(self, dataset_preprocessed: pd.DataFrame) -> Optional[np.ndarray]:
         try:
-            pca_model = PCA(n_components=self._hyperparams.n_components)
+            pca_model = PCA(n_components=self._n_components)
             return pca_model.fit_transform(X=dataset_preprocessed)
         except (ValueError, np.linalg.LinAlgError, NotFittedError):
             return None
