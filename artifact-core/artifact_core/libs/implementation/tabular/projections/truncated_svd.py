@@ -21,10 +21,12 @@ truncatedSVDProjectorType = TypeVar("truncatedSVDProjectorType", bound="Truncate
 
 @dataclass(frozen=True)
 class TruncatedSVDHyperparams(ProjectorHyperparams):
-    n_components: int = 2
+    pass
 
 
 class TruncatedSVDProjector(ProjectorBase[TruncatedSVDHyperparams]):
+    _n_components = 2
+
     @classmethod
     def build(
         cls: Type[truncatedSVDProjectorType],
@@ -48,7 +50,7 @@ class TruncatedSVDProjector(ProjectorBase[TruncatedSVDHyperparams]):
 
     def _project(self, dataset_preprocessed: pd.DataFrame) -> np.ndarray | None:
         try:
-            tsvd_model = TruncatedSVD(n_components=self._hyperparams.n_components)
+            tsvd_model = TruncatedSVD(n_components=self._n_components)
             return tsvd_model.fit_transform(X=dataset_preprocessed)
         except (ValueError, LinAlgError, NotFittedError):
             return None

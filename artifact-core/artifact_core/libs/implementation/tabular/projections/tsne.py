@@ -24,10 +24,11 @@ class TSNEHyperparams(ProjectorHyperparams):
     perplexity: float = 30.0
     learning_rate: float | Literal["auto"] = "auto"
     n_iter: int = 1000
-    n_components: int = 2
 
 
 class TSNEProjector(ProjectorBase[TSNEHyperparams]):
+    _n_components = 2
+
     @classmethod
     def build(
         cls: Type[tsneProjectorType],
@@ -53,7 +54,7 @@ class TSNEProjector(ProjectorBase[TSNEHyperparams]):
     def _project(self, dataset_preprocessed: pd.DataFrame) -> np.ndarray | None:
         try:
             tsne_model = TSNE(
-                n_components=self._hyperparams.n_components,
+                n_components=self._n_components,
                 perplexity=self._hyperparams.perplexity,
                 learning_rate=self._hyperparams.learning_rate,
                 n_iter=self._hyperparams.n_iter,
