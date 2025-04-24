@@ -507,7 +507,7 @@ from artifact_core.base.artifact_dependencies import NoArtifactHyperparams
 
 In this case no hyperparams class needs to be registered and no configuration params need to be added to the config file.
 
-The appropriate generics for table comparison artifacts are as follows:
+The appropriate generics for table comparison scores are as follows:
 
 ```python
 import pandas as pd
