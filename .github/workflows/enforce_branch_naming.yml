@@ -10,7 +10,7 @@ jobs:
   check-branch-naming:
     runs-on: ubuntu-latest
     env:
-      ALLOWED_COMPONENTS: "root artifact-core artifact-experiment artifact-torch"
+      ALLOWED_COMPONENTS: "root core experiment torch"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
