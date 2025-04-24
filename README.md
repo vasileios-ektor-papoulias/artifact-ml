@@ -19,7 +19,7 @@ Artifact is a modular framework for reusable, standardized validation across mac
 
 It enables the design of generic validation plans that work across models, datasets, and training frameworks.
 
-It thereby offers data scientists and ML engineers working in the same application domain a means to produce and share common---and easily customizable---validation plans.
+It thereby offers data scientists and ML engineers working in the same application domain a way to produce and share common—and easily customizable—validation plans.
 
 The upshot is:
 
@@ -64,7 +64,7 @@ Key features:
 - Extendible architecture to foster growth both in the collection of ML tasks (thematic model categories) addressed by the framework and the artifact collection supported for each category.
 
 
-### 2. artifact-experiment-tracking
+### 2. artifact-experiment
 
 A repository for experiment tracking with the Artifact framework.
 
@@ -77,7 +77,7 @@ Key features:
 
 ### 3. artifact-torch
 
-A deep learning framework built on top of artifact-core---abstracting engineering aspects of deep learning research (data pipelines, device management, training, monitoring validation) to enable researchers to focus on what matters.
+A deep learning framework built on top of artifact-core—abstracting engineering aspects of deep learning research (data pipelines, device management, training, monitoring validation) to enable researchers to focus on what matters.
 
 Key features:
 - Integration with PyTorch: lightweight PyTorch extension to ensure type-safety and compatibility with Artifact's validation plans.
@@ -93,13 +93,13 @@ ML research projects focusing on the same application domain can utilize shared 
 
 Capitalizing on this can facilitate:
 
-- the elimination of code duplication arising from tailoring a fixed high-level validation plan to a multiple model interfaces,
-- the elimination of varaince in validation results arising from unwanted discrepancies in validation logic,
-- the reduction of unnecessary coupling between research and engineering code---thereby freeing researchers to rapidly iterate on new ideas/ architectures.
+- the elimination of code duplication arising from tailoring a fixed high-level validation plan to multiple model interfaces,
+- the elimination of variance in validation results arising from unwanted discrepancies in validation logic,
+- the reduction of unnecessary coupling between research and engineering code—thereby freeing researchers to rapidly iterate on new ideas/ architectures.
 
 Making this happen comes down to designing, writing and deploying general validation plans requiring only the ***minimal structure shared by a given family of thematically related models***.
 
-Evidently, it's crucial to identify model families through concrete specifications of the ***minimal shared structure*** unifying them. We've pursued this goal by carefully designing flexible hierarchical types for the resources required to execute validation plans---and thereby implicitly grouping models by their ability to produce them.
+Evidently, it's crucial to identify model families through concrete specifications of the ***minimal shared structure*** unifying them. We've pursued this goal by carefully designing flexible hierarchical types for the resources required to execute validation plans—and thereby implicitly grouping models by their ability to produce them.
 
 ### Pluggable Architecture
 
