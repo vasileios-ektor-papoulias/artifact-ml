@@ -587,7 +587,9 @@ class NewTableComparisonScore(
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request, following the guidelines in [the framework README](./README.md).
+Contributions are welcome! 
+
+Please feel free to submit a Pull Request following the guidelines in [the general Artifact-ML README](./README.md).
 
 ## 📄 License
 
