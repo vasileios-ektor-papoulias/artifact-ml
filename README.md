@@ -2,6 +2,12 @@
 
 > Artifact is a modular framework for reusable, standardized validation across machine learning experiments. It enables the design of generic validation plans that work across models, datasets, and training frameworks.
 
+
+<p align="center">
+  <img src="assets/artifact_ml_logo.svg" width="600" alt="Overview Diagram">
+</p>
+
+
 ![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
 ![License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-core)
 
@@ -21,11 +27,33 @@ The upshot is:
 - the **elimination of varaince** in validation results arising from unwanted discrepancies in validation logic,
 - the reduction of friction in the research process as researchers become able to iterate on new ideas that are fairly evaluated with minimal high-level specifications.
 
-To illustrate: in the context of tabular synthetic data generation, models will ultimately produce pandas dataframes. This restriction is sufficient to produce general validation plans that are applicable to any tabular synthesizer and easily customizable by selecting abstract enumerations associated to common validation artifacts (e.g. mean JS divergence).
+To illustrate: in the context of tabular synthetic data generation, models will ultimately produce pandas dataframes. This restriction is sufficient to produce general validation plans that are applicable to any tabular synthesizer and easily customizable by selecting abstract enumerations associated to common validation artifacts (e.g. marginal distribution comparison plots).`
 
-<p align="center">
-  <img src="assets/artifact_ml_logo.svg" width="600" alt="Overview Diagram">
-</p>
+<style>
+  .img-row {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 24px;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .img-row img {
+    flex: 0 0 33%;
+    max-width: 500px;
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+</style>
+
+<div class="img-row">
+  <img src="assets/pdf_comparison.png" alt="PDF Comparison">
+  <img src="assets/pca_comparison.png" alt="PCA Comparison">
+  <img src="assets/min_comparison.png" alt="Minimum Comparison">
+</div>
+
 
 ## 🏗️ Framework Components
 
