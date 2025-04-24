@@ -35,7 +35,7 @@ This common denominator is sufficient to produce general validation plans that a
 
 Further, these validation plans can be made to be easily customizable through the selection of abstract enumerations associated to common validation artifacts (e.g. marginal distribution comparison plots).
 
-The upshot is that researchers developing tabular synthesizers can reuse common experiment code (training, validation, monitoring, experiment tracking) and easily tune it to their needs with minimal effort and zero code duplication.
+The upshot is that researchers developing tabular synthesizers can reuse common experiment code (training, validation, monitoring, experiment tracking) and easily tune it to their needs with minimal effort, ultimately enabling them to focus on what matters.
 
 <p align="center">
   <img src="assets/pdf_comparison.png" width="700" alt="PDF Comparison">
@@ -98,8 +98,6 @@ Capitalizing on this can facilitate:
 - the reduction of unnecessary coupling between research and engineering code---thereby freeing researchers to rapidly iterate on new ideas/ architectures.
 
 Making this happen comes down to designing, writing and deploying general validation plans requiring only the ***minimal structure shared by a given family of thematically related models***.
-
-To illustrate: any tabular data synthesizer should be able to produce a synthetic data table---and together with the original training data, this should be the only resources required to evaluate it. The upshot is that one can design general ML experiments: applicable to any tabular synthesizer requiring only these resources. This ultimately decouples research code from engineering code (e.g. training/validation): the latter would be project-agnostic and applicable to any tabular data generation project. To try out a new synthesizer one would only implement the forward pass, and then hook into pre-existing experiments on which competing models have been trained and evaluated.
 
 Evidently, it's crucial to identify model families through concrete specifications of the ***minimal shared structure*** unifying them. We've pursued this goal by carefully designing flexible hierarchical types for the resources required to execute validation plans---and thereby implicitly grouping models by their ability to produce them.
 
