@@ -7,10 +7,10 @@ from artifact_core.base.artifact_dependencies import (
     ArtifactHyperparams,
     ArtifactResources,
     ArtifactResult,
-    DataSpecProtocol,
+    ResourceSpecProtocol,
 )
 
-dataSpecProtocolT = TypeVar("dataSpecProtocolT", bound=DataSpecProtocol)
+resourceSpecProtocol = TypeVar("resourceSpecProtocol", bound=ResourceSpecProtocol)
 artifactHyperparamsT = TypeVar("artifactHyperparamsT", bound="ArtifactHyperparams")
 datasetT = TypeVar("datasetT")
 artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
@@ -24,16 +24,16 @@ class DatasetComparisonArtifactResources(ArtifactResources, Generic[datasetT]):
 
 class DatasetComparisonArtifact(
     Artifact[
-        DatasetComparisonArtifactResources[datasetT],
+        DatasetComparisonArtifactResources,
         artifactResultT,
         artifactHyperparamsT,
-        dataSpecProtocolT,
+        resourceSpecProtocol,
     ],
     Generic[
         datasetT,
         artifactResultT,
         artifactHyperparamsT,
-        dataSpecProtocolT,
+        resourceSpecProtocol,
     ],
 ):
     @abstractmethod

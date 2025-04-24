@@ -2,7 +2,7 @@ from typing import TypeVar
 
 from artifact_core.base.artifact_dependencies import (
     ArtifactResult,
-    DataSpecProtocol,
+    ResourceSpecProtocol,
 )
 from artifact_core.base.registry import ArtifactRegistry, ArtifactType
 from artifact_core.core.dataset_comparison.artifact import (
@@ -12,12 +12,12 @@ from artifact_core.core.dataset_comparison.artifact import (
 artifactTypeT = TypeVar("artifactTypeT", bound="ArtifactType")
 datasetT = TypeVar("datasetT")
 artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
-dataSpecProtocolT = TypeVar("dataSpecProtocolT", bound=DataSpecProtocol)
+resourceSpecProtocolT = TypeVar("resourceSpecProtocolT", bound=ResourceSpecProtocol)
 
 
 DatasetComparisonArtifactRegistry = ArtifactRegistry[
     artifactTypeT,
     DatasetComparisonArtifactResources[datasetT],
     artifactResultT,
-    dataSpecProtocolT,
+    resourceSpecProtocolT,
 ]

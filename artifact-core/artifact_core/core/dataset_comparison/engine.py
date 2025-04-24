@@ -3,7 +3,7 @@ from typing import Dict, Generic, TypeVar
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-from artifact_core.base.artifact_dependencies import DataSpecProtocol
+from artifact_core.base.artifact_dependencies import ResourceSpecProtocol
 from artifact_core.base.engine import ArtifactEngine
 from artifact_core.base.registry import ArtifactType
 from artifact_core.core.dataset_comparison.artifact import (
@@ -16,14 +16,14 @@ plotTypeT = TypeVar("plotTypeT", bound="ArtifactType")
 scoreCollectionTypeT = TypeVar("scoreCollectionTypeT", bound="ArtifactType")
 arrayCollectionTypeT = TypeVar("arrayCollectionTypeT", bound="ArtifactType")
 plotCollectionTypeT = TypeVar("plotCollectionTypeT", bound="ArtifactType")
-dataSpecProtocolT = TypeVar("dataSpecProtocolT", bound=DataSpecProtocol)
+resourceSpecProtocolT = TypeVar("resourceSpecProtocolT", bound=ResourceSpecProtocol)
 datasetT = TypeVar("datasetT")
 
 
 class DatasetComparisonEngine(
     ArtifactEngine[
         DatasetComparisonArtifactResources[datasetT],
-        dataSpecProtocolT,
+        resourceSpecProtocolT,
         scoreTypeT,
         arrayTypeT,
         plotTypeT,
@@ -33,7 +33,7 @@ class DatasetComparisonEngine(
     ],
     Generic[
         datasetT,
-        dataSpecProtocolT,
+        resourceSpecProtocolT,
         scoreTypeT,
         arrayTypeT,
         plotTypeT,

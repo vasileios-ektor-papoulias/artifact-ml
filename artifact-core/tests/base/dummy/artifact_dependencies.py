@@ -2,12 +2,12 @@ from dataclasses import dataclass
 
 from artifact_core.base.artifact_dependencies import (
     ArtifactResources,
-    DataSpecProtocol,
+    ResourceSpecProtocol,
 )
 
 
 @dataclass
-class DummyDataSpec(DataSpecProtocol):
+class DummyResourceSpec(ResourceSpecProtocol):
     scale: float
 
 

@@ -4,14 +4,15 @@ from typing import Any, Callable, Dict, Generic, Optional, Type, TypeVar
 
 from artifact_core.base.artifact import Artifact
 from artifact_core.base.artifact_dependencies import (
+    NO_ARTIFACT_HYPERPARAMS,
     ArtifactHyperparams,
     ArtifactResources,
     ArtifactResult,
-    DataSpecProtocol,
     NoArtifactHyperparams,
+    ResourceSpecProtocol,
 )
 
-dataSpecProtocolT = TypeVar("dataSpecProtocolT", bound="DataSpecProtocol")
+resourceSpecProtocol = TypeVar("resourceSpecProtocol", bound="ResourceSpecProtocol")
 artifactHyperparamsT = TypeVar("artifactHyperparamsT", bound="ArtifactHyperparams")
 artifactResourcesT = TypeVar("artifactResourcesT", bound="ArtifactResources")
 artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
@@ -24,7 +25,7 @@ class ArtifactType(Enum):
 
 
 class ArtifactRegistry(
-    Generic[artifactTypeT, artifactResourcesT, artifactResultT, dataSpecProtocolT]
+    Generic[artifactTypeT, artifactResourcesT, artifactResultT, resourceSpecProtocol]
 ):
     _artifact_registry: Dict[
         artifactTypeT,
@@ -33,7 +34,7 @@ class ArtifactRegistry(
                 artifactResourcesT,
                 artifactResultT,
                 ArtifactHyperparams,
-                dataSpecProtocolT,
+                resourceSpecProtocol,
             ]
         ],
     ] = {}
@@ -74,12 +75,12 @@ class ArtifactRegistry(
 
     @classmethod
     def get(
-        cls, artifact_type: artifactTypeT, data_spec: dataSpecProtocolT
+        cls, artifact_type: artifactTypeT, resource_spec: resourceSpecProtocol
     ) -> Artifact[
         artifactResourcesT,
         artifactResultT,
         ArtifactHyperparams,
-        dataSpecProtocolT,
+        resourceSpecProtocol,
     ]:
         artifact_class = cls._get_artifact_class(artifact_type=artifact_type)
         artifact_hyperparams_class = cls._get_artifact_hyperparams_class(
@@ -89,7 +90,7 @@ class ArtifactRegistry(
         hyperparams = cls._build_artifact_hyperparams(
             artifact_hyperparams_class=artifact_hyperparams_class, artifact_config=artifact_config
         )
-        artifact = artifact_class(data_spec=data_spec, hyperparams=hyperparams)
+        artifact = artifact_class(resource_spec=resource_spec, hyperparams=hyperparams)
         return artifact
 
     @classmethod
@@ -100,7 +101,7 @@ class ArtifactRegistry(
             artifactResourcesT,
             artifactResultT,
             ArtifactHyperparams,
-            dataSpecProtocolT,
+            resourceSpecProtocol,
         ]
     ]:
         artifact_class = cls._artifact_registry.get(artifact_type, None)
@@ -111,32 +112,32 @@ class ArtifactRegistry(
     @classmethod
     def _build_artifact_hyperparams(
         cls,
-        artifact_hyperparams_class: Optional[Type[ArtifactHyperparams]],
+        artifact_hyperparams_class: Type[ArtifactHyperparams],
         artifact_config: Optional[Dict[str, Any]],
-    ) -> Optional[ArtifactHyperparams]:
-        if artifact_hyperparams_class is None:
-            artifact_hyperparams = None
-        elif artifact_hyperparams_class == NoArtifactHyperparams:
-            artifact_hyperparams = None
+    ) -> ArtifactHyperparams:
+        if artifact_hyperparams_class == NoArtifactHyperparams:
+            artifact_hyperparams = NO_ARTIFACT_HYPERPARAMS
         elif artifact_config is None:
             raise ValueError(
                 f"Missing config for hyperparams type {artifact_hyperparams_class.__name__}"
             )
         else:
             try:
-                artifact_hyperparams = artifact_hyperparams_class(**artifact_config)
-            except TypeError as err:
+                artifact_hyperparams = artifact_hyperparams_class.build(**artifact_config)
+            except TypeError as e:
                 raise ValueError(
                     f"Error instantiating '{artifact_hyperparams_class.__name__}'"
-                    f"with argumentss {artifact_config}: {err}"
-                ) from err
+                    f"with argumentss {artifact_config}: {e}"
+                ) from e
         return artifact_hyperparams
 
     @classmethod
     def _get_artifact_hyperparams_class(
         cls, artifact_type: artifactTypeT
-    ) -> Optional[Type[ArtifactHyperparams]]:
-        artifact_hyperparams_class = cls._artifact_config_registry.get(artifact_type, None)
+    ) -> Type[ArtifactHyperparams]:
+        artifact_hyperparams_class = cls._artifact_config_registry.get(
+            artifact_type, NoArtifactHyperparams
+        )
         return artifact_hyperparams_class
 
     @classmethod
