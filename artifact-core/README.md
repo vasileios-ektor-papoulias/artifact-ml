@@ -572,7 +572,6 @@ class NewTableComparisonScore(
         score = 1.0
         if score > self._hyperparams.threshold and self._hyperparams.use_weights:
             score = 2*score
-
         return score
 ```
 
