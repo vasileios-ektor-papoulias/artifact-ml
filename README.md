@@ -43,15 +43,17 @@ The upshot is that researchers developing tabular synthesizers can reuse common 
     flex-direction: column;
     align-items: center;
     gap: 24px;
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
   }
   .img-stack img {
+    display: block;
+    margin: 0 auto;
     width: 100%;
     max-width: 700px;
     height: auto;
-    display: block;
-  }.img-stack img:nth-child(2) {
+  }
+  .img-stack img:nth-child(2) {
     max-width: 900px;
   }
 </style>
