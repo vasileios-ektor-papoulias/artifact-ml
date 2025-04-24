@@ -15,9 +15,9 @@ It provides a **flexible minimal interface** for the computation of heterogeneou
 It defines the core abstractions, interfaces, and implementations that enable standardized validation across different models and datasets.
 
 This repository serves as the base layer of **Artifact**, which comprises of:
-- **artifact-core**: Core validation framework (this repository)
-- **artifact-experiment-tracking**: Executable validation plans with experiment tracking integration
-- **artifact-torch**: Deep learning framework built on Artifact
+- **artifact-core**: Core framework providing the fundamental abstractions and implementations for standardized validation.
+- **artifact-experiment-tracking**: Executable validation plans exporting results to popular experiment tracking services.
+- **artifact-torch**: PyTorch integration for rapid prototyping: flexible model types and trainers supporting seamless validation using Artifact-ML.
 
 <p align="center">
   <img src="./assets/artifact_ml_logo.svg" width="600" alt="Artifact-ML Logo">
@@ -26,6 +26,25 @@ This repository serves as the base layer of **Artifact**, which comprises of:
 ## 📚 Examples
 
 ```python
+import pandas as pd
+from artifact_core.libs.resource_spec.tabular.spec import TabularDataSpec
+from artifact_core.table_comparison import (
+    TableComparisonEngine,
+    TableComparisonScoreType,
+)
+
+df_real = pd.read_csv("real_data.csv")
+
+df_synthetic = pd.read_csv("synthetic_data.csv")
+
+spec = TabularDataSpec.from_df(
+    df=df_real, 
+    cat_features=categorical_features, 
+    cont_features=continuous_features
+)
+
+engine = TableComparisonEngine(resource_spec=spec)
+
 dict_ js_distance = engine.produce_dataset_comparison_score_collection(
     score_collection_type=TableComparisonScoreCollectionType.JS_DISTANCE,
     dataset_real=df_real,
@@ -40,6 +59,10 @@ dict_ js_distance
 </p>
 
 ```python
+from artifact_core.table_comparison import (
+    TableComparisonPlotType,
+)
+
 pca_plot = engine.produce_dataset_comparison_plot(
     plot_type=TableComparisonPlotType.PCA_PROJECTION_PLOT,
     dataset_real=df_real,
