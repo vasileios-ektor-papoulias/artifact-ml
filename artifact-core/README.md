@@ -14,9 +14,9 @@ It provides a **flexible minimal interface** for the computation of heterogeneou
 
 It defines the core abstractions, interfaces, and implementations that enable standardized validation across different models and datasets.
 
-This repository serves as the base layer of **Artifact**, which comprises of:
+This repository serves as the base layer of **Artifact**, which consists of:
 - **artifact-core**: Core framework providing the fundamental abstractions and implementations for standardized validation.
-- **artifact-experiment-tracking**: Executable validation plans exporting results to popular experiment tracking services.
+- **artifact-experiment**: Executable validation plans exporting results to popular experiment tracking services.
 - **artifact-torch**: PyTorch integration for rapid prototyping: flexible model types and trainers supporting seamless validation using Artifact-ML.
 
 <p align="center">
@@ -45,13 +45,13 @@ spec = TabularDataSpec.from_df(
 
 engine = TableComparisonEngine(resource_spec=spec)
 
-dict_ js_distance = engine.produce_dataset_comparison_score_collection(
+dict_js_distance = engine.produce_dataset_comparison_score_collection(
     score_collection_type=TableComparisonScoreCollectionType.JS_DISTANCE,
     dataset_real=df_real,
     dataset_synthetic=df_synthetic,
 )
 
-dict_ js_distance
+dict_js_distance
 ```
 
 <p align="center">
@@ -114,7 +114,7 @@ The framework follows a modular architecture with the following key components:
 
 1. **Artifact**: A flexible computation unit utilizing generic resources, static resource specifications and hyperparameters to evaluate model outputs.
 2. **ArtifactRegistry**: Manages the registration and retrieval of artifacts.
-3. **ArtifactEngine**: High level interface orchestrating the production of validation artifacts.
+3. **ArtifactEngine**: High-level interface orchestrating the production of validation artifacts.
 
 Artifacts are reusable components that compute specific validation metrics or visualizations.
 
