@@ -141,6 +141,93 @@ New artifacts can be registered with the appropriate registry. In doing so abstr
 
 All artifacts associated to a given engine share resources and resource spec types.
 
+## 📊 Table Comparison Engine
+
+`artifact-core` provides a concrete implementation for the comparison of tabular datasets: the **TableComparisonEngine**.
+
+This is intended to serve research projects in synthetic tabular data generation.
+
+### TableComparisonEngine: Available Artifacts
+
+#### Plots
+- `PDF_PLOT`: Probability density function plots
+- `CDF_PLOT`: Cumulative distribution function plots
+- `DESCRIPTIVE_STATS_COMPARISON_PLOT`: Comparison of descriptive statistics
+- `MEAN_COMPARISON_PLOT`: Comparison of means between real and synthetic data
+- `STD_COMPARISON_PLOT`: Comparison of standard deviations
+- `VARIANCE_COMPARISON_PLOT`: Comparison of variances
+- `MEDIAN_COMPARISON_PLOT`: Comparison of medians
+- `FIRST_QUARTILE_COMPARISON_PLOT`: Comparison of first quartiles
+- `THIRD_QUARTILE_COMPARISON_PLOT`: Comparison of third quartiles
+- `MIN_COMPARISON_PLOT`: Comparison of minimum values
+- `MAX_COMPARISON_PLOT`: Comparison of maximum values
+- `PAIRWISE_CORRELATION_COMPARISON_HEATMAP`: Correlation comparison heatmap
+- `PCA_PROJECTION_PLOT`: PCA projection visualization
+- `TRUNCATED_SVD_PROJECTION_PLOT`: Truncated SVD projection visualization
+- `TSNE_PROJECTION_PLOT`: t-SNE projection visualization
+
+#### Scores
+- `MEAN_JS_DISTANCE`: Jensen-Shannon divergence between distributions
+- `PAIRWISE_CORRELATION_DISTANCE`: Distance between correlation matrices
+
+#### Score Collections
+- `JS_DISTANCE`: Collection of Jensen-Shannon distances for all features
+
+#### Array Collections
+- `MEANS`: Collection of mean values for all features
+- `STDS`: Collection of standard deviations for all features
+- `VARIANCES`: Collection of variances for all features
+- `MEDIANS`: Collection of median values for all features
+- `FIRST_QUARTILES`: Collection of first quartile values for all features
+- `THIRD_QUARTILES`: Collection of third quartile values for all features
+- `MINIMA`: Collection of minimum values for all features
+- `MAXIMA`: Collection of maximum values for all features
+
+#### Plot Collections
+- `PDF_PLOTS`: Collection of PDF plots for all features
+- `CDF_PLOTS`: Collection of CDF plots for all features
+
+### 📊 Example: General Usage
+
+```python
+import pandas as pd
+from artifact_core.libs.resource_spec.tabular.spec import TabularDataSpec
+from artifact_core.table_comparison import (
+    TableComparisonEngine,
+    TableComparisonPlotType,
+    TableComparisonScoreType,
+)
+
+# Create or load your datasets
+df_real = pd.read_csv("real_data.csv")
+df_synthetic = pd.read_csv("synthetic_data.csv")
+
+# Define the data specification
+categorical_features = ["cat_1", "cat_2", "cat_3"]
+continuous_features = ["num_1", "num_2", "num_3"]
+spec = TabularDataSpec.from_df(
+    df=df_real, 
+    cat_features=categorical_features, 
+    cont_features=continuous_features
+)
+
+# Create the engine
+engine = TableComparisonEngine(resource_spec=spec)
+
+# Compute a plot artifact
+pca_plot = engine.produce_dataset_comparison_plot(
+    plot_type=TableComparisonPlotType.PCA_PROJECTION_PLOT,
+    dataset_real=df_real,
+    dataset_synthetic=df_synthetic,
+)
+
+# Compute a score artifact
+js_distance = engine.produce_dataset_comparison_score(
+    score_type=TableComparisonScoreType.MEAN_JS_DISTANCE,
+    dataset_real=df_real,
+    dataset_synthetic=df_synthetic,
+)
+```
 
 ## 🔧 Architecture Deep Dive
 
@@ -296,94 +383,6 @@ class CustomArtifactEngine(ArtifactEngine[
     ) -> float:
         resources = CustomResources(resource_attribute=resource_attribute)
         return self.produce_score(score_type=score_type, resources=resources)
-```
-
-## 📊 Table Comparison Engine
-
-`artifact-core` provides a concrete implementation for the comparison of tabular datasets: the **TableComparisonEngine**.
-
-This is intended to serve research projects in synthetic tabular data generation.
-
-### TableComparisonEngine: Available Artifacts
-
-#### Plots
-- `PDF_PLOT`: Probability density function plots
-- `CDF_PLOT`: Cumulative distribution function plots
-- `DESCRIPTIVE_STATS_COMPARISON_PLOT`: Comparison of descriptive statistics
-- `MEAN_COMPARISON_PLOT`: Comparison of means between real and synthetic data
-- `STD_COMPARISON_PLOT`: Comparison of standard deviations
-- `VARIANCE_COMPARISON_PLOT`: Comparison of variances
-- `MEDIAN_COMPARISON_PLOT`: Comparison of medians
-- `FIRST_QUARTILE_COMPARISON_PLOT`: Comparison of first quartiles
-- `THIRD_QUARTILE_COMPARISON_PLOT`: Comparison of third quartiles
-- `MIN_COMPARISON_PLOT`: Comparison of minimum values
-- `MAX_COMPARISON_PLOT`: Comparison of maximum values
-- `PAIRWISE_CORRELATION_COMPARISON_HEATMAP`: Correlation comparison heatmap
-- `PCA_PROJECTION_PLOT`: PCA projection visualization
-- `TRUNCATED_SVD_PROJECTION_PLOT`: Truncated SVD projection visualization
-- `TSNE_PROJECTION_PLOT`: t-SNE projection visualization
-
-#### Scores
-- `MEAN_JS_DISTANCE`: Jensen-Shannon divergence between distributions
-- `PAIRWISE_CORRELATION_DISTANCE`: Distance between correlation matrices
-
-#### Score Collections
-- `JS_DISTANCE`: Collection of Jensen-Shannon distances for all features
-
-#### Array Collections
-- `MEANS`: Collection of mean values for all features
-- `STDS`: Collection of standard deviations for all features
-- `VARIANCES`: Collection of variances for all features
-- `MEDIANS`: Collection of median values for all features
-- `FIRST_QUARTILES`: Collection of first quartile values for all features
-- `THIRD_QUARTILES`: Collection of third quartile values for all features
-- `MINIMA`: Collection of minimum values for all features
-- `MAXIMA`: Collection of maximum values for all features
-
-#### Plot Collections
-- `PDF_PLOTS`: Collection of PDF plots for all features
-- `CDF_PLOTS`: Collection of CDF plots for all features
-
-### 📊 Example: General Usage
-
-```python
-import pandas as pd
-from artifact_core.libs.resource_spec.tabular.spec import TabularDataSpec
-from artifact_core.table_comparison import (
-    TableComparisonEngine,
-    TableComparisonPlotType,
-    TableComparisonScoreType,
-)
-
-# Create or load your datasets
-df_real = pd.read_csv("real_data.csv")
-df_synthetic = pd.read_csv("synthetic_data.csv")
-
-# Define the data specification
-categorical_features = ["cat_1", "cat_2", "cat_3"]
-continuous_features = ["num_1", "num_2", "num_3"]
-spec = TabularDataSpec.from_df(
-    df=df_real, 
-    cat_features=categorical_features, 
-    cont_features=continuous_features
-)
-
-# Create the engine
-engine = TableComparisonEngine(resource_spec=spec)
-
-# Compute a plot artifact
-pca_plot = engine.produce_dataset_comparison_plot(
-    plot_type=TableComparisonPlotType.PCA_PROJECTION_PLOT,
-    dataset_real=df_real,
-    dataset_synthetic=df_synthetic,
-)
-
-# Compute a score artifact
-js_distance = engine.produce_dataset_comparison_score(
-    score_type=TableComparisonScoreType.MEAN_JS_DISTANCE,
-    dataset_real=df_real,
-    dataset_synthetic=df_synthetic,
-)
 ```
 
 ## 🚀 Configuring and Using the Framework
