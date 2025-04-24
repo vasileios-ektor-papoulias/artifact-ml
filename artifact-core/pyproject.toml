@@ -9,6 +9,12 @@ license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "numpy (>=2.2.4,<3.0.0)",
+    "pandas (>=2.2.3,<3.0.0)",
+    "matplotlib (>=3.10.1,<4.0.0)",
+    "seaborn (>=0.13.2,<0.14.0)",
+    "scikit-learn (>=1.6.1,<2.0.0)",
+    "dython (>=0.7.9,<0.8.0)",
 ]
 
 
@@ -21,6 +27,7 @@ build-backend = "poetry.core.masonry.api"
 ruff = "^0.11.4"
 pytest = "^8.3.5"
 pytest-mock = "^3.14.0"
+ipykernel = "^6.29.5"
 
 
 [tool.pytest.ini_options]

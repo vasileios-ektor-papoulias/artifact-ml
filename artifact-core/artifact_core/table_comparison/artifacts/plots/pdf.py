@@ -1,0 +1,30 @@
+import pandas as pd
+from matplotlib.figure import Figure
+
+from artifact_core.base.artifact_dependencies import NoArtifactHyperparams
+from artifact_core.libs.implementation.tabular.pdf.overlaid_plotter import (
+    OverlaidPDFPlotter,
+)
+from artifact_core.table_comparison.artifacts.base import (
+    TableComparisonPlot,
+)
+from artifact_core.table_comparison.registries.plots.registry import (
+    TableComparisonPlotRegistry,
+    TableComparisonPlotType,
+)
+
+
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.PDF_PLOT)
+class PDFComparisonCombinedPlot(TableComparisonPlot[NoArtifactHyperparams]):
+    def _compare_datasets(
+        self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
+    ) -> Figure:
+        dict_plots = OverlaidPDFPlotter.get_overlaid_pdf_plot(
+            dataset_real=dataset_real,
+            dataset_synthetic=dataset_synthetic,
+            ls_features_order=self._resource_spec.ls_features,
+            ls_cts_features=self._resource_spec.ls_cts_features,
+            ls_cat_features=self._resource_spec.ls_cat_features,
+            cat_unique_map=self._resource_spec.cat_unique_map,
+        )
+        return dict_plots
