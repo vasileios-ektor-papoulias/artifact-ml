@@ -449,7 +449,11 @@ Your configuration will be merged with the default one automatically, with your 
 
 ## 🔧 Extending the Framework
 
-### 1. Contributing Basic Artifacts to Concrete Engines
+### 1. Contributing New Artifacts
+
+The success of this project hinges on the availability of a rich corpus of validation artifacts.
+
+Contributions are strongly encouraged and highly appreciated.
 
 To contribute new artifacts to the `artifact-core` project:
 
@@ -460,17 +464,17 @@ To contribute new artifacts to the `artifact-core` project:
 
 #### Example: Contributing a New Score Artifact to the TableComparisonEngine
 
+First, add your new score type to the existing enum in: artifact_core/table_comparison/registries/scores/types.py.
 ```python
-# First, add your new score type to the existing enum in:
-# artifact_core/table_comparison/registries/scores/types.py
-
 class TableComparisonScoreType(ArtifactType):
     MEAN_JS_DISTANCE = "mean_js_distance"
     PAIRWISE_CORRELATION_DISTANCE = "pairwise_correlation_distance"
     # Add your new score type
     NEW_TABLE_COMPARISON_SCORE = "new_table_comparison_score"
+```
+Then implement and register your artifact's hyperparameters:
 
-# Then create and register your artifact's hyperparameters:
+```python
 from artifact_core.base.artifact_dependencies import ArtifactHyperparams
 from artifact_core.table_comparison.registries.scores.registry import TableComparisonScoreRegistry
 
@@ -480,40 +484,6 @@ from artifact_core.table_comparison.registries.scores.registry import TableCompa
 class NewTableComparisonScoreHyperparams(ArtifactHyperparams):
     threshold: float,
     use_weights: bool
-
-# Should your contribution not require any hyperparameters, simply use the following as the generic parameter:
-
-from artifact_core.base.artifact_dependencies import NoArtifactHyperparams
-
-# Finally implement and register your artifact (accessing the relevant hyperparameters and data spec):
-from typing import Dict, Any, Optional, Union, List
-from dataclasses import dataclass
-import pandas as pd
-
-from artifact_core.base.artifact import Artifact
-from artifact_core.table_comparison.registries.scores.registry import TableComparisonScoreRegistry
-from artifact_core.table_comparison.registries.scores.types import TableComparisonScoreType
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.core.dataset_comparison.artifact import DatasetComparisonResources
-
-
-@TableComparisonScoreRegistry.register_artifact(TableComparisonScoreType.MY_CUSTOM_SCORE)
-class NewTableComparisonScore(
-    Artifact[DatasetComparisonResources[pd.DataFrame], float, CustomArtifactHyperparams, TabularDataSpecProtocol]
-    ):
-    def _validate(self, resources: DatasetComparisonResources) -> DatasetComparisonResources:
-        if resources.dataset_real is None or resources.dataset_synthetic is None:
-            raise ValueError("Both real and synthetic datasets must be provided")
-        return resources
-        
-    def _compute(self, resources: DatasetComparisonResources) -> float:
-        real_data = resources.dataset_real[self._resource_spec.ls_cts_features]
-        synthetic_data = resources.dataset_synthetic[self._resource_spec.ls_cts_features]
-        score = 1.0
-        if score > self._hyperparams.threshold and self._hyperparams.use_weights:
-            score = 2*score
-
-        return score
 ```
 
 The corresponding contribution to the configuration file (`artifact_core/table_comparison/config/raw.json`) should then look like:
@@ -529,15 +499,53 @@ The corresponding contribution to the configuration file (`artifact_core/table_c
 }
 ```
 
-Note that we've provided more refined abstractions than the general artifact base class.
+Should your contribution not require any hyperparameters, simply use the following as the generic parameter:
 
-You can work by subclassing these instead:
+```python
+from artifact_core.base.artifact_dependencies import NoArtifactHyperparams
+```
+
+In this case no hyperparams class needs to be registered and no configuration params need to be added to the config file.
+
+The appropriate generics for table comparison artifacts are as follows:
+
+```python
+import pandas as pd
+
+from artifact_core.base.artifact import Artifact
+from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.core.dataset_comparison.artifact import DatasetComparisonResources
+
+Artifact[
+        DatasetComparisonResources[pd.DataFrame],
+        float,
+        <HyperparamsT>,
+        TabularDataSpecProtocol
+        ]
+```
+However, note that we've provided more refined abstractions than the general artifact base class.
+
+You should work with these instead: they implement core logic tailored to the specific artifact group in question.
+
+All table comparison scores should inherit the following base:
+
+```python
+import pandas as pd
+
+from artifact_core.table_comparison.artifacts.base import TableComparisonScore
+from artifact_core.table_comparison.registries.scores.types import TableComparisonScoreType
+
+TableComparisonScore[<HyperparamsT>]:
+```
+
+Finally implement and register your artifact (accessing the relevant hyperparameters and resource spec):
+
 ```python
 from typing import Dict, Any, Optional, Union, List
 from dataclasses import dataclass
 import pandas as pd
 
-from artifact_core.table_comparison.artifacts.base import TableComparisonArtifactResources, TableComparisonScore
+from artifact_core.base.artifact import Artifact
 from artifact_core.table_comparison.registries.scores.registry import TableComparisonScoreRegistry
 from artifact_core.table_comparison.registries.scores.types import TableComparisonScoreType
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
@@ -545,7 +553,18 @@ from artifact_core.core.dataset_comparison.artifact import DatasetComparisonReso
 
 
 @TableComparisonScoreRegistry.register_artifact(TableComparisonScoreType.MY_CUSTOM_SCORE)
-class NewTableComparisonScore(TableComparisonScore[CustomArtifactHyperparams]):
+class NewTableComparisonScore(
+    TableComparisonScore[
+        NewTableComparisonScoreHyperparams
+        ]
+    ):
+    def _validate(
+        self,
+        resources: DatasetComparisonResources
+        ) -> DatasetComparisonResources:
+        if resources.dataset_real is None or resources.dataset_synthetic is None:
+            raise ValueError("Both real and synthetic datasets must be provided")
+        return resources
         
     def _compare_datasets(self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame) -> float:
         dataset_real = dataset_real[self._resource_spec.ls_cts_features]
@@ -556,7 +575,6 @@ class NewTableComparisonScore(TableComparisonScore[CustomArtifactHyperparams]):
 
         return score
 ```
-This is preferred over working with the general base class as the refined base types already implement core logic tailored to specific artifact groups.
 
 ## 🤝 Contributing
 
