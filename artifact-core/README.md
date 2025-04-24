@@ -479,7 +479,9 @@ from artifact_core.base.artifact_dependencies import ArtifactHyperparams
 from artifact_core.table_comparison.registries.scores.registry import TableComparisonScoreRegistry
 
 
-@TableComparisonScoreRegistry.register_artifact_config(TableComparisonScoreType.MY_CUSTOM_SCORE)
+@TableComparisonScoreRegistry.register_artifact_config(
+    TableComparisonScoreType.MY_CUSTOM_SCORE
+    )
 @dataclass
 class NewTableComparisonScoreHyperparams(ArtifactHyperparams):
     threshold: float,
@@ -552,7 +554,9 @@ from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecPro
 from artifact_core.core.dataset_comparison.artifact import DatasetComparisonResources
 
 
-@TableComparisonScoreRegistry.register_artifact(TableComparisonScoreType.MY_CUSTOM_SCORE)
+@TableComparisonScoreRegistry.register_artifact(
+    TableComparisonScoreType.MY_CUSTOM_SCORE
+    )
 class NewTableComparisonScore(
     TableComparisonScore[
         NewTableComparisonScoreHyperparams
@@ -563,10 +567,16 @@ class NewTableComparisonScore(
         resources: DatasetComparisonResources
         ) -> DatasetComparisonResources:
         if resources.dataset_real is None or resources.dataset_synthetic is None:
-            raise ValueError("Both real and synthetic datasets must be provided")
+            raise ValueError(
+                "Both real and synthetic datasets must be provided"
+                )
         return resources
         
-    def _compare_datasets(self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame) -> float:
+    def _compare_datasets(
+        self,
+        dataset_real: pd.DataFrame,
+        dataset_synthetic: pd.DataFrame
+        ) -> float:
         dataset_real = dataset_real[self._resource_spec.ls_cts_features]
         dataset_synthetic = dataset_synthetic[self._resource_spec.ls_cts_features]
         score = 1.0
