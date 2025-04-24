@@ -25,7 +25,7 @@ The upshot is:
 
 - The **reduction of friction in the research process**: researchers focus on iterating on new ideas and receive immediate effortless feedback.
 - The **reduction of duplicated code**: no re-inventing the wheel, no model-specific validation plans, no extra code to tune existing logic to heterogeneous model interfaces. 
-- The **elimination of varaince** in validation results arising from unwanted discrepancies in validation logic: a stable common environment for evaluating competing models.
+- The **elimination of variance** in validation results arising from unwanted discrepancies in validation logic: a stable common environment for evaluating competing models.
 
 To illustrate:
 
