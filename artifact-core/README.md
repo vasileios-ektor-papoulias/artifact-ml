@@ -8,12 +8,64 @@
 
 ## 📋 Overview
 
-`artifact-core` is the foundation of the Artifact framework, providing a flexible minimal interface for the computation of heterogeneous validation artifacts in machine learning experiments. It defines the core abstractions, interfaces, and implementations that enable standardized validation across different models and datasets.
+`artifact-core` constitutes the foundation of the **Artifact** framework.
 
-This repository serves as the base layer for the broader Artifact framework, which includes:
+It provides a **flexible minimal interface** for the computation of heterogeneous validation artifacts in machine learning experiments.
+
+It defines the core abstractions, interfaces, and implementations that enable standardized validation across different models and datasets.
+
+This repository serves as the base layer of **Artifact**, which comprises of:
 - **artifact-core**: Core validation framework (this repository)
 - **artifact-experiment-tracking**: Executable validation plans with experiment tracking integration
 - **artifact-torch**: Deep learning framework built on Artifact
+
+<p align="center">
+  <img src="./assets/artifact_ml_logo.svg" width="600" alt="Artifact-ML Logo">
+</p>
+
+## 📚 Examples
+
+```python
+dict_ js_distance = engine.produce_dataset_comparison_score_collection(
+    score_collection_type=TableComparisonScoreCollectionType.JS_DISTANCE,
+    dataset_real=df_real,
+    dataset_synthetic=df_synthetic,
+)
+
+dict_ js_distance
+```
+
+<p align="center">
+  <img src="./assets/js.png" width="350" alt="JS Distance Artifact">
+</p>
+
+```python
+pca_plot = engine.produce_dataset_comparison_plot(
+    plot_type=TableComparisonPlotType.PCA_PROJECTION_PLOT,
+    dataset_real=df_real,
+    dataset_synthetic=df_synthetic,
+)
+
+pca_plot
+```
+
+<p align="center">
+  <img src="./assets/pca_comparison_artifact.png" width="1000" alt="PCA Projection Artifact">
+</p>
+
+```python
+pdf_plots = engine.produce_dataset_comparison_plot(
+    plot_type=TableComparisonPlotType.PDF_PLOT,
+    dataset_real=df_real,
+    dataset_synthetic=df_synthetic,
+)
+
+pdf_plots
+```
+
+<p align="center">
+  <img src="./assets/pdf_comparison_artifact.png" width="1700" alt="PDF Comparison Artifact">
+</p>
 
 ## 🚀 Installation
 
@@ -37,13 +89,13 @@ pip install .
 
 The framework follows a modular architecture with the following key components:
 
-1. **Artifact**: The base class for all artifacts that can be computed.
+1. **Artifact**: A flexible computation unit utilizing generic resources, static resource specifications and hyperparameters to evaluate model outputs.
 2. **ArtifactRegistry**: Manages the registration and retrieval of artifacts.
-3. **ArtifactEngine**: Orchestrates the computation of artifacts using the appropriate registries.
+3. **ArtifactEngine**: High level interface orchestrating the production of validation artifacts.
 
-The project is built around a customizable computation unit termed an *artifact*.
+Artifacts are reusable components that compute specific validation metrics or visualizations.
 
-Artifacts are reusable components that compute specific validation metrics or visualizations. They are heterogeneous (multi-modal). Based on their return value, they are categorized in the following groups:
+They are heterogeneous (multi-modal). Based on their return value, they are categorized in the following groups:
 
 - **Scores**: Single numerical metrics
 - **Arrays**: Numpy arrays containing computed data
@@ -52,17 +104,18 @@ Artifacts are reusable components that compute specific validation metrics or vi
 
 Artifacts consume generic *resources* tailored to each use case. Their action is configured through:
 * generic *hyperparameter* objects encoding configuration settings
-* generic *data spec* objects encoding structural properties of the validation resources.
+* generic *resource spec* objects encoding static structural properties of the validation resources (e.g. schema properties in the context of tabular data generation).
 
 Artifacts are grouped in **registries**.
 
-Artifacts in the same registry share the same resources, return type and data spec type, but may differ in their hyperparams type.
+Artifacts in the same registry share the same resources, return type and resource specification type, but may differ in their hyperparams type.
 
 New artifacts can be registered with the appropriate registry. In doing so abstract enumerations are associated to the relevant artifact and hyperparmeter classes.
 
 **Engines** utilize a group of registries (one for each data type) to provide a uniform interface for executing artifacts.
 
-All artifacts associated to a given engine share resources and data spec types.
+All artifacts associated to a given engine share resources and resource spec types.
+
 
 ## 🔧 Architecture Deep Dive
 
@@ -99,15 +152,15 @@ These enumerations serve as identifiers for the different artifacts that can be 
 
 ### 2. Create a Data Specification
 
-The data specification defines the structural properties of your validation resources:
+The resource specification defines the structural properties of your validation resources:
 
 ```python
 from dataclasses import dataclass
 from typing import List, Dict, Optional
-from artifact_core.base.artifact_dependencies import DataSpecProtocol
+from artifact_core.base.artifact_dependencies import ResourceSpecProtocol
 
 @dataclass
-class CustomDataSpec(DataSpecProtocol):
+class CustomResourceSpec(ResourceSpecProtocol):
     validation_resource_structural_property: float
 ```
 
@@ -153,10 +206,13 @@ def load_config_section(config_path: str, section: str) -> Dict[str, Dict[str, A
 CONFIG_PATH = 'path/to/custom_engine/config/raw.json'
 
 # Create artifact registries
-class CustomScoreRegistry(ArtifactRegistry[CustomScoreType, CustomResources, float, CustomDataSpec]):
+class CustomScoreRegistry(ArtifactRegistry[CustomScoreType, CustomResources, float, CustomResourceSpec]):
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
-        return load_config_section(CONFIG_PATH, 'scores')
+        return load_config_section(
+            config_path=CONFIG_PATH,
+            section='scores'
+            )
 
 # Similar registries for other artifact types...
 ```
@@ -172,7 +228,7 @@ from artifact_core.base.artifact import Artifact
 from artifact_core.base.artifact_dependencies import NoArtifactHyperparams
 
 @CustomScoreRegistry.register_artifact(CustomScoreType.CUSTOM_SCORE)
-class CustomScore(Artifact[CustomResources, float, NoArtifactHyperparams, CustomDataSpec]):
+class CustomScore(Artifact[CustomResources, float, NoArtifactHyperparams, CustomResourceSpec]):
     def _validate(self, resources: CustomResources) -> CustomResources:
         if not hasattr(resources, "resource_attribute"):
             raise ValueError("Resources must contain resource_attribute")
@@ -193,7 +249,7 @@ from artifact_core.base.engine import ArtifactEngine
 
 class CustomArtifactEngine(ArtifactEngine[
     CustomResources,
-    CustomDataSpec,
+    CustomResourceSpec,
     CustomScoreType,
     CustomArrayType,
     CustomPlotType,
@@ -305,39 +361,68 @@ js_distance = engine.produce_dataset_comparison_score(
 )
 ```
 
-### Example: Table Comparison Plot Artifacts
+## 🚀 Configuring and Using the Framework
 
-#### PCA Projection Plot
+### 1. Configuring Existing Artifacts in Your Project
 
-```python
-# Generate a PCA projection plot comparing real and synthetic datasets
-pca_plot = engine.produce_dataset_comparison_plot(
-    plot_type=TableComparisonPlotType.PCA_PROJECTION_PLOT,
-    dataset_real=df_real,
-    dataset_synthetic=df_synthetic,
-)
+When using `artifact-core` as a package in your own project, you can override the default configuration of existing artifacts:
+
+#### How Configuration Override Works
+
+1. Create a `.artifact` directory in your project root
+2. Create a configuration file named after the engine type (e.g., `table_comparison.json`)
+3. Define your custom configuration in JSON format
+4. Your configuration override will be automatically detected and merged with the default one
+
+#### Example: Overriding Table Comparison Configuration
+
+Create a file at `.artifact/table_comparison.json` in your project root:
+
+```json
+{
+  "scores": {
+    "mean_js_distance": {
+      "n_bins_cts_histogram": 200,
+      "categorical_only": true
+    }
+  },
+  "plots": {
+    "tsne_projection_plot": {
+      "perplexity": 50,
+      "learning_rate": 200,
+      "n_iter": 2000
+    }
+  }
+}
 ```
 
-<p align="center">
-  <img src="../assets/pca_comparison.png" width="700" alt="PCA Projection Plot">
-</p>
+This configuration will override the default settings for the `mean_js_distance` score and the `tsne_projection_plot` plot, while keeping the default settings for all other artifacts.
 
-#### Probability Density Function (PDF) Comparison
+#### Configuration Structure
 
-```python
-# Generate PDF plots for all features comparing real and synthetic distributions
-pdf_plots = engine.produce_dataset_comparison_plot(
-    plot_type=TableComparisonPlotType.PDF_PLOT,
-    dataset_real=df_real,
-    dataset_synthetic=df_synthetic,
-)
+The configuration file follows the same structure as the default configuration:
+
+```json
+{
+  "scores": {
+    "score_type_name": {
+      "param1": value1,
+      "param2": value2
+    }
+  },
+  "arrays": { ... },
+  "plots": { ... },
+  "score_collections": { ... },
+  "array_collections": { ... },
+  "plot_collections": { ... }
+}
 ```
 
-<p align="center">
-  <img src="../assets/pdf_comparison.png" width="700" alt="PDF Comparison Plot">
-</p>
+Only include the sections and parameters you want to override.
 
-## 🔧 Extending and Configuring the Framework
+Your configuration will be merged with the default one automatically, with your settings taking precedence.
+
+## 🔧 Extending the Framework
 
 ### 1. Contributing Basic Artifacts to Concrete Engines
 
@@ -448,74 +533,9 @@ class NewTableComparisonScore(TableComparisonScore[CustomArtifactHyperparams]):
 ```
 This is preferred over working with the general base class as the refined base types already implement core logic tailored to specific artifact groups.
 
-### 2. Configuring Existing Artifacts in Your Project
-
-When using `artifact-core` as a package in your own project, you can override the default configuration of existing artifacts without modifying the source code:
-
-#### How Configuration Override Works
-
-1. Create a `.artifact` directory in your project root
-2. Create a configuration file named after the engine type (e.g., `table_comparison.json`)
-3. Define your custom configuration in JSON format
-4. Your configuration override will be automatically detected and merged with the default one
-
-#### Example: Overriding Table Comparison Configuration
-
-Create a file at `.artifact/table_comparison.json` in your project root:
-
-```json
-{
-  "scores": {
-    "mean_js_distance": {
-      "n_bins_cts_histogram": 200,
-      "categorical_only": true
-    }
-  },
-  "plots": {
-    "tsne_projection_plot": {
-      "perplexity": 50,
-      "learning_rate": 200,
-      "n_iter": 2000
-    }
-  }
-}
-```
-
-This configuration will override the default settings for the `mean_js_distance` score and the `tsne_projection_plot` plot, while keeping the default settings for all other artifacts.
-
-#### Configuration Structure
-
-The configuration file follows the same structure as the default configuration:
-
-```json
-{
-  "scores": {
-    "score_type_name": {
-      "param1": value1,
-      "param2": value2
-    }
-  },
-  "arrays": { ... },
-  "plots": { ... },
-  "score_collections": { ... },
-  "array_collections": { ... },
-  "plot_collections": { ... }
-}
-```
-
-Only include the sections and parameters you want to override. The framework will merge your configuration with the default one, with your settings taking precedence.
-
-### 3. Creating Your Own Engine
-
-For custom use cases, you can create your own validation engine by extending the base classes.
-
-This is useful when you have a specific domain or validation workflow that differs from the existing implementations.
-
-To achieve this, simply follow the pattern exhibited in the *Architecture Deep Dive* section.
-
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request, following the guidelines in [the central Artifact-ML README](./README.md).
+Contributions are welcome! Please feel free to submit a Pull Request, following the guidelines in [the framework README](./README.md).
 
 ## 📄 License
 
