@@ -37,34 +37,17 @@ Further, these validation plans can easily customizable through the selection of
 
 The upshot is that researchers developing tabular synthesizers can reuse common experiment code (training, validation, monitoring, experiment tracking) and easily tune it to their needs with minimal effort and zero code duplication.
 
-<style>
-  .img-stack {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-  .img-stack img {
-    display: block;
-    margin: 0 auto;
-    width: 100%;
-    max-width: 700px;
-    height: auto;
-  }
-  .img-stack img:nth-child(2) {
-    max-width: 900px;
-  }
-</style>
+<p align="center">
+  <img src="assets/pdf_comparison.png" width="700" alt="PDF Comparison">
+</p>
 
-<div class="img-stack">
-  <img src="assets/pdf_comparison.png" alt="PDF Comparison">
-  <img src="assets/pca_comparison.png" alt="PCA Comparison">
-  <img src="assets/min_comparison.png" alt="Minimum Comparison">
-</div>
+<p align="center">
+  <img src="assets/pca_comparison.png" width="900" alt="PCA Comparison">
+</p>
 
-
+<p align="center">
+  <img src="assets/min_comparison.png" width="700" alt="Minimum Comparison">
+</p>
 
 
 ## 🏗️ Framework Components
