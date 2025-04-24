@@ -36,15 +36,23 @@ To illustrate: in the context of tabular synthetic data generation, models will 
     align-items: flex-start;
     gap: 24px;
     flex-wrap: wrap;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
   }
   .img-row img {
-    flex: 0 0 33%;
-    max-width: 500px;
+    flex: 0 0 45%;
+    max-width: 700px;
     width: 100%;
     height: auto;
     display: block;
+  }
+
+  /* optional: on very narrow screens, stack them */
+  @media (max-width: 800px) {
+    .img-row img {
+      flex: 0 0 100%;
+      max-width: none;
+    }
   }
 </style>
 
