@@ -263,7 +263,7 @@ class CustomScore(Artifact[CustomResources, float, NoArtifactHyperparams, Custom
         return resources.resource_attribute.mean()
 ```
 
-### 6. Create the Engine
+### 6. Deploy Artifacts through an Artifact Engine
 
 Finally, create the engine that orchestrates the computation of artifacts:
 
