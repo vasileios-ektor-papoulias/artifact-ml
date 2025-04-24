@@ -202,7 +202,7 @@ from artifact_core.table_comparison import (
 df_real = pd.read_csv("real_data.csv")
 df_synthetic = pd.read_csv("synthetic_data.csv")
 
-# Define the data specification
+# Define the resource specification
 categorical_features = ["cat_1", "cat_2", "cat_3"]
 continuous_features = ["num_1", "num_2", "num_3"]
 spec = TabularDataSpec.from_df(
@@ -262,7 +262,7 @@ class CustomPlotCollectionType(ArtifactType):
 
 These enumerations serve as identifiers for the different artifacts that can be computed by your engine.
 
-### 2. Create a Data Specification
+### 2. Create a Resource Specification
 
 The resource specification defines the structural properties of your validation resources:
 
