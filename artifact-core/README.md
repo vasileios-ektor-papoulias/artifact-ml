@@ -546,7 +546,7 @@ from typing import Dict, Any, Optional, Union, List
 from dataclasses import dataclass
 import pandas as pd
 
-from artifact_core.base.artifact import Artifact
+from artifact_core.table_comparison.artifacts.base import TableComparisonScore, TableComparisonArtifactResources
 from artifact_core.table_comparison.registries.scores.registry import TableComparisonScoreRegistry
 from artifact_core.table_comparison.registries.scores.types import TableComparisonScoreType
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
@@ -563,8 +563,8 @@ class NewTableComparisonScore(
     ):
     def _validate(
         self,
-        resources: DatasetComparisonResources
-        ) -> DatasetComparisonResources:
+        resources: TableComparisonArtifactResources
+        ) -> TableComparisonArtifactResources:
         if resources.dataset_real is None or resources.dataset_synthetic is None:
             raise ValueError(
                 "Both real and synthetic datasets must be provided"
