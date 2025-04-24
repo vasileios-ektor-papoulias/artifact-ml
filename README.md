@@ -23,36 +23,34 @@ It thereby offers data scientists and ML engineers working in the same applicati
 
 The upshot is:
 
-- the **reduction of duplicated code** (no model-specific validation plans),
-- the **elimination of varaince** in validation results arising from unwanted discrepancies in validation logic,
-- the reduction of friction in the research process as researchers become able to iterate on new ideas that are fairly evaluated with minimal high-level specifications.
+- The **reduction of friction in the research process**: researchers focus on iterating on new ideas and receive immediate effortless feedback.
+- The **reduction of duplicated code**: no re-inventing the wheel, no model-specific validation plans, no extra code to tune existing logic to heterogeneous model interfaces. 
+- The **elimination of varaince** in validation results arising from unwanted discrepancies in validation logic: a stable common environment for evaluating competing models.
 
-To illustrate: in the context of tabular synthetic data generation, models will ultimately produce pandas dataframes. This restriction is sufficient to produce general validation plans that are applicable to any tabular synthesizer and easily customizable by selecting abstract enumerations associated to common validation artifacts (e.g. marginal distribution comparison plots).`
+To illustrate:
+
+In the context of ***tabular synthetic data generation***, models are designed to produce synthetic tables. Their evaluation is entirely contingent on the properties of these tables.
+
+This common denominator is sufficient to produce general validation plans that are applicable to any tabular synthesizer.
+
+Further, these validation plans can easily customizable through the selection of abstract enumerations associated to common validation artifacts (e.g. marginal distribution comparison plots).`
+
+The upshot is that researchers developing tabular synthesizers can reuse common experiment code (training, validation, monitoring, experiment tracking) and easily tune it to their needs with minimal effort and zero code duplication.
 
 <style>
   .img-row {
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    justify-content: space-between;
     gap: 24px;
-    flex-wrap: wrap;
-    max-width: 1400px;
+    max-width: 2100px;
     margin: 0 auto;
   }
   .img-row img {
-    flex: 0 0 45%;
+    flex: 0 1 calc((100% - 2 * 24px) / 3);
     max-width: 700px;
     width: 100%;
     height: auto;
     display: block;
-  }
-
-  /* optional: on very narrow screens, stack them */
-  @media (max-width: 800px) {
-    .img-row img {
-      flex: 0 0 100%;
-      max-width: none;
-    }
   }
 </style>
 
@@ -61,6 +59,7 @@ To illustrate: in the context of tabular synthetic data generation, models will 
   <img src="assets/pca_comparison.png" alt="PCA Comparison">
   <img src="assets/min_comparison.png" alt="Minimum Comparison">
 </div>
+
 
 
 ## 🏗️ Framework Components
@@ -73,12 +72,15 @@ The core framework providing the foundation for reusable validation. It defines 
 
 Key features:
 - A **flexible minimal interface** for the computation of heterogeneous validation artifacts in thematically related ML experiments.
-- Modular architecture with pluggable components.
 - Type-safe interfaces using Python generics.
+- Extendible architecture to foster growth both in the collection of ML tasks (thematic model categories) addressed by the framework and the artifact collection supported for each category.
+
 
 ### 2. artifact-experiment-tracking
 
-A repository for experiment tracking with the Artifact framework. It introduces executable validation plan abstractions that utilize artifact-core and export to various experiment tracking backends.
+A repository for experiment tracking with the Artifact framework.
+
+It introduces executable validation plan abstractions that utilize artifact-core and export to various experiment tracking backends.
 
 Key features:
 - Executable validation plan abstractions.
@@ -87,11 +89,11 @@ Key features:
 
 ### 3. artifact-torch
 
-A deep learning framework built on top of artifact-core, providing implementations for common deep learning tasks.
+A deep learning framework built on top of artifact-core---abstracting engineering aspects of deep learning research (data pipelines, device management, training, monitoring validation) to enable researchers to focus on what matters.
 
 Key features:
 - Integration with PyTorch: lightweight PyTorch extension to ensure type-safety and compatibility with Artifact's validation plans.
-- Extendible/ customizable trainer abstraction covering the full training/ validation pipeline for thematically related neural networks (e.g. tabular synthesizers).
+- Extendible/ customizable trainer abstraction covering the full training/ validation pipeline for thematically related neural networks (e.g. tabular synthesizers, image generators etc.).
 
 ## 🎯 Design Philosophy
 
