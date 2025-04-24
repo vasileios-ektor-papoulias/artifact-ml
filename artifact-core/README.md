@@ -1,6 +1,13 @@
 # ⚙️ artifact-core
 
 > The core component of the Artifact framework, providing a flexible minimal interface for the computation of heterogeneous validation artifacts in machine learning experiments.
+
+
+<p align="center">
+  <img src="./assets/artifact_ml_logo.svg" width="600" alt="Artifact-ML Logo">
+</p>
+
+
 ![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
 ![License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-core)
 
@@ -8,20 +15,15 @@
 
 ## 📋 Overview
 
-`artifact-core` constitutes the foundation of the **Artifact** framework.
+This repository serves as the foundation of the **Artifact** framework.
 
-It provides a **flexible minimal interface** for the computation of heterogeneous validation artifacts in machine learning experiments.
-
-It defines the core abstractions, interfaces, and implementations that enable standardized validation across different models and datasets.
-
-This repository serves as the base layer of **Artifact**, which consists of:
-- **artifact-core**: Core framework providing the fundamental abstractions and implementations for standardized validation.
+It stands alongside::
 - **artifact-experiment**: Executable validation plans exporting results to popular experiment tracking services.
 - **artifact-torch**: PyTorch integration for rapid prototyping: flexible model types and trainers supporting seamless validation using Artifact-ML.
 
-<p align="center">
-  <img src="./assets/artifact_ml_logo.svg" width="600" alt="Artifact-ML Logo">
-</p>
+`artifact-core` provides a **flexible minimal interface** for the computation of heterogeneous validation artifacts in machine learning experiments.
+
+It defines the core abstractions, interfaces, and implementations that enable standardized validation across different models and datasets.
 
 ## 📚 Examples
 
