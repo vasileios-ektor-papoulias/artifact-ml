@@ -33,7 +33,7 @@ In the context of ***tabular synthetic data generation***, models are designed t
 
 This common denominator is sufficient to produce general validation plans that are applicable to any tabular synthesizer.
 
-Further, these validation plans can easily customizable through the selection of abstract enumerations associated to common validation artifacts (e.g. marginal distribution comparison plots).`
+Further, these validation plans can be made to be easily customizable through the selection of abstract enumerations associated to common validation artifacts (e.g. marginal distribution comparison plots).`
 
 The upshot is that researchers developing tabular synthesizers can reuse common experiment code (training, validation, monitoring, experiment tracking) and easily tune it to their needs with minimal effort and zero code duplication.
 
