@@ -535,7 +535,7 @@ import pandas as pd
 from artifact_core.table_comparison.artifacts.base import TableComparisonScore
 from artifact_core.table_comparison.registries.scores.types import TableComparisonScoreType
 
-TableComparisonScore[<HyperparamsT>]:
+TableComparisonScore[<HyperparamsT>]
 ```
 
 Finally implement and register your artifact (accessing the relevant hyperparameters and resource spec):
