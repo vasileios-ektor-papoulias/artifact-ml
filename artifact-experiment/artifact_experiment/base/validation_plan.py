@@ -113,6 +113,30 @@ class ArtifactValidationPlan(
         )
         return validation_plan
 
+    @property
+    def scores(self) -> Dict[str, Optional[float]]:
+        return self._score_handler.cache
+
+    @property
+    def arrays(self) -> Dict[str, Optional[ndarray]]:
+        return self._array_handler.cache
+
+    @property
+    def plots(self) -> Dict[str, Optional[Figure]]:
+        return self._plot_handler.cache
+
+    @property
+    def score_collections(self) -> Dict[str, Optional[Dict[str, float]]]:
+        return self._score_collection_handler.cache
+
+    @property
+    def array_collections(self) -> Dict[str, Optional[Dict[str, ndarray]]]:
+        return self._array_collection_handler.cache
+
+    @property
+    def plot_collections(self) -> Dict[str, Optional[Dict[str, Figure]]]:
+        return self._plot_collection_handler.cache
+
     @staticmethod
     @abstractmethod
     def _get_score_types() -> List[scoreTypeT]: ...
