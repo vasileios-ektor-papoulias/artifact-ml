@@ -10,10 +10,10 @@ class NoNativeClient:
 NO_NATIVE_CLIENT = NoNativeClient()
 
 nativeClientT = TypeVar("nativeClientT")
-trackingBackendT = TypeVar("trackingBackendT", bound="ExperimentTrackingBackend")
+trackingBackendT = TypeVar("trackingBackendT", bound="TrackingBackend")
 
 
-class ExperimentTrackingBackend(ABC, Generic[nativeClientT]):
+class TrackingBackend(ABC, Generic[nativeClientT]):
     def __init__(self, native_client: nativeClientT):
         self._native_client = native_client
 
@@ -23,33 +23,28 @@ class ExperimentTrackingBackend(ABC, Generic[nativeClientT]):
 
     @property
     @abstractmethod
-    def is_active(self) -> bool:
-        pass
+    def experiment_is_active(self) -> bool: ...
 
     @property
     @abstractmethod
-    def id(self) -> Optional[str]:
-        pass
+    def experiment_id(self) -> Optional[str]: ...
 
     @property
     @abstractmethod
-    def native_client(self) -> nativeClientT:
-        pass
+    def native_client(self) -> nativeClientT: ...
 
     @abstractmethod
-    def _start(self, experiment_id: str):
-        pass
+    def _start_experiment(self, experiment_id: str): ...
 
     @abstractmethod
-    def _stop(self):
-        pass
+    def _stop_experiment(self): ...
 
-    def start(self, experiment_id: Optional[str] = None) -> str:
+    def start_experiment(self, experiment_id: Optional[str] = None) -> str:
         if experiment_id is None:
             experiment_id = str(uuid4())
-        self._start(experiment_id=experiment_id)
+        self._start_experiment(experiment_id=experiment_id)
         return experiment_id
 
-    def stop(self):
-        if not self.is_active:
-            self._stop()
+    def experiment(self):
+        if not self.experiment_is_active:
+            self._stop_experiment()

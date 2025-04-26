@@ -1,23 +1,17 @@
 from abc import abstractmethod
 from typing import Dict, Generic, Optional, Type, TypeVar
 
-from artifact_experiment.base.experiment_tracking.backend import ExperimentTrackingBackend
-from artifact_experiment.base.experiment_tracking.logger import (
-    ArrayCollectionLogger,
-    ArrayLogger,
-    PlotCollectionLogger,
-    PlotLogger,
-    ScoreCollectionLogger,
-    ScoreLogger,
-)
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-trackingBackendT = TypeVar("trackingBackendT", bound=ExperimentTrackingBackend)
-trackingClientT = TypeVar("trackingClientT", bound="ExperimentTrackingClient")
+from artifact_experiment.base.tracking.backend import TrackingBackend
+from artifact_experiment.base.tracking.logger import ArtifactLogger
+
+trackingBackendT = TypeVar("trackingBackendT", bound=TrackingBackend)
+trackingClientT = TypeVar("trackingClientT", bound="TrackingClient")
 
 
-class ExperimentTrackingClient(Generic[trackingBackendT]):
+class TrackingClient(Generic[trackingBackendT]):
     def __init__(self, backend: trackingBackendT):
         self._backend = backend
         self._score_logger = self._get_score_logger(backend=self._backend)
@@ -45,41 +39,41 @@ class ExperimentTrackingClient(Generic[trackingBackendT]):
 
     @staticmethod
     @abstractmethod
-    def _get_score_logger(backend: trackingBackendT) -> ScoreLogger[trackingBackendT]: ...
+    def _get_score_logger(backend: trackingBackendT) -> ArtifactLogger[float, trackingBackendT]: ...
 
     @staticmethod
     @abstractmethod
     def _get_array_logger(
         backend: trackingBackendT,
-    ) -> ArrayLogger[trackingBackendT]: ...
+    ) -> ArtifactLogger[ndarray, trackingBackendT]: ...
 
     @staticmethod
     @abstractmethod
-    def _get_plot_logger(backend: trackingBackendT) -> PlotLogger[trackingBackendT]: ...
+    def _get_plot_logger(backend: trackingBackendT) -> ArtifactLogger[Figure, trackingBackendT]: ...
 
     @staticmethod
     @abstractmethod
     def _get_score_collection_logger(
         backend: trackingBackendT,
-    ) -> ScoreCollectionLogger[trackingBackendT]: ...
+    ) -> ArtifactLogger[Dict[str, float], trackingBackendT]: ...
 
     @staticmethod
     @abstractmethod
     def _get_array_collection_logger(
         backend: trackingBackendT,
-    ) -> ArrayCollectionLogger[trackingBackendT]: ...
+    ) -> ArtifactLogger[Dict[str, ndarray], trackingBackendT]: ...
 
     @staticmethod
     @abstractmethod
     def _get_plot_collection_logger(
         backend: trackingBackendT,
-    ) -> PlotCollectionLogger[trackingBackendT]: ...
+    ) -> ArtifactLogger[Dict[str, Figure], trackingBackendT]: ...
 
     def start_experiment(self, experiment_id: str):
-        self._backend.start(experiment_id=experiment_id)
+        self._backend.start_experiment(experiment_id=experiment_id)
 
     def stop_experiment(self):
-        self._backend.stop()
+        self._backend.experiment()
 
     def log_score(self, score: float, name: str):
         self._score_logger.log(artifact=score, name=name)
@@ -97,4 +91,6 @@ class ExperimentTrackingClient(Generic[trackingBackendT]):
         self._array_collection_logger.log(artifact=array_collection, name=name)
 
     def log_plot_collection(self, plot_collection: Dict[str, Figure], name: str):
+        self._plot_collection_logger.log(artifact=plot_collection, name=name)
+        self._plot_collection_logger.log(artifact=plot_collection, name=name)
         self._plot_collection_logger.log(artifact=plot_collection, name=name)

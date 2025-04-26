@@ -1,13 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Generic, TypeVar
+from typing import Generic, TypeVar
 
 from artifact_core.base.artifact_dependencies import ArtifactResult
-from artifact_experiment.base.experiment_tracking.backend import ExperimentTrackingBackend
-from matplotlib.figure import Figure
-from numpy import ndarray
+
+from artifact_experiment.base.tracking.backend import TrackingBackend
 
 artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
-trackingBackendT = TypeVar("trackingBackendT", bound=ExperimentTrackingBackend)
+trackingBackendT = TypeVar("trackingBackendT", bound=TrackingBackend)
 
 
 class ArtifactLogger(ABC, Generic[artifactResultT, trackingBackendT]):
@@ -26,11 +25,3 @@ class ArtifactLogger(ABC, Generic[artifactResultT, trackingBackendT]):
     def log(self, name: str, artifact: artifactResultT):
         path = self._get_artifact_path(artifact_name=name)
         self._log(path=path, artifact=artifact)
-
-
-ScoreLogger = ArtifactLogger[float, trackingBackendT]
-ArrayLogger = ArtifactLogger[ndarray, trackingBackendT]
-PlotLogger = ArtifactLogger[Figure, trackingBackendT]
-ScoreCollectionLogger = ArtifactLogger[Dict[str, float], trackingBackendT]
-ArrayCollectionLogger = ArtifactLogger[Dict[str, ndarray], trackingBackendT]
-PlotCollectionLogger = ArtifactLogger[Dict[str, Figure], trackingBackendT]
