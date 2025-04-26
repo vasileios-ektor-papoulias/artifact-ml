@@ -9,7 +9,8 @@ license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "artifact-core @ file:///C:/Users/hecto/Codebase/artifact-ml/artifact-core"
+    "artifact-core @ file:///C:/Users/hecto/Codebase/artifact-ml/artifact-core",
+    "tqdm (>=4.67.1,<5.0.0)"
 ]
 
 
