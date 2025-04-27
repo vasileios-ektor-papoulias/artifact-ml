@@ -1,11 +1,13 @@
 from abc import abstractmethod
 from typing import List, Type
 
+import pandas as pd
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonArtifactResources,
     TabularDataSpecProtocol,
 )
 
+from artifact_experiment.base.callbacks.artifact import ArtifactCallbackResources
 from artifact_experiment.base.callbacks.factory import ArtifactCallbackFactory
 from artifact_experiment.base.validation_plan import ArtifactValidationPlan
 from artifact_experiment.table_comparison.callback_factory import (
@@ -54,6 +56,13 @@ class TableComparisonValidationPlan(
     @staticmethod
     @abstractmethod
     def _get_plot_collection_types() -> List[TableComparisonPlotCollectionType]: ...
+
+    def execute(self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame):
+        artifact_resources = TableComparisonArtifactResources(
+            dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
+        )
+        callback_resources = ArtifactCallbackResources(artifact_resources=artifact_resources)
+        super()._execute(resources=callback_resources)
 
     @staticmethod
     def _get_callback_factory() -> Type[

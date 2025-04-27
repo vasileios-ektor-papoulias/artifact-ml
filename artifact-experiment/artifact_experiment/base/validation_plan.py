@@ -137,6 +137,14 @@ class ArtifactValidationPlan(
     def plot_collections(self) -> Dict[str, Optional[Dict[str, Figure]]]:
         return self._plot_collection_handler.cache
 
+    def _execute(self, resources: ArtifactCallbackResources[artifactResourcesT]):
+        self._score_handler.execute(resources=resources)
+        self._array_handler.execute(resources=resources)
+        self._plot_handler.execute(resources=resources)
+        self._score_collection_handler.execute(resources=resources)
+        self._array_collection_handler.execute(resources=resources)
+        self._plot_collection_handler.execute(resources=resources)
+
     @staticmethod
     @abstractmethod
     def _get_score_types() -> List[scoreTypeT]: ...
