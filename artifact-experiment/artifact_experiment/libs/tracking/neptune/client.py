@@ -6,19 +6,19 @@ from numpy import ndarray
 
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_experiment.base.tracking.logger import ArtifactLogger
-from artifact_experiment.tracking.neptune.backend import NeptuneBackend
-from artifact_experiment.tracking.neptune.loggers.array_collections import (
+from artifact_experiment.libs.tracking.neptune.backend import NeptuneBackend
+from artifact_experiment.libs.tracking.neptune.loggers.array_collections import (
     NeptuneArrayCollectionLogger,
 )
-from artifact_experiment.tracking.neptune.loggers.arrays import NeptuneArrayLogger
-from artifact_experiment.tracking.neptune.loggers.plot_collections import (
+from artifact_experiment.libs.tracking.neptune.loggers.arrays import NeptuneArrayLogger
+from artifact_experiment.libs.tracking.neptune.loggers.plot_collections import (
     NeptunePlotCollectionLogger,
 )
-from artifact_experiment.tracking.neptune.loggers.plots import NeptunePlotLogger
-from artifact_experiment.tracking.neptune.loggers.score_collections import (
+from artifact_experiment.libs.tracking.neptune.loggers.plots import NeptunePlotLogger
+from artifact_experiment.libs.tracking.neptune.loggers.score_collections import (
     NeptuneScoreCollectionLogger,
 )
-from artifact_experiment.tracking.neptune.loggers.scores import NeptuneScoreLogger
+from artifact_experiment.libs.tracking.neptune.loggers.scores import NeptuneScoreLogger
 
 
 class NeptuneTrackingClient(TrackingClient[NeptuneBackend]):

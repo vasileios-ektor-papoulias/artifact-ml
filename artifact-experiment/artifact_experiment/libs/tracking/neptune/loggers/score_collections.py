@@ -1,7 +1,7 @@
 from typing import Dict
 
 from artifact_experiment.base.tracking.logger import ArtifactLogger
-from artifact_experiment.tracking.neptune.backend import (
+from artifact_experiment.libs.tracking.neptune.backend import (
     NeptuneBackend,
     NeptuneExperimentNotSetError,
 )

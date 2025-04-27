@@ -1,17 +1,17 @@
-from matplotlib.figure import Figure
+from numpy import ndarray
 
 from artifact_experiment.base.tracking.logger import ArtifactLogger
-from artifact_experiment.tracking.neptune.backend import (
+from artifact_experiment.libs.tracking.neptune.backend import (
     NeptuneBackend,
     NeptuneExperimentNotSetError,
 )
 
 
-class NeptunePlotLogger(ArtifactLogger[Figure, NeptuneBackend]):
+class NeptuneArrayLogger(ArtifactLogger[ndarray, NeptuneBackend]):
     def __init__(self, backend: NeptuneBackend):
         self._backend = backend
 
-    def _log(self, path: str, artifact: Figure):
+    def _log(self, path: str, artifact: ndarray):
         if self._backend.experiment_is_active:
             self._backend.native_client[path] = artifact
         else:
@@ -19,4 +19,4 @@ class NeptunePlotLogger(ArtifactLogger[Figure, NeptuneBackend]):
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        return f"plots/{artifact_name}"
+        return f"arrays/{artifact_name}"

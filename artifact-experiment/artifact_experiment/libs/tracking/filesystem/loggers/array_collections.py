@@ -3,12 +3,12 @@ from typing import Dict
 import numpy as np
 
 from artifact_experiment.base.tracking.logger import ArtifactLogger
-from artifact_experiment.libs.utils.filesystem import (
-    IncrementalPathGenerator,
-)
-from artifact_experiment.tracking.filesystem.backend import (
+from artifact_experiment.libs.tracking.filesystem.backend import (
     FilesystemBackend,
     FilesystemExperimentNotSetError,
+)
+from artifact_experiment.libs.utils.filesystem import (
+    IncrementalPathGenerator,
 )
 
 

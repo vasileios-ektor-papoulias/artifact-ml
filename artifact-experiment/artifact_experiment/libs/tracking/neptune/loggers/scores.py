@@ -1,17 +1,15 @@
-from numpy import ndarray
-
 from artifact_experiment.base.tracking.logger import ArtifactLogger
-from artifact_experiment.tracking.neptune.backend import (
+from artifact_experiment.libs.tracking.neptune.backend import (
     NeptuneBackend,
     NeptuneExperimentNotSetError,
 )
 
 
-class NeptuneArrayLogger(ArtifactLogger[ndarray, NeptuneBackend]):
+class NeptuneScoreLogger(ArtifactLogger[float, NeptuneBackend]):
     def __init__(self, backend: NeptuneBackend):
         self._backend = backend
 
-    def _log(self, path: str, artifact: ndarray):
+    def _log(self, path: str, artifact: float):
         if self._backend.experiment_is_active:
             self._backend.native_client[path] = artifact
         else:
@@ -19,4 +17,4 @@ class NeptuneArrayLogger(ArtifactLogger[ndarray, NeptuneBackend]):
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        return f"arrays/{artifact_name}"
+        return f"scores/{artifact_name}"
