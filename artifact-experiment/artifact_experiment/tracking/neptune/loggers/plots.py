@@ -12,11 +12,11 @@ class NeptunePlotLogger(ArtifactLogger[Figure, NeptuneBackend]):
         self._backend = backend
 
     def _log(self, path: str, artifact: Figure):
-        if self._backend.native_client is not None and self._backend.experiment_is_active:
+        if self._backend.experiment_is_active:
             self._backend.native_client[path] = artifact
         else:
             raise NeptuneExperimentNotSetError("No active experiment.")
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        return "plots/artifact_name"
+        return f"plots/{artifact_name}"
