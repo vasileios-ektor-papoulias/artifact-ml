@@ -1,11 +1,8 @@
 import time
-from typing import Optional, Type, TypeVar
 
 import neptune
 
 from artifact_experiment.base.tracking.backend import TrackingBackend
-
-neptuneBackendT = TypeVar("neptuneBackendT", bound="NeptuneBackend")
 
 
 class NeptuneExperimentNotSetError(Exception):
@@ -19,21 +16,6 @@ class NeptuneBackend(TrackingBackend[neptune.Run]):
     _neptune_project_name = ""
     _neptune_project_key = ""
 
-    @classmethod
-    def build(cls: Type[neptuneBackendT], experiment_id: Optional[str] = None) -> neptuneBackendT:
-        if experiment_id is None:
-            experiment_id = cls._generate_random_id()
-        native_client = cls._get_native_client(experiment_id=experiment_id)
-        backend = cls(native_client=native_client)
-        return backend
-
-    @classmethod
-    def from_native_client(
-        cls: Type[neptuneBackendT], native_client: neptune.Run
-    ) -> neptuneBackendT:
-        backend = cls(native_client=native_client)
-        return backend
-
     @property
     def experiment_is_active(self) -> bool:
         state = self._native_client["sys/state"].fetch()
@@ -42,10 +24,6 @@ class NeptuneBackend(TrackingBackend[neptune.Run]):
     @property
     def experiment_id(self) -> str:
         return self._native_client["sys/id"].fetch()
-
-    @property
-    def native_client(self) -> neptune.Run:
-        return self._native_client
 
     def _start_experiment(self, experiment_id: str):
         self._native_client = self._get_native_client(experiment_id=experiment_id)
