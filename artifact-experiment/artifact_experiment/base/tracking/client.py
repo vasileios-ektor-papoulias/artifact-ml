@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Dict, Generic, Type, TypeVar
+from typing import Dict, Generic, TypeVar
 
 from matplotlib.figure import Figure
 from numpy import ndarray
@@ -20,10 +20,6 @@ class TrackingClient(Generic[trackingBackendT]):
         self._score_collection_logger = self._get_score_collection_logger(backend=self._backend)
         self._array_collection_logger = self._get_array_collection_logger(backend=self._backend)
         self._plot_collection_logger = self._get_plot_collection_logger(backend=self._backend)
-
-    @classmethod
-    @abstractmethod
-    def build(cls: Type[trackingClientT]) -> trackingClientT: ...
 
     @property
     def experiment_id(self) -> str:
