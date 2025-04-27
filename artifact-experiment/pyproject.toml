@@ -7,10 +7,11 @@ authors = [
 ]
 license = {text = "MIT"}
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.11,<4.0"
 dependencies = [
     "artifact-core @ file:///C:/Users/hecto/Codebase/artifact-ml/artifact-core",
-    "tqdm (>=4.67.1,<5.0.0)"
+    "tqdm (>=4.67.1,<5.0.0)",
+    "neptune (>=1.14.0,<2.0.0)"
 ]
 
 
