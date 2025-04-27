@@ -9,7 +9,7 @@ from artifact_experiment.libs.tracking.filesystem.backend import (
 )
 
 
-class FilesystemScoreCollectionLogger(ArtifactLogger[float, FilesystemBackend]):
+class FilesystemScoreLogger(ArtifactLogger[float, FilesystemBackend]):
     _column_name: str = "value"
 
     def __init__(self, backend: FilesystemBackend):
