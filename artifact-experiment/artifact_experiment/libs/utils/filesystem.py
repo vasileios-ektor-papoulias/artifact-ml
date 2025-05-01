@@ -1,35 +1,69 @@
 import os
 from typing import List, Optional
 
+from mlflow import MlflowClient
+
 
 class IncrementalPathGenerator:
     @classmethod
+    def generate_mlflow(
+        cls,
+        client: MlflowClient,
+        run_id: str,
+        remote_path: str,
+        dir_local: str,
+        fmt: Optional[str] = None,
+    ) -> str:
+        ls_existing_filepaths = cls._get_existing_files_mlflow(
+            client=client, run_id=run_id, remote_path=remote_path
+        )
+        ls_indices = cls._gather_indices(ls_existing_filepaths=ls_existing_filepaths, fmt=fmt)
+        next_idx = cls._compute_next_index(ls_indices=ls_indices)
+        filename = cls._format_filename(index=next_idx, fmt=fmt)
+        path = os.path.join(dir_local, filename)
+        return path
+
+    @classmethod
     def generate(cls, dir_path: str, fmt: Optional[str] = None) -> str:
-        cls._ensure_directory(dir_path)
-        indices = cls._gather_indices(dir_path, fmt)
-        next_idx = cls._compute_next_index(indices)
-        filename = cls._format_filename(next_idx, fmt)
-        return os.path.join(dir_path, filename)
+        cls._ensure_directory(dir_path=dir_path)
+        ls_existing_filepaths = cls._get_existing_files_fs(dir_path=dir_path)
+        ls_indices = cls._gather_indices(ls_existing_filepaths=ls_existing_filepaths, fmt=fmt)
+        next_idx = cls._compute_next_index(ls_indices=ls_indices)
+        filename = cls._format_filename(index=next_idx, fmt=fmt)
+        path = os.path.join(dir_path, filename)
+        return path
 
     @staticmethod
-    def _ensure_directory(dir_path: str):
-        os.makedirs(dir_path, exist_ok=True)
-
-    @staticmethod
-    def _gather_indices(dir_path: str, fmt: Optional[str] = None) -> List[int]:
-        existing_files = os.listdir(dir_path)
-        indices: list[int] = []
-        for fname in existing_files:
+    def _gather_indices(ls_existing_filepaths: List[str], fmt: Optional[str] = None) -> List[int]:
+        ls_indices: List[int] = []
+        for fname in ls_existing_filepaths:
             name, ext = os.path.splitext(fname)
             ext = ext.lstrip(".")
             if name.isdigit() and ((fmt is None and ext == "") or (fmt is not None and ext == fmt)):
-                indices.append(int(name))
-        return indices
+                ls_indices.append(int(name))
+        return ls_indices
 
     @staticmethod
-    def _compute_next_index(indices: list[int]) -> int:
-        return max(indices) + 1 if indices else 0
+    def _get_existing_files_mlflow(
+        client: MlflowClient, run_id: str, remote_path: str
+    ) -> List[str]:
+        ls_artifact_infos = client.list_artifacts(run_id=run_id, path=remote_path)
+        ls_existing_filepaths = [info.path for info in ls_artifact_infos]
+        return ls_existing_filepaths
+
+    @staticmethod
+    def _get_existing_files_fs(dir_path: str) -> List[str]:
+        ls_existing_filepaths = os.listdir(dir_path)
+        return ls_existing_filepaths
+
+    @staticmethod
+    def _compute_next_index(ls_indices: List[int]) -> int:
+        return max(ls_indices) + 1 if ls_indices else 0
 
     @staticmethod
     def _format_filename(index: int, fmt: Optional[str]) -> str:
         return f"{index}.{fmt}" if fmt else str(index)
+
+    @staticmethod
+    def _ensure_directory(dir_path: str):
+        os.makedirs(dir_path, exist_ok=True)
