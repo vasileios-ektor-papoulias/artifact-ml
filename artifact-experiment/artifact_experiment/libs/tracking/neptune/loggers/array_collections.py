@@ -2,22 +2,18 @@ from typing import Dict
 
 from numpy import ndarray
 
-from artifact_experiment.base.tracking.logger import ArtifactLogger
 from artifact_experiment.libs.tracking.neptune.backend import (
-    NeptuneBackend,
-    NeptuneExperimentNotSetError,
+    NoActiveNeptuneRunError,
 )
+from artifact_experiment.libs.tracking.neptune.loggers.base import NeptuneArtifactLogger
 
 
-class NeptuneArrayCollectionLogger(ArtifactLogger[Dict[str, ndarray], NeptuneBackend]):
-    def __init__(self, backend: NeptuneBackend):
-        self._backend = backend
-
+class NeptuneArrayCollectionLogger(NeptuneArtifactLogger[Dict[str, ndarray]]):
     def _log(self, path: str, artifact: Dict[str, ndarray]):
-        if self._backend.experiment_is_active:
+        if self._backend.run_is_active:
             self._backend.native_client[path] = artifact
         else:
-            raise NeptuneExperimentNotSetError("No active experiment.")
+            raise NoActiveNeptuneRunError("No active run.")
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:

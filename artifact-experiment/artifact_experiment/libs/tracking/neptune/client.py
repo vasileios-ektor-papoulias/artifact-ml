@@ -24,9 +24,9 @@ from artifact_experiment.libs.tracking.neptune.loggers.scores import NeptuneScor
 class NeptuneTrackingClient(TrackingClient[NeptuneBackend]):
     @classmethod
     def build(
-        cls: Type["NeptuneTrackingClient"], experiment_id: Optional[str] = None
+        cls: Type["NeptuneTrackingClient"], experiment_id: str, run_id: Optional[str] = None
     ) -> "NeptuneTrackingClient":
-        backend = NeptuneBackend.build(experiment_id=experiment_id)
+        backend = NeptuneBackend.build(experiment_id=experiment_id, run_id=run_id)
         client = NeptuneTrackingClient(backend=backend)
         return client
 
