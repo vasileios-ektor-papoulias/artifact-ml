@@ -11,10 +11,12 @@ class TrackingBackend(ABC, Generic[nativeClientT]):
         self._native_client = native_client
 
     @classmethod
-    def build(cls: Type[trackingBackendT], experiment_id: Optional[str] = None) -> trackingBackendT:
-        if experiment_id is None:
-            experiment_id = cls._generate_random_id()
-        native_client = cls._get_native_client(experiment_id=experiment_id)
+    def build(
+        cls: Type[trackingBackendT], experiment_id: str, run_id: Optional[str] = None
+    ) -> trackingBackendT:
+        if run_id is None:
+            run_id = cls._generate_random_id()
+        native_client = cls._get_native_client(experiment_id=experiment_id, run_id=run_id)
         backend = cls(native_client=native_client)
         return backend
 
@@ -31,32 +33,35 @@ class TrackingBackend(ABC, Generic[nativeClientT]):
 
     @property
     @abstractmethod
-    def experiment_is_active(self) -> bool: ...
+    def experiment_id(self) -> str: ...
 
     @property
     @abstractmethod
-    def experiment_id(self) -> str: ...
+    def run_id(self) -> str: ...
 
+    @property
     @abstractmethod
-    def _start_experiment(self, experiment_id: str): ...
+    def run_is_active(self) -> bool: ...
 
     @classmethod
     @abstractmethod
-    def _stop_experiment(cls, native_client: nativeClientT): ...
+    def _get_native_client(cls, experiment_id: str, run_id: str) -> nativeClientT: ...
 
-    @classmethod
     @abstractmethod
-    def _get_native_client(cls, experiment_id: str) -> nativeClientT: ...
+    def _start_run(self, run_id: str): ...
 
-    def start_experiment(self, experiment_id: Optional[str] = None) -> str:
-        if experiment_id is None:
-            experiment_id = self._generate_random_id()
-        self._start_experiment(experiment_id=experiment_id)
-        return experiment_id
+    @abstractmethod
+    def _stop_run(self): ...
 
-    def stop_experiment(self):
-        if self.experiment_is_active:
-            self._stop_experiment(native_client=self.native_client)
+    def start_run(self, run_id: Optional[str] = None) -> str:
+        if run_id is None:
+            run_id = self._generate_random_id()
+        self._start_run(run_id=run_id)
+        return run_id
+
+    def stop_run(self):
+        if self.run_is_active:
+            self._stop_run()
 
     @staticmethod
     def _generate_random_id() -> str:
