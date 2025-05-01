@@ -3,22 +3,18 @@ from typing import Dict
 
 import pandas as pd
 
-from artifact_experiment.base.tracking.logger import ArtifactLogger
 from artifact_experiment.libs.tracking.filesystem.backend import (
-    FilesystemBackend,
-    FilesystemExperimentNotSetError,
+    NoActiveFilesystemRunError,
 )
+from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemArtifactLogger
 
 
-class FilesystemScoreCollectionLogger(ArtifactLogger[Dict[str, float], FilesystemBackend]):
-    def __init__(self, backend: FilesystemBackend):
-        self._backend = backend
-
+class FilesystemScoreCollectionLogger(FilesystemArtifactLogger[Dict[str, float]]):
     def _log(self, path: str, artifact: Dict[str, float]):
-        if self._backend.native_client is not None and self._backend.experiment_is_active:
+        if self._backend.run_is_active:
             self._export_score_collection(path=Path(path), dict_values=artifact)
         else:
-            raise FilesystemExperimentNotSetError("No active experiment.")
+            raise NoActiveFilesystemRunError("No active run.")
 
     @staticmethod
     def _export_score_collection(path: Path, dict_values: Dict[str, float]):

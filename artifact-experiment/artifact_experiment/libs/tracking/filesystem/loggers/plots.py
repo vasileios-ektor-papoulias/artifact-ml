@@ -1,28 +1,24 @@
 from matplotlib.figure import Figure
 
-from artifact_experiment.base.tracking.logger import ArtifactLogger
 from artifact_experiment.libs.tracking.filesystem.backend import (
-    FilesystemBackend,
-    FilesystemExperimentNotSetError,
+    NoActiveFilesystemRunError,
 )
+from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemArtifactLogger
 from artifact_experiment.libs.utils.filesystem import (
     IncrementalPathGenerator,
 )
 
 
-class FilesystemPlotLogger(ArtifactLogger[Figure, FilesystemBackend]):
+class FilesystemPlotLogger(FilesystemArtifactLogger[Figure]):
     _fmt: str = "png"
     _dpi: int = 300
     _bbox_inches: str = "tight"
 
-    def __init__(self, backend: FilesystemBackend):
-        self._backend = backend
-
     def _log(self, path: str, artifact: Figure):
-        if self._backend.experiment_is_active:
+        if self._backend.run_is_active:
             self._export_plot(dir_path=path, plot=artifact)
         else:
-            raise FilesystemExperimentNotSetError("No active experiment.")
+            raise NoActiveFilesystemRunError("No active run.")
 
     @classmethod
     def _export_plot(cls, dir_path: str, plot: Figure):

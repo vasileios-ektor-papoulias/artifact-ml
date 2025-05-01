@@ -3,29 +3,25 @@ from typing import Dict
 
 from matplotlib.figure import Figure
 
-from artifact_experiment.base.tracking.logger import ArtifactLogger
 from artifact_experiment.libs.tracking.filesystem.backend import (
-    FilesystemBackend,
-    FilesystemExperimentNotSetError,
+    NoActiveFilesystemRunError,
 )
+from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemArtifactLogger
 from artifact_experiment.libs.utils.filesystem import (
     IncrementalPathGenerator,
 )
 
 
-class FilesystemPlotCollectionLogger(ArtifactLogger[Dict[str, Figure], FilesystemBackend]):
+class FilesystemPlotCollectionLogger(FilesystemArtifactLogger[Dict[str, Figure]]):
     _fmt: str = "png"
     _dpi: int = 300
     _bbox_inches: str = "tight"
 
-    def __init__(self, backend: FilesystemBackend):
-        self._backend = backend
-
     def _log(self, path: str, artifact: Dict[str, Figure]):
-        if self._backend.experiment_is_active:
+        if self._backend.run_is_active:
             self._export_plot_collection(dir_path=path, plot_collection=artifact)
         else:
-            raise FilesystemExperimentNotSetError("No active experiment.")
+            raise NoActiveFilesystemRunError("No active run.")
 
     @classmethod
     def _export_plot_collection(cls, dir_path: str, plot_collection: Dict[str, Figure]):
