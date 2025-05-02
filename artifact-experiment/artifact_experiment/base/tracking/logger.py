@@ -30,6 +30,7 @@ class ArtifactLogger(ABC, Generic[artifactResultT, trackingBackendT]):
     def _get_artifact_path(cls, root_dir: str, artifact_name: str) -> str:
         relative_path = cls._get_relative_path(artifact_name=artifact_name)
         artifact_path = os.path.join(root_dir, relative_path)
+        os.makedirs(name=os.path.dirname(artifact_path), exist_ok=True)
         return artifact_path
 
     def log(self, name: str, artifact: artifactResultT):
