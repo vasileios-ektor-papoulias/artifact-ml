@@ -31,6 +31,14 @@ class FilesystemTrackingClient(TrackingClient[FilesystemBackend]):
         client = FilesystemTrackingClient(backend=backend)
         return client
 
+    @property
+    def experiment_dir(self) -> str:
+        return self._backend.experiment_dir
+
+    @property
+    def run_dir(self) -> str:
+        return self._backend.run_dir
+
     @staticmethod
     def _get_score_logger(backend: FilesystemBackend) -> ArtifactLogger[float, FilesystemBackend]:
         return FilesystemScoreLogger(backend=backend)

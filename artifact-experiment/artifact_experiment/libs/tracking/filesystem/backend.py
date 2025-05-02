@@ -62,6 +62,14 @@ class FilesystemBackend(TrackingBackend[FilesystemRunClient]):
     def run_is_active(self) -> bool:
         return self._native_client.run_is_active
 
+    @property
+    def experiment_dir(self) -> str:
+        return self._native_client.experiment_dir
+
+    @property
+    def run_dir(self) -> str:
+        return self._native_client.run_dir
+
     @classmethod
     def _get_native_client(cls, experiment_id: str, run_id: str) -> FilesystemRunClient:
         return FilesystemRunClient(experiment_id=experiment_id, run_id=run_id)
