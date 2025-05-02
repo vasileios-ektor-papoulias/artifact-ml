@@ -26,7 +26,7 @@ class TSNEProjectionComparisonPlotConfig(ArtifactHyperparams):
     use_categorical: bool
     perplexity: float
     learning_rate: float | str
-    n_iter: int
+    max_iter: int
 
 
 @TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.TSNE_PROJECTION_PLOT)
