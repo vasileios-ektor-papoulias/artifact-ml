@@ -25,9 +25,9 @@ from artifact_experiment.libs.tracking.filesystem.loggers.scores import Filesyst
 class FilesystemTrackingClient(TrackingClient[FilesystemBackend]):
     @classmethod
     def build(
-        cls: Type["FilesystemTrackingClient"], experiment_id: Optional[str] = None
+        cls: Type["FilesystemTrackingClient"], experiment_id: str, run_id: Optional[str] = None
     ) -> "FilesystemTrackingClient":
-        backend = FilesystemBackend.build(experiment_id=experiment_id)
+        backend = FilesystemBackend.build(experiment_id=experiment_id, run_id=run_id)
         client = FilesystemTrackingClient(backend=backend)
         return client
 
