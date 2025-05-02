@@ -414,7 +414,7 @@ Create a file at `.artifact/table_comparison.json` in your project root:
     "tsne_projection_plot": {
       "perplexity": 50,
       "learning_rate": 200,
-      "n_iter": 2000
+      "max_iter": 2000
     }
   }
 }

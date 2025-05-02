@@ -23,7 +23,7 @@ tsneProjectorType = TypeVar("tsneProjectorType", bound="TSNEProjector")
 class TSNEHyperparams(ProjectorHyperparams):
     perplexity: float = 30.0
     learning_rate: float | Literal["auto"] = "auto"
-    n_iter: int = 1000
+    max_iter: int = 1000
 
 
 class TSNEProjector(ProjectorBase[TSNEHyperparams]):
@@ -57,7 +57,7 @@ class TSNEProjector(ProjectorBase[TSNEHyperparams]):
                 n_components=self._n_components,
                 perplexity=self._hyperparams.perplexity,
                 learning_rate=self._hyperparams.learning_rate,
-                n_iter=self._hyperparams.n_iter,
+                max_iter=self._hyperparams.max_iter,
             )
             return tsne_model.fit_transform(X=dataset_preprocessed)
         except (ValueError, LinAlgError, NotFittedError):

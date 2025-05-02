@@ -19,7 +19,7 @@ from pytest_mock import MockerFixture
 @pytest.fixture
 def hyperparams() -> TSNEProjectionComparisonPlotConfig:
     hyperparams = TSNEProjectionComparisonPlotConfig(
-        use_categorical=True, perplexity=30.0, learning_rate="auto", n_iter=1000
+        use_categorical=True, perplexity=30.0, learning_rate="auto", max_iter=1000
     )
     return hyperparams
 
@@ -58,7 +58,7 @@ def test_compute(
     assert build_kwargs["projector_config"].use_categorical == hyperparams.use_categorical
     assert build_kwargs["projector_config"].perplexity == hyperparams.perplexity
     assert build_kwargs["projector_config"].learning_rate == hyperparams.learning_rate
-    assert build_kwargs["projector_config"].n_iter == hyperparams.n_iter
+    assert build_kwargs["projector_config"].max_iter == hyperparams.max_iter
     mock_proj.produce_projection_comparison_plot.assert_called_once()
     _, plot_kwargs = mock_proj.produce_projection_comparison_plot.call_args
     pd.testing.assert_frame_equal(plot_kwargs["dataset_real"], df_real)
