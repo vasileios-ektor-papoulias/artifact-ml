@@ -1,12 +1,9 @@
 import os
 from pathlib import Path
-from typing import TypeVar
 
 from artifact_experiment.base.tracking.backend import (
     TrackingBackend,
 )
-
-filesystemBackendT = TypeVar("filesystemBackendT", bound="FilesystemBackend")
 
 
 class NoActiveFilesystemRunError(Exception):
