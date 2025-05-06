@@ -71,11 +71,11 @@ class FilesystemBackend(TrackingBackend[FilesystemRunClient]):
         return self._native_client.run_dir
 
     @classmethod
-    def _get_native_client(cls, experiment_id: str, run_id: str) -> FilesystemRunClient:
+    def _build_native_client(cls, experiment_id: str, run_id: str) -> FilesystemRunClient:
         return FilesystemRunClient(experiment_id=experiment_id, run_id=run_id)
 
     def _start_run(self, run_id: str):
-        self._native_client = self._get_native_client(
+        self._native_client = self._build_native_client(
             experiment_id=self.experiment_id, run_id=run_id
         )
 

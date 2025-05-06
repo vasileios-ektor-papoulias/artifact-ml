@@ -49,7 +49,7 @@ class MlflowBackend(TrackingBackend[MlflowNativeClient]):
         return self.run_status.upper() == RunStatus.to_string(RunStatus.RUNNING)
 
     @classmethod
-    def _get_native_client(cls, experiment_id: str, run_id: str) -> MlflowNativeClient:
+    def _build_native_client(cls, experiment_id: str, run_id: str) -> MlflowNativeClient:
         mlflow_client = MlflowClient(tracking_uri=cls._tracking_uri)
         run = cls._start_mlflow_run(
             mlflow_client=mlflow_client, experiment_id=experiment_id, run_id=run_id
@@ -58,7 +58,7 @@ class MlflowBackend(TrackingBackend[MlflowNativeClient]):
         return native_client
 
     def _start_run(self, run_id: str):
-        self._native_client = self._get_native_client(
+        self._native_client = self._build_native_client(
             experiment_id=self.experiment_id, run_id=run_id
         )
 

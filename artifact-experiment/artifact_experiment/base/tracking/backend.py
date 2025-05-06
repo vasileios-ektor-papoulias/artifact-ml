@@ -16,7 +16,7 @@ class TrackingBackend(ABC, Generic[nativeClientT]):
     ) -> trackingBackendT:
         if run_id is None:
             run_id = cls._generate_random_id()
-        native_client = cls._get_native_client(experiment_id=experiment_id, run_id=run_id)
+        native_client = cls._build_native_client(experiment_id=experiment_id, run_id=run_id)
         backend = cls(native_client=native_client)
         return backend
 
@@ -45,7 +45,7 @@ class TrackingBackend(ABC, Generic[nativeClientT]):
 
     @classmethod
     @abstractmethod
-    def _get_native_client(cls, experiment_id: str, run_id: str) -> nativeClientT: ...
+    def _build_native_client(cls, experiment_id: str, run_id: str) -> nativeClientT: ...
 
     @abstractmethod
     def _start_run(self, run_id: str): ...

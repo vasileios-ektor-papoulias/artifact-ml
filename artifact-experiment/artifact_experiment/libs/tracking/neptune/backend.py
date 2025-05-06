@@ -28,7 +28,7 @@ class NeptuneBackend(TrackingBackend[neptune.Run]):
         return state == "active"
 
     def _start_experiment(self, run_id: str):
-        self._native_client = self._get_native_client(
+        self._native_client = self._build_native_client(
             experiment_id=self.experiment_id, run_id=run_id
         )
 
@@ -37,7 +37,7 @@ class NeptuneBackend(TrackingBackend[neptune.Run]):
         self._native_client.stop()
 
     @classmethod
-    def _get_native_client(cls, experiment_id: str, run_id: str) -> neptune.Run:
+    def _build_native_client(cls, experiment_id: str, run_id: str) -> neptune.Run:
         native_client = neptune.init_run(
             api_token=cls._neptune_api_token,
             project=experiment_id,
