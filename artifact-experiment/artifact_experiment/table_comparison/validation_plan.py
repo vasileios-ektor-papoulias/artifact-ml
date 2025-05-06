@@ -7,7 +7,6 @@ from artifact_core.table_comparison.artifacts.base import (
     TabularDataSpecProtocol,
 )
 
-from artifact_experiment.base.callbacks.artifact import ArtifactCallbackResources
 from artifact_experiment.base.callbacks.factory import ArtifactCallbackFactory
 from artifact_experiment.base.validation_plan import ArtifactValidationPlan
 from artifact_experiment.table_comparison.callback_factory import (
@@ -19,6 +18,7 @@ from artifact_experiment.table_comparison.callback_factory import (
     TableComparisonScoreCollectionType,
     TableComparisonScoreType,
 )
+from artifact_experiment.table_comparison.resources import TableComparisonCallbackResources
 
 
 class TableComparisonValidationPlan(
@@ -58,10 +58,9 @@ class TableComparisonValidationPlan(
     def _get_plot_collection_types() -> List[TableComparisonPlotCollectionType]: ...
 
     def execute(self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame):
-        artifact_resources = TableComparisonArtifactResources(
+        callback_resources = TableComparisonCallbackResources.build(
             dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
         )
-        callback_resources = ArtifactCallbackResources(artifact_resources=artifact_resources)
         super()._execute(resources=callback_resources)
 
     @staticmethod
