@@ -1,36 +1,28 @@
 import os
 from typing import List, Optional
 
-from mlflow import MlflowClient
-
 
 class IncrementalPathGenerator:
-    @classmethod
-    def generate_mlflow(
-        cls,
-        client: MlflowClient,
-        run_id: str,
-        remote_path: str,
-        dir_local: str,
-        fmt: Optional[str] = None,
-    ) -> str:
-        ls_existing_filepaths = cls._get_existing_files_mlflow(
-            client=client, run_id=run_id, remote_path=remote_path
-        )
-        ls_indices = cls._gather_indices(ls_existing_filepaths=ls_existing_filepaths, fmt=fmt)
-        next_idx = cls._compute_next_index(ls_indices=ls_indices)
-        filename = cls._format_filename(index=next_idx, fmt=fmt)
-        path = os.path.join(dir_local, filename)
-        return path
-
     @classmethod
     def generate(cls, dir_path: str, fmt: Optional[str] = None) -> str:
         cls._ensure_directory(dir_path=dir_path)
         ls_existing_filepaths = cls._get_existing_files_fs(dir_path=dir_path)
+        path = cls.generate_from_existing_filepaths(
+            ls_existing_filepaths=ls_existing_filepaths, dir_local=dir_path, fmt=fmt
+        )
+        return path
+
+    @classmethod
+    def generate_from_existing_filepaths(
+        cls,
+        ls_existing_filepaths: List[str],
+        dir_local: str,
+        fmt: Optional[str] = None,
+    ) -> str:
         ls_indices = cls._gather_indices(ls_existing_filepaths=ls_existing_filepaths, fmt=fmt)
         next_idx = cls._compute_next_index(ls_indices=ls_indices)
         filename = cls._format_filename(index=next_idx, fmt=fmt)
-        path = os.path.join(dir_path, filename)
+        path = os.path.join(dir_local, filename)
         return path
 
     @staticmethod
@@ -42,14 +34,6 @@ class IncrementalPathGenerator:
             if name.isdigit() and ((fmt is None and ext == "") or (fmt is not None and ext == fmt)):
                 ls_indices.append(int(name))
         return ls_indices
-
-    @staticmethod
-    def _get_existing_files_mlflow(
-        client: MlflowClient, run_id: str, remote_path: str
-    ) -> List[str]:
-        ls_artifact_infos = client.list_artifacts(run_id=run_id, path=remote_path)
-        ls_existing_filepaths = [info.path for info in ls_artifact_infos]
-        return ls_existing_filepaths
 
     @staticmethod
     def _get_existing_files_fs(dir_path: str) -> List[str]:
