@@ -22,4 +22,4 @@ class FilesystemArtifactLogger(
     def _get_relative_path(cls, artifact_name: str) -> str: ...
 
     def _get_root_dir(self) -> str:
-        return self._run.run_dir
+        return self._run.dir
