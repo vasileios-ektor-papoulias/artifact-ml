@@ -1,11 +1,11 @@
-from typing import Dict, Optional, Type
+from typing import Dict, Optional, Type, TypeVar
 
 from matplotlib.figure import Figure
 from numpy import ndarray
 
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_experiment.base.tracking.logger import ArtifactLogger
-from artifact_experiment.libs.tracking.mlflow.backend import MlflowBackend, MlflowNativeClient
+from artifact_experiment.libs.tracking.mlflow.adapter import MlflowNativeClient, MlflowRunAdapter
 from artifact_experiment.libs.tracking.mlflow.loggers.array_collections import (
     MlflowArrayCollectionLogger,
 )
@@ -19,52 +19,54 @@ from artifact_experiment.libs.tracking.mlflow.loggers.score_collections import (
 )
 from artifact_experiment.libs.tracking.mlflow.loggers.scores import MlflowScoreLogger
 
+mflowTrackingClientT = TypeVar("mflowTrackingClientT", bound="MlflowTrackingClient")
 
-class MlflowTrackingClient(TrackingClient[MlflowBackend]):
+
+class MlflowTrackingClient(TrackingClient[MlflowRunAdapter]):
     @classmethod
     def build(
-        cls: Type["MlflowTrackingClient"], experiment_id: str, run_id: Optional[str] = None
-    ) -> "MlflowTrackingClient":
-        backend = MlflowBackend.build(experiment_id=experiment_id, run_id=run_id)
-        client = MlflowTrackingClient(backend=backend)
+        cls: Type[mflowTrackingClientT], experiment_id: str, run_id: Optional[str] = None
+    ) -> mflowTrackingClientT:
+        run = MlflowRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
+        client = cls(run=run)
         return client
 
     @classmethod
-    def from_native_client(
-        cls: Type["MlflowTrackingClient"], native_client: MlflowNativeClient
-    ) -> "MlflowTrackingClient":
-        backend = MlflowBackend.from_native_client(native_client=native_client)
-        client = MlflowTrackingClient(backend=backend)
+    def from_native_run(
+        cls: Type[mflowTrackingClientT], native_run: MlflowNativeClient
+    ) -> mflowTrackingClientT:
+        run = MlflowRunAdapter.from_native_run(native_run=native_run)
+        client = cls(run=run)
         return client
 
     @staticmethod
-    def _get_score_logger(backend: MlflowBackend) -> ArtifactLogger[float, MlflowBackend]:
-        return MlflowScoreLogger(backend=backend)
+    def _get_score_logger(run: MlflowRunAdapter) -> ArtifactLogger[float, MlflowRunAdapter]:
+        return MlflowScoreLogger(run=run)
 
     @staticmethod
     def _get_array_logger(
-        backend: MlflowBackend,
-    ) -> ArtifactLogger[ndarray, MlflowBackend]:
-        return MlflowArrayLogger(backend=backend)
+        run: MlflowRunAdapter,
+    ) -> ArtifactLogger[ndarray, MlflowRunAdapter]:
+        return MlflowArrayLogger(run=run)
 
     @staticmethod
-    def _get_plot_logger(backend: MlflowBackend) -> ArtifactLogger[Figure, MlflowBackend]:
-        return MLFlowPlotLogger(backend=backend)
+    def _get_plot_logger(run: MlflowRunAdapter) -> ArtifactLogger[Figure, MlflowRunAdapter]:
+        return MLFlowPlotLogger(run=run)
 
     @staticmethod
     def _get_score_collection_logger(
-        backend: MlflowBackend,
-    ) -> ArtifactLogger[Dict[str, float], MlflowBackend]:
-        return MlflowScoreCollectionLogger(backend=backend)
+        run: MlflowRunAdapter,
+    ) -> ArtifactLogger[Dict[str, float], MlflowRunAdapter]:
+        return MlflowScoreCollectionLogger(run=run)
 
     @staticmethod
     def _get_array_collection_logger(
-        backend: MlflowBackend,
-    ) -> ArtifactLogger[Dict[str, ndarray], MlflowBackend]:
-        return MlflowArrayCollectionLogger(backend=backend)
+        run: MlflowRunAdapter,
+    ) -> ArtifactLogger[Dict[str, ndarray], MlflowRunAdapter]:
+        return MlflowArrayCollectionLogger(run=run)
 
     @staticmethod
     def _get_plot_collection_logger(
-        backend: MlflowBackend,
-    ) -> ArtifactLogger[Dict[str, Figure], MlflowBackend]:
-        return MLFlowPlotCollectionLogger(backend=backend)
+        run: MlflowRunAdapter,
+    ) -> ArtifactLogger[Dict[str, Figure], MlflowRunAdapter]:
+        return MLFlowPlotCollectionLogger(run=run)

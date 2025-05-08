@@ -1,11 +1,11 @@
 import os
 from dataclasses import dataclass
-from typing import Optional
+from typing import List, Optional
 
-from mlflow.entities import Run, RunStatus
+from mlflow.entities import FileInfo, Metric, Run, RunStatus
 from mlflow.tracking import MlflowClient
 
-from artifact_experiment.base.tracking.backend import TrackingBackend
+from artifact_experiment.base.tracking.adapter import RunAdapter
 
 
 class InactiveMlflowRunError(Exception):
@@ -18,52 +18,79 @@ class MlflowNativeClient:
     run: Run
 
 
-class MlflowBackend(TrackingBackend[MlflowNativeClient]):
+class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
     _tracking_uri = os.environ.get("MLFLOW_TRACKING_URI", "http://localhost:5000")
-    ROOT_DIR = "artifact_ml"
 
     @property
     def experiment_id(self) -> str:
-        return self._native_client.run.info.experiment_id
+        return self._native_run.run.info.experiment_id
 
     @property
     def experiment_name(self) -> str:
-        experiment = self._native_client.client.get_experiment(experiment_id=self.experiment_id)
+        experiment = self._native_run.client.get_experiment(experiment_id=self.experiment_id)
         return experiment.name
 
     @property
     def run_uuid(self) -> str:
-        return self._native_client.run.info.run_id
+        return self._native_run.run.info.run_id
 
     @property
     def run_id(self) -> str:
-        name = self._native_client.run.info.run_name
+        name = self._native_run.run.info.run_name
         return name if name is not None else self.run_id
 
     @property
     def run_status(self) -> str:
-        return self._native_client.run.info.status
+        return self._native_run.run.info.status
 
     @property
     def run_is_active(self) -> bool:
         return self.run_status.upper() == RunStatus.to_string(RunStatus.RUNNING)
 
+    def log_metric(self, backend_path: str, value: float, step: int = 0):
+        if self.run_is_active:
+            self._native_run.client.log_metric(
+                run_id=self.run_id, key=backend_path, value=value, step=step
+            )
+        else:
+            raise InactiveMlflowRunError("Inactive run.")
+
+    def upload(self, backend_path: str, local_path: str):
+        if self.run_is_active:
+            self._native_run.client.log_artifact(
+                run_id=self.run_id,
+                local_path=local_path,
+                artifact_path=backend_path,
+            )
+        else:
+            raise InactiveMlflowRunError("Inactive run.")
+
+    def get_ls_artifact_info(self, backend_path: str) -> List[FileInfo]:
+        ls_artifact_infos = self._native_run.client.list_artifacts(
+            run_id=self.run_id, path=backend_path
+        )
+        return ls_artifact_infos
+
+    def get_ls_metric_history(self, backend_path: str) -> List[Metric]:
+        ls_metric_history = self._native_run.client.get_metric_history(
+            run_id=self.run_id, key=backend_path
+        )
+        return ls_metric_history
+
     @classmethod
-    def _build_native_client(cls, experiment_id: str, run_id: str) -> MlflowNativeClient:
+    def _build_native_run(cls, experiment_id: str, run_id: str) -> MlflowNativeClient:
         mlflow_client = MlflowClient(tracking_uri=cls._tracking_uri)
         run = cls._start_mlflow_run(
             mlflow_client=mlflow_client, experiment_id=experiment_id, run_id=run_id
         )
-        native_client = MlflowNativeClient(client=mlflow_client, run=run)
-        return native_client
+        native_run = MlflowNativeClient(client=mlflow_client, run=run)
+        return native_run
 
-    def _start_run(self, run_id: str):
-        self._native_client = self._build_native_client(
-            experiment_id=self.experiment_id, run_id=run_id
-        )
+    def _start(self, run_id: str):
+        self._native_run = self._build_native_run(experiment_id=self.experiment_id, run_id=run_id)
 
-    def _stop_run(self):
-        self._native_client.client.set_terminated(run_id=self.run_uuid)
+    def stop(self):
+        self._native_run.client.set_terminated(run_id=self.run_uuid)
 
     @classmethod
     def _start_mlflow_run(cls, mlflow_client: MlflowClient, experiment_id: str, run_id: str) -> Run:
