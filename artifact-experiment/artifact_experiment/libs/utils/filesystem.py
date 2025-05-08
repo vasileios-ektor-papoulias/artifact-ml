@@ -50,4 +50,4 @@ class IncrementalPathGenerator:
 
     @staticmethod
     def _ensure_directory(dir_path: str):
-        os.makedirs(dir_path, exist_ok=True)
+        os.makedirs(name=dir_path, exist_ok=True)

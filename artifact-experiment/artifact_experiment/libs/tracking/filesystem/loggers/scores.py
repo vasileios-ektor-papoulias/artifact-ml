@@ -31,5 +31,5 @@ class FilesystemScoreLogger(FilesystemArtifactLogger[float]):
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
         relative_dirpath = "scores"
-        os.makedirs(relative_dirpath, exist_ok=True)
+        os.makedirs(name=relative_dirpath, exist_ok=True)
         return f"{relative_dirpath}/{artifact_name}"
