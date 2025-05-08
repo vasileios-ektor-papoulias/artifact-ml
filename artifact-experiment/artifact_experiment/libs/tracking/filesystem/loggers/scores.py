@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -29,4 +30,6 @@ class FilesystemScoreLogger(FilesystemArtifactLogger[float]):
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        return f"scores/{artifact_name}"
+        relative_dirpath = "scores"
+        os.makedirs(relative_dirpath, exist_ok=True)
+        return f"{relative_dirpath}/{artifact_name}"

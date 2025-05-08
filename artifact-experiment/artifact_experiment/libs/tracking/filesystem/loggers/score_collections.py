@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from typing import Dict
 
@@ -28,4 +29,6 @@ class FilesystemScoreCollectionLogger(FilesystemArtifactLogger[Dict[str, float]]
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        return f"score_collections/{artifact_name}"
+        relative_dirpath = "score_collections"
+        os.makedirs(relative_dirpath, exist_ok=True)
+        return f"{relative_dirpath}/{artifact_name}"
