@@ -12,7 +12,7 @@ from artifact_experiment.libs.tracking.filesystem.loggers.base import Filesystem
 
 class FilesystemScoreCollectionLogger(FilesystemArtifactLogger[Dict[str, float]]):
     def _log(self, path: str, artifact: Dict[str, float]):
-        if self._run.run_is_active:
+        if self._run.is_active:
             self._export_score_collection(path=Path(path), dict_values=artifact)
         else:
             raise NoActiveFilesystemRunError("No active run.")

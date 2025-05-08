@@ -11,7 +11,7 @@ class MLFlowPlotLogger(MlflowArtifactLogger[Figure]):
     _fmt = "png"
 
     def _log(self, path: str, artifact: Figure):
-        if not self._run.run_is_active:
+        if not self._run.is_active:
             raise InactiveMlflowRunError("No active experiment.")
         ls_existing_filepaths = [
             str(info.path) for info in self._run.get_ls_artifact_info(backend_path=path)

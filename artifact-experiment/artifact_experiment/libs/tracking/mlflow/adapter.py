@@ -35,30 +35,30 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
         return self._native_run.run.info.run_id
 
     @property
-    def run_id(self) -> str:
+    def id(self) -> str:
         name = self._native_run.run.info.run_name
-        return name if name is not None else self.run_id
+        return name if name is not None else self.id
 
     @property
     def run_status(self) -> str:
         return self._native_run.run.info.status
 
     @property
-    def run_is_active(self) -> bool:
+    def is_active(self) -> bool:
         return self.run_status.upper() == RunStatus.to_string(RunStatus.RUNNING)
 
     def log_metric(self, backend_path: str, value: float, step: int = 0):
-        if self.run_is_active:
+        if self.is_active:
             self._native_run.client.log_metric(
-                run_id=self.run_id, key=backend_path, value=value, step=step
+                run_id=self.id, key=backend_path, value=value, step=step
             )
         else:
             raise InactiveMlflowRunError("Inactive run.")
 
     def upload(self, backend_path: str, local_path: str):
-        if self.run_is_active:
+        if self.is_active:
             self._native_run.client.log_artifact(
-                run_id=self.run_id,
+                run_id=self.id,
                 local_path=local_path,
                 artifact_path=backend_path,
             )
@@ -67,13 +67,13 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
 
     def get_ls_artifact_info(self, backend_path: str) -> List[FileInfo]:
         ls_artifact_infos = self._native_run.client.list_artifacts(
-            run_id=self.run_id, path=backend_path
+            run_id=self.id, path=backend_path
         )
         return ls_artifact_infos
 
     def get_ls_metric_history(self, backend_path: str) -> List[Metric]:
         ls_metric_history = self._native_run.client.get_metric_history(
-            run_id=self.run_id, key=backend_path
+            run_id=self.id, key=backend_path
         )
         return ls_metric_history
 

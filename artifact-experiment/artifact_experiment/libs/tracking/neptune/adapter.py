@@ -19,16 +19,16 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
         return self._native_run["sys/experiment/name"].fetch()
 
     @property
-    def run_id(self) -> str:
+    def id(self) -> str:
         return self._native_run["sys/id"].fetch()
 
     @property
-    def run_is_active(self) -> bool:
+    def is_active(self) -> bool:
         state = self._native_run["sys/state"].fetch()
         return state == "active"
 
     def log(self, path: str, artifact: ArtifactResult):
-        if self.run_is_active:
+        if self.is_active:
             self._native_run[path] = artifact
         else:
             raise NoActiveNeptuneRunError("No active run.")

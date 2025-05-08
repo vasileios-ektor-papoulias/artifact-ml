@@ -13,7 +13,7 @@ class FilesystemScoreLogger(FilesystemArtifactLogger[float]):
     _column_name: str = "value"
 
     def _log(self, path: str, artifact: float):
-        if self._run.run_is_active:
+        if self._run.is_active:
             self._export_score(path=Path(path), value=artifact, column_name=self._column_name)
         else:
             raise NoActiveFilesystemRunError("No active run.")

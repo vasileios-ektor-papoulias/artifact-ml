@@ -13,7 +13,7 @@ from artifact_experiment.libs.utils.filesystem import (
 
 class FilesystemArrayCollectionLogger(FilesystemArtifactLogger[Dict[str, np.ndarray]]):
     def _log(self, path: str, artifact: Dict[str, np.ndarray]):
-        if self._run.run_is_active:
+        if self._run.is_active:
             self._export_array_collection(dir_path=path, array_collection=artifact)
         else:
             raise NoActiveFilesystemRunError("No active run.")
