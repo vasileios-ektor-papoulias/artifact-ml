@@ -1,79 +1,65 @@
 from abc import abstractmethod
-from typing import Dict, Generic, Optional, TypeVar
+from typing import Dict, Generic, TypeVar
 
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-from artifact_experiment.base.tracking.backend import TrackingBackend
+from artifact_experiment.base.tracking.adapter import RunAdapter
 from artifact_experiment.base.tracking.logger import ArtifactLogger
 
-trackingBackendT = TypeVar("trackingBackendT", bound=TrackingBackend)
+runAdapterT = TypeVar("runAdapterT", bound=RunAdapter)
 trackingClientT = TypeVar("trackingClientT", bound="TrackingClient")
 
 
-class TrackingClient(Generic[trackingBackendT]):
-    def __init__(self, backend: trackingBackendT):
-        self._backend = backend
-        self._score_logger = self._get_score_logger(backend=self._backend)
-        self._array_logger = self._get_array_logger(backend=self._backend)
-        self._plot_logger = self._get_plot_logger(backend=self._backend)
-        self._score_collection_logger = self._get_score_collection_logger(backend=self._backend)
-        self._array_collection_logger = self._get_array_collection_logger(backend=self._backend)
-        self._plot_collection_logger = self._get_plot_collection_logger(backend=self._backend)
+class TrackingClient(Generic[runAdapterT]):
+    def __init__(self, run: runAdapterT):
+        self._run = run
+        self._score_logger = self._get_score_logger(run=self._run)
+        self._array_logger = self._get_array_logger(run=self._run)
+        self._plot_logger = self._get_plot_logger(run=self._run)
+        self._score_collection_logger = self._get_score_collection_logger(run=self._run)
+        self._array_collection_logger = self._get_array_collection_logger(run=self._run)
+        self._plot_collection_logger = self._get_plot_collection_logger(run=self._run)
 
     @property
-    def backend(self) -> trackingBackendT:
-        return self._backend
+    def run(self) -> runAdapterT:
+        return self._run
 
-    @property
-    def experiment_id(self) -> str:
-        return self._backend.experiment_id
-
-    @property
-    def run_id(self) -> str:
-        return self._backend.run_id
-
-    @property
-    def run_is_active(self) -> bool:
-        return self._backend.run_is_active
+    @run.setter
+    def run(self, run: runAdapterT):
+        self._run = run
 
     @staticmethod
     @abstractmethod
-    def _get_score_logger(backend: trackingBackendT) -> ArtifactLogger[float, trackingBackendT]: ...
+    def _get_score_logger(run: runAdapterT) -> ArtifactLogger[float, runAdapterT]: ...
 
     @staticmethod
     @abstractmethod
     def _get_array_logger(
-        backend: trackingBackendT,
-    ) -> ArtifactLogger[ndarray, trackingBackendT]: ...
+        run: runAdapterT,
+    ) -> ArtifactLogger[ndarray, runAdapterT]: ...
 
     @staticmethod
     @abstractmethod
-    def _get_plot_logger(backend: trackingBackendT) -> ArtifactLogger[Figure, trackingBackendT]: ...
+    def _get_plot_logger(run: runAdapterT) -> ArtifactLogger[Figure, runAdapterT]: ...
 
     @staticmethod
     @abstractmethod
     def _get_score_collection_logger(
-        backend: trackingBackendT,
-    ) -> ArtifactLogger[Dict[str, float], trackingBackendT]: ...
+        run: runAdapterT,
+    ) -> ArtifactLogger[Dict[str, float], runAdapterT]: ...
 
     @staticmethod
     @abstractmethod
     def _get_array_collection_logger(
-        backend: trackingBackendT,
-    ) -> ArtifactLogger[Dict[str, ndarray], trackingBackendT]: ...
+        run: runAdapterT,
+    ) -> ArtifactLogger[Dict[str, ndarray], runAdapterT]: ...
 
     @staticmethod
     @abstractmethod
     def _get_plot_collection_logger(
-        backend: trackingBackendT,
-    ) -> ArtifactLogger[Dict[str, Figure], trackingBackendT]: ...
-
-    def start_run(self, run_id: Optional[str] = None):
-        self._backend.start_run(run_id=run_id)
-
-    def stop_run(self):
-        self._backend.stop_run()
+        run: runAdapterT,
+    ) -> ArtifactLogger[Dict[str, Figure], runAdapterT]: ...
 
     def log_score(self, score: float, name: str):
         self._score_logger.log(artifact=score, name=name)
