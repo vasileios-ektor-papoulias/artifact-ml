@@ -25,9 +25,10 @@ class FilesystemPlotCollectionLogger(FilesystemArtifactLogger[Dict[str, Figure]]
 
     @classmethod
     def _export_plot_collection(cls, dir_path: str, plot_collection: Dict[str, Figure]):
-        path = IncrementalPathGenerator.generate(dir_path=dir_path, fmt=cls._fmt)
-        for name, plot in plot_collection.items():
-            filepath = os.path.join(path, name)
+        step_path = IncrementalPathGenerator.generate(dir_path=dir_path, fmt=cls._fmt)
+        os.makedirs(name=step_path, exist_ok=True)
+        for plot_name, plot in plot_collection.items():
+            filepath = os.path.join(step_path, plot_name)
             plot.savefig(fname=filepath, dpi=cls._dpi, bbox_inches=cls._bbox_inches)
 
     @classmethod
