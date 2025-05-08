@@ -1,12 +1,10 @@
 import os
 from pathlib import Path
 
-from artifact_experiment.base.tracking.adapter import (
-    RunAdapter,
-)
+from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
 
 
-class InactiveFilesystemRunError(Exception):
+class InactiveFilesystemRunError(InactiveRunError):
     pass
 
 
@@ -34,7 +32,7 @@ class FilesystemRun:
         return os.path.join(str(self._default_root_dir), self._experiment_id)
 
     @property
-    def dir(self) -> str:
+    def run_dir(self) -> str:
         return os.path.join(self.experiment_dir, self._id)
 
     def start(self, id: str):
@@ -46,7 +44,7 @@ class FilesystemRun:
         self._is_active = False
 
     def _create_run_dir(self):
-        os.makedirs(name=self.dir, exist_ok=True)
+        os.makedirs(name=self.run_dir, exist_ok=True)
 
 
 class FilesystemRunAdapter(RunAdapter[FilesystemRun]):
@@ -55,7 +53,7 @@ class FilesystemRunAdapter(RunAdapter[FilesystemRun]):
         return self._native_run.experiment_id
 
     @property
-    def id(self) -> str:
+    def run_id(self) -> str:
         return self._native_run.id
 
     @property
@@ -68,10 +66,12 @@ class FilesystemRunAdapter(RunAdapter[FilesystemRun]):
 
     @property
     def dir(self) -> str:
-        return self._native_run.dir
+        return self._native_run.run_dir
 
     def start(self):
-        self._native_run = self._build_native_run(experiment_id=self.experiment_id, run_id=self.id)
+        self._native_run = self._build_native_run(
+            experiment_id=self.experiment_id, run_id=self.run_id
+        )
 
     def stop(self):
         self._native_run.stop()

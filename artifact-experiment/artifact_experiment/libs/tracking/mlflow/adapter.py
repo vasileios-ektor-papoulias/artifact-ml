@@ -5,10 +5,10 @@ from typing import List, Optional
 from mlflow.entities import FileInfo, Metric, Run, RunStatus
 from mlflow.tracking import MlflowClient
 
-from artifact_experiment.base.tracking.adapter import RunAdapter
+from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
 
 
-class InactiveMlflowRunError(Exception):
+class InactiveMlflowRunError(InactiveRunError):
     pass
 
 
@@ -35,9 +35,8 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
         return self._native_run.run.info.run_id
 
     @property
-    def id(self) -> str:
-        name = self._native_run.run.info.run_name
-        return name if name is not None else self.id
+    def run_id(self) -> str:
+        return str(self._native_run.run.info.run_name)
 
     @property
     def run_status(self) -> str:
@@ -50,7 +49,7 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
     def log_metric(self, backend_path: str, value: float, step: int = 0):
         if self.is_active:
             self._native_run.client.log_metric(
-                run_id=self.id, key=backend_path, value=value, step=step
+                run_id=self.run_id, key=backend_path, value=value, step=step
             )
         else:
             raise InactiveMlflowRunError("Run is inactive")
@@ -58,7 +57,7 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
     def upload(self, backend_path: str, local_path: str):
         if self.is_active:
             self._native_run.client.log_artifact(
-                run_id=self.id,
+                run_id=self.run_id,
                 local_path=local_path,
                 artifact_path=backend_path,
             )
@@ -67,18 +66,20 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
 
     def get_ls_artifact_info(self, backend_path: str) -> List[FileInfo]:
         ls_artifact_infos = self._native_run.client.list_artifacts(
-            run_id=self.id, path=backend_path
+            run_id=self.run_id, path=backend_path
         )
         return ls_artifact_infos
 
     def get_ls_metric_history(self, backend_path: str) -> List[Metric]:
         ls_metric_history = self._native_run.client.get_metric_history(
-            run_id=self.id, key=backend_path
+            run_id=self.run_id, key=backend_path
         )
         return ls_metric_history
 
     def start(self):
-        self._native_run = self._build_native_run(experiment_id=self.experiment_id, run_id=self.id)
+        self._native_run = self._build_native_run(
+            experiment_id=self.experiment_id, run_id=self.run_id
+        )
 
     def stop(self):
         self._native_run.client.set_terminated(run_id=self.run_uuid)

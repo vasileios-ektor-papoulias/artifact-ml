@@ -7,6 +7,10 @@ nativeRunT = TypeVar("nativeRunT")
 runAdapterT = TypeVar("runAdapterT", bound="RunAdapter")
 
 
+class InactiveRunError(Exception):
+    pass
+
+
 class RunAdapter(ABC, Generic[nativeRunT]):
     def __init__(self, native_run: nativeRunT):
         self._native_run = native_run
@@ -32,7 +36,7 @@ class RunAdapter(ABC, Generic[nativeRunT]):
 
     @property
     @abstractmethod
-    def id(self) -> str: ...
+    def run_id(self) -> str: ...
 
     @property
     @abstractmethod
