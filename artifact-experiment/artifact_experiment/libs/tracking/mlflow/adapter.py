@@ -46,7 +46,7 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
     def is_active(self) -> bool:
         return self.run_status.upper() == RunStatus.to_string(RunStatus.RUNNING)
 
-    def log_metric(self, backend_path: str, value: float, step: int = 0):
+    def log_score(self, backend_path: str, value: float, step: int = 0):
         if self.is_active:
             self._native_run.client.log_metric(
                 run_id=self.run_id, key=backend_path, value=value, step=step
@@ -70,7 +70,7 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
         )
         return ls_artifact_infos
 
-    def get_ls_metric_history(self, backend_path: str) -> List[Metric]:
+    def get_ls_score_history(self, backend_path: str) -> List[Metric]:
         ls_metric_history = self._native_run.client.get_metric_history(
             run_id=self.run_id, key=backend_path
         )
