@@ -44,8 +44,7 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
 
     @property
     def is_active(self) -> bool:
-        state = self._native_run["sys/state"].fetch()
-        return state == "active"
+        return self.run_status == NeptuneRunStatus.ACTIVE
 
     def log(self, path: str, artifact: ArtifactResult):
         if self.is_active:
