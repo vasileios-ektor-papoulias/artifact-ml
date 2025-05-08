@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from artifact_experiment.libs.tracking.filesystem.backend import (
+from artifact_experiment.libs.tracking.filesystem.adapter import (
     NoActiveFilesystemRunError,
 )
 from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemArtifactLogger
@@ -12,7 +12,7 @@ class FilesystemScoreLogger(FilesystemArtifactLogger[float]):
     _column_name: str = "value"
 
     def _log(self, path: str, artifact: float):
-        if self._backend.run_is_active:
+        if self._run.run_is_active:
             self._export_score(path=Path(path), value=artifact, column_name=self._column_name)
         else:
             raise NoActiveFilesystemRunError("No active run.")

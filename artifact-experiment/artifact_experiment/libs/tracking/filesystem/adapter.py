@@ -1,8 +1,8 @@
 import os
 from pathlib import Path
 
-from artifact_experiment.base.tracking.backend import (
-    TrackingBackend,
+from artifact_experiment.base.tracking.adapter import (
+    RunAdapter,
 )
 
 
@@ -10,7 +10,7 @@ class NoActiveFilesystemRunError(Exception):
     pass
 
 
-class FilesystemRunClient:
+class FilesystemRun:
     _default_root_dir = Path.home() / "artifact_ml"
 
     def __init__(self, experiment_id: str, run_id: str):
@@ -49,35 +49,33 @@ class FilesystemRunClient:
         os.makedirs(name=self.run_dir, exist_ok=True)
 
 
-class FilesystemBackend(TrackingBackend[FilesystemRunClient]):
+class FilesystemRunAdapter(RunAdapter[FilesystemRun]):
     @property
     def experiment_id(self) -> str:
-        return self._native_client.experiment_id
+        return self._native_run.experiment_id
 
     @property
     def run_id(self) -> str:
-        return self._native_client.run_id
+        return self._native_run.run_id
 
     @property
     def run_is_active(self) -> bool:
-        return self._native_client.run_is_active
+        return self._native_run.run_is_active
 
     @property
     def experiment_dir(self) -> str:
-        return self._native_client.experiment_dir
+        return self._native_run.experiment_dir
 
     @property
     def run_dir(self) -> str:
-        return self._native_client.run_dir
+        return self._native_run.run_dir
 
     @classmethod
-    def _build_native_client(cls, experiment_id: str, run_id: str) -> FilesystemRunClient:
-        return FilesystemRunClient(experiment_id=experiment_id, run_id=run_id)
+    def _build_native_run(cls, experiment_id: str, run_id: str) -> FilesystemRun:
+        return FilesystemRun(experiment_id=experiment_id, run_id=run_id)
 
-    def _start_run(self, run_id: str):
-        self._native_client = self._build_native_client(
-            experiment_id=self.experiment_id, run_id=run_id
-        )
+    def _start(self, run_id: str):
+        self._native_run = self._build_native_run(experiment_id=self.experiment_id, run_id=run_id)
 
-    def _stop_run(self):
-        self._native_client.stop()
+    def stop(self):
+        self._native_run.stop()

@@ -3,7 +3,7 @@ from typing import Dict
 
 from matplotlib.figure import Figure
 
-from artifact_experiment.libs.tracking.filesystem.backend import (
+from artifact_experiment.libs.tracking.filesystem.adapter import (
     NoActiveFilesystemRunError,
 )
 from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemArtifactLogger
@@ -18,7 +18,7 @@ class FilesystemPlotCollectionLogger(FilesystemArtifactLogger[Dict[str, Figure]]
     _bbox_inches: str = "tight"
 
     def _log(self, path: str, artifact: Dict[str, Figure]):
-        if self._backend.run_is_active:
+        if self._run.run_is_active:
             self._export_plot_collection(dir_path=path, plot_collection=artifact)
         else:
             raise NoActiveFilesystemRunError("No active run.")

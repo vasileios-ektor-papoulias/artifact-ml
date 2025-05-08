@@ -1,7 +1,7 @@
 import numpy as np
 from numpy import ndarray
 
-from artifact_experiment.libs.tracking.filesystem.backend import (
+from artifact_experiment.libs.tracking.filesystem.adapter import (
     NoActiveFilesystemRunError,
 )
 from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemArtifactLogger
@@ -12,7 +12,7 @@ from artifact_experiment.libs.utils.filesystem import (
 
 class FilesystemArrayLogger(FilesystemArtifactLogger[ndarray]):
     def _log(self, path: str, artifact: ndarray):
-        if self._backend.run_is_active:
+        if self._run.run_is_active:
             self._export_array(dir_path=path, array=artifact)
         else:
             raise NoActiveFilesystemRunError("No active run.")

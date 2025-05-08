@@ -3,7 +3,7 @@ from typing import Dict
 
 import pandas as pd
 
-from artifact_experiment.libs.tracking.filesystem.backend import (
+from artifact_experiment.libs.tracking.filesystem.adapter import (
     NoActiveFilesystemRunError,
 )
 from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemArtifactLogger
@@ -11,7 +11,7 @@ from artifact_experiment.libs.tracking.filesystem.loggers.base import Filesystem
 
 class FilesystemScoreCollectionLogger(FilesystemArtifactLogger[Dict[str, float]]):
     def _log(self, path: str, artifact: Dict[str, float]):
-        if self._backend.run_is_active:
+        if self._run.run_is_active:
             self._export_score_collection(path=Path(path), dict_values=artifact)
         else:
             raise NoActiveFilesystemRunError("No active run.")
