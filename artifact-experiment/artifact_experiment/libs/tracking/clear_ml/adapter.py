@@ -53,9 +53,19 @@ class ClearMLRunAdapter(RunAdapter[Task]):
             time.sleep(self._time_to_wait_before_stopping_seconds)
             self._native_run.close()
 
-    def log_score(self, value: float, title: str, series: str, iteration: int):
+    def log_score(
+        self,
+        value: float,
+        title: str,
+        series: Optional[str] = None,
+        iteration: Optional[int] = None,
+    ):
         if not self.is_active:
             raise InactiveClearMLRunError("Run is inactive")
+        if series is None:
+            series = title
+        if iteration is None:
+            iteration = 0
         logger = self._native_run.get_logger()
         logger.report_scalar(
             title=title,
@@ -64,9 +74,19 @@ class ClearMLRunAdapter(RunAdapter[Task]):
             value=value,
         )
 
-    def log_plot(self, plot: Figure, title: str, series: str, iteration: int):
+    def log_plot(
+        self,
+        plot: Figure,
+        title: str,
+        series: Optional[str] = None,
+        iteration: Optional[int] = None,
+    ):
         if not self.is_active:
             raise InactiveClearMLRunError("Run is inactive")
+        if series is None:
+            series = title
+        if iteration is None:
+            iteration = 0
         logger = self._native_run.get_logger()
         logger.report_matplotlib_figure(
             title=title,
