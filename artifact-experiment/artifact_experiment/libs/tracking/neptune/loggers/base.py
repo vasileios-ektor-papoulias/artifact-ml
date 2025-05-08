@@ -4,22 +4,24 @@ from typing import Generic, TypeVar
 from artifact_core.base.artifact_dependencies import ArtifactResult
 
 from artifact_experiment.base.tracking.logger import ArtifactLogger
-from artifact_experiment.libs.tracking.neptune.backend import (
-    NeptuneBackend,
+from artifact_experiment.libs.tracking.neptune.adapter import (
+    NeptuneRunAdapter,
 )
 
 artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
 
 
 class NeptuneArtifactLogger(
-    ArtifactLogger[artifactResultT, NeptuneBackend], Generic[artifactResultT]
+    ArtifactLogger[artifactResultT, NeptuneRunAdapter], Generic[artifactResultT]
 ):
-    @abstractmethod
-    def _log(self, path: str, artifact: artifactResultT): ...
+    _root_dir = "artifact_ml"
+
+    def _log(self, path: str, artifact: artifactResultT):
+        self._run.log(path=path, artifact=artifact)
 
     @classmethod
     @abstractmethod
     def _get_relative_path(cls, artifact_name: str) -> str: ...
 
     def _get_root_dir(self) -> str:
-        return self._backend.ROOT_DIR
+        return self._root_dir

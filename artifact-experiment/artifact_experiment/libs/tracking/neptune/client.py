@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Type
+from typing import Dict, Optional, Type, TypeVar
 
 import neptune
 from matplotlib.figure import Figure
@@ -6,7 +6,7 @@ from numpy import ndarray
 
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_experiment.base.tracking.logger import ArtifactLogger
-from artifact_experiment.libs.tracking.neptune.backend import NeptuneBackend
+from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter
 from artifact_experiment.libs.tracking.neptune.loggers.array_collections import (
     NeptuneArrayCollectionLogger,
 )
@@ -20,52 +20,54 @@ from artifact_experiment.libs.tracking.neptune.loggers.score_collections import 
 )
 from artifact_experiment.libs.tracking.neptune.loggers.scores import NeptuneScoreLogger
 
+neptuneTrackingClientT = TypeVar("neptuneTrackingClientT", bound="NeptuneTrackingClient")
 
-class NeptuneTrackingClient(TrackingClient[NeptuneBackend]):
+
+class NeptuneTrackingClient(TrackingClient[NeptuneRunAdapter]):
     @classmethod
     def build(
-        cls: Type["NeptuneTrackingClient"], experiment_id: str, run_id: Optional[str] = None
-    ) -> "NeptuneTrackingClient":
-        backend = NeptuneBackend.build(experiment_id=experiment_id, run_id=run_id)
-        client = NeptuneTrackingClient(backend=backend)
+        cls: Type[neptuneTrackingClientT], experiment_id: str, run_id: Optional[str] = None
+    ) -> neptuneTrackingClientT:
+        run = NeptuneRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
+        client = cls(run=run)
         return client
 
     @classmethod
-    def from_native_client(
-        cls: Type["NeptuneTrackingClient"], native_client: neptune.Run
-    ) -> "NeptuneTrackingClient":
-        backend = NeptuneBackend.from_native_client(native_client=native_client)
-        client = NeptuneTrackingClient(backend=backend)
+    def from_native_run(
+        cls: Type[neptuneTrackingClientT], native_run: neptune.Run
+    ) -> neptuneTrackingClientT:
+        run = NeptuneRunAdapter.from_native_run(native_run=native_run)
+        client = cls(run=run)
         return client
 
     @staticmethod
-    def _get_score_logger(backend: NeptuneBackend) -> ArtifactLogger[float, NeptuneBackend]:
-        return NeptuneScoreLogger(backend=backend)
+    def _get_score_logger(run: NeptuneRunAdapter) -> ArtifactLogger[float, NeptuneRunAdapter]:
+        return NeptuneScoreLogger(run=run)
 
     @staticmethod
     def _get_array_logger(
-        backend: NeptuneBackend,
-    ) -> ArtifactLogger[ndarray, NeptuneBackend]:
-        return NeptuneArrayLogger(backend=backend)
+        run: NeptuneRunAdapter,
+    ) -> ArtifactLogger[ndarray, NeptuneRunAdapter]:
+        return NeptuneArrayLogger(run=run)
 
     @staticmethod
-    def _get_plot_logger(backend: NeptuneBackend) -> ArtifactLogger[Figure, NeptuneBackend]:
-        return NeptunePlotLogger(backend=backend)
+    def _get_plot_logger(run: NeptuneRunAdapter) -> ArtifactLogger[Figure, NeptuneRunAdapter]:
+        return NeptunePlotLogger(run=run)
 
     @staticmethod
     def _get_score_collection_logger(
-        backend: NeptuneBackend,
-    ) -> ArtifactLogger[Dict[str, float], NeptuneBackend]:
-        return NeptuneScoreCollectionLogger(backend=backend)
+        run: NeptuneRunAdapter,
+    ) -> ArtifactLogger[Dict[str, float], NeptuneRunAdapter]:
+        return NeptuneScoreCollectionLogger(run=run)
 
     @staticmethod
     def _get_array_collection_logger(
-        backend: NeptuneBackend,
-    ) -> ArtifactLogger[Dict[str, ndarray], NeptuneBackend]:
-        return NeptuneArrayCollectionLogger(backend=backend)
+        run: NeptuneRunAdapter,
+    ) -> ArtifactLogger[Dict[str, ndarray], NeptuneRunAdapter]:
+        return NeptuneArrayCollectionLogger(run=run)
 
     @staticmethod
     def _get_plot_collection_logger(
-        backend: NeptuneBackend,
-    ) -> ArtifactLogger[Dict[str, Figure], NeptuneBackend]:
-        return NeptunePlotCollectionLogger(backend=backend)
+        run: NeptuneRunAdapter,
+    ) -> ArtifactLogger[Dict[str, Figure], NeptuneRunAdapter]:
+        return NeptunePlotCollectionLogger(run=run)
