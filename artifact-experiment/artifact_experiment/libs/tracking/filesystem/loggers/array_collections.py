@@ -3,7 +3,7 @@ from typing import Dict
 import numpy as np
 
 from artifact_experiment.libs.tracking.filesystem.adapter import (
-    NoActiveFilesystemRunError,
+    InactiveFilesystemRunError,
 )
 from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemArtifactLogger
 from artifact_experiment.libs.utils.filesystem import (
@@ -16,7 +16,7 @@ class FilesystemArrayCollectionLogger(FilesystemArtifactLogger[Dict[str, np.ndar
         if self._run.is_active:
             self._export_array_collection(dir_path=path, array_collection=artifact)
         else:
-            raise NoActiveFilesystemRunError("No active run.")
+            raise InactiveFilesystemRunError("Run is inactive")
 
     @classmethod
     def _export_array_collection(cls, dir_path: str, array_collection: Dict[str, np.ndarray]):

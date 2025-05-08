@@ -1,7 +1,7 @@
 from matplotlib.figure import Figure
 
 from artifact_experiment.libs.tracking.filesystem.adapter import (
-    NoActiveFilesystemRunError,
+    InactiveFilesystemRunError,
 )
 from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemArtifactLogger
 from artifact_experiment.libs.utils.filesystem import (
@@ -18,7 +18,7 @@ class FilesystemPlotLogger(FilesystemArtifactLogger[Figure]):
         if self._run.is_active:
             self._export_plot(dir_path=path, plot=artifact)
         else:
-            raise NoActiveFilesystemRunError("No active run.")
+            raise InactiveFilesystemRunError("Run is inactive")
 
     @classmethod
     def _export_plot(cls, dir_path: str, plot: Figure):

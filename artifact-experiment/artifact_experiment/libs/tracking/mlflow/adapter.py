@@ -53,7 +53,7 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
                 run_id=self.id, key=backend_path, value=value, step=step
             )
         else:
-            raise InactiveMlflowRunError("Inactive run.")
+            raise InactiveMlflowRunError("Run is inactive")
 
     def upload(self, backend_path: str, local_path: str):
         if self.is_active:
@@ -63,7 +63,7 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
                 artifact_path=backend_path,
             )
         else:
-            raise InactiveMlflowRunError("Inactive run.")
+            raise InactiveMlflowRunError("Run is inactive")
 
     def get_ls_artifact_info(self, backend_path: str) -> List[FileInfo]:
         ls_artifact_infos = self._native_run.client.list_artifacts(
@@ -77,6 +77,12 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
         )
         return ls_metric_history
 
+    def start(self):
+        self._native_run = self._build_native_run(experiment_id=self.experiment_id, run_id=self.id)
+
+    def stop(self):
+        self._native_run.client.set_terminated(run_id=self.run_uuid)
+
     @classmethod
     def _build_native_run(cls, experiment_id: str, run_id: str) -> MlflowNativeClient:
         mlflow_client = MlflowClient(tracking_uri=cls._tracking_uri)
@@ -85,12 +91,6 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
         )
         native_run = MlflowNativeClient(client=mlflow_client, run=run)
         return native_run
-
-    def _start(self, run_id: str):
-        self._native_run = self._build_native_run(experiment_id=self.experiment_id, run_id=run_id)
-
-    def stop(self):
-        self._native_run.client.set_terminated(run_id=self.run_uuid)
 
     @classmethod
     def _start_mlflow_run(cls, mlflow_client: MlflowClient, experiment_id: str, run_id: str) -> Run:

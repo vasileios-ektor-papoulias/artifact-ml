@@ -6,7 +6,7 @@ from artifact_core.base.artifact_dependencies import ArtifactResult
 from artifact_experiment.base.tracking.adapter import RunAdapter
 
 
-class NoActiveNeptuneRunError(Exception):
+class InactiveNeptuneRunError(Exception):
     pass
 
 
@@ -31,12 +31,12 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
         if self.is_active:
             self._native_run[path] = artifact
         else:
-            raise NoActiveNeptuneRunError("No active run.")
+            raise InactiveNeptuneRunError("Run is inactive")
 
-    def _start_experiment(self, run_id: str):
-        self._native_run = self._build_native_run(experiment_id=self.experiment_id, run_id=run_id)
+    def start(self):
+        self._native_run = self._build_native_run(experiment_id=self.experiment_id, run_id=self.id)
 
-    def _stop_experiment(self):
+    def stop(self):
         time.sleep(self._time_to_wait_before_stopping_seconds)
         self._native_run.stop()
 

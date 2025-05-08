@@ -5,7 +5,7 @@ from typing import Dict
 import pandas as pd
 
 from artifact_experiment.libs.tracking.filesystem.adapter import (
-    NoActiveFilesystemRunError,
+    InactiveFilesystemRunError,
 )
 from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemArtifactLogger
 
@@ -15,7 +15,7 @@ class FilesystemScoreCollectionLogger(FilesystemArtifactLogger[Dict[str, float]]
         if self._run.is_active:
             self._export_score_collection(path=Path(path), dict_values=artifact)
         else:
-            raise NoActiveFilesystemRunError("No active run.")
+            raise InactiveFilesystemRunError("Run is inactive")
 
     @staticmethod
     def _export_score_collection(path: Path, dict_values: Dict[str, float]):

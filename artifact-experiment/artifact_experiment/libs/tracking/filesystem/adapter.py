@@ -6,7 +6,7 @@ from artifact_experiment.base.tracking.adapter import (
 )
 
 
-class NoActiveFilesystemRunError(Exception):
+class InactiveFilesystemRunError(Exception):
     pass
 
 
@@ -70,12 +70,12 @@ class FilesystemRunAdapter(RunAdapter[FilesystemRun]):
     def dir(self) -> str:
         return self._native_run.dir
 
-    @classmethod
-    def _build_native_run(cls, experiment_id: str, run_id: str) -> FilesystemRun:
-        return FilesystemRun(experiment_id=experiment_id, run_id=run_id)
-
-    def _start(self, run_id: str):
-        self._native_run = self._build_native_run(experiment_id=self.experiment_id, run_id=run_id)
+    def start(self):
+        self._native_run = self._build_native_run(experiment_id=self.experiment_id, run_id=self.id)
 
     def stop(self):
         self._native_run.stop()
+
+    @classmethod
+    def _build_native_run(cls, experiment_id: str, run_id: str) -> FilesystemRun:
+        return FilesystemRun(experiment_id=experiment_id, run_id=run_id)
