@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from typing import Dict
 
+import numpy as np
 import pandas as pd
 
 from artifact_experiment.libs.tracking.filesystem.adapter import (
@@ -19,16 +20,15 @@ class FilesystemScoreCollectionLogger(FilesystemArtifactLogger[Dict[str, float]]
 
     @staticmethod
     def _export_score_collection(path: Path, dict_values: Dict[str, float]):
+        os.makedirs(name=path.parent, exist_ok=True)
         if path.exists():
             df = pd.read_csv(path)
         else:
-            df = pd.DataFrame(columns=list(dict_values.keys()))
+            df = pd.DataFrame(columns=list(dict_values.keys()), dtype=np.float64)
         new_row = pd.DataFrame([dict_values])
         df = pd.concat([df, new_row], ignore_index=True)
         df.to_csv(path, index=False)
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        relative_dirpath = "score_collections"
-        os.makedirs(name=relative_dirpath, exist_ok=True)
-        return f"{relative_dirpath}/{artifact_name}"
+        return f"score_collections/{artifact_name}"
