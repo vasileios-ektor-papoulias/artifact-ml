@@ -1,0 +1,95 @@
+import time
+from typing import Optional
+
+from clearml import Task
+from matplotlib.figure import Figure
+
+from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
+
+
+class InactiveClearMLRunError(InactiveRunError):
+    pass
+
+
+class ClearMLRunAdapter(RunAdapter[Task]):
+    _time_to_wait_before_stopping_seconds: int = 1
+
+    def __init__(self, native_run: Task):
+        super().__init__(native_run=native_run)
+        self._experiment_id: Optional[str] = None
+        self._run_id: Optional[str] = None
+
+    @property
+    def experiment_id(self) -> str:
+        if self._experiment_id is None:
+            self._experiment_id = self._native_run.project
+        return self._experiment_id
+
+    @property
+    def run_id(self) -> str:
+        if self._run_id is None:
+            self._run_id = self._native_run.id
+        assert self._run_id is not None
+        return self._run_id
+
+    @property
+    def run_status(self) -> str:
+        status, _ = self._native_run.get_status()
+        return status
+
+    @property
+    def is_active(self) -> bool:
+        return self.run_status.lower() in ("queued", "in_progress")
+
+    def start(self):
+        if not self.is_active:
+            self._native_run = self._build_native_run(
+                experiment_id=self.experiment_id,
+                run_id=self.run_id,
+            )
+
+    def stop(self):
+        if self.is_active:
+            time.sleep(self._time_to_wait_before_stopping_seconds)
+            self._native_run.close()
+
+    def log_score(self, value: float, title: str, series: str, iteration: int):
+        if not self.is_active:
+            raise InactiveClearMLRunError("Run is inactive")
+        logger = self._native_run.get_logger()
+        logger.report_scalar(
+            title=title,
+            series=series,
+            iteration=iteration,
+            value=value,
+        )
+
+    def log_plot(self, plot: Figure, title: str, series: str, iteration: int):
+        if not self.is_active:
+            raise InactiveClearMLRunError("Run is inactive")
+        logger = self._native_run.get_logger()
+        logger.report_matplotlib_figure(
+            title=title,
+            series=series,
+            iteration=iteration,
+            figure=plot,
+        )
+
+    def upload_artifact(self, name: str, filepath: str, delete_after_upload: bool = False):
+        if not self.is_active:
+            raise InactiveClearMLRunError("Run is inactive")
+        self._native_run.upload_artifact(
+            name=name,
+            artifact_object=filepath,
+            delete_after_upload=delete_after_upload,
+            auto_pickle=False,
+            wait_on_upload=True,
+        )
+
+    @classmethod
+    def _build_native_run(cls, experiment_id: str, run_id: str) -> Task:
+        return Task.init(
+            project_name=experiment_id,
+            task_name=run_id,
+            reuse_last_task_id=False,
+        )
