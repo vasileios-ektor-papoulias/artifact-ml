@@ -87,14 +87,16 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
     @classmethod
     def _build_native_run(cls, experiment_id: str, run_id: str) -> MlflowNativeClient:
         mlflow_client = MlflowClient(tracking_uri=cls._tracking_uri)
-        run = cls._start_mlflow_run(
+        run = cls._create_mlflow_run(
             mlflow_client=mlflow_client, experiment_id=experiment_id, run_id=run_id
         )
         native_run = MlflowNativeClient(client=mlflow_client, run=run)
         return native_run
 
     @classmethod
-    def _start_mlflow_run(cls, mlflow_client: MlflowClient, experiment_id: str, run_id: str) -> Run:
+    def _create_mlflow_run(
+        cls, mlflow_client: MlflowClient, experiment_id: str, run_id: str
+    ) -> Run:
         run = cls._get_run_from_id(
             mlflow_client=mlflow_client, experiment_id=experiment_id, run_id=run_id
         )
