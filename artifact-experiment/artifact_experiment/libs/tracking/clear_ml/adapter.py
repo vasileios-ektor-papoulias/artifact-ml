@@ -1,7 +1,7 @@
 import time
 from typing import Optional
 
-from clearml import Task
+from clearml import Task, TaskTypes
 from matplotlib.figure import Figure
 
 from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
@@ -13,6 +13,11 @@ class InactiveClearMLRunError(InactiveRunError):
 
 class ClearMLRunAdapter(RunAdapter[Task]):
     _time_to_wait_before_stopping_seconds: int = 1
+    _tup_active_statuses = (
+        Task.TaskStatusEnum.queued,
+        Task.TaskStatusEnum.in_progress,
+    )
+    _new_task_type = task_type = TaskTypes.testing
 
     def __init__(self, native_run: Task):
         super().__init__(native_run=native_run)
@@ -39,7 +44,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
 
     @property
     def is_active(self) -> bool:
-        return self.run_status.lower() in ("queued", "in_progress")
+        return self.run_status.lower() in (status.value for status in self._tup_active_statuses)
 
     def start(self):
         if not self.is_active:
@@ -111,5 +116,6 @@ class ClearMLRunAdapter(RunAdapter[Task]):
         return Task.init(
             project_name=experiment_id,
             task_name=run_id,
+            task_type=cls._new_task_type,
             reuse_last_task_id=False,
         )

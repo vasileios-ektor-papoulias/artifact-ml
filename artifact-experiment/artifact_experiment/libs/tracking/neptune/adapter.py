@@ -21,6 +21,7 @@ class InactiveNeptuneRunError(InactiveRunError):
 
 class NeptuneRunAdapter(RunAdapter[neptune.Run]):
     _time_to_wait_before_stopping_seconds: int = 1
+    _active_run_status = NeptuneRunStatus.ACTIVE
     _api_token: Optional[str] = None
 
     def __init__(self, native_run: neptune.Run):
@@ -48,7 +49,7 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
 
     @property
     def is_active(self) -> bool:
-        return self.run_status == NeptuneRunStatus.ACTIVE
+        return self.run_status == self._active_run_status.value
 
     def log(self, path: str, artifact: ArtifactResult):
         if self.is_active:
