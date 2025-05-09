@@ -1,5 +1,6 @@
 import time
-from typing import Optional
+from copy import deepcopy
+from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 from clearml import Task, TaskTypes
 from matplotlib.figure import Figure
@@ -64,14 +65,12 @@ class ClearMLRunAdapter(RunAdapter[Task]):
         value: float,
         title: str,
         series: Optional[str] = None,
-        iteration: Optional[int] = None,
+        iteration: int = 0,
     ):
         if not self.is_active:
             raise InactiveClearMLRunError("Run is inactive")
         if series is None:
-            series = self._default_series_name
-        if iteration is None:
-            iteration = 0
+            series = deepcopy(self._default_series_name)
         logger = self._native_run.get_logger()
         logger.report_scalar(
             title=title,
@@ -85,14 +84,12 @@ class ClearMLRunAdapter(RunAdapter[Task]):
         plot: Figure,
         title: str,
         series: Optional[str] = None,
-        iteration: Optional[int] = None,
+        iteration: int = 0,
     ):
         if not self.is_active:
             raise InactiveClearMLRunError("Run is inactive")
         if series is None:
-            series = self._default_series_name
-        if iteration is None:
-            iteration = 0
+            series = deepcopy(self._default_series_name)
         logger = self._native_run.get_logger()
         logger.report_matplotlib_figure(
             title=title,
