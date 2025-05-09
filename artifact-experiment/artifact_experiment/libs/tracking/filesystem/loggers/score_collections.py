@@ -31,4 +31,4 @@ class FilesystemScoreCollectionLogger(FilesystemArtifactLogger[Dict[str, float]]
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        return f"score_collections/{artifact_name}"
+        return os.path.join("score_collections", artifact_name)

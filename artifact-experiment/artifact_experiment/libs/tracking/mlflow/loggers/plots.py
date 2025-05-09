@@ -1,3 +1,4 @@
+import os
 import tempfile
 
 from matplotlib.figure import Figure
@@ -30,4 +31,4 @@ class MLFlowPlotLogger(MlflowArtifactLogger[Figure]):
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        return f"plots/{artifact_name}"
+        return os.path.join("plots", artifact_name)

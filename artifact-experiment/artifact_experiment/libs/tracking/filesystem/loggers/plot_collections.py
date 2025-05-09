@@ -33,4 +33,4 @@ class FilesystemPlotCollectionLogger(FilesystemArtifactLogger[Dict[str, Figure]]
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        return f"plot_collections/{artifact_name}"
+        return os.path.join("plot_collections", artifact_name)

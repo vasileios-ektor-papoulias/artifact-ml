@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 from numpy import ndarray
 
@@ -24,4 +26,4 @@ class FilesystemArrayLogger(FilesystemArtifactLogger[ndarray]):
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        return f"arrays/{artifact_name}"
+        return os.path.join("arrays", artifact_name)

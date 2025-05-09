@@ -1,3 +1,5 @@
+import os
+
 from numpy import ndarray
 
 from artifact_experiment.libs.tracking.neptune.loggers.base import NeptuneArtifactLogger
@@ -6,4 +8,4 @@ from artifact_experiment.libs.tracking.neptune.loggers.base import NeptuneArtifa
 class NeptuneArrayLogger(NeptuneArtifactLogger[ndarray]):
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        return f"arrays/{artifact_name}"
+        return os.path.join("arrays", artifact_name)

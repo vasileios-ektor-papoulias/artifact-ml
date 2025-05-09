@@ -1,3 +1,4 @@
+import os
 from typing import Dict
 
 import numpy as np
@@ -25,4 +26,4 @@ class FilesystemArrayCollectionLogger(FilesystemArtifactLogger[Dict[str, np.ndar
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        return f"array_collections/{artifact_name}"
+        return os.path.join("array_collections", artifact_name)

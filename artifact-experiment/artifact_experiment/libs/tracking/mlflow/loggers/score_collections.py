@@ -1,3 +1,4 @@
+import os
 from typing import Dict
 
 from artifact_experiment.libs.tracking.mlflow.loggers.base import MlflowArtifactLogger
@@ -13,4 +14,4 @@ class MlflowScoreCollectionLogger(MlflowArtifactLogger[Dict[str, float]]):
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        return f"score_collections/{artifact_name}"
+        return os.path.join("score_collections", artifact_name)

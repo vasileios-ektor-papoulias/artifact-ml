@@ -1,3 +1,5 @@
+import os
+
 from artifact_experiment.libs.tracking.clear_ml.loggers.base import ClearMLArtifactLogger
 
 
@@ -8,4 +10,4 @@ class ClearMLScoreLogger(ClearMLArtifactLogger[float]):
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        return f"scores/{artifact_name}"
+        return os.path.join("scores", artifact_name)

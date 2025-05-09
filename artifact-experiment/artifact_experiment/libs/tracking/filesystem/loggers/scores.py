@@ -32,4 +32,4 @@ class FilesystemScoreLogger(FilesystemArtifactLogger[float]):
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        return f"scores/{artifact_name}"
+        return os.path.join("scores", artifact_name)

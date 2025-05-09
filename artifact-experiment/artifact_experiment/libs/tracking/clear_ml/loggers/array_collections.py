@@ -31,4 +31,4 @@ class ClearMLArrayCollectionLogger(ClearMLArtifactLogger[Dict[str, np.ndarray]])
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        return f"array_collections/{artifact_name}"
+        return os.path.join("array_collections", artifact_name)

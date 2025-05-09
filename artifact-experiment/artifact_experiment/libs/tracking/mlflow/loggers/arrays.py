@@ -1,3 +1,4 @@
+import os
 import tempfile
 
 import numpy as np
@@ -27,4 +28,4 @@ class MlflowArrayLogger(MlflowArtifactLogger[np.ndarray]):
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        return f"arrays/{artifact_name}"
+        return os.path.join("arrays", artifact_name)
