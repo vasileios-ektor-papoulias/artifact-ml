@@ -21,5 +21,11 @@ class MlflowArtifactLogger(
     @abstractmethod
     def _get_relative_path(cls, artifact_name: str) -> str: ...
 
+    @staticmethod
+    def _get_next_step_count(run: MlflowRunAdapter, path: str) -> int:
+        history = run.get_ls_score_history(backend_path=path)
+        next_step = len(history) + 1
+        return next_step
+
     def _get_root_dir(self) -> str:
         return self._root_dir
