@@ -34,7 +34,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
 
     @property
     def run_status(self) -> str:
-        status, _ = self._native_run.get_status()
+        status = self._native_run.get_status()
         return status
 
     @property
