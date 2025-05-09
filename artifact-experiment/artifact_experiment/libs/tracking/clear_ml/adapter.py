@@ -17,7 +17,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
         Task.TaskStatusEnum.queued,
         Task.TaskStatusEnum.in_progress,
     )
-    _new_task_type = task_type = TaskTypes.testing
+    _new_task_type = TaskTypes.testing
 
     def __init__(self, native_run: Task):
         super().__init__(native_run=native_run)
