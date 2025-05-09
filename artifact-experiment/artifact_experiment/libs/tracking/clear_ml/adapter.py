@@ -3,6 +3,7 @@ from copy import deepcopy
 from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 from clearml import Task, TaskTypes
+from clearml.binding.artifacts import Artifact
 from matplotlib.figure import Figure
 
 from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
@@ -118,6 +119,9 @@ class ClearMLRunAdapter(RunAdapter[Task]):
     def get_ls_exported_plot_info(self, max_iterations: int = 0) -> List[Dict[str, Any]]:
         plot_data = self._native_run.get_reported_plots(max_iterations=max_iterations)
         return plot_data
+
+    def get_dict_artifact_data(self) -> Dict[str, Artifact]:
+        return self._native_run.artifacts
 
     @classmethod
     def _build_native_run(cls, experiment_id: str, run_id: str) -> Task:
