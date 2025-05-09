@@ -13,6 +13,7 @@ class InactiveClearMLRunError(InactiveRunError):
 
 class ClearMLRunAdapter(RunAdapter[Task]):
     _time_to_wait_before_stopping_seconds: int = 1
+    _default_series_name: str = ""
     _tup_active_statuses = (
         Task.TaskStatusEnum.queued,
         Task.TaskStatusEnum.in_progress,
@@ -68,7 +69,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
         if not self.is_active:
             raise InactiveClearMLRunError("Run is inactive")
         if series is None:
-            series = title
+            series = self._default_series_name
         if iteration is None:
             iteration = 0
         logger = self._native_run.get_logger()
@@ -89,7 +90,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
         if not self.is_active:
             raise InactiveClearMLRunError("Run is inactive")
         if series is None:
-            series = title
+            series = self._default_series_name
         if iteration is None:
             iteration = 0
         logger = self._native_run.get_logger()
