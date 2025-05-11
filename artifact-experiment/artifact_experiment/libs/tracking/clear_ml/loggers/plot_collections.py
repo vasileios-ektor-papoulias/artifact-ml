@@ -26,7 +26,9 @@ class ClearMLPlotCollectionLogger(ClearMLArtifactLogger[Dict[str, Figure]]):
             if dict_plot_metadata["metric"] == path
         ]
         if ls_plot_history:
-            iteration = max(dict_plot_metadata["iter"] for dict_plot_metadata in ls_plot_history)
+            iteration = 1 + max(
+                dict_plot_metadata["iter"] for dict_plot_metadata in ls_plot_history
+            )
         else:
             iteration = 0
         return iteration
