@@ -110,17 +110,17 @@ class ClearMLRunAdapter(RunAdapter[Task]):
             wait_on_upload=True,
         )
 
-    def get_dict_exported_score_info(
+    def get_exported_scores(
         self, max_iterations: int = 0
     ) -> Mapping[str, Mapping[str, Mapping[str, Sequence[float]]]]:
         score_data = self._native_run.get_reported_scalars(max_samples=max_iterations)
         return score_data
 
-    def get_ls_exported_plot_info(self, max_iterations: int = 0) -> List[Dict[str, Any]]:
+    def get_exported_plots(self, max_iterations: int = 0) -> List[Dict[str, Any]]:
         plot_data = self._native_run.get_reported_plots(max_iterations=max_iterations)
         return plot_data
 
-    def get_dict_artifact_data(self) -> Dict[str, Artifact]:
+    def get_uploaded_files(self) -> Dict[str, Artifact]:
         return self._native_run.artifacts
 
     @classmethod
