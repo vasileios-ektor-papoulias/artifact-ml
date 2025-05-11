@@ -99,7 +99,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
             figure=plot,
         )
 
-    def upload_artifact(self, name: str, filepath: str, delete_after_upload: bool = False):
+    def upload(self, name: str, filepath: str, delete_after_upload: bool = False):
         if not self.is_active:
             raise InactiveClearMLRunError("Run is inactive")
         self._native_run.upload_artifact(
