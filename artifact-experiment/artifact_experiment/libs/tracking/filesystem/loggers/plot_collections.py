@@ -7,9 +7,7 @@ from artifact_experiment.libs.tracking.filesystem.adapter import (
     InactiveFilesystemRunError,
 )
 from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemArtifactLogger
-from artifact_experiment.libs.utils.filesystem import (
-    IncrementalPathGenerator,
-)
+from artifact_experiment.libs.utils.filesystem import IncrementalPathGenerator, remove_extension
 
 
 class FilesystemPlotCollectionLogger(FilesystemArtifactLogger[Dict[str, Figure]]):
@@ -25,7 +23,9 @@ class FilesystemPlotCollectionLogger(FilesystemArtifactLogger[Dict[str, Figure]]
 
     @classmethod
     def _export_plot_collection(cls, dir_path: str, plot_collection: Dict[str, Figure]):
-        step_path = IncrementalPathGenerator.generate(dir_path=dir_path, fmt=cls._fmt)
+        step_path = remove_extension(
+            IncrementalPathGenerator.generate(dir_path=dir_path, fmt=cls._fmt)
+        )
         os.makedirs(name=step_path, exist_ok=True)
         for plot_name, plot in plot_collection.items():
             filepath = os.path.join(step_path, plot_name)

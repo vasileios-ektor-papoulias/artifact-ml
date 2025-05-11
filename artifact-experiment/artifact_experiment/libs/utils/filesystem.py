@@ -2,6 +2,11 @@ import os
 from typing import List, Optional
 
 
+def remove_extension(filepath: str) -> str:
+    root, _ext = os.path.splitext(filepath)
+    return root
+
+
 class IncrementalPathGenerator:
     @classmethod
     def generate(cls, dir_path: str, fmt: Optional[str] = None) -> str:
