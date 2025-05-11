@@ -1,5 +1,4 @@
 import time
-from copy import deepcopy
 from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 from clearml import Task, TaskTypes
@@ -15,7 +14,6 @@ class InactiveClearMLRunError(InactiveRunError):
 
 class ClearMLRunAdapter(RunAdapter[Task]):
     _time_to_wait_before_stopping_seconds: int = 1
-    _default_series_name: str = ""
     _tup_active_statuses = (
         Task.TaskStatusEnum.queued,
         Task.TaskStatusEnum.in_progress,
@@ -65,13 +63,11 @@ class ClearMLRunAdapter(RunAdapter[Task]):
         self,
         value: float,
         title: str,
-        series: Optional[str] = None,
+        series: str,
         iteration: int = 0,
     ):
         if not self.is_active:
             raise InactiveClearMLRunError("Run is inactive")
-        if series is None:
-            series = deepcopy(self._default_series_name)
         logger = self._native_run.get_logger()
         logger.report_scalar(
             title=title,
@@ -84,13 +80,11 @@ class ClearMLRunAdapter(RunAdapter[Task]):
         self,
         plot: Figure,
         title: str,
-        series: Optional[str] = None,
+        series: str,
         iteration: int = 0,
     ):
         if not self.is_active:
             raise InactiveClearMLRunError("Run is inactive")
-        if series is None:
-            series = deepcopy(self._default_series_name)
         logger = self._native_run.get_logger()
         logger.report_matplotlib_figure(
             title=title,
