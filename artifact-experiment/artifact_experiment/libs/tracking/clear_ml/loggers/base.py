@@ -16,10 +16,6 @@ class ClearMLArtifactLogger(
 ):
     _root_dir = "artifact_ml"
 
-    def __init__(self, run: ClearMLRunAdapter):
-        super().__init__(run=run)
-        self._iteration = 0
-
     @classmethod
     @abstractmethod
     def _get_relative_path(cls, artifact_name: str) -> str: ...
