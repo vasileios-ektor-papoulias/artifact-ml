@@ -13,6 +13,8 @@ from artifact_experiment.libs.utils.filesystem import (
 
 
 class FilesystemArrayCollectionLogger(FilesystemArtifactLogger[Dict[str, np.ndarray]]):
+    _fmt: str = "npz"
+
     def _log(self, path: str, artifact: Dict[str, np.ndarray]):
         if self._run.is_active:
             self._export_array_collection(dir_path=path, array_collection=artifact)
@@ -21,7 +23,7 @@ class FilesystemArrayCollectionLogger(FilesystemArtifactLogger[Dict[str, np.ndar
 
     @classmethod
     def _export_array_collection(cls, dir_path: str, array_collection: Dict[str, np.ndarray]):
-        filepath = IncrementalPathGenerator.generate(dir_path=dir_path)
+        filepath = IncrementalPathGenerator.generate(dir_path=dir_path, fmt=cls._fmt)
         np.savez_compressed(file=filepath, allow_pickle=True, **array_collection)
 
     @classmethod
