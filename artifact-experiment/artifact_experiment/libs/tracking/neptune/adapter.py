@@ -63,12 +63,6 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
         else:
             raise InactiveNeptuneRunError("Run is inactive")
 
-    def start(self):
-        if not self.is_active:
-            self._native_run = self._build_native_run(
-                experiment_id=self.experiment_id, run_id=self.run_id
-            )
-
     def stop(self):
         if self.is_active:
             time.sleep(self._time_to_wait_before_stopping_seconds)

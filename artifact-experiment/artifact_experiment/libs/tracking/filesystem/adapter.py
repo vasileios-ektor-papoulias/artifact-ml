@@ -13,7 +13,7 @@ class FilesystemRun:
 
     def __init__(self, experiment_id: str, run_id: str):
         self._experiment_id = experiment_id
-        self.start(id=run_id)
+        self._start(id=run_id)
 
     @property
     def experiment_id(self) -> str:
@@ -35,13 +35,13 @@ class FilesystemRun:
     def run_dir(self) -> str:
         return os.path.join(self.experiment_dir, self._id)
 
-    def start(self, id: str):
+    def stop(self):
+        self._is_active = False
+
+    def _start(self, id: str):
         self._is_active = True
         self._id = id
         self._create_run_dir()
-
-    def stop(self):
-        self._is_active = False
 
     def _create_run_dir(self):
         os.makedirs(name=self.run_dir, exist_ok=True)
@@ -67,11 +67,6 @@ class FilesystemRunAdapter(RunAdapter[FilesystemRun]):
     @property
     def dir(self) -> str:
         return self._native_run.run_dir
-
-    def start(self):
-        self._native_run = self._build_native_run(
-            experiment_id=self.experiment_id, run_id=self.run_id
-        )
 
     def stop(self):
         self._native_run.stop()

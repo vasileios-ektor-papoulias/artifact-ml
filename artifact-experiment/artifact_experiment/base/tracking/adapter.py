@@ -43,9 +43,6 @@ class RunAdapter(ABC, Generic[nativeRunT]):
     def is_active(self) -> bool: ...
 
     @abstractmethod
-    def start(self): ...
-
-    @abstractmethod
     def stop(self): ...
 
     @contextmanager

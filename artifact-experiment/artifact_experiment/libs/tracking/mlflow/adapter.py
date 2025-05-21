@@ -76,11 +76,6 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
         )
         return ls_metric_history
 
-    def start(self):
-        self._native_run = self._build_native_run(
-            experiment_id=self.experiment_id, run_id=self.run_id
-        )
-
     def stop(self):
         self._native_run.client.set_terminated(run_id=self.run_uuid)
 

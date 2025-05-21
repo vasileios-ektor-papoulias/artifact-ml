@@ -47,13 +47,6 @@ class ClearMLRunAdapter(RunAdapter[Task]):
     def is_active(self) -> bool:
         return self.run_status.lower() in (status.value for status in self._tup_active_statuses)
 
-    def start(self):
-        if not self.is_active:
-            self._native_run = self._build_native_run(
-                experiment_id=self.experiment_id,
-                run_id=self.run_id,
-            )
-
     def stop(self):
         if self.is_active:
             time.sleep(self._time_to_wait_before_stopping_seconds)
