@@ -5,6 +5,7 @@ from matplotlib.figure import Figure
 
 from artifact_experiment.libs.tracking.clear_ml.adapter import ClearMLRunAdapter
 from artifact_experiment.libs.tracking.clear_ml.loggers.base import ClearMLArtifactLogger
+from artifact_experiment.libs.tracking.clear_ml.readers.plots import ClearMLPlotReader
 
 
 class ClearMLPlotCollectionLogger(ClearMLArtifactLogger[Dict[str, Figure]]):
@@ -17,17 +18,16 @@ class ClearMLPlotCollectionLogger(ClearMLArtifactLogger[Dict[str, Figure]]):
     def _get_relative_path(cls, artifact_name: str) -> str:
         return os.path.join("plot_collections", artifact_name)
 
-    @staticmethod
-    def _get_plot_collection_iteration(run: ClearMLRunAdapter, path: str) -> int:
-        ls_all_plots = run.get_exported_plots()
-        ls_plot_history = [
-            dict_plot_metadata
-            for dict_plot_metadata in ls_all_plots
-            if dict_plot_metadata["metric"] == path
-        ]
-        if ls_plot_history:
+    @classmethod
+    def _get_plot_collection_iteration(cls, run: ClearMLRunAdapter, path: str) -> int:
+        ls_all_plots = ClearMLPlotReader.get_all_plots(run=run)
+        ls_series_metadata = ClearMLPlotReader.get_series_from_path(
+            ls_all_plots=ls_all_plots, plot_path=path
+        )
+        if ls_series_metadata:
             iteration = 1 + max(
-                dict_plot_metadata["iter"] for dict_plot_metadata in ls_plot_history
+                ClearMLPlotReader.get_plot_iter_from_metadata(dict_plot_metadata=dict_plot_metadata)
+                for dict_plot_metadata in ls_series_metadata
             )
         else:
             iteration = 0
