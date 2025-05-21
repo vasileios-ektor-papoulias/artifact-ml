@@ -56,9 +56,10 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
     def run_metadata(self) -> Dict[str, Any]:
         run_metadata = self._native_run.fetch()
         return run_metadata
+
     def log(self, path: str, artifact: ArtifactResult):
         if self.is_active:
-            self._native_run[path] = artifact
+            self._native_run[path.replace("\\", "/")].append(artifact)
         else:
             raise InactiveNeptuneRunError("Run is inactive")
 
