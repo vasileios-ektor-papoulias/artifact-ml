@@ -6,6 +6,9 @@ __pycache__/
 *.pyo
 *.pyd
 
+# Neptune cache
+*.neptune
+
 # Poetry virtual environments (per subpackage)
 **/.venv/
 
