@@ -25,11 +25,7 @@ class FilesystemPlotLogger(FilesystemArtifactLogger[Figure]):
     @classmethod
     def _export_plot(cls, dir_path: str, plot: Figure):
         filepath = IncrementalPathGenerator.generate(dir_path=dir_path, fmt=cls._fmt)
-        plot.savefig(
-            fname=filepath,
-            dpi=cls._dpi,
-            bbox_inches=cls._bbox_inches,
-        )
+        plot.savefig(fname=filepath, dpi=cls._dpi, bbox_inches=cls._bbox_inches, format=cls._fmt)
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:

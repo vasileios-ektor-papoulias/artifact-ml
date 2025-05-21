@@ -13,8 +13,8 @@ class IncrementalPathGenerator:
         if fmt is not None:
             fmt = cls._ensure_extension(fmt=fmt)
         cls._ensure_directory(dir_path=dir_path)
-        ls_existing_filepaths = cls._get_existing_files(dir_path=dir_path)
-        ls_indices = cls._gather_indices(ls_existing_filepaths=ls_existing_filepaths, fmt=fmt)
+        ls_existing_filepaths = os.listdir(dir_path)
+        ls_indices = cls._gather_indices(ls_filepaths=ls_existing_filepaths, fmt=fmt)
         next_idx = cls._compute_next_index(ls_indices=ls_indices)
         path = cls.format_path(dir_path=dir_path, next_idx=next_idx, fmt=fmt)
         return path
@@ -36,24 +36,28 @@ class IncrementalPathGenerator:
     def _compute_next_index(ls_indices: List[int]) -> int:
         return max(ls_indices) + 1 if ls_indices else 0
 
-    @staticmethod
-    def _gather_indices(ls_existing_filepaths: List[str], fmt: Optional[str] = None) -> List[int]:
+    @classmethod
+    def _gather_indices(cls, ls_filepaths: List[str], fmt: Optional[str] = None) -> List[int]:
         ls_indices: List[int] = []
-        for fname in ls_existing_filepaths:
-            name, ext = os.path.splitext(fname)
-            ext = ext.lstrip(".")
-            if name.isdigit() and ((fmt is None and ext == "") or (fmt is not None and ext == fmt)):
-                ls_indices.append(int(name))
+        for filename in ls_filepaths:
+            index = cls._get_index_from_filename(filename=filename, fmt=fmt)
+            if index is not None:
+                ls_indices.append(index)
         return ls_indices
 
     @staticmethod
-    def _get_existing_files(dir_path: str) -> List[str]:
-        ls_existing_filepaths = os.listdir(dir_path)
-        return ls_existing_filepaths
+    def _get_index_from_filename(filename: str, fmt: Optional[str] = None) -> Optional[int]:
+        name, ext = os.path.splitext(filename)
+        filename_is_valid = name.isdigit() and (
+            (fmt is None and ext == "") or (fmt is not None and ext == fmt)
+        )
+        if filename_is_valid:
+            index = int(name)
+            return index
 
     @staticmethod
     def _format_filename(index: int, fmt: Optional[str]) -> str:
-        return f"{index}.{fmt}" if fmt else str(index)
+        return f"{index}{fmt}" if fmt else str(index)
 
     @staticmethod
     def _ensure_directory(dir_path: str):

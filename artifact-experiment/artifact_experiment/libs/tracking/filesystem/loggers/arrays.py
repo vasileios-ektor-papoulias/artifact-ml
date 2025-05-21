@@ -13,6 +13,8 @@ from artifact_experiment.libs.utils.filesystem import (
 
 
 class FilesystemArrayLogger(FilesystemArtifactLogger[ndarray]):
+    _fmt: str = "npy"
+
     def _log(self, path: str, artifact: ndarray):
         if self._run.is_active:
             self._export_array(dir_path=path, array=artifact)
@@ -21,7 +23,7 @@ class FilesystemArrayLogger(FilesystemArtifactLogger[ndarray]):
 
     @classmethod
     def _export_array(cls, dir_path: str, array: np.ndarray):
-        filepath = IncrementalPathGenerator.generate(dir_path=dir_path)
+        filepath = IncrementalPathGenerator.generate(dir_path=dir_path, fmt=cls._fmt)
         np.save(file=filepath, arr=array)
 
     @classmethod
