@@ -3,32 +3,38 @@ from typing import List, Optional
 
 
 def remove_extension(filepath: str) -> str:
-    root, _ext = os.path.splitext(filepath)
+    root, _ = os.path.splitext(filepath)
     return root
 
 
 class IncrementalPathGenerator:
     @classmethod
     def generate(cls, dir_path: str, fmt: Optional[str] = None) -> str:
+        if fmt is not None:
+            fmt = cls._ensure_extension(fmt=fmt)
         cls._ensure_directory(dir_path=dir_path)
-        ls_existing_filepaths = cls._get_existing_files_fs(dir_path=dir_path)
-        path = cls.generate_from_existing_filepaths(
-            ls_existing_filepaths=ls_existing_filepaths, dir_local=dir_path, fmt=fmt
-        )
+        ls_existing_filepaths = cls._get_existing_files(dir_path=dir_path)
+        ls_indices = cls._gather_indices(ls_existing_filepaths=ls_existing_filepaths, fmt=fmt)
+        next_idx = cls._compute_next_index(ls_indices=ls_indices)
+        path = cls.format_path(dir_path=dir_path, next_idx=next_idx, fmt=fmt)
         return path
 
     @classmethod
-    def generate_from_existing_filepaths(
+    def format_path(
         cls,
-        ls_existing_filepaths: List[str],
-        dir_local: str,
+        dir_path: str,
+        next_idx: int,
         fmt: Optional[str] = None,
     ) -> str:
-        ls_indices = cls._gather_indices(ls_existing_filepaths=ls_existing_filepaths, fmt=fmt)
-        next_idx = cls._compute_next_index(ls_indices=ls_indices)
+        if fmt is not None:
+            fmt = cls._ensure_extension(fmt=fmt)
         filename = cls._format_filename(index=next_idx, fmt=fmt)
-        path = os.path.join(dir_local, filename)
+        path = os.path.join(dir_path, filename)
         return path
+
+    @staticmethod
+    def _compute_next_index(ls_indices: List[int]) -> int:
+        return max(ls_indices) + 1 if ls_indices else 0
 
     @staticmethod
     def _gather_indices(ls_existing_filepaths: List[str], fmt: Optional[str] = None) -> List[int]:
@@ -41,13 +47,9 @@ class IncrementalPathGenerator:
         return ls_indices
 
     @staticmethod
-    def _get_existing_files_fs(dir_path: str) -> List[str]:
+    def _get_existing_files(dir_path: str) -> List[str]:
         ls_existing_filepaths = os.listdir(dir_path)
         return ls_existing_filepaths
-
-    @staticmethod
-    def _compute_next_index(ls_indices: List[int]) -> int:
-        return max(ls_indices) + 1 if ls_indices else 0
 
     @staticmethod
     def _format_filename(index: int, fmt: Optional[str]) -> str:
@@ -56,3 +58,9 @@ class IncrementalPathGenerator:
     @staticmethod
     def _ensure_directory(dir_path: str):
         os.makedirs(name=dir_path, exist_ok=True)
+
+    @staticmethod
+    def _ensure_extension(fmt: str) -> str:
+        if not fmt.startswith("."):
+            fmt = "." + fmt
+        return fmt
