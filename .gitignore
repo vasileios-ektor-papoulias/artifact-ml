@@ -9,6 +9,12 @@ __pycache__/
 # Neptune cache
 *.neptune
 
+# Mlflow cache
+mlflow.db
+mlflow.db-*
+*mlruns
+
+
 # Poetry virtual environments (per subpackage)
 **/.venv/
 
