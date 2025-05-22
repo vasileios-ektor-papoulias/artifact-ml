@@ -8,31 +8,25 @@ authors = [
 license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.11,<4.0"
-dependencies = [
-    "tqdm (>=4.67.1,<5.0.0)",
-    "neptune (>=1.14.0,<2.0.0)",
-    "mlflow (>=2.22.0,<3.0.0)",
-    "artifact-core @ file:///C:/Users/hecto/Codebase/artifact-ml/artifact-core",
-    "clearml (>=1.18.0,<2.0.0)"
-]
 
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.poetry.dependencies]
+python = ">=3.11,<4.0"
+tqdm = ">=4.67.1,<5.0.0"
+neptune = ">=1.14.0,<2.0.0"
+mlflow = ">=2.22.0,<3.0.0"
+artifact-core = { path = "../artifact-core", develop = true }
+clearml = "^2.0.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.11.4"
 pytest = "^8.3.5"
 pytest-mock = "^3.14.0"
 ipykernel = "^6.29.5"
-
-
-
-[tool.poetry.dependencies]
-artifact-core = {develop = true}
-
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
