@@ -1,0 +1,36 @@
+import os
+import tempfile
+
+import numpy as np
+
+from artifact_experiment.libs.tracking.clear_ml.adapter import ClearMLRunAdapter
+from artifact_experiment.libs.tracking.clear_ml.loggers.base import ClearMLArtifactLogger
+from artifact_experiment.libs.tracking.clear_ml.readers.files import ClearMLFileReader
+from artifact_experiment.libs.utils.filesystem import IncrementalPathGenerator
+
+
+class ClearMLArrayLogger(ClearMLArtifactLogger[np.ndarray]):
+    _fmt = ".npy"
+
+    def _log(self, path: str, artifact: np.ndarray):
+        iteration = self._get_array_iteration(run=self._run, path=path)
+        artifact_name = IncrementalPathGenerator.format_path(dir_path=path, next_idx=iteration)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            local_filepath = IncrementalPathGenerator.format_path(
+                dir_path=temp_dir, next_idx=iteration, fmt=self._fmt
+            )
+            np.save(file=local_filepath, arr=artifact)
+            self._run.upload(name=artifact_name, filepath=local_filepath, delete_after_upload=False)
+
+    @classmethod
+    def _get_relative_path(cls, artifact_name: str) -> str:
+        return os.path.join("arrays", artifact_name)
+
+    @staticmethod
+    def _get_array_iteration(run: ClearMLRunAdapter, path: str) -> int:
+        dict_all_files = ClearMLFileReader.get_all_files(run=run)
+        dict_array_history = ClearMLFileReader.get_file_history(
+            dict_all_files=dict_all_files, remote_path=path
+        )
+        iteration = len(dict_array_history)
+        return iteration
