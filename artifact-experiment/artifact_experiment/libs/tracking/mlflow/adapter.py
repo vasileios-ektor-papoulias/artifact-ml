@@ -19,7 +19,8 @@ class MlflowNativeClient:
 
 
 class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
-    _tracking_uri = os.environ.get("MLFLOW_TRACKING_URI", "http://localhost:5000")
+    DEFAULT_TRACKING_URI = "http://localhost:5000"
+    TRACKING_URI = os.environ.get("MLFLOW_TRACKING_URI", DEFAULT_TRACKING_URI)
 
     @property
     def experiment_id(self) -> str:
@@ -48,8 +49,9 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
 
     def log_score(self, backend_path: str, value: float, step: int = 0):
         if self.is_active:
+            key = backend_path.replace("\\", "/")
             self._native_run.client.log_metric(
-                run_id=self.run_id, key=backend_path, value=value, step=step
+                run_id=self.run_uuid, key=key, value=value, step=step
             )
         else:
             raise InactiveMlflowRunError("Run is inactive")
@@ -57,7 +59,7 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
     def upload(self, backend_path: str, local_path: str):
         if self.is_active:
             self._native_run.client.log_artifact(
-                run_id=self.run_id,
+                run_id=self.run_uuid,
                 local_path=local_path,
                 artifact_path=backend_path,
             )
@@ -66,13 +68,14 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
 
     def get_ls_artifact_info(self, backend_path: str) -> List[FileInfo]:
         ls_artifact_infos = self._native_run.client.list_artifacts(
-            run_id=self.run_id, path=backend_path
+            run_id=self.run_uuid, path=backend_path
         )
         return ls_artifact_infos
 
     def get_ls_score_history(self, backend_path: str) -> List[Metric]:
+        key = backend_path.replace("\\", "/")
         ls_metric_history = self._native_run.client.get_metric_history(
-            run_id=self.run_id, key=backend_path
+            run_id=self.run_uuid, key=key
         )
         return ls_metric_history
 
@@ -81,7 +84,7 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
 
     @classmethod
     def _build_native_run(cls, experiment_id: str, run_id: str) -> MlflowNativeClient:
-        mlflow_client = MlflowClient(tracking_uri=cls._tracking_uri)
+        mlflow_client = MlflowClient(tracking_uri=cls.TRACKING_URI)
         run = cls._create_mlflow_run(
             mlflow_client=mlflow_client, experiment_id=experiment_id, run_id=run_id
         )
