@@ -21,7 +21,7 @@ It stands alongside:
 - **artifact-core**: The foundation providing a flexible minimal interface for computing heterogeneous validation artifacts.
 - **artifact-torch**: PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
 
-`artifact-experiment` provides **executable validation plan abstractions** that utilize artifact-core and export results to various experiment tracking backends (e.g. Mlflow).
+`artifact-experiment` provides **executable validation plan abstractions** that utilize `artifact-core` and export results to various experiment tracking backends (e.g. Mlflow).
 
 ## 🚀 Key Features
 
@@ -174,7 +174,11 @@ The framework follows a modular architecture with the following key components:
 
 ### 1. Validation Plans
 
-Validation plans define what artifacts to compute and how to execute them. They are built on top of the artifact-core engine and provide a high-level interface for executing validation workflows.
+Validation plans define what artifacts to compute and how to execute them.
+
+They are built on top of the `artifact-core` engine and provide a high-level interface for executing validation workflows.
+
+They are configured by implementing subcalss hooks determining the artifacts of interest:
 
 ```python
 class MyValidationPlan(TableComparisonValidationPlan):
@@ -189,27 +193,24 @@ class MyValidationPlan(TableComparisonValidationPlan):
 
 Callbacks handle the computation of artifacts and their tracking. The framework provides a flexible callback system that allows for easy extension and customization.
 
-- **ArtifactCallback**: Base class for all callbacks
-- **Callback Handlers**: Manage groups of related callbacks (e.g., ScoreCallbackHandler)
+- **Callback**: Base class for all callbacks
+- **Callback Handlers**: Manage groups of related callbacks
+
+Each callback subtype comes with an associated handler.
+
+Callback subtypes:
+
+- **CacheCallback**: Executes a computation and stores output in state.
+- **TrackingCallback**: Executes a computation, stores output in state and exports to an experiment tracking run.
+- **ArtifactCallback**: Integration with `artifact-core`: a **TrackingCallback** whose computation delegates to an **Artifact**.
 
 ### 3. Tracking
 
 The tracking system provides a unified interface for logging artifacts to different experiment tracking backends.
 
-- **TrackingClient**: Base class for all tracking clients
-- **RunAdapter**: Adapts native run objects from different backends
-- **ArtifactLogger**: Handles the logging of specific artifact types
-
-### 4. Resources
-
-Resources define the data objects that artifacts operate on. The framework provides a flexible resource system that can be adapted to different use cases.
-
-```python
-# Example: TableComparisonCallbackResources
-callback_resources = TableComparisonCallbackResources.build(
-    dataset_real=df_real, 
-    dataset_synthetic=df_synthetic
-)
+- **TrackingClient**: Base class for all tracking clients.
+- **RunAdapter**: Adapts native run objects from different backends.
+- **ArtifactLogger**: Handles the logging of specific artifact types.
 ```
 
 ## 🚀 Installation
@@ -232,36 +233,21 @@ pip install .
 
 ## 🔧 Extending the Framework
 
-### 1. Creating a Custom Validation Plan
+### 1. Creating a **ValidationPlan** to Match a New **ArtifactEngine**
 
-To create a custom validation plan, subclass the appropriate base validation plan and define which artifacts to compute:
+Each **ArtifactEngine** in `artifac-core` has a **ValidationPlan** counterpart defined in `artifact-experiment`.
 
-```python
-from typing import List
-from artifact_experiment.table_comparison.validation_plan import (
-    TableComparisonValidationPlan,
-    TableComparisonScoreType,
-    # Import other types...
-)
+To illustrate: the **TableComparisonEngine** provides an interface for executing table comarison artifacts. The same artifact collection is made available for tracking (through `artifact-experiment`) using the **TableComparisonValidationPlan** class.
 
-class MyCustomValidationPlan(TableComparisonValidationPlan):
-    @staticmethod
-    def _get_score_types() -> List[TableComparisonScoreType]:
-        return [
-            TableComparisonScoreType.MEAN_JS_DISTANCE,
-            # Add other score types...
-        ]
-    
-    # Define other artifact types to compute...
-```
+When contributing new artifact types to `artifact-core`, it's suggested to also provide the relevant extension to `artifact-experiment` as in the the example above.
 
 ### 2. Adding Support for a New Tracking Backend
 
 To add support for a new tracking backend:
 
-1. Create a new RunAdapter for the backend
-2. Create a new TrackingClient for the backend
-3. Implement the necessary loggers for different artifact types
+1. Create a new **RunAdapter** for the backend
+2. Create a new **TrackingClient** for the backend
+3. Implement the necessary loggers (**ArtifactLogger**) for different artifact types
 
 ```python
 # Example: Implementing a new tracking backend
