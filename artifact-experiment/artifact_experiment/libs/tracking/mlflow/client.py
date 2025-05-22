@@ -1,6 +1,7 @@
 from typing import Dict, Optional, Type, TypeVar
 
 from matplotlib.figure import Figure
+from mlflow.tracking import MlflowClient
 from numpy import ndarray
 
 from artifact_experiment.base.tracking.client import TrackingClient
@@ -38,6 +39,16 @@ class MlflowTrackingClient(TrackingClient[MlflowRunAdapter]):
         run = MlflowRunAdapter.from_native_run(native_run=native_run)
         client = cls(run=run)
         return client
+
+    @classmethod
+    def create_experiment(cls, experiment_name: str) -> str:
+        native_client = MlflowClient(tracking_uri=MlflowRunAdapter.TRACKING_URI)
+        experiment = native_client.get_experiment_by_name(name=experiment_name)
+        if experiment is None:
+            experiment_id = native_client.create_experiment(name=experiment_name)
+        else:
+            experiment_id = experiment.experiment_id
+        return experiment_id
 
     @staticmethod
     def _get_score_logger(run: MlflowRunAdapter) -> ArtifactLogger[float, MlflowRunAdapter]:
