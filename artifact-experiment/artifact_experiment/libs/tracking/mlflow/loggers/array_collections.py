@@ -15,8 +15,8 @@ from artifact_experiment.libs.utils.filesystem import IncrementalPathGenerator
 class MlflowArrayCollectionLogger(MlflowArtifactLogger[Dict[str, np.ndarray]]):
     _fmt = "npz"
 
-    def _log(self, path: str, artifact: Dict[str, np.ndarray]):
-        ls_history = self._get_array_collection_history(run=self._run, path=path)
+    def _append(self, artifact_path: str, artifact: Dict[str, np.ndarray]):
+        ls_history = self._get_array_collection_history(run=self._run, path=artifact_path)
         next_step = self._get_next_step_from_history(ls_history=ls_history)
         with tempfile.TemporaryDirectory() as temp_dir:
             local_path = IncrementalPathGenerator.format_path(
@@ -26,7 +26,7 @@ class MlflowArrayCollectionLogger(MlflowArtifactLogger[Dict[str, np.ndarray]]):
             )
             np.savez_compressed(file=local_path, allow_pickle=True, **artifact)
             self._run.upload(
-                backend_path=path,
+                backend_path=artifact_path,
                 local_path=local_path,
             )
 

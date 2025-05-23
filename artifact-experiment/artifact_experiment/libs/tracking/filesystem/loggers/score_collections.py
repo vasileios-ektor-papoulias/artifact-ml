@@ -12,9 +12,9 @@ from artifact_experiment.libs.tracking.filesystem.loggers.base import Filesystem
 
 
 class FilesystemScoreCollectionLogger(FilesystemArtifactLogger[Dict[str, float]]):
-    def _log(self, path: str, artifact: Dict[str, float]):
+    def _append(self, artifact_path: str, artifact: Dict[str, float]):
         if self._run.is_active:
-            self._export_score_collection(path=Path(path), dict_values=artifact)
+            self._export_score_collection(path=Path(artifact_path), dict_values=artifact)
         else:
             raise InactiveFilesystemRunError("Run is inactive")
 

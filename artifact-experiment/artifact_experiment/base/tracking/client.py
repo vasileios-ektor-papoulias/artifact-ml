@@ -62,19 +62,19 @@ class TrackingClient(Generic[runAdapterT]):
     ) -> ArtifactLogger[Dict[str, Figure], runAdapterT]: ...
 
     def log_score(self, score: float, name: str):
-        self._score_logger.log(artifact=score, name=name)
+        self._score_logger.log(artifact=score, artifact_name=name)
 
     def log_array(self, array: ndarray, name: str):
-        self._array_logger.log(artifact=array, name=name)
+        self._array_logger.log(artifact=array, artifact_name=name)
 
     def log_plot(self, plot: Figure, name: str):
-        self._plot_logger.log(artifact=plot, name=name)
+        self._plot_logger.log(artifact=plot, artifact_name=name)
 
     def log_score_collection(self, score_collection: Dict[str, float], name: str):
-        self._score_collection_logger.log(artifact=score_collection, name=name)
+        self._score_collection_logger.log(artifact=score_collection, artifact_name=name)
 
     def log_array_collection(self, array_collection: Dict[str, ndarray], name: str):
-        self._array_collection_logger.log(artifact=array_collection, name=name)
+        self._array_collection_logger.log(artifact=array_collection, artifact_name=name)
 
     def log_plot_collection(self, plot_collection: Dict[str, Figure], name: str):
-        self._plot_collection_logger.log(artifact=plot_collection, name=name)
+        self._plot_collection_logger.log(artifact=plot_collection, artifact_name=name)

@@ -8,10 +8,12 @@ from artifact_experiment.libs.tracking.clear_ml.readers.scores import ClearMLSco
 class ClearMLScoreLogger(ClearMLArtifactLogger[float]):
     _series_name: str = "score"
 
-    def _log(self, path: str, artifact: float):
-        iteration = self._get_score_iteration(run=self._run, path=path, series=self._series_name)
+    def _append(self, artifact_path: str, artifact: float):
+        iteration = self._get_score_iteration(
+            run=self._run, path=artifact_path, series=self._series_name
+        )
         self._run.log_score(
-            value=artifact, title=path, series=self._series_name, iteration=iteration
+            value=artifact, title=artifact_path, series=self._series_name, iteration=iteration
         )
 
     @classmethod

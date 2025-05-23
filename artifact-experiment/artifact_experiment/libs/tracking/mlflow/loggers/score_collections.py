@@ -8,10 +8,14 @@ from artifact_experiment.libs.tracking.mlflow.loggers.base import MlflowArtifact
 
 
 class MlflowScoreCollectionLogger(MlflowArtifactLogger[Dict[str, float]]):
-    def _log(self, path: str, artifact: Dict[str, float]):
-        next_step = self._get_next_step(collection_path=path, ls_score_names=list(artifact.keys()))
+    def _append(self, artifact_path: str, artifact: Dict[str, float]):
+        next_step = self._get_next_step(
+            collection_path=artifact_path, ls_score_names=list(artifact.keys())
+        )
         for score_name, score_value in artifact.items():
-            backend_path = self._get_score_path(collection_path=path, score_name=score_name)
+            backend_path = self._get_score_path(
+                collection_path=artifact_path, score_name=score_name
+            )
             self._run.log_score(backend_path=backend_path, value=score_value, step=next_step)
 
     def _get_next_step(self, collection_path: str, ls_score_names: List[str]) -> int:

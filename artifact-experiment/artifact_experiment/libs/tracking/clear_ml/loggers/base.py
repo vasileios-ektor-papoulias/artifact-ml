@@ -16,6 +16,9 @@ class ClearMLArtifactLogger(
 ):
     _root_dir = "artifact_ml"
 
+    @abstractmethod
+    def _append(self, artifact_path: str, artifact: artifactResultT): ...
+
     @classmethod
     @abstractmethod
     def _get_relative_path(cls, artifact_name: str) -> str: ...

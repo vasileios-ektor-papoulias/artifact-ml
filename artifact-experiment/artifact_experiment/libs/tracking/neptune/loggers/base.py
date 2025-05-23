@@ -16,8 +16,8 @@ class NeptuneArtifactLogger(
 ):
     _root_dir = "artifact_ml"
 
-    def _log(self, path: str, artifact: artifactResultT):
-        self._run.log(path=path, artifact=artifact)
+    def _append(self, artifact_path: str, artifact: artifactResultT):
+        self._run.log(path=artifact_path, artifact=artifact)
 
     @classmethod
     @abstractmethod

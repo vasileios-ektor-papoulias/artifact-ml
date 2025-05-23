@@ -13,9 +13,11 @@ from artifact_experiment.libs.utils.filesystem import IncrementalPathGenerator
 class ClearMLArrayCollectionLogger(ClearMLArtifactLogger[Dict[str, np.ndarray]]):
     _fmt = ".npz"
 
-    def _log(self, path: str, artifact: Dict[str, np.ndarray]):
-        iteration = self._get_array_collection_iteration(run=self._run, path=path)
-        artifact_name = IncrementalPathGenerator.format_path(dir_path=path, next_idx=iteration)
+    def _append(self, artifact_path: str, artifact: Dict[str, np.ndarray]):
+        iteration = self._get_array_collection_iteration(run=self._run, path=artifact_path)
+        artifact_name = IncrementalPathGenerator.format_path(
+            dir_path=artifact_path, next_idx=iteration
+        )
         with tempfile.TemporaryDirectory() as temp_dir:
             local_filepath = IncrementalPathGenerator.format_path(
                 dir_path=temp_dir, next_idx=iteration, fmt=self._fmt

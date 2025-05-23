@@ -10,9 +10,11 @@ from artifact_experiment.libs.tracking.clear_ml.readers.plots import ClearMLPlot
 class ClearMLPlotLogger(ClearMLArtifactLogger[Figure]):
     _series_name: str = "plot"
 
-    def _log(self, path: str, artifact: Figure):
-        iteration = self._get_plot_iteration(run=self._run, path=path)
-        self._run.log_plot(plot=artifact, title=path, series=self._series_name, iteration=iteration)
+    def _append(self, artifact_path: str, artifact: Figure):
+        iteration = self._get_plot_iteration(run=self._run, path=artifact_path)
+        self._run.log_plot(
+            plot=artifact, title=artifact_path, series=self._series_name, iteration=iteration
+        )
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:

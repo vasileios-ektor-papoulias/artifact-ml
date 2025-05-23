@@ -15,7 +15,7 @@ class FilesystemArtifactLogger(
     ArtifactLogger[artifactResultT, FilesystemRunAdapter], Generic[artifactResultT]
 ):
     @abstractmethod
-    def _log(self, path: str, artifact: artifactResultT): ...
+    def _append(self, artifact_path: str, artifact: artifactResultT): ...
 
     @classmethod
     @abstractmethod

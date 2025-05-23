@@ -15,15 +15,17 @@ from artifact_experiment.libs.utils.filesystem import IncrementalPathGenerator
 class MLFlowPlotCollectionLogger(MlflowArtifactLogger[Dict[str, Figure]]):
     _fmt = "png"
 
-    def _log(self, path: str, artifact: Dict[str, Figure]):
-        ls_history = self._get_plot_collection_history(run=self._run, backend_artifact_path=path)
+    def _append(self, artifact_path: str, artifact: Dict[str, Figure]):
+        ls_history = self._get_plot_collection_history(
+            run=self._run, backend_artifact_path=artifact_path
+        )
         next_step = self._get_next_step_from_history(ls_history=ls_history)
         with tempfile.TemporaryDirectory() as temp_dir:
             collection_local_path = self._get_collection_local_path(
                 export_dir=temp_dir, iteration=next_step
             )
             collection_backend_path = self._get_collection_backend_path(
-                artifact_path=path, iteration=next_step
+                artifact_path=artifact_path, iteration=next_step
             )
             for plot_name, plot in artifact.items():
                 plot_local_path = self._get_plot_path_from_collection_path(

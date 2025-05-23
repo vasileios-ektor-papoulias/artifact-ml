@@ -15,9 +15,9 @@ from artifact_experiment.libs.utils.filesystem import (
 class FilesystemArrayLogger(FilesystemArtifactLogger[ndarray]):
     _fmt: str = "npy"
 
-    def _log(self, path: str, artifact: ndarray):
+    def _append(self, artifact_path: str, artifact: ndarray):
         if self._run.is_active:
-            self._export_array(dir_path=path, array=artifact)
+            self._export_array(dir_path=artifact_path, array=artifact)
         else:
             raise InactiveFilesystemRunError("Run is inactive")
 

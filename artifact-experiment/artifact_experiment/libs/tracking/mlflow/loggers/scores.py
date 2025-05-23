@@ -7,10 +7,10 @@ from artifact_experiment.libs.tracking.mlflow.loggers.base import MlflowArtifact
 
 
 class MlflowScoreLogger(MlflowArtifactLogger[float]):
-    def _log(self, path: str, artifact: float):
-        ls_history = self._run.get_ls_score_history(backend_path=path)
+    def _append(self, artifact_path: str, artifact: float):
+        ls_history = self._run.get_ls_score_history(backend_path=artifact_path)
         next_step = self._get_next_step_from_history(ls_history=ls_history)
-        self._run.log_score(backend_path=path, value=artifact, step=next_step)
+        self._run.log_score(backend_path=artifact_path, value=artifact, step=next_step)
 
     @staticmethod
     def _get_next_step_from_history(ls_history: List[Metric]) -> int:

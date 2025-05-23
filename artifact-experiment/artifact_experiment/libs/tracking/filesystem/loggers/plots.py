@@ -16,9 +16,9 @@ class FilesystemPlotLogger(FilesystemArtifactLogger[Figure]):
     _dpi: int = 300
     _bbox_inches: str = "tight"
 
-    def _log(self, path: str, artifact: Figure):
+    def _append(self, artifact_path: str, artifact: Figure):
         if self._run.is_active:
-            self._export_plot(dir_path=path, plot=artifact)
+            self._export_plot(dir_path=artifact_path, plot=artifact)
         else:
             raise InactiveFilesystemRunError("Run is inactive")
 

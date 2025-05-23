@@ -15,7 +15,7 @@ class ArtifactLogger(ABC, Generic[artifactResultT, runAdapterT]):
         self._run = run
 
     @abstractmethod
-    def _log(self, path: str, artifact: artifactResultT):
+    def _append(self, artifact_path: str, artifact: artifactResultT):
         pass
 
     @classmethod
@@ -32,7 +32,7 @@ class ArtifactLogger(ABC, Generic[artifactResultT, runAdapterT]):
         artifact_path = os.path.join(root_dir, relative_path)
         return artifact_path
 
-    def log(self, name: str, artifact: artifactResultT):
+    def log(self, artifact_name: str, artifact: artifactResultT):
         root_dir = self._get_root_dir()
-        path = self._get_artifact_path(root_dir=root_dir, artifact_name=name)
-        self._log(path=path, artifact=artifact)
+        path = self._get_artifact_path(root_dir=root_dir, artifact_name=artifact_name)
+        self._append(artifact_path=path, artifact=artifact)

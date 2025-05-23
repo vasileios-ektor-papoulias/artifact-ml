@@ -15,8 +15,8 @@ from artifact_experiment.libs.utils.filesystem import IncrementalPathGenerator
 class MLFlowPlotLogger(MlflowArtifactLogger[Figure]):
     _fmt = "png"
 
-    def _log(self, path: str, artifact: Figure):
-        ls_history = self._get_plot_history(run=self._run, path=path)
+    def _append(self, artifact_path: str, artifact: Figure):
+        ls_history = self._get_plot_history(run=self._run, path=artifact_path)
         next_step = self._get_next_step_from_history(ls_history=ls_history)
         with tempfile.TemporaryDirectory() as temp_dir:
             local_path = IncrementalPathGenerator.format_path(
@@ -26,7 +26,7 @@ class MLFlowPlotLogger(MlflowArtifactLogger[Figure]):
             )
             artifact.savefig(fname=local_path, format="png", bbox_inches="tight")
             self._run.upload(
-                backend_path=path,
+                backend_path=artifact_path,
                 local_path=local_path,
             )
 

@@ -15,7 +15,7 @@ class MlflowArtifactLogger(
     _root_dir = "artifact_ml"
 
     @abstractmethod
-    def _log(self, path: str, artifact: artifactResultT): ...
+    def _append(self, artifact_path: str, artifact: artifactResultT): ...
 
     @classmethod
     @abstractmethod
