@@ -176,7 +176,7 @@ class ValidationPlan(
         ]
     ]: ...
 
-    def _execute(self, resources: ArtifactCallbackResources[artifactResourcesT]):
+    def execute(self, resources: ArtifactCallbackResources[artifactResourcesT]):
         self._score_handler.execute(resources=resources)
         self._array_handler.execute(resources=resources)
         self._plot_handler.execute(resources=resources)

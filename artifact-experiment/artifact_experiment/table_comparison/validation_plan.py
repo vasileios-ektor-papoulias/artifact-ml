@@ -57,11 +57,11 @@ class TableComparisonValidationPlan(
     @abstractmethod
     def _get_plot_collection_types() -> List[TableComparisonPlotCollectionType]: ...
 
-    def execute(self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame):
+    def execute_table_comparison(self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame):
         callback_resources = TableComparisonCallbackResources.build(
             dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
         )
-        super()._execute(resources=callback_resources)
+        super().execute(resources=callback_resources)
 
     @staticmethod
     def _get_callback_factory() -> Type[
