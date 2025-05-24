@@ -29,10 +29,10 @@ arrayCollectionTypeT = TypeVar("arrayCollectionTypeT", bound=ArtifactType)
 plotCollectionTypeT = TypeVar("plotCollectionTypeT", bound=ArtifactType)
 resourceSpecProtocolT = TypeVar("resourceSpecProtocolT", bound=ResourceSpecProtocol)
 artifactResourcesT = TypeVar("artifactResourcesT", bound=ArtifactResources)
-artifactValidationPlanT = TypeVar("artifactValidationPlanT", bound="ArtifactValidationPlan")
+ValidationPlanT = TypeVar("ValidationPlanT", bound="ValidationPlan")
 
 
-class ArtifactValidationPlan(
+class ValidationPlan(
     ABC,
     Generic[
         scoreTypeT,
@@ -81,10 +81,10 @@ class ArtifactValidationPlan(
 
     @classmethod
     def build(
-        cls: Type[artifactValidationPlanT],
+        cls: Type[ValidationPlanT],
         resource_spec: resourceSpecProtocolT,
         tracking_client: Optional[TrackingClient] = None,
-    ) -> artifactValidationPlanT:
+    ) -> ValidationPlanT:
         score_handler = cls._build_score_handler(
             resource_spec=resource_spec, tracking_client=tracking_client
         )

@@ -8,7 +8,7 @@ from artifact_core.table_comparison.artifacts.base import (
 )
 
 from artifact_experiment.base.callbacks.factory import ArtifactCallbackFactory
-from artifact_experiment.base.validation_plan import ArtifactValidationPlan
+from artifact_experiment.base.validation_plan import ValidationPlan
 from artifact_experiment.table_comparison.callback_factory import (
     TableComparisonArrayCollectionType,
     TableComparisonArrayType,
@@ -22,7 +22,7 @@ from artifact_experiment.table_comparison.resources import TableComparisonCallba
 
 
 class TableComparisonValidationPlan(
-    ArtifactValidationPlan[
+    ValidationPlan[
         TableComparisonScoreType,
         TableComparisonArrayType,
         TableComparisonPlotType,
