@@ -10,8 +10,9 @@ from artifact_experiment.base.callbacks.base import (
 CacheDataT = TypeVar("CacheDataT")
 CallbackResourcesT = TypeVar("CallbackResourcesT", bound=CallbackResources)
 
+
 class CacheCallback(Callback[CallbackResourcesT], Generic[CallbackResourcesT, CacheDataT]):
-    def __init__(self, key):
+    def __init__(self, key: str):
         self._key = key
         self._cache: Dict[str, Optional[CacheDataT]] = {self._key: None}
 
@@ -34,7 +35,9 @@ class CacheCallback(Callback[CallbackResourcesT], Generic[CallbackResourcesT, Ca
     def cache(self) -> Dict[str, Optional[CacheDataT]]:
         return self._cache.copy()
 
+
 CacheCallbackT = TypeVar("CacheCallbackT", bound=CacheCallback)
+
 
 class CacheCallbackHandler(
     CallbackHandler[CacheCallbackT, CallbackResourcesT],

@@ -10,8 +10,8 @@ from artifact_core.base.artifact_dependencies import (
 from artifact_experiment.base.callbacks.base import (
     CallbackResources,
 )
-from artifact_experiment.base.callbacks.tracking import (
-    TrackingCallback,
+from artifact_experiment.base.callbacks.cache import (
+    CacheCallback,
 )
 
 resourceSpecProtocolT = TypeVar("resourceSpecProtocolT", bound=ResourceSpecProtocol)
@@ -25,7 +25,7 @@ class ArtifactCallbackResources(CallbackResources, Generic[artifactResourcesT]):
 
 
 class ArtifactCallback(
-    TrackingCallback[ArtifactCallbackResources[artifactResourcesT], artifactResultT],
+    CacheCallback[ArtifactCallbackResources[artifactResourcesT], artifactResultT],
     Generic[artifactResourcesT, artifactResultT, resourceSpecProtocolT],
 ):
     def __init__(
