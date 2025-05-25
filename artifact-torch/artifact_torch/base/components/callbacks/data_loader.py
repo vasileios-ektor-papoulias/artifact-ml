@@ -72,18 +72,18 @@ class DataLoaderCallback(
         model_output: ModelOutputT,
     ) -> BatchResultT: ...
 
+    def finalize(self) -> CacheDataT:
+        result = self._aggregate_batch_results(ls_batch_results=self._ls_batch_results)
+        self._ls_batch_results.clear()
+        self._cache[self._key] = result
+        return result
+
     def _compute(
         self,
         resources: DataLoaderCallbackResources[ModelInputT, ModelOutputT],
     ) -> CacheDataT:
         self._process_data_loader(model=resources.model, data_loader=resources.data_loader)
         result = self.finalize()
-        return result
-
-    def finalize(self) -> CacheDataT:
-        result = self._aggregate_batch_results(ls_batch_results=self._ls_batch_results)
-        self._ls_batch_results.clear()
-        self._cache[self._key] = result
         return result
 
     def _process_data_loader(
