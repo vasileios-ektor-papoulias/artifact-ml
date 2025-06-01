@@ -9,7 +9,15 @@ from artifact_core.base.registry import ArtifactType
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-from artifact_experiment.base.callbacks.artifact import ArtifactCallback, ArtifactCallbackResources
+from artifact_experiment.base.callbacks.artifact import (
+    ArtifactArrayCallback,
+    ArtifactArrayCollectionCallback,
+    ArtifactCallbackResources,
+    ArtifactPlotCallback,
+    ArtifactPlotCollectionCallback,
+    ArtifactScoreCallback,
+    ArtifactScoreCollectionCallback,
+)
 from artifact_experiment.base.callbacks.factory import ArtifactCallbackFactory
 from artifact_experiment.base.callbacks.tracking import (
     ArrayCallbackHandler,
@@ -48,27 +56,27 @@ class ValidationPlan(
     def __init__(
         self,
         score_handler: ScoreCallbackHandler[
-            ArtifactCallback[artifactResourcesT, float, resourceSpecProtocolT],
+            ArtifactScoreCallback[artifactResourcesT, resourceSpecProtocolT],
             ArtifactCallbackResources[artifactResourcesT],
         ],
         array_handler: ArrayCallbackHandler[
-            ArtifactCallback[artifactResourcesT, ndarray, resourceSpecProtocolT],
+            ArtifactArrayCallback[artifactResourcesT, resourceSpecProtocolT],
             ArtifactCallbackResources[artifactResourcesT],
         ],
         plot_handler: PlotCallbackHandler[
-            ArtifactCallback[artifactResourcesT, Figure, resourceSpecProtocolT],
+            ArtifactPlotCallback[artifactResourcesT, resourceSpecProtocolT],
             ArtifactCallbackResources[artifactResourcesT],
         ],
         score_collection_handler: ScoreCollectionCallbackHandler[
-            ArtifactCallback[artifactResourcesT, Dict[str, float], resourceSpecProtocolT],
+            ArtifactScoreCollectionCallback[artifactResourcesT, resourceSpecProtocolT],
             ArtifactCallbackResources[artifactResourcesT],
         ],
         array_collection_handler: ArrayCollectionCallbackHandler[
-            ArtifactCallback[artifactResourcesT, Dict[str, ndarray], resourceSpecProtocolT],
+            ArtifactArrayCollectionCallback[artifactResourcesT, resourceSpecProtocolT],
             ArtifactCallbackResources[artifactResourcesT],
         ],
         plot_collection_handler: PlotCollectionCallbackHandler[
-            ArtifactCallback[artifactResourcesT, Dict[str, Figure], resourceSpecProtocolT],
+            ArtifactPlotCollectionCallback[artifactResourcesT, resourceSpecProtocolT],
             ArtifactCallbackResources[artifactResourcesT],
         ],
     ):
@@ -191,7 +199,7 @@ class ValidationPlan(
         ls_score_types: Optional[List[scoreTypeT]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ScoreCallbackHandler[
-        ArtifactCallback[artifactResourcesT, float, resourceSpecProtocolT],
+        ArtifactScoreCallback[artifactResourcesT, resourceSpecProtocolT],
         ArtifactCallbackResources[artifactResourcesT],
     ]:
         callback_factory = cls._get_callback_factory()
@@ -215,7 +223,7 @@ class ValidationPlan(
         ls_array_types: Optional[List[arrayTypeT]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ArrayCallbackHandler[
-        ArtifactCallback[artifactResourcesT, ndarray, resourceSpecProtocolT],
+        ArtifactArrayCallback[artifactResourcesT, resourceSpecProtocolT],
         ArtifactCallbackResources[artifactResourcesT],
     ]:
         callback_factory = cls._get_callback_factory()
@@ -239,7 +247,7 @@ class ValidationPlan(
         ls_plot_types: Optional[List[plotTypeT]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> PlotCallbackHandler[
-        ArtifactCallback[artifactResourcesT, Figure, resourceSpecProtocolT],
+        ArtifactPlotCallback[artifactResourcesT, resourceSpecProtocolT],
         ArtifactCallbackResources[artifactResourcesT],
     ]:
         callback_factory = cls._get_callback_factory()
@@ -261,7 +269,7 @@ class ValidationPlan(
         ls_score_collection_types: Optional[List[scoreCollectionTypeT]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ScoreCollectionCallbackHandler[
-        ArtifactCallback[artifactResourcesT, Dict[str, float], resourceSpecProtocolT],
+        ArtifactScoreCollectionCallback[artifactResourcesT, resourceSpecProtocolT],
         ArtifactCallbackResources[artifactResourcesT],
     ]:
         callback_factory = cls._get_callback_factory()
@@ -285,7 +293,7 @@ class ValidationPlan(
         ls_array_collection_types: Optional[List[arrayCollectionTypeT]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ArrayCollectionCallbackHandler[
-        ArtifactCallback[artifactResourcesT, Dict[str, ndarray], resourceSpecProtocolT],
+        ArtifactArrayCollectionCallback[artifactResourcesT, resourceSpecProtocolT],
         ArtifactCallbackResources[artifactResourcesT],
     ]:
         callback_factory = cls._get_callback_factory()
@@ -309,7 +317,7 @@ class ValidationPlan(
         ls_plot_collection_types: Optional[List[plotCollectionTypeT]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> PlotCollectionCallbackHandler[
-        ArtifactCallback[artifactResourcesT, Dict[str, Figure], resourceSpecProtocolT],
+        ArtifactPlotCollectionCallback[artifactResourcesT, resourceSpecProtocolT],
         ArtifactCallbackResources[artifactResourcesT],
     ]:
         callback_factory = cls._get_callback_factory()

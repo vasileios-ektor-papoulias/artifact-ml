@@ -14,22 +14,6 @@ from numpy import ndarray
 
 CacheDataT = TypeVar("CacheDataT")
 CallbackResourcesT = TypeVar("CallbackResourcesT", bound=CallbackResources)
-CacheCallbackT = TypeVar(
-    "CacheCallbackT",
-    bound=CacheCallback,
-)
-ScoreCallbackT = TypeVar("ScoreCallbackT", bound=CacheCallback[Any, float])
-ArrayCallbackT = TypeVar("ArrayCallbackT", bound=CacheCallback[Any, ndarray])
-PlotCallbackT = TypeVar("PlotCallbackT", bound=CacheCallback[Any, Figure])
-ScoreCollectionCallbackT = TypeVar(
-    "ScoreCollectionCallbackT", bound=CacheCallback[Any, Dict[str, float]]
-)
-ArrayCollectionCallbackT = TypeVar(
-    "ArrayCollectionCallbackT", bound=CacheCallback[Any, Dict[str, ndarray]]
-)
-PlotCollectionCallbackT = TypeVar(
-    "PlotCollectionCallbackT", bound=CacheCallback[Any, Dict[str, Figure]]
-)
 
 
 class TrackingCallback(
@@ -38,6 +22,9 @@ class TrackingCallback(
 ):
     def __init__(self, key: str, tracking_client: Optional[TrackingClient] = None):
         super().__init__(key=key)
+        self._tracking_client = tracking_client
+
+    def set_tracking_client(self, tracking_client: Optional[TrackingClient]):
         self._tracking_client = tracking_client
 
     @abstractmethod
@@ -54,61 +41,43 @@ class TrackingCallback(
             self._export(key=self.key, value=self.value, tracking_client=self._tracking_client)
 
 
-class ScoreTrackingCallback(
-    TrackingCallback[CallbackResourcesT, float], Generic[CallbackResourcesT]
-):
-    @staticmethod
-    def _export(key: str, value: float, tracking_client: TrackingClient):
-        tracking_client.log_score(score=value, name=key)
-
-
-class ArrayTrackingCallback(
-    TrackingCallback[CallbackResourcesT, ndarray], Generic[CallbackResourcesT]
-):
-    @staticmethod
-    def _export(key: str, value: ndarray, tracking_client: TrackingClient):
-        tracking_client.log_array(array=value, name=key)
-
-
-class PlotTrackingCallback(
-    TrackingCallback[CallbackResourcesT, Figure], Generic[CallbackResourcesT]
-):
-    @staticmethod
-    def _export(key: str, value: Figure, tracking_client: TrackingClient):
-        tracking_client.log_plot(plot=value, name=key)
-
-
-class ScoreCollectionTrackingCallback(
-    TrackingCallback[CallbackResourcesT, Dict[str, float]], Generic[CallbackResourcesT]
-):
-    @staticmethod
-    def _export(key: str, value: Dict[str, float], tracking_client: TrackingClient):
-        tracking_client.log_score_collection(score_collection=value, name=key)
-
-
-class ArrayCollectionTrackingCallback(
-    TrackingCallback[CallbackResourcesT, Dict[str, ndarray]], Generic[CallbackResourcesT]
-):
-    @staticmethod
-    def _export(key: str, value: Dict[str, ndarray], tracking_client: TrackingClient):
-        tracking_client.log_array_collection(array_collection=value, name=key)
-
-
-class PlotCollectionTrackingCallback(
-    TrackingCallback[CallbackResourcesT, Dict[str, Figure]], Generic[CallbackResourcesT]
-):
-    @staticmethod
-    def _export(key: str, value: Dict[str, Figure], tracking_client: TrackingClient):
-        tracking_client.log_plot_collection(plot_collection=value, name=key)
+TrackingCallbackT = TypeVar(
+    "TrackingCallbackT",
+    bound=TrackingCallback,
+)
+ScoreCallbackT = TypeVar(
+    "ScoreCallbackT",
+    bound=TrackingCallback[Any, float],
+)
+ArrayCallbackT = TypeVar(
+    "ArrayCallbackT",
+    bound=TrackingCallback[Any, ndarray],
+)
+PlotCallbackT = TypeVar(
+    "PlotCallbackT",
+    bound=TrackingCallback[Any, Figure],
+)
+ScoreCollectionCallbackT = TypeVar(
+    "ScoreCollectionCallbackT",
+    bound=TrackingCallback[Any, Dict[str, float]],
+)
+ArrayCollectionCallbackT = TypeVar(
+    "ArrayCollectionCallbackT",
+    bound=TrackingCallback[Any, Dict[str, ndarray]],
+)
+PlotCollectionCallbackT = TypeVar(
+    "PlotCollectionCallbackT",
+    bound=TrackingCallback[Any, Dict[str, Figure]],
+)
 
 
 class TrackingCallbackHandler(
-    CacheCallbackHandler[CacheCallbackT, CallbackResourcesT, CacheDataT],
-    Generic[CacheCallbackT, CallbackResourcesT, CacheDataT],
+    CacheCallbackHandler[TrackingCallbackT, CallbackResourcesT, CacheDataT],
+    Generic[TrackingCallbackT, CallbackResourcesT, CacheDataT],
 ):
     def __init__(
         self,
-        ls_callbacks: Optional[List[CacheCallbackT]] = None,
+        ls_callbacks: Optional[List[TrackingCallbackT]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ):
         super().__init__(ls_callbacks=ls_callbacks)
@@ -120,38 +89,73 @@ class TrackingCallbackHandler(
         pass
 
     def execute(self, resources: CallbackResourcesT):
-        super().execute(resources=resources)
         if self._tracking_client is not None:
+            self._invalidate_callback_tracking_clients(ls_callbacks=self._ls_callbacks)
+            super().execute(resources=resources)
             self._export(
                 cache=self.active_cache,
                 tracking_client=self._tracking_client,
             )
+        else:
+            super().execute(resources=resources)
+
+    @staticmethod
+    def _invalidate_callback_tracking_clients(ls_callbacks: List[TrackingCallbackT]):
+        for callback in ls_callbacks:
+            callback.set_tracking_client(tracking_client=None)
 
 
-class ScoreCallbackHandler(
-    TrackingCallbackHandler[ScoreCallbackT, CallbackResourcesT, float],
-    Generic[ScoreCallbackT, CallbackResourcesT],
-):
+class ScoreExportMixin:
+    @staticmethod
+    def _export(key: str, value: float, tracking_client: TrackingClient):
+        tracking_client.log_score(score=value, name=key)
+
+
+class ArrayExportMixin:
+    @staticmethod
+    def _export(key: str, value: ndarray, tracking_client: TrackingClient):
+        tracking_client.log_array(array=value, name=key)
+
+
+class PlotExportMixin:
+    @staticmethod
+    def _export(key: str, value: Figure, tracking_client: TrackingClient):
+        tracking_client.log_plot(plot=value, name=key)
+
+
+class ScoreCollectionExportMixin:
+    @staticmethod
+    def _export(key: str, value: Dict[str, float], tracking_client: TrackingClient):
+        tracking_client.log_score_collection(score_collection=value, name=key)
+
+
+class ArrayCollectionExportMixin:
+    @staticmethod
+    def _export(key: str, value: Dict[str, ndarray], tracking_client: TrackingClient):
+        tracking_client.log_array_collection(array_collection=value, name=key)
+
+
+class PlotCollectionExportMixin:
+    @staticmethod
+    def _export(key: str, value: Dict[str, Figure], tracking_client: TrackingClient):
+        tracking_client.log_plot_collection(plot_collection=value, name=key)
+
+
+class ScoreHandlerExportMixin:
     @staticmethod
     def _export(cache: Dict[str, float], tracking_client: TrackingClient):
         for score_name, score_value in cache.items():
             tracking_client.log_score(score=score_value, name=score_name)
 
 
-class ArrayCallbackHandler(
-    TrackingCallbackHandler[ArrayCallbackT, CallbackResourcesT, ndarray],
-    Generic[ArrayCallbackT, CallbackResourcesT],
-):
+class ArrayHandlerExportMixin:
     @staticmethod
     def _export(cache: Dict[str, ndarray], tracking_client: TrackingClient):
         for array_name, array in cache.items():
             tracking_client.log_array(array=array, name=array_name)
 
 
-class PlotCallbackHandler(
-    TrackingCallbackHandler[PlotCallbackT, CallbackResourcesT, Figure],
-    Generic[PlotCallbackT, CallbackResourcesT],
-):
+class PlotHandlerExportMixin:
     @staticmethod
     def _export(
         cache: Dict[str, Figure],
@@ -161,14 +165,7 @@ class PlotCallbackHandler(
             tracking_client.log_plot(plot=plot, name=plot_name)
 
 
-class ScoreCollectionCallbackHandler(
-    TrackingCallbackHandler[
-        ScoreCollectionCallbackT,
-        CallbackResourcesT,
-        Dict[str, float],
-    ],
-    Generic[ScoreCollectionCallbackT, CallbackResourcesT],
-):
+class ScoreCollectionHandlerExportMixin:
     @staticmethod
     def _export(
         cache: Dict[str, Dict[str, float]],
@@ -180,14 +177,7 @@ class ScoreCollectionCallbackHandler(
             )
 
 
-class ArrayCollectionCallbackHandler(
-    TrackingCallbackHandler[
-        ArrayCollectionCallbackT,
-        CallbackResourcesT,
-        Dict[str, ndarray],
-    ],
-    Generic[ArrayCollectionCallbackT, CallbackResourcesT],
-):
+class ArrayCollectionHandlerExportMixin:
     @staticmethod
     def _export(
         cache: Dict[str, Dict[str, ndarray]],
@@ -199,14 +189,7 @@ class ArrayCollectionCallbackHandler(
             )
 
 
-class PlotCollectionCallbackHandler(
-    TrackingCallbackHandler[
-        PlotCollectionCallbackT,
-        CallbackResourcesT,
-        Dict[str, Figure],
-    ],
-    Generic[PlotCollectionCallbackT, CallbackResourcesT],
-):
+class PlotCollectionHandlerExportMixin:
     @staticmethod
     def _export(
         cache: Dict[str, Dict[str, Figure]],
@@ -216,3 +199,111 @@ class PlotCollectionCallbackHandler(
             tracking_client.log_plot_collection(
                 plot_collection=plot_collection, name=plot_collection_name
             )
+
+
+class ScoreCallback(
+    ScoreExportMixin, TrackingCallback[CallbackResourcesT, float], Generic[CallbackResourcesT]
+):
+    @abstractmethod
+    def _compute(self, resources: CallbackResourcesT) -> float: ...
+
+
+class ArrayCallback(
+    ArrayExportMixin, TrackingCallback[CallbackResourcesT, ndarray], Generic[CallbackResourcesT]
+):
+    @abstractmethod
+    def _compute(self, resources: CallbackResourcesT) -> ndarray: ...
+
+
+class PlotCallback(
+    PlotExportMixin, TrackingCallback[CallbackResourcesT, Figure], Generic[CallbackResourcesT]
+):
+    @abstractmethod
+    def _compute(self, resources: CallbackResourcesT) -> Figure: ...
+
+
+class ScoreCollectionCallback(
+    ScoreCollectionExportMixin,
+    TrackingCallback[CallbackResourcesT, Dict[str, float]],
+    Generic[CallbackResourcesT],
+):
+    @abstractmethod
+    def _compute(self, resources: CallbackResourcesT) -> Dict[str, float]: ...
+
+
+class ArrayCollectionCallback(
+    ArrayCollectionExportMixin,
+    TrackingCallback[CallbackResourcesT, Dict[str, ndarray]],
+    Generic[CallbackResourcesT],
+):
+    @abstractmethod
+    def _compute(self, resources: CallbackResourcesT) -> Dict[str, ndarray]: ...
+
+
+class PlotCollectionCallback(
+    PlotCollectionExportMixin,
+    TrackingCallback[CallbackResourcesT, Dict[str, Figure]],
+    Generic[CallbackResourcesT],
+):
+    @abstractmethod
+    def _compute(self, resources: CallbackResourcesT) -> Dict[str, Figure]: ...
+
+
+class ScoreCallbackHandler(
+    ScoreHandlerExportMixin,
+    TrackingCallbackHandler[ScoreCallbackT, CallbackResourcesT, float],
+    Generic[ScoreCallbackT, CallbackResourcesT],
+):
+    pass
+
+
+class ArrayCallbackHandler(
+    ArrayHandlerExportMixin,
+    TrackingCallbackHandler[ArrayCallbackT, CallbackResourcesT, ndarray],
+    Generic[ArrayCallbackT, CallbackResourcesT],
+):
+    pass
+
+
+class PlotCallbackHandler(
+    PlotHandlerExportMixin,
+    TrackingCallbackHandler[PlotCallbackT, CallbackResourcesT, Figure],
+    Generic[PlotCallbackT, CallbackResourcesT],
+):
+    pass
+
+
+class ScoreCollectionCallbackHandler(
+    ScoreCollectionHandlerExportMixin,
+    TrackingCallbackHandler[
+        ScoreCollectionCallbackT,
+        CallbackResourcesT,
+        Dict[str, float],
+    ],
+    Generic[ScoreCollectionCallbackT, CallbackResourcesT],
+):
+    pass
+
+
+class ArrayCollectionCallbackHandler(
+    ArrayCollectionHandlerExportMixin,
+    TrackingCallbackHandler[
+        ArrayCollectionCallbackT,
+        CallbackResourcesT,
+        Dict[str, ndarray],
+    ],
+    Generic[ArrayCollectionCallbackT, CallbackResourcesT],
+):
+    pass
+
+
+class PlotCollectionCallbackHandler(
+    PlotCollectionHandlerExportMixin,
+    TrackingCallbackHandler[
+        PlotCollectionCallbackT,
+        CallbackResourcesT,
+        Dict[str, Figure],
+    ],
+    Generic[PlotCollectionCallbackT, CallbackResourcesT],
+):
+    pass
