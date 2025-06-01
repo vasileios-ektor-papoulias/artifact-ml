@@ -25,13 +25,13 @@ class CheckpointCallback(
         key = self._get_key()
         super().__init__(key=key, period=period, tracking_client=tracking_client)
 
-    @classmethod
-    @abstractmethod
-    def _get_key(cls) -> str: ...
-
     @staticmethod
     @abstractmethod
     def _export(key: str, value: Dict[str, Any], tracking_client: TrackingClient): ...
+
+    @classmethod
+    def _get_key(cls) -> str:
+        return "checkpoint"
 
     def _compute(self, resources: CheckpointCallbackResources) -> Dict[str, Any]:
         return resources.checkpoint
