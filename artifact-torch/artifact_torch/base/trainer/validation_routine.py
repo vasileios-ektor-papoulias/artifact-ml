@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Generic, List, Optional, Type, TypeVar
+from typing import Any, Generic, List, Optional, Type, TypeVar, Union
 
 from artifact_experiment.base.tracking.client import TrackingClient
 
@@ -8,7 +8,6 @@ from artifact_torch.base.components.callbacks.data_loader import (
     DataLoaderArrayCollectionCallback,
     DataLoaderArrayCollectionHandler,
     DataLoaderArrayHandler,
-    DataLoaderCallbackHandler,
     DataLoaderCallbackResources,
     DataLoaderPlotCallback,
     DataLoaderPlotCollectionCallback,
@@ -268,7 +267,34 @@ class ValidationRoutine(Generic[ModelT, ModelInputT, ModelOutputT]):
 
     @staticmethod
     def _execute_loader_handlers(
-        ls_loader_handlers: List[DataLoaderCallbackHandler[ModelInputT, ModelOutputT, Any]],
+        ls_loader_handlers: List[
+            Union[
+                DataLoaderScoreHandler[
+                    ModelInputT,
+                    ModelOutputT,
+                ],
+                DataLoaderArrayHandler[
+                    ModelInputT,
+                    ModelOutputT,
+                ],
+                DataLoaderPlotHandler[
+                    ModelInputT,
+                    ModelOutputT,
+                ],
+                DataLoaderScoreCollectionHandler[
+                    ModelInputT,
+                    ModelOutputT,
+                ],
+                DataLoaderArrayCollectionHandler[
+                    ModelInputT,
+                    ModelOutputT,
+                ],
+                DataLoaderPlotCollectionHandler[
+                    ModelInputT,
+                    ModelOutputT,
+                ],
+            ]
+        ],
         model: Model[ModelInputT, ModelOutputT],
         data_loader: DataLoader[ModelInputT],
         n_epochs_elapsed: int,

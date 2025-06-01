@@ -1,12 +1,23 @@
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import Generic, TypeVar
+from typing import Dict, Generic, TypeVar
 
-from artifact_experiment.base.callbacks.tracking import TrackingCallbackHandler
+from artifact_experiment.base.callbacks.tracking import (
+    ArrayCollectionExportMixin,
+    ArrayExportMixin,
+    CacheCallbackHandler,
+    PlotCollectionExportMixin,
+    PlotExportMixin,
+    ScoreCollectionExportMixin,
+    ScoreExportMixin,
+)
+from artifact_experiment.base.tracking.client import TrackingClient
+from matplotlib.figure import Figure
+from numpy import ndarray
 
 from artifact_torch.base.components.callbacks.periodic import (
-    PeriodicCacheCallback,
     PeriodicCallbackResources,
+    PeriodicTrackingCallback,
 )
 from artifact_torch.base.model.io import (
     ModelInput,
@@ -25,7 +36,7 @@ class BatchCallbackResources(PeriodicCallbackResources, Generic[ModelInputT, Mod
 
 
 class BatchCallback(
-    PeriodicCacheCallback[
+    PeriodicTrackingCallback[
         BatchCallbackResources[ModelInputT, ModelOutputT],
         CacheDataT,
     ],
@@ -43,6 +54,10 @@ class BatchCallback(
     @abstractmethod
     def _compute_on_batch(model_input: ModelInputT, model_output: ModelOutputT) -> CacheDataT: ...
 
+    @staticmethod
+    @abstractmethod
+    def _export(key: str, value: CacheDataT, tracking_client: TrackingClient): ...
+
     def _compute(self, resources: BatchCallbackResources[ModelInputT, ModelOutputT]) -> CacheDataT:
         result = self._compute_on_batch(
             model_input=resources.model_input, model_output=resources.model_output
@@ -50,8 +65,98 @@ class BatchCallback(
         return result
 
 
+class BatchScoreCallback(
+    ScoreExportMixin,
+    BatchCallback[ModelInputT, ModelOutputT, float],
+    Generic[ModelInputT, ModelOutputT],
+):
+    @classmethod
+    @abstractmethod
+    def _get_key(cls) -> str: ...
+
+    @staticmethod
+    @abstractmethod
+    def _compute_on_batch(model_input: ModelInputT, model_output: ModelOutputT) -> float: ...
+
+
+class BatchArrayCallback(
+    ArrayExportMixin,
+    BatchCallback[ModelInputT, ModelOutputT, ndarray],
+    Generic[ModelInputT, ModelOutputT],
+):
+    @classmethod
+    @abstractmethod
+    def _get_key(cls) -> str: ...
+
+    @staticmethod
+    @abstractmethod
+    def _compute_on_batch(model_input: ModelInputT, model_output: ModelOutputT) -> ndarray: ...
+
+
+class BatchPlotCallback(
+    PlotExportMixin,
+    BatchCallback[ModelInputT, ModelOutputT, Figure],
+    Generic[ModelInputT, ModelOutputT],
+):
+    @classmethod
+    @abstractmethod
+    def _get_key(cls) -> str: ...
+
+    @staticmethod
+    @abstractmethod
+    def _compute_on_batch(model_input: ModelInputT, model_output: ModelOutputT) -> Figure: ...
+
+
+class BatchScoreCollectionCallback(
+    ScoreCollectionExportMixin,
+    BatchCallback[ModelInputT, ModelOutputT, Dict[str, float]],
+    Generic[ModelInputT, ModelOutputT],
+):
+    @classmethod
+    @abstractmethod
+    def _get_key(cls) -> str: ...
+
+    @staticmethod
+    @abstractmethod
+    def _compute_on_batch(
+        model_input: ModelInputT, model_output: ModelOutputT
+    ) -> Dict[str, float]: ...
+
+
+class BatchArrayCollectionCallback(
+    ArrayCollectionExportMixin,
+    BatchCallback[ModelInputT, ModelOutputT, Dict[str, ndarray]],
+    Generic[ModelInputT, ModelOutputT],
+):
+    @classmethod
+    @abstractmethod
+    def _get_key(cls) -> str: ...
+
+    @staticmethod
+    @abstractmethod
+    def _compute_on_batch(
+        model_input: ModelInputT, model_output: ModelOutputT
+    ) -> Dict[str, ndarray]: ...
+
+
+class BatchPlotCollectionCallback(
+    PlotCollectionExportMixin,
+    BatchCallback[ModelInputT, ModelOutputT, Dict[str, Figure]],
+    Generic[ModelInputT, ModelOutputT],
+):
+    @classmethod
+    @abstractmethod
+    def _get_key(cls) -> str: ...
+
+    @staticmethod
+    @abstractmethod
+    def _compute_on_batch(
+        model_input: ModelInputT, model_output: ModelOutputT
+    ) -> Dict[str, Figure]: ...
+
+
 class BatchCallbackHandler(
-    TrackingCallbackHandler[
+    CacheCallbackHandler[
         BatchCallback[ModelInputT, ModelOutputT, CacheDataT],
         BatchCallbackResources[ModelInputT, ModelOutputT],
         CacheDataT,
