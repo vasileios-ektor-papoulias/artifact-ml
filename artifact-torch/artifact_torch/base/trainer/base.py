@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Generic, Optional, TypeVar
+from typing import Any, Dict, Generic, Optional, TypeVar
 
 import torch
 from torch import optim
 from tqdm import tqdm
 
+from artifact_torch.base.components.logging.trainer_logger import TrainerLogger
 from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
@@ -64,33 +65,22 @@ class TrainerBase(ABC, Generic[ModelT, ModelInputT, ModelOutputT]):
     def _should_stop(self) -> bool: ...
 
     @abstractmethod
-    def load_checkpoint(self, path: Path): ...
-
-    @abstractmethod
-    def _execute_epoch_preprocessing(self): ...
-
-    @abstractmethod
     def _execute_epoch_postprocessing(self):
         self._n_epochs_elapsed += 1
 
     @abstractmethod
-    def _execute_batch_preprocessing(self, batch: ModelInputT): ...
+    def _execute_batch_postprocessing(
+        self, batch_idx: int, batch: ModelInputT, model_output: ModelOutputT
+    ): ...
 
-    @abstractmethod
-    def _execute_batch_postprocessing(self, batch: ModelInputT, model_output: ModelOutputT): ...
-
-    @abstractmethod
-    def _get_progress_bar_description(self) -> str: ...
-
-    @staticmethod
-    @abstractmethod
-    def _compute_loss(batch: ModelInputT, model_output: ModelOutputT) -> torch.Tensor: ...
+    def _get_progress_bar_description(self) -> str:
+        desc = TrainerLogger.get_progress_bar_desc(n_epochs_elapsed=self.n_epochs_elapsed)
+        return desc
 
     def train(self):
         self._training_state.model.device = self.device
         print(f"Training on device: {self.device}")
         while not self._should_stop():
-            self._execute_epoch_preprocessing()
             self._train_one_epoch()
             self._execute_epoch_postprocessing()
 
@@ -98,10 +88,13 @@ class TrainerBase(ABC, Generic[ModelT, ModelInputT, ModelOutputT]):
         self._training_state.model.train()
         self._train_loader.device = self._training_state.model.device
         progress_bar_desc = self._get_progress_bar_description()
-        for batch in tqdm(self._train_loader, desc=progress_bar_desc, leave=False):
-            self._execute_batch_preprocessing(batch=batch)
+        for batch_idx, batch in tqdm(
+            enumerate(self._train_loader), desc=progress_bar_desc, leave=False
+        ):
             model_output = self._train_one_batch(batch=batch)
-            self._execute_batch_postprocessing(batch=batch, model_output=model_output)
+            self._execute_batch_postprocessing(
+                batch_idx=batch_idx, batch=batch, model_output=model_output
+            )
         self._training_state.model.eval()
 
     def _train_one_batch(
@@ -109,7 +102,7 @@ class TrainerBase(ABC, Generic[ModelT, ModelInputT, ModelOutputT]):
         batch: ModelInputT,
     ) -> ModelOutputT:
         model_output = self._training_state.model(batch)
-        t_loss = self._compute_loss(batch=batch, model_output=model_output)
+        t_loss = self._get_loss(model_output=model_output)
         self._training_step(
             t_loss=t_loss,
             optimizer=self._training_state.optimizer,
@@ -128,3 +121,15 @@ class TrainerBase(ABC, Generic[ModelT, ModelInputT, ModelOutputT]):
         optimizer.step()
         if scheduler is not None:
             scheduler.step()
+
+    @staticmethod
+    def _get_loss(model_output: ModelOutputT) -> torch.Tensor:
+        loss = model_output.get("t_loss")
+        assert loss is not None
+        return loss
+
+    def load_checkpoint(self, path: Path):
+        self._training_state.load(path=path, map_location=self.device)
+
+    def _get_checkpoint(self) -> Dict[str, Any]:
+        return self._training_state.serialize()
