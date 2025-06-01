@@ -20,8 +20,4 @@ class LabeledTensorInput(SingleTensorInput):
 
 
 class ModelOutput(ModelIO):
-    pass
-
-
-class LossOutput(ModelOutput):
     t_loss: Optional[torch.Tensor]
