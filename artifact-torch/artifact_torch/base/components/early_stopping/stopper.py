@@ -30,14 +30,14 @@ class EarlyStopper(ABC, Generic[StopperUpdateDataT]):
         return self._max_n_epochs
 
     @abstractmethod
-    def stopping_condition_met(self) -> bool:
-        pass
+    def stopping_condition_met(self) -> bool: ...
 
     def update(self, update_data: StopperUpdateDataT):
-        self._n_epochs_elapsed = update_data.n_epochs_elapsed
+        self._update(update_data=update_data)
         self._stopped = self.stopping_condition_met()
-        self._enforce_max_epochs()
 
-    def _enforce_max_epochs(self) -> None:
-        if self._max_n_epochs is not None and self._n_epochs_elapsed >= self._max_n_epochs:
-            self._stopped = True
+    def _update(self, update_data: StopperUpdateDataT):
+        self._n_epochs_elapsed = update_data.n_epochs_elapsed
+
+    def _max_epochs_exceeded(self) -> bool:
+        return self._max_n_epochs is not None and self._n_epochs_elapsed >= self._max_n_epochs
