@@ -114,7 +114,7 @@ class DataLoaderCallback(
 
 DataLoaderScoreCallback = DataLoaderCallback[ModelInputT, ModelOutputT, float, float]
 DataLoaderArrayCallback = DataLoaderCallback[ModelInputT, ModelOutputT, ndarray, ndarray]
-DataLoaderPlotCallback = DataLoaderCallback[ModelInputT, ModelOutputT, Figure, float]
+DataLoaderPlotCallback = DataLoaderCallback[ModelInputT, ModelOutputT, Figure, ndarray]
 DataLoaderScoreCollectionCallback = DataLoaderCallback[
     ModelInputT, ModelOutputT, Dict[str, float], float
 ]
@@ -122,7 +122,7 @@ DataLoaderArrayCollectionCallback = DataLoaderCallback[
     ModelInputT, ModelOutputT, Dict[str, ndarray], ndarray
 ]
 DataLoaderPlotCollectionCallback = DataLoaderCallback[
-    ModelInputT, ModelOutputT, Dict[str, Figure], float
+    ModelInputT, ModelOutputT, Dict[str, Figure], ndarray
 ]
 
 
