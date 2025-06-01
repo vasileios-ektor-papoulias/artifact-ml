@@ -50,14 +50,17 @@ class TrainingState(Generic[ModelT]):
         checkpoint = self.serialize()
         torch.save(checkpoint, path)
 
-    def load(self, path: Union[Path, str], map_location: torch.device):
-        checkpoint: Dict[str, Any] = torch.load(path, weights_only=True, map_location=map_location)
+    def load_checkpoint(self, checkpoint: Dict[str, Any]):
         self._model.load_state_dict(checkpoint.get(self._model_state_checkpoint_key, {}))
         self._optimizer.load_state_dict(checkpoint.get(self._optimizer_state_checkpoint_key, {}))
         if self._scheduler is not None:
             self._scheduler.load_state_dict(
                 checkpoint.get(self._scheduler_state_checkpoint_key, {})
             )
+
+    def load(self, path: Union[Path, str], map_location: torch.device):
+        checkpoint: Dict[str, Any] = torch.load(path, weights_only=True, map_location=map_location)
+        self.load_checkpoint(checkpoint=checkpoint)
 
     def _validate(self):
         self._validate_optimizer(optimizer=self._optimizer, model=self._model)
