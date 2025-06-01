@@ -1,20 +1,20 @@
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import Dict, Generic, TypeVar
+from typing import Generic, TypeVar
 
-from matplotlib.figure import Figure
-from numpy import ndarray
+from artifact_experiment.base.callbacks.tracking import TrackingCallbackHandler
 
 from artifact_torch.base.components.callbacks.periodic import (
     PeriodicCacheCallback,
     PeriodicCallbackResources,
 )
 from artifact_torch.base.model.io import (
+    ModelInput,
     ModelOutput,
 )
 
 CacheDataT = TypeVar("CacheDataT")
-ModelInputT = TypeVar("ModelInputT", bound=ModelOutput)
+ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
 ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
 
 
@@ -50,9 +50,12 @@ class BatchCallback(
         return result
 
 
-BatchScoreCallback = BatchCallback[ModelInputT, ModelOutputT, float]
-BatchArrayCallback = BatchCallback[ModelInputT, ModelOutputT, ndarray]
-BatchPlotCallback = BatchCallback[ModelInputT, ModelOutputT, Figure]
-BatchScoreCollectionCallback = BatchCallback[ModelInputT, ModelOutputT, Dict[str, float]]
-BatchArrayCollectionCallback = BatchCallback[ModelInputT, ModelOutputT, Dict[str, ndarray]]
-BatchPlotCollectionCallback = BatchCallback[ModelInputT, ModelOutputT, Dict[str, Figure]]
+class BatchCallbackHandler(
+    TrackingCallbackHandler[
+        BatchCallback[ModelInputT, ModelOutputT, CacheDataT],
+        BatchCallbackResources[ModelInputT, ModelOutputT],
+        CacheDataT,
+    ],
+    Generic[ModelInputT, ModelOutputT, CacheDataT],
+):
+    pass
