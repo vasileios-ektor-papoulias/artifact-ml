@@ -3,7 +3,6 @@ from typing import Any, Generic, List, Optional, Type, TypeVar
 
 import torch
 from artifact_experiment.base.tracking.client import TrackingClient
-from libs.components.callbacks.batch.loss import BatchLossCallback
 from torch import optim
 
 from artifact_torch.base.components.callbacks.batch import (
@@ -22,7 +21,6 @@ from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.base.trainer.custom import CustomTrainer
 from artifact_torch.base.trainer.validation_routine import ValidationRoutine
-from artifact_torch.libs.components.early_stopping.epoch_bound import EpochBoundStopper
 
 ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
 ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
@@ -69,52 +67,40 @@ class Trainer(
 
     @staticmethod
     @abstractmethod
-    def _get_optimizer(model: ModelT) -> optim.Optimizer:
-        return optim.Adam(params=model.parameters(), lr=0.001)
+    def _get_optimizer(model: ModelT) -> optim.Optimizer: ...
 
     @staticmethod
     @abstractmethod
+    def _get_early_stopper() -> EarlyStopper[StopperUpdateDataT]: ...
+
+    @abstractmethod
+    def _get_stopper_update_data(self) -> StopperUpdateDataT: ...
+
+    @staticmethod
     def _get_scheduler(
         optimizer: optim.Optimizer,
     ) -> Optional[optim.lr_scheduler._LRScheduler]:
         _ = optimizer
-        pass
 
     @staticmethod
-    @abstractmethod
     def _get_device() -> torch.device:
         return torch.device("cpu")
 
     @staticmethod
-    @abstractmethod
     def _get_model_tracker() -> Optional[ModelTracker]:
         pass
 
-    @abstractmethod
     def _get_model_tracking_criterion(self) -> Optional[ModelTrackingCriterionT]:
         pass
 
     @staticmethod
-    @abstractmethod
-    def _get_early_stopper() -> EarlyStopper[StopperUpdateDataT]:
-        return EpochBoundStopper(max_n_epochs=100)
-
-    @abstractmethod
-    def _get_stopper_update_data(self) -> StopperUpdateDataT:
-        return StopperUpdateData(n_epochs_elapsed=self.n_epochs_elapsed)
-
-    @staticmethod
-    @abstractmethod
     def _get_checkpoint_callback(
         tracking_client: Optional[TrackingClient],
     ) -> Optional[CheckpointCallback]:
         _ = tracking_client
-        pass
 
     @staticmethod
-    @abstractmethod
     def _get_batch_callbacks(
         tracking_client: Optional[TrackingClient],
     ) -> List[BatchCallback[ModelInputT, ModelOutputT, Any]]:
-        _ = tracking_client
-        return [BatchLossCallback(period=1)]
+        return []
