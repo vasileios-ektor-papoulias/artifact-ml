@@ -9,13 +9,20 @@ from tqdm import tqdm
 class CallbackResources:
     pass
 
-CallbackResourcesT = TypeVar("CallbackResourcesT", bound=CallbackResources)
 
-class Callback(ABC, Generic[CallbackResourcesT]):
+CallbackResourcesTContr = TypeVar(
+    "CallbackResourcesTContr", bound=CallbackResources, contravariant=True
+)
+
+
+class Callback(ABC, Generic[CallbackResourcesTContr]):
     @abstractmethod
-    def execute(self, resources: CallbackResourcesT): ...
+    def execute(self, resources: CallbackResourcesTContr): ...
+
 
 CallbackT = TypeVar("CallbackT", bound=Callback)
+CallbackResourcesT = TypeVar("CallbackResourcesT", bound=CallbackResources)
+
 
 class CallbackHandler(Generic[CallbackT, CallbackResourcesT]):
     _verbose = True
