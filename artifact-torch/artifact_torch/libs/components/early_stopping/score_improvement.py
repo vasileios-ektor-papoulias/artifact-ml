@@ -1,4 +1,4 @@
-from artifact_torch.base.components.early_stopping.single_score import (
+from artifact_torch.core.components.early_stopping.single_score import (
     SingleScoreStopper,
 )
 

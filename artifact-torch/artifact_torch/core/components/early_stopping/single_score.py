@@ -2,7 +2,7 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from typing import List, Optional
 
-from artifact_torch.base.components.early_stopping.patience import (
+from artifact_torch.core.components.early_stopping.patience import (
     PatienceStopper,
     PatienceStopperCriterion,
     PatienceStopperUpdateData,
