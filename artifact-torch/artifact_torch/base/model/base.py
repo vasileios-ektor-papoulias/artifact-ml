@@ -9,16 +9,16 @@ from artifact_torch.base.model.io import (
     ModelOutput,
 )
 
-ModelInputT = TypeVar("ModelInputT", bound="ModelInput")
-ModelOutputT = TypeVar("ModelOutputT", bound="ModelOutput")
+ModelInputTContr = TypeVar("ModelInputTContr", bound="ModelInput", contravariant=True)
+ModelOutputTCov = TypeVar("ModelOutputTCov", bound="ModelOutput", covariant=True)
 
 
-class Model(ABC, nn.Module, Generic[ModelInputT, ModelOutputT]):
+class Model(ABC, nn.Module, Generic[ModelInputTContr, ModelOutputTCov]):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._device = torch.device("cpu")
 
-    def __call__(self, model_input: ModelInputT, *args, **kwargs) -> ModelOutputT:
+    def __call__(self, model_input: ModelInputTContr, *args, **kwargs) -> ModelOutputTCov:
         return super().__call__(model_input, *args, **kwargs)
 
     @property
@@ -38,7 +38,7 @@ class Model(ABC, nn.Module, Generic[ModelInputT, ModelOutputT]):
         self._move_to_device(device=device)
 
     @abstractmethod
-    def forward(self, model_input: ModelInputT, *args, **kwargs) -> ModelOutputT: ...
+    def forward(self, model_input: ModelInputTContr, *args, **kwargs) -> ModelOutputTCov: ...
 
     def load_params(self, params: Dict[str, Any]):
         self.load_state_dict(state_dict=params)

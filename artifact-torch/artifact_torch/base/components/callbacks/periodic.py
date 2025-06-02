@@ -11,9 +11,8 @@ from artifact_experiment.base.callbacks.tracking import TrackingCallback
 from artifact_experiment.base.tracking.client import TrackingClient
 
 CacheDataT = TypeVar("CacheDataT")
-PeriodicCallbackResourcesT = TypeVar(
-    "PeriodicCallbackResourcesT",
-    bound="PeriodicCallbackResources",
+PeriodicCallbackResourcesTContr = TypeVar(
+    "PeriodicCallbackResourcesTContr", bound="PeriodicCallbackResources", contravariant=True
 )
 
 
@@ -31,8 +30,8 @@ class PeriodicActionTrigger:
 
 
 class PeriodicCallback(
-    Callback[PeriodicCallbackResourcesT],
-    Generic[PeriodicCallbackResourcesT],
+    Callback[PeriodicCallbackResourcesTContr],
+    Generic[PeriodicCallbackResourcesTContr],
 ):
     def __init__(self, period: int):
         self._period = period
@@ -42,9 +41,9 @@ class PeriodicCallback(
         return self._period
 
     @abstractmethod
-    def _execute(self, resources: PeriodicCallbackResourcesT): ...
+    def _execute(self, resources: PeriodicCallbackResourcesTContr): ...
 
-    def execute(self, resources: PeriodicCallbackResourcesT):
+    def execute(self, resources: PeriodicCallbackResourcesTContr):
         should_trigger = PeriodicActionTrigger.should_trigger(
             step=resources.step, period=self._period
         )
@@ -53,21 +52,21 @@ class PeriodicCallback(
 
 
 class PeriodicCacheCallback(
-    CacheCallback[PeriodicCallbackResourcesT, CacheDataT],
-    Generic[PeriodicCallbackResourcesT, CacheDataT],
+    CacheCallback[PeriodicCallbackResourcesTContr, CacheDataT],
+    Generic[PeriodicCallbackResourcesTContr, CacheDataT],
 ):
     def __init__(self, key: str, period: int):
         super().__init__(key=key)
         self._period = period
 
     @abstractmethod
-    def _compute(self, resources: PeriodicCallbackResourcesT) -> CacheDataT: ...
+    def _compute(self, resources: PeriodicCallbackResourcesTContr) -> CacheDataT: ...
 
     @property
     def execution_interval(self) -> int:
         return self._period
 
-    def execute(self, resources: PeriodicCallbackResourcesT):
+    def execute(self, resources: PeriodicCallbackResourcesTContr):
         should_trigger = PeriodicActionTrigger.should_trigger(
             step=resources.step, period=self._period
         )
@@ -76,15 +75,15 @@ class PeriodicCacheCallback(
 
 
 class PeriodicTrackingCallback(
-    TrackingCallback[PeriodicCallbackResourcesT, CacheDataT],
-    Generic[PeriodicCallbackResourcesT, CacheDataT],
+    TrackingCallback[PeriodicCallbackResourcesTContr, CacheDataT],
+    Generic[PeriodicCallbackResourcesTContr, CacheDataT],
 ):
     def __init__(self, key: str, period: int, tracking_client: Optional[TrackingClient] = None):
         super().__init__(key=key, tracking_client=tracking_client)
         self._period = period
 
     @abstractmethod
-    def _compute(self, resources: PeriodicCallbackResourcesT) -> CacheDataT: ...
+    def _compute(self, resources: PeriodicCallbackResourcesTContr) -> CacheDataT: ...
 
     @staticmethod
     @abstractmethod
@@ -94,7 +93,7 @@ class PeriodicTrackingCallback(
     def execution_interval(self) -> int:
         return self._period
 
-    def execute(self, resources: PeriodicCallbackResourcesT):
+    def execute(self, resources: PeriodicCallbackResourcesTContr):
         should_trigger = PeriodicActionTrigger.should_trigger(
             step=resources.step, period=self._period
         )

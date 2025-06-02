@@ -8,8 +8,8 @@ from artifact_torch.base.model.io import (
     ModelOutput,
 )
 
-ModelInputT = TypeVar("ModelInputT", bound="ModelInput")
-ModelOutputT = TypeVar("ModelOutputT", bound="ModelOutput")
+ModelInputTContr = TypeVar("ModelInputTContr", bound="ModelInput", contravariant=True)
+ModelOutputTCov = TypeVar("ModelOutputTCov", bound="ModelOutput", covariant=True)
 GenerationParamsT = TypeVar("GenerationParamsT", bound="GenerationParams")
 GenerationT = TypeVar("GenerationT")
 
@@ -20,11 +20,11 @@ class GenerationParams:
 
 
 class GenerativeModel(
-    Model[ModelInputT, ModelOutputT],
-    Generic[ModelInputT, ModelOutputT, GenerationParamsT, GenerationT],
+    Model[ModelInputTContr, ModelOutputTCov],
+    Generic[ModelInputTContr, ModelOutputTCov, GenerationParamsT, GenerationT],
 ):
     @abstractmethod
-    def forward(self, model_input: ModelInputT, *args, **kwargs) -> ModelOutputT: ...
+    def forward(self, model_input: ModelInputTContr, *args, **kwargs) -> ModelOutputTCov: ...
 
     @abstractmethod
     def generate(self, params: GenerationParamsT) -> GenerationT: ...

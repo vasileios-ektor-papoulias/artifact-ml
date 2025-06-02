@@ -36,23 +36,27 @@ from artifact_torch.base.model.io import (
 
 CacheDataT = TypeVar("CacheDataT")
 BatchResultT = TypeVar("BatchResultT")
-ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
-ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
-DataLoaderCallbackT = TypeVar(
-    "DataLoaderCallbackT",
-    bound="DataLoaderCallback",
-)
+ModelInputTCov = TypeVar("ModelInputTCov", bound=ModelInput)
+ModelOutputTCov = TypeVar("ModelOutputTCov", bound=ModelOutput)
 
 
 @dataclass
-class DataLoaderCallbackResources(PeriodicCallbackResources, Generic[ModelInputT, ModelOutputT]):
-    model: Model[ModelInputT, ModelOutputT]
-    data_loader: DataLoader[ModelInputT]
+class DataLoaderCallbackResources(
+    PeriodicCallbackResources, Generic[ModelInputTCov, ModelOutputTCov]
+):
+    model: Model[ModelInputTCov, ModelOutputTCov]
+    data_loader: DataLoader[ModelInputTCov]
+
+
+ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput)
+ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput)
 
 
 class DataLoaderCallback(
-    PeriodicTrackingCallback[DataLoaderCallbackResources[ModelInputT, ModelOutputT], CacheDataT],
-    Generic[ModelInputT, ModelOutputT, CacheDataT, BatchResultT],
+    PeriodicTrackingCallback[
+        DataLoaderCallbackResources[ModelInputTContr, ModelOutputTContr], CacheDataT
+    ],
+    Generic[ModelInputTContr, ModelOutputTContr, CacheDataT, BatchResultT],
 ):
     _verbose = True
     _progressbar_message = "Processing Data Loader"
@@ -75,8 +79,8 @@ class DataLoaderCallback(
     @staticmethod
     @abstractmethod
     def _compute_on_batch(
-        model_input: ModelInputT,
-        model_output: ModelOutputT,
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
     ) -> BatchResultT: ...
 
     @staticmethod
@@ -91,7 +95,7 @@ class DataLoaderCallback(
 
     def _compute(
         self,
-        resources: DataLoaderCallbackResources[ModelInputT, ModelOutputT],
+        resources: DataLoaderCallbackResources[ModelInputTContr, ModelOutputTContr],
     ) -> CacheDataT:
         self._process_data_loader(model=resources.model, data_loader=resources.data_loader)
         result = self.finalize()
@@ -99,8 +103,8 @@ class DataLoaderCallback(
 
     def _process_data_loader(
         self,
-        model: Model[ModelInputT, ModelOutputT],
-        data_loader: DataLoader[ModelInputT],
+        model: Model[ModelInputTContr, ModelOutputTContr],
+        data_loader: DataLoader[ModelInputTContr],
     ):
         data_loader.device = model.device
         model.eval()
@@ -116,15 +120,15 @@ class DataLoaderCallback(
 
     def process_batch(
         self,
-        model_input: ModelInputT,
-        model_output: ModelOutputT,
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
     ):
         batch_result = self._compute_on_batch(model_input=model_input, model_output=model_output)
         self._ls_batch_results.append(batch_result)
 
 
 class DataLoaderScoreCallback(
-    ScoreExportMixin, DataLoaderCallback[ModelInputT, ModelOutputT, float, float]
+    ScoreExportMixin, DataLoaderCallback[ModelInputTContr, ModelOutputTContr, float, float]
 ):
     @classmethod
     @abstractmethod
@@ -139,13 +143,13 @@ class DataLoaderScoreCallback(
     @staticmethod
     @abstractmethod
     def _compute_on_batch(
-        model_input: ModelInputT,
-        model_output: ModelOutputT,
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
     ) -> float: ...
 
 
 class DataLoaderArrayCallback(
-    ArrayExportMixin, DataLoaderCallback[ModelInputT, ModelOutputT, ndarray, ndarray]
+    ArrayExportMixin, DataLoaderCallback[ModelInputTContr, ModelOutputTContr, ndarray, ndarray]
 ):
     @classmethod
     @abstractmethod
@@ -160,13 +164,13 @@ class DataLoaderArrayCallback(
     @staticmethod
     @abstractmethod
     def _compute_on_batch(
-        model_input: ModelInputT,
-        model_output: ModelOutputT,
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
     ) -> ndarray: ...
 
 
 class DataLoaderPlotCallback(
-    PlotExportMixin, DataLoaderCallback[ModelInputT, ModelOutputT, Figure, ndarray]
+    PlotExportMixin, DataLoaderCallback[ModelInputTContr, ModelOutputTContr, Figure, ndarray]
 ):
     @classmethod
     @abstractmethod
@@ -181,14 +185,14 @@ class DataLoaderPlotCallback(
     @staticmethod
     @abstractmethod
     def _compute_on_batch(
-        model_input: ModelInputT,
-        model_output: ModelOutputT,
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
     ) -> ndarray: ...
 
 
 class DataLoaderScoreCollectionCallback(
     ScoreCollectionExportMixin,
-    DataLoaderCallback[ModelInputT, ModelOutputT, Dict[str, float], Dict[str, float]],
+    DataLoaderCallback[ModelInputTContr, ModelOutputTContr, Dict[str, float], Dict[str, float]],
 ):
     @classmethod
     @abstractmethod
@@ -203,14 +207,14 @@ class DataLoaderScoreCollectionCallback(
     @staticmethod
     @abstractmethod
     def _compute_on_batch(
-        model_input: ModelInputT,
-        model_output: ModelOutputT,
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
     ) -> Dict[str, float]: ...
 
 
 class DataLoaderArrayCollectionCallback(
     ArrayCollectionExportMixin,
-    DataLoaderCallback[ModelInputT, ModelOutputT, Dict[str, ndarray], Dict[str, ndarray]],
+    DataLoaderCallback[ModelInputTContr, ModelOutputTContr, Dict[str, ndarray], Dict[str, ndarray]],
 ):
     @classmethod
     @abstractmethod
@@ -225,14 +229,14 @@ class DataLoaderArrayCollectionCallback(
     @staticmethod
     @abstractmethod
     def _compute_on_batch(
-        model_input: ModelInputT,
-        model_output: ModelOutputT,
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
     ) -> Dict[str, ndarray]: ...
 
 
 class DataLoaderPlotCollectionCallback(
     PlotCollectionExportMixin,
-    DataLoaderCallback[ModelInputT, ModelOutputT, Dict[str, Figure], Dict[str, ndarray]],
+    DataLoaderCallback[ModelInputTContr, ModelOutputTContr, Dict[str, Figure], Dict[str, ndarray]],
 ):
     @classmethod
     @abstractmethod
@@ -247,9 +251,17 @@ class DataLoaderPlotCollectionCallback(
     @staticmethod
     @abstractmethod
     def _compute_on_batch(
-        model_input: ModelInputT,
-        model_output: ModelOutputT,
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
     ) -> Dict[str, ndarray]: ...
+
+
+ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
+ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
+DataLoaderCallbackT = TypeVar(
+    "DataLoaderCallbackT",
+    bound="DataLoaderCallback",
+)
 
 
 class DataLoaderCallbackHandler(

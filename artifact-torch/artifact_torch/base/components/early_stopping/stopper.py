@@ -2,7 +2,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Generic, Optional, TypeVar
 
-StopperUpdateDataT = TypeVar("StopperUpdateDataT", bound="StopperUpdateData")
+StopperUpdateDataTContr = TypeVar(
+    "StopperUpdateDataTContr", bound="StopperUpdateData", contravariant=True
+)
 
 
 @dataclass
@@ -10,7 +12,7 @@ class StopperUpdateData:
     n_epochs_elapsed: int
 
 
-class EarlyStopper(ABC, Generic[StopperUpdateDataT]):
+class EarlyStopper(ABC, Generic[StopperUpdateDataTContr]):
     def __init__(self, max_n_epochs: Optional[int] = None):
         super().__init__()
         self._stopped: bool = False
@@ -32,11 +34,11 @@ class EarlyStopper(ABC, Generic[StopperUpdateDataT]):
     @abstractmethod
     def stopping_condition_met(self) -> bool: ...
 
-    def update(self, update_data: StopperUpdateDataT):
+    def update(self, update_data: StopperUpdateDataTContr):
         self._update(update_data=update_data)
         self._stopped = self.stopping_condition_met()
 
-    def _update(self, update_data: StopperUpdateDataT):
+    def _update(self, update_data: StopperUpdateDataTContr):
         self._n_epochs_elapsed = update_data.n_epochs_elapsed
 
     def _max_epochs_exceeded(self) -> bool:
