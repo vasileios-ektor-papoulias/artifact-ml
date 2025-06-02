@@ -28,16 +28,17 @@ from artifact_torch.base.model.io import ModelInput, ModelOutput
 
 ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
 ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
-ModelT = TypeVar("ModelT", bound=Model[ModelInput, ModelOutput])
+ModelT = TypeVar("ModelT", bound=Model[Any, Any])
+ValidationPlanCallbackT = TypeVar("ValidationPlanCallbackT", bound=ValidationPlanCallback)
 ValidationRoutineT = TypeVar("ValidationRoutineT", bound="ValidationRoutine")
 
 
-class ValidationRoutine(Generic[ModelT, ModelInputT, ModelOutputT]):
+class ValidationRoutine(Generic[ModelT, ModelInputT, ModelOutputT, ValidationPlanCallbackT]):
     def __init__(
         self,
         train_loader: DataLoader[ModelInputT],
         val_loader: Optional[DataLoader[ModelInputT]],
-        validation_plan_callback: ValidationPlanCallback[ModelT, Any],
+        validation_plan_callback: ValidationPlanCallbackT,
         train_loader_score_handler: DataLoaderScoreHandler[ModelInputT, ModelOutputT],
         train_loader_array_handler: DataLoaderArrayHandler[ModelInputT, ModelOutputT],
         train_loader_plot_handler: DataLoaderPlotHandler[ModelInputT, ModelOutputT],
@@ -80,11 +81,11 @@ class ValidationRoutine(Generic[ModelT, ModelInputT, ModelOutputT]):
         self._val_loader_plot_collection_handler = val_loader_plot_collection_handler
 
     @classmethod
-    def build(
+    def _build(
         cls: Type[ValidationRoutineT],
         train_loader: DataLoader[ModelInputT],
         val_loader: Optional[DataLoader[ModelInputT]],
-        validation_plan_callback: ValidationPlanCallback[ModelT, Any],
+        validation_plan_callback: ValidationPlanCallbackT,
         tracking_client: Optional[TrackingClient],
     ) -> ValidationRoutineT:
         train_loader_score_callbacks = cls._get_train_loader_score_callbacks()
@@ -260,7 +261,7 @@ class ValidationRoutine(Generic[ModelT, ModelInputT, ModelOutputT]):
 
     @staticmethod
     def _execute_validation_plan_callback(
-        callback: ValidationPlanCallback[ModelT, Any], model: ModelT, n_epochs_elapsed: int
+        callback: ValidationPlanCallbackT, model: ModelT, n_epochs_elapsed: int
     ):
         resources = ValidationPlanCallbackResources[ModelT](step=n_epochs_elapsed, model=model)
         callback.execute(resources=resources)
