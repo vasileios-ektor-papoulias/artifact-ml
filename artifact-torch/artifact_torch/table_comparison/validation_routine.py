@@ -20,10 +20,9 @@ from artifact_torch.core.model.generative import GenerationParams
 from artifact_torch.table_comparison.model import TabularGenerativeModel
 from artifact_torch.table_comparison.validation_plan_callback import TableComparisonPlanCallback
 
-GenerationParamsT = TypeVar("GenerationParamsT", bound=GenerationParams)
-
 ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
 ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
+GenerationParamsT = TypeVar("GenerationParamsT", bound=GenerationParams)
 TableComparisonValidationRoutineT = TypeVar(
     "TableComparisonValidationRoutineT", bound="TableComparisonValidationRoutine"
 )
@@ -72,8 +71,8 @@ class TableComparisonValidationRoutine(
     def _get_validation_plan() -> TableComparisonValidationPlan: ...
 
     @staticmethod
-    def _get_artifact_validation_period() -> int:
-        return 0
+    @abstractmethod
+    def _get_artifact_validation_period() -> int: ...
 
     @staticmethod
     def _get_train_loader_score_callbacks() -> List[
