@@ -42,9 +42,9 @@ class BatchCallback(
     ],
     Generic[ModelInputT, ModelOutputT, CacheDataT],
 ):
-    def __init__(self, execution_interval: int):
+    def __init__(self, period: int):
         key = self._get_key()
-        super().__init__(key=key, period=execution_interval)
+        super().__init__(key=key, period=period)
 
     @classmethod
     @abstractmethod

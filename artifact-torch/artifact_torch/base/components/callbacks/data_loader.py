@@ -57,9 +57,9 @@ class DataLoaderCallback(
     _verbose = True
     _progressbar_message = "Processing Data Loader"
 
-    def __init__(self, execution_interval: int):
+    def __init__(self, period: int):
         key = self._get_key()
-        super().__init__(key=key, period=execution_interval)
+        super().__init__(key=key, period=period)
         self._ls_batch_results = []
 
     @classmethod
