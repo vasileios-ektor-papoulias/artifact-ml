@@ -12,7 +12,8 @@ from artifact_experiment.base.tracking.client import TrackingClient
 
 CacheDataT = TypeVar("CacheDataT")
 PeriodicCallbackResourcesT = TypeVar(
-    "PeriodicCallbackResourcesT", bound="PeriodicCallbackResources"
+    "PeriodicCallbackResourcesT",
+    bound="PeriodicCallbackResources",
 )
 
 
