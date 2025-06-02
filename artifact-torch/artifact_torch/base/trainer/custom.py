@@ -33,15 +33,23 @@ from artifact_torch.base.trainer.validation_routine import ValidationRoutine
 
 ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
 ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
-ModelT = TypeVar("ModelT", bound=Model[ModelInput, ModelOutput])
+ModelT = TypeVar("ModelT", bound=Model[Any, Any])
+ValidationRoutineT = TypeVar("ValidationRoutineT", bound=ValidationRoutine)
 ModelTrackingCriterionT = TypeVar("ModelTrackingCriterionT", bound=ModelTrackingCriterion)
 StopperUpdateDataT = TypeVar("StopperUpdateDataT", bound=StopperUpdateData)
-TrainerT = TypeVar("TrainerT", bound="Trainer")
+CustomTrainerT = TypeVar("CustomTrainerT", bound="CustomTrainer")
 
 
-class Trainer(
+class CustomTrainer(
     TrainerBase[ModelT, ModelInputT, ModelOutputT],
-    Generic[ModelT, ModelInputT, ModelOutputT, ModelTrackingCriterionT, StopperUpdateDataT],
+    Generic[
+        ModelT,
+        ModelInputT,
+        ModelOutputT,
+        ValidationRoutineT,
+        ModelTrackingCriterionT,
+        StopperUpdateDataT,
+    ],
 ):
     _maintain_batch_scores = False
 
@@ -50,9 +58,9 @@ class Trainer(
         training_state: TrainingState,
         train_loader: DataLoader[ModelInputT],
         device: torch.device,
-        validation_routine: ValidationRoutine[ModelT, ModelInputT, ModelOutputT],
-        model_tracker: Optional[ModelTracker],
-        early_stopper: EarlyStopper,
+        validation_routine: ValidationRoutineT,
+        model_tracker: Optional[ModelTracker[ModelTrackingCriterionT]],
+        early_stopper: EarlyStopper[StopperUpdateDataT],
         checkpoint_callback: Optional[CheckpointCallback],
         batch_callback_handler: BatchCallbackHandler[ModelInputT, ModelOutputT, Any],
     ):
@@ -66,13 +74,13 @@ class Trainer(
         self._epoch_score_cache = ScoreCache()
 
     @classmethod
-    def build(
-        cls: Type[TrainerT],
+    def _build(
+        cls: Type[CustomTrainerT],
         model: ModelT,
         train_loader: DataLoader[ModelInputT],
-        validation_routine: ValidationRoutine[ModelT, ModelInputT, ModelOutputT],
+        validation_routine: ValidationRoutineT,
         tracking_client: Optional[TrackingClient] = None,
-    ) -> TrainerT:
+    ) -> CustomTrainerT:
         optimizer = cls._get_optimizer(model=model)
         scheduler = cls._get_scheduler(optimizer=optimizer)
         training_state = TrainingState[ModelT](
@@ -134,14 +142,16 @@ class Trainer(
 
     @staticmethod
     @abstractmethod
-    def _get_model_tracker() -> Optional[ModelTracker]: ...
+    def _get_model_tracker() -> Optional[ModelTracker[ModelTrackingCriterionT]]: ...
 
-    def _get_model_tracking_criterion(self) -> ModelTrackingCriterionT: ...
+    @abstractmethod
+    def _get_model_tracking_criterion(self) -> Optional[ModelTrackingCriterionT]: ...
 
     @staticmethod
     @abstractmethod
     def _get_early_stopper() -> EarlyStopper[StopperUpdateDataT]: ...
 
+    @abstractmethod
     def _get_stopper_update_data(self) -> StopperUpdateDataT: ...
 
     @staticmethod
@@ -201,6 +211,7 @@ class Trainer(
     def _update_tracker(self):
         if self._model_tracker is not None:
             criterion = self._get_model_tracking_criterion()
+            assert criterion is not None
             self._model_tracker.update(
                 model=self.model,
                 criterion=criterion,
