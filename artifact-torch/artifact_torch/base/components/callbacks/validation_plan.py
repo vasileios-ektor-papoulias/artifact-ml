@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import Any, Generic, TypeVar
+from typing import Generic, TypeVar
 
 from artifact_core.base.artifact_dependencies import (
     ArtifactResources,
@@ -15,6 +15,7 @@ from artifact_torch.base.components.callbacks.periodic import (
 from artifact_torch.base.model.base import Model
 
 ModelT = TypeVar("ModelT", bound=Model)
+ValidationPlanT = TypeVar("ValidationPlanT", bound=ValidationPlan)
 ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound=ArtifactResources)
 
 
@@ -25,12 +26,12 @@ class ValidationPlanCallbackResources(PeriodicCallbackResources, Generic[ModelT]
 
 class ValidationPlanCallback(
     PeriodicCallback[ValidationPlanCallbackResources],
-    Generic[ModelT, ArtifactResourcesT],
+    Generic[ModelT, ValidationPlanT, ArtifactResourcesT],
 ):
     def __init__(
         self,
         period: int,
-        validation_plan: ValidationPlan[Any, Any, Any, Any, Any, Any, ArtifactResourcesT, Any],
+        validation_plan: ValidationPlanT,
     ):
         super().__init__(period=period)
         self._validation_plan = validation_plan
@@ -41,7 +42,7 @@ class ValidationPlanCallback(
         model: ModelT,
     ) -> ArtifactResourcesT: ...
 
-    def _compute(self, resources: ValidationPlanCallbackResources):
+    def _execute(self, resources: ValidationPlanCallbackResources):
         artifact_resources = self._generate_artifact_resources(model=resources.model)
         artifact_callback_resources = ArtifactCallbackResources(
             artifact_resources=artifact_resources
