@@ -1,10 +1,10 @@
 from artifact_torch.base.components.callbacks.batch import (
-    BatchCallback,
+    BatchScoreCallback,
 )
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 
 
-class BatchLossCallback(BatchCallback[ModelInput, ModelOutput, float]):
+class BatchLossCallback(BatchScoreCallback[ModelInput, ModelOutput]):
     @classmethod
     def _get_key(cls):
         return "batch_loss"
