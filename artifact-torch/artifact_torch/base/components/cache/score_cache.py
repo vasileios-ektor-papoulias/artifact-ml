@@ -27,6 +27,9 @@ class ScoreCache(AlignedCache[float]):
 
     @staticmethod
     def _build_df(cache: Dict[str, List[Optional[float]]]) -> pd.DataFrame:
-        series_dict: Dict[str, pd.Series] = {k: pd.Series(v) for k, v in cache.items()}
-        df = pd.DataFrame(series_dict).replace({None: np.nan}).astype(pd.SparseDtype("float"))
+        sanitized: Dict[str, List[float]] = {
+            k: [np.nan if v_item is None else v_item for v_item in v_list]
+            for k, v_list in cache.items()
+        }
+        df = pd.DataFrame(sanitized).astype(pd.SparseDtype("float"))
         return df
