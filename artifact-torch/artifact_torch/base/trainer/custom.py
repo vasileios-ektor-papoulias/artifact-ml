@@ -75,7 +75,7 @@ class CustomTrainer(
         self._epoch_score_cache = ScoreCache()
 
     @classmethod
-    def _build(
+    def build(
         cls: Type[CustomTrainerT],
         model: ModelT,
         train_loader: DataLoader[ModelInputT],
