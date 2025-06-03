@@ -51,7 +51,7 @@ class Cache(Generic[CacheDataT]):
     def append(self, items: Dict[str, CacheDataT]):
         if self._mode == CacheMode.STANDARD:
             self._append_standard(items=items)
-        if self._mode == CacheMode.ALIGNED:
+        elif self._mode == CacheMode.ALIGNED:
             self._append_aligned(items=items)
         else:
             raise ValueError(f"Invalid cache mode: {self._mode}")
