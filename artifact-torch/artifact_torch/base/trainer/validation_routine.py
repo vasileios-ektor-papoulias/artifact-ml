@@ -1,7 +1,13 @@
 from abc import abstractmethod
-from typing import Any, Generic, List, Optional, Type, TypeVar, Union
+from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
 
+from artifact_core.base.artifact_dependencies import (
+    ArtifactResources,
+)
 from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_experiment.base.validation_plan import ValidationPlan
+from matplotlib.figure import Figure
+from numpy import ndarray
 
 from artifact_torch.base.components.callbacks.data_loader import (
     DataLoaderArrayCallback,
@@ -29,16 +35,21 @@ from artifact_torch.base.model.io import ModelInput, ModelOutput
 ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
 ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
 ModelT = TypeVar("ModelT", bound=Model[Any, Any])
-ValidationPlanCallbackT = TypeVar("ValidationPlanCallbackT", bound=ValidationPlanCallback)
+ValidationPlanT = TypeVar("ValidationPlanT", bound=ValidationPlan)
+ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound=ArtifactResources)
 ValidationRoutineT = TypeVar("ValidationRoutineT", bound="ValidationRoutine")
 
 
-class ValidationRoutine(Generic[ModelT, ModelInputT, ModelOutputT, ValidationPlanCallbackT]):
+class ValidationRoutine(
+    Generic[ModelT, ModelInputT, ModelOutputT, ValidationPlanT, ArtifactResourcesT]
+):
     def __init__(
         self,
         train_loader: DataLoader[ModelInputT],
         val_loader: Optional[DataLoader[ModelInputT]],
-        validation_plan_callback: ValidationPlanCallbackT,
+        validation_plan_callback: ValidationPlanCallback[
+            ModelT, ValidationPlanT, ArtifactResourcesT
+        ],
         train_loader_score_handler: DataLoaderScoreHandler[ModelInputT, ModelOutputT],
         train_loader_array_handler: DataLoaderArrayHandler[ModelInputT, ModelOutputT],
         train_loader_plot_handler: DataLoaderPlotHandler[ModelInputT, ModelOutputT],
@@ -85,7 +96,9 @@ class ValidationRoutine(Generic[ModelT, ModelInputT, ModelOutputT, ValidationPla
         cls: Type[ValidationRoutineT],
         train_loader: DataLoader[ModelInputT],
         val_loader: Optional[DataLoader[ModelInputT]],
-        validation_plan_callback: ValidationPlanCallbackT,
+        validation_plan_callback: ValidationPlanCallback[
+            ModelT, ValidationPlanT, ArtifactResourcesT
+        ],
         tracking_client: Optional[TrackingClient],
     ) -> ValidationRoutineT:
         train_loader_score_callbacks = cls._get_train_loader_score_callbacks()
@@ -112,7 +125,7 @@ class ValidationRoutine(Generic[ModelT, ModelInputT, ModelOutputT, ValidationPla
         train_loader_plot_collection_handler = DataLoaderPlotCollectionHandler[
             ModelInputT, ModelOutputT
         ](ls_callbacks=train_loader_plot_collection_callbacks)
-        val_loader_score_callbacks = cls._get_train_loader_score_callbacks()
+        val_loader_score_callbacks = cls._get_val_loader_score_callbacks()
         val_loader_score_handler = DataLoaderScoreHandler[ModelInputT, ModelOutputT](
             ls_callbacks=val_loader_score_callbacks
         )
@@ -154,6 +167,54 @@ class ValidationRoutine(Generic[ModelT, ModelInputT, ModelOutputT, ValidationPla
             val_loader_plot_collection_handler=val_loader_plot_collection_handler,
         )
         return routine
+
+    @property
+    def scores(self) -> Dict[str, float]:
+        scores = {}
+        scores.update(self._validation_plan_callback.validation_plan.scores)
+        scores.update(self._train_loader_score_handler.active_cache)
+        scores.update(self._val_loader_score_handler.active_cache)
+        return scores
+
+    @property
+    def arrays(self) -> Dict[str, ndarray]:
+        arrays = {}
+        arrays.update(self._validation_plan_callback.validation_plan.arrays)
+        arrays.update(self._train_loader_array_handler.active_cache)
+        arrays.update(self._val_loader_array_handler.active_cache)
+        return arrays
+
+    @property
+    def plots(self) -> Dict[str, Figure]:
+        plots = {}
+        plots.update(self._validation_plan_callback.validation_plan.plots)
+        plots.update(self._train_loader_plot_handler.active_cache)
+        plots.update(self._val_loader_plot_handler.active_cache)
+        return plots
+
+    @property
+    def score_collections(self) -> Dict[str, Dict[str, float]]:
+        score_collections = {}
+        score_collections.update(self._validation_plan_callback.validation_plan.score_collections)
+        score_collections.update(self._train_loader_score_collection_handler.active_cache)
+        score_collections.update(self._val_loader_score_collection_handler.active_cache)
+        return score_collections
+
+    @property
+    def array_collections(self) -> Dict[str, Dict[str, ndarray]]:
+        array_collections = {}
+        array_collections.update(self._validation_plan_callback.validation_plan.array_collections)
+        array_collections.update(self._train_loader_array_collection_handler.active_cache)
+        array_collections.update(self._val_loader_array_collection_handler.active_cache)
+        return array_collections
+
+    @property
+    def plot_collections(self) -> Dict[str, Dict[str, Figure]]:
+        plot_collections = {}
+        plot_collections.update(self._validation_plan_callback.validation_plan.plot_collections)
+        plot_collections.update(self._train_loader_plot_collection_handler.active_cache)
+        plot_collections.update(self._val_loader_plot_collection_handler.active_cache)
+        return plot_collections
 
     @staticmethod
     @abstractmethod
@@ -276,7 +337,9 @@ class ValidationRoutine(Generic[ModelT, ModelInputT, ModelOutputT, ValidationPla
 
     @staticmethod
     def _execute_validation_plan_callback(
-        callback: ValidationPlanCallbackT, model: ModelT, n_epochs_elapsed: int
+        callback: ValidationPlanCallback[ModelT, ValidationPlanT, ArtifactResourcesT],
+        model: ModelT,
+        n_epochs_elapsed: int,
     ):
         resources = ValidationPlanCallbackResources[ModelT](step=n_epochs_elapsed, model=model)
         callback.execute(resources=resources)
