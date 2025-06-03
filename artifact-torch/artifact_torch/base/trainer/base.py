@@ -6,7 +6,6 @@ import torch
 from torch import optim
 from tqdm import tqdm
 
-from artifact_torch.base.components.logging.trainer_logger import TrainerLogger
 from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
@@ -73,9 +72,8 @@ class TrainerBase(ABC, Generic[ModelT, ModelInputT, ModelOutputT]):
         self, batch_idx: int, batch: ModelInputT, model_output: ModelOutputT
     ): ...
 
-    def _get_progress_bar_description(self) -> str:
-        desc = TrainerLogger.get_progress_bar_desc(n_epochs_elapsed=self.n_epochs_elapsed)
-        return desc
+    @abstractmethod
+    def _get_progress_bar_description(self) -> str: ...
 
     def train(self):
         self._training_state.model.device = self.device
