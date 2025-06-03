@@ -20,6 +20,7 @@ from artifact_torch.base.components.callbacks.checkpoint import (
     CheckpointCallbackResources,
 )
 from artifact_torch.base.components.early_stopping.stopper import EarlyStopper, StopperUpdateData
+from artifact_torch.base.components.logging.trainer_logger import TrainerLogger
 from artifact_torch.base.components.model_tracking.tracker import (
     ModelTracker,
     ModelTrackingCriterion,
@@ -165,6 +166,11 @@ class CustomTrainer(
     def _get_batch_callbacks(
         tracking_client: Optional[TrackingClient],
     ) -> List[BatchCallback[ModelInputT, ModelOutputT, Any]]: ...
+
+    @abstractmethod
+    def _get_progress_bar_description(self) -> str:
+        desc = TrainerLogger.get_progress_bar_desc(n_epochs_elapsed=self.n_epochs_elapsed)
+        return desc
 
     def _should_stop(self) -> bool:
         return self._early_stopper.stopped
