@@ -36,6 +36,10 @@ class ValidationPlanCallback(
         super().__init__(period=period)
         self._validation_plan = validation_plan
 
+    @property
+    def validation_plan(self) -> ValidationPlanT:
+        return self._validation_plan
+
     @abstractmethod
     def _generate_artifact_resources(
         self,
