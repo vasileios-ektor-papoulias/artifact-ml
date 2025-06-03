@@ -2,6 +2,8 @@ from abc import abstractmethod
 from typing import Generic, List, Optional, Type, TypeVar
 
 import pandas as pd
+from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.table_comparison.artifacts.base import TableComparisonArtifactResources
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_experiment.table_comparison.validation_plan import TableComparisonValidationPlan
 
@@ -33,21 +35,25 @@ class TableComparisonValidationRoutine(
         TabularGenerativeModel[ModelInputT, ModelOutputT, GenerationParamsT],
         ModelInputT,
         ModelOutputT,
-        TableComparisonPlanCallback[GenerationParamsT],
+        TableComparisonValidationPlan,
+        TableComparisonArtifactResources,
     ],
     Generic[ModelInputT, ModelOutputT, GenerationParamsT],
 ):
     @classmethod
     def build(
         cls: Type[TableComparisonValidationRoutineT],
-        train_loader: DataLoader[ModelInputT],
         df_real: pd.DataFrame,
-        val_loader: Optional[DataLoader[ModelInputT]],
-        tracking_client: Optional[TrackingClient],
+        tabular_data_spec: TabularDataSpecProtocol,
+        train_loader: DataLoader[ModelInputT],
+        val_loader: Optional[DataLoader[ModelInputT]] = None,
+        tracking_client: Optional[TrackingClient] = None,
     ) -> TableComparisonValidationRoutineT:
         artifact_validation_period = cls._get_artifact_validation_period()
         generation_params = cls._get_generation_params()
-        validation_plan = cls._get_validation_plan()
+        validation_plan = cls._get_validation_plan(
+            tabular_data_spec=tabular_data_spec, tracking_client=tracking_client
+        )
         validation_plan_callback = TableComparisonPlanCallback[GenerationParamsT](
             period=artifact_validation_period,
             validation_plan=validation_plan,
@@ -68,7 +74,10 @@ class TableComparisonValidationRoutine(
 
     @staticmethod
     @abstractmethod
-    def _get_validation_plan() -> TableComparisonValidationPlan: ...
+    def _get_validation_plan(
+        tabular_data_spec: TabularDataSpecProtocol,
+        tracking_client: Optional[TrackingClient],
+    ) -> TableComparisonValidationPlan: ...
 
     @staticmethod
     @abstractmethod
