@@ -204,7 +204,9 @@ class CustomTrainer(
         self._batch_cache.append(items=self._batch_callback_handler.cache)
 
     def _execute_validation_routine(self):
+        self._validation_routine.clear_cache()
         self._validation_routine.execute(model=self.model, n_epochs_elapsed=self.n_epochs_elapsed)
+        self._epoch_score_cache.append(self._validation_routine.scores)
 
     def _execute_checkpoint_callback(self):
         if self._checkpoint_callback is not None:
