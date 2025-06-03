@@ -259,6 +259,21 @@ class ValidationRoutine(Generic[ModelT, ModelInputT, ModelOutputT, ValidationPla
                 n_epochs_elapsed=n_epochs_elapsed,
             )
 
+    def clear_cache(self):
+        self._validation_plan_callback.validation_plan.clear_cache()
+        self._train_loader_score_handler.clear()
+        self._train_loader_array_handler.clear()
+        self._train_loader_plot_handler.clear()
+        self._train_loader_score_collection_handler.clear()
+        self._train_loader_array_collection_handler.clear()
+        self._train_loader_plot_collection_handler.clear()
+        self._val_loader_score_handler.clear()
+        self._val_loader_array_handler.clear()
+        self._val_loader_plot_handler.clear()
+        self._val_loader_score_collection_handler.clear()
+        self._val_loader_array_collection_handler.clear()
+        self._val_loader_plot_collection_handler.clear()
+
     @staticmethod
     def _execute_validation_plan_callback(
         callback: ValidationPlanCallbackT, model: ModelT, n_epochs_elapsed: int
