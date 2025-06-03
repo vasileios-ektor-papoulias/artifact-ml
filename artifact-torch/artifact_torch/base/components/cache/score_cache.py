@@ -13,9 +13,7 @@ class ScoreCache(AlignedCache[float]):
 
     @property
     def scores(self) -> pd.DataFrame:
-        df = self._build_df(self._cache)
-        self._df_scores = df
-        return df
+        return self._df_scores
 
     def clear(self) -> None:
         super().clear()
