@@ -72,7 +72,10 @@ class TabularVAETrainer(
     def _get_checkpoint_callback(
         tracking_client: Optional[TrackingClient],
     ) -> Optional[CheckpointCallback]:
-        return StandardCheckpointCallback(period=CHECKPOINT_PERIOD, tracking_client=tracking_client)
+        if tracking_client is not None:
+            return StandardCheckpointCallback(
+                period=CHECKPOINT_PERIOD, tracking_client=tracking_client
+            )
 
     @staticmethod
     def _get_batch_callbacks(
