@@ -10,7 +10,7 @@ class InactiveFilesystemRunError(InactiveRunError):
 
 
 class FilesystemRun:
-    _default_root_dir = Path.home() / "artifact_ml"
+    _root_dir = Path.home() / "artifact_ml"
 
     def __init__(self, experiment_id: str, run_id: str):
         self._experiment_id = experiment_id
@@ -30,7 +30,7 @@ class FilesystemRun:
 
     @property
     def experiment_dir(self) -> str:
-        return os.path.join(str(self._default_root_dir), self._experiment_id)
+        return os.path.join(str(self._root_dir), self._experiment_id)
 
     @property
     def run_dir(self) -> str:
