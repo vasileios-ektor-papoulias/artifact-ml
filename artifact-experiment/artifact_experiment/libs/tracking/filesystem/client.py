@@ -39,7 +39,7 @@ class FilesystemTrackingClient(TrackingClient[FilesystemRunAdapter]):
 
     @property
     def run_dir(self) -> str:
-        return self._run.dir
+        return self._run.run_dir
 
     @staticmethod
     def _get_score_logger(

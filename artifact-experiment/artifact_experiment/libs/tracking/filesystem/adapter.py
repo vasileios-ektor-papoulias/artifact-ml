@@ -66,7 +66,7 @@ class FilesystemRunAdapter(RunAdapter[FilesystemRun]):
         return self._native_run.experiment_dir
 
     @property
-    def dir(self) -> str:
+    def run_dir(self) -> str:
         return self._native_run.run_dir
 
     def stop(self):
