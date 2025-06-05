@@ -33,10 +33,11 @@ with _config_file.open() as f:
     DEVICE: torch.device = torch.device(_training_config["device"])
     MAX_N_EPOCHS: int = _training_config["max_n_epochs"]
     LEARNING_RATE: float = _training_config["learning_rate"]
+    CHECKPOINT_PERIOD: int = _training_config["checkpoint_period"]
+    BATCH_LOSS_PERIOD: int = _training_config["batch_loss_period"]
     BATCH_SIZE: int = _training_config["batch_size"]
     DROP_LAST: float = _training_config["drop_last"]
     SHUFFLE: bool = _training_config["shuffle"]
-    BATCH_LOSS_PERIOD: int = _training_config["batch_loss_period"]
 
     # Validation Config
     TRAIN_LOADER_CALLBACK_PERIOD: int = _validation_config["train_loader_callback_period"]

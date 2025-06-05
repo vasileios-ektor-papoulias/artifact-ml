@@ -14,10 +14,17 @@ from artifact_torch.base.components.model_tracking.tracker import (
 )
 from artifact_torch.base.trainer.custom import CustomTrainer
 from artifact_torch.libs.components.callbacks.batch.loss import BatchLossCallback
+from artifact_torch.libs.components.callbacks.checkpoint.standard import StandardCheckpointCallback
 from artifact_torch.libs.components.early_stopping.epoch_bound import EpochBoundStopper
 from torch import optim
 
-from demo.config.constants import BATCH_LOSS_PERIOD, DEVICE, LEARNING_RATE, MAX_N_EPOCHS
+from demo.config.constants import (
+    BATCH_LOSS_PERIOD,
+    CHECKPOINT_PERIOD,
+    DEVICE,
+    LEARNING_RATE,
+    MAX_N_EPOCHS,
+)
 from demo.model.io import TabularVAEInput, TabularVAEOutput
 from demo.model.synthesizer import TabularVAESynthesizer
 from demo.trainer.validation_routine import TabularVAEValidationRoutine
@@ -65,7 +72,7 @@ class TabularVAETrainer(
     def _get_checkpoint_callback(
         tracking_client: Optional[TrackingClient],
     ) -> Optional[CheckpointCallback]:
-        _ = tracking_client
+        return StandardCheckpointCallback(period=CHECKPOINT_PERIOD, tracking_client=tracking_client)
 
     @staticmethod
     def _get_batch_callbacks(
@@ -75,7 +82,7 @@ class TabularVAETrainer(
         return [BatchLossCallback(period=BATCH_LOSS_PERIOD)]
 
     def _get_progress_bar_description(self) -> str:
-        train_loss = self._epoch_score_cache.get_latest_non_null(key="train_loss")
+        train_loss = self._epoch_score_cache.get_latest_non_null(key="TRAIN_LOSS")
         desc = TrainerLogger.get_progress_bar_desc(
             n_epochs_elapsed=self.n_epochs_elapsed, train_loss=train_loss
         )
