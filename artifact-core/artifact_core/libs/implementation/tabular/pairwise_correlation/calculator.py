@@ -49,6 +49,7 @@ class PairwiseCorrelationCalculator:
             continuous_correlation_type=continuous_correlation_type,
         )
         df_correlations = dict_assoc[cls._dython_association_config.dict_assoc_df_key]
+        assert isinstance(df_correlations, pd.DataFrame)
         return df_correlations
 
     @classmethod
