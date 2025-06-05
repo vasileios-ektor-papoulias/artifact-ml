@@ -9,8 +9,8 @@ from artifact_torch.base.components.callbacks.validation_plan import (
     ValidationPlanCallback,
 )
 from artifact_torch.core.model.generative import GenerationParams
+from artifact_torch.libs.exports.table import TableExporter
 from artifact_torch.table_comparison.model import TabularGenerativeModel
-from artifact_torch.table_comparison.tabular_data_exporter import TabularDataExporter
 
 GenerationParamsT = TypeVar("GenerationParamsT", bound=GenerationParams)
 
@@ -23,6 +23,8 @@ class TableComparisonPlanCallback(
     ],
     Generic[GenerationParamsT],
 ):
+    _resource_export_prefix = "synthetic"
+
     def __init__(
         self,
         period: int,
@@ -36,16 +38,6 @@ class TableComparisonPlanCallback(
         self._generation_params = generation_params
         self._tracking_client = tracking_client
 
-    @staticmethod
-    def _export_artifact_resources(
-        artifact_resources: TableComparisonArtifactResources,
-        tracking_client: TrackingClient,
-        step: int,
-    ):
-        TabularDataExporter.export(
-            df=artifact_resources.dataset_synthetic, tracking_client=tracking_client, step=step
-        )
-
     def _generate_artifact_resources(
         self,
         model: TabularGenerativeModel[Any, Any, GenerationParamsT],
@@ -55,3 +47,16 @@ class TableComparisonPlanCallback(
             dataset_real=self._df_real, dataset_synthetic=df_synthetic
         )
         return resources
+
+    def _export_artifact_resources(
+        self,
+        artifact_resources: TableComparisonArtifactResources,
+        step: int,
+    ):
+        if self._tracking_client is not None:
+            TableExporter.export(
+                data=artifact_resources.dataset_synthetic,
+                tracking_client=self._tracking_client,
+                prefix=self._resource_export_prefix,
+                step=step,
+            )

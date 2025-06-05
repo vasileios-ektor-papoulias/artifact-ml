@@ -43,17 +43,14 @@ class ValidationPlanCallback(
     def validation_plan(self) -> ValidationPlanT:
         return self._validation_plan
 
-    @staticmethod
-    @abstractmethod
-    def _export_artifact_resources(
-        artifact_resources: ArtifactResourcesT, tracking_client: TrackingClient, step: int
-    ): ...
-
     @abstractmethod
     def _generate_artifact_resources(
         self,
         model: ModelT,
     ) -> ArtifactResourcesT: ...
+
+    @abstractmethod
+    def _export_artifact_resources(self, artifact_resources: ArtifactResourcesT, step: int): ...
 
     def _execute(self, resources: ValidationPlanCallbackResources):
         artifact_resources = self._generate_artifact_resources(model=resources.model)
@@ -61,9 +58,7 @@ class ValidationPlanCallback(
             artifact_resources=artifact_resources
         )
         self._validation_plan.execute(resources=artifact_callback_resources)
-        if self._tracking_client is not None:
-            self._export_artifact_resources(
-                artifact_resources=artifact_resources,
-                tracking_client=self._tracking_client,
-                step=resources.step,
-            )
+        self._export_artifact_resources(
+            artifact_resources=artifact_resources,
+            step=resources.step,
+        )
