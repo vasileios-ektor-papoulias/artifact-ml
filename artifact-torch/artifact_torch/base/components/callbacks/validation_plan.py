@@ -1,11 +1,12 @@
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import Generic, TypeVar
+from typing import Generic, Optional, TypeVar
 
 from artifact_core.base.artifact_dependencies import (
     ArtifactResources,
 )
 from artifact_experiment.base.callbacks.artifact import ArtifactCallbackResources
+from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_experiment.base.validation_plan import ValidationPlan
 
 from artifact_torch.base.components.callbacks.periodic import (
@@ -32,13 +33,21 @@ class ValidationPlanCallback(
         self,
         period: int,
         validation_plan: ValidationPlanT,
+        tracking_client: Optional[TrackingClient] = None,
     ):
         super().__init__(period=period)
         self._validation_plan = validation_plan
+        self._tracking_client = tracking_client
 
     @property
     def validation_plan(self) -> ValidationPlanT:
         return self._validation_plan
+
+    @staticmethod
+    @abstractmethod
+    def _export_artifact_resources(
+        artifact_resources: ArtifactResourcesT, tracking_client: TrackingClient, step: int
+    ): ...
 
     @abstractmethod
     def _generate_artifact_resources(
@@ -52,3 +61,9 @@ class ValidationPlanCallback(
             artifact_resources=artifact_resources
         )
         self._validation_plan.execute(resources=artifact_callback_resources)
+        if self._tracking_client is not None:
+            self._export_artifact_resources(
+                artifact_resources=artifact_resources,
+                tracking_client=self._tracking_client,
+                step=resources.step,
+            )

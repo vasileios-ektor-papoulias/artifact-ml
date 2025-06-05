@@ -59,6 +59,7 @@ class TableComparisonValidationRoutine(
             validation_plan=validation_plan,
             df_real=df_real,
             generation_params=generation_params,
+            tracking_client=tracking_client,
         )
         routine = super()._build(
             train_loader=train_loader,
