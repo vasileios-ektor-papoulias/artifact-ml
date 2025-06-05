@@ -44,7 +44,7 @@ from artifact_experiment.table_comparison.validation_plan import (
     TableComparisonPlotType,
     TableComparisonScoreCollectionType,
     TableComparisonScoreType,
-    TableComparisonValidationPlan,
+    TableComparisonPlan,
 )
 
 # Load datasets
@@ -60,7 +60,7 @@ resource_spec = TabularDataSpec.from_df(
 )
 
 # Define a custom validation plan
-class MyValidationPlan(TableComparisonValidationPlan):
+class MyValidationPlan(TableComparisonPlan):
     @staticmethod
     def _get_score_types() -> List[TableComparisonScoreType]:
         return [TableComparisonScoreType.MEAN_JS_DISTANCE]
@@ -181,7 +181,7 @@ They are built on top of the `artifact-core` engine and provide a high-level int
 They are configured by implementing subcalss hooks determining the artifacts of interest:
 
 ```python
-class MyValidationPlan(TableComparisonValidationPlan):
+class MyValidationPlan(TableComparisonPlan):
     @staticmethod
     def _get_score_types() -> List[TableComparisonScoreType]:
         return [...]  # Define which scores to compute
@@ -237,7 +237,7 @@ pip install .
 
 Each **ArtifactEngine** in `artifac-core` has a **ValidationPlan** counterpart defined in `artifact-experiment`.
 
-To illustrate: the **TableComparisonEngine** provides an interface for executing table comarison artifacts. The same artifact collection is made available for tracking (through `artifact-experiment`) using the **TableComparisonValidationPlan** class.
+To illustrate: the **TableComparisonEngine** provides an interface for executing table comarison artifacts. The same artifact collection is made available for tracking (through `artifact-experiment`) using the **TableComparisonPlan** class.
 
 When contributing new artifact types to `artifact-core`, it's suggested to also provide the relevant extension to `artifact-experiment` as in the the example above.
 

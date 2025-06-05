@@ -21,7 +21,7 @@ from artifact_experiment.table_comparison.callback_factory import (
 from artifact_experiment.table_comparison.resources import TableComparisonCallbackResources
 
 
-class TableComparisonValidationPlan(
+class TableComparisonPlan(
     ValidationPlan[
         TableComparisonScoreType,
         TableComparisonArrayType,
