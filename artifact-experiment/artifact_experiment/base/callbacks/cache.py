@@ -23,10 +23,6 @@ class CacheCallback(
     @abstractmethod
     def _compute(self, resources: CallbackResourcesTContr) -> CacheDataT: ...
 
-    def execute(self, resources: CallbackResourcesTContr):
-        value = self._compute(resources=resources)
-        self._cache[self._key] = value
-
     @property
     def key(self) -> str:
         return self._key
@@ -38,6 +34,13 @@ class CacheCallback(
     @property
     def cache(self) -> Dict[str, Optional[CacheDataT]]:
         return self._cache.copy()
+
+    def execute(self, resources: CallbackResourcesTContr):
+        value = self._compute(resources=resources)
+        self._cache[self._key] = value
+
+    def clear(self):
+        self._cache = {self._key: None}
 
 
 CacheCallbackT = TypeVar("CacheCallbackT", bound=CacheCallback)
@@ -70,13 +73,18 @@ class CacheCallbackHandler(
         self._execute(resources=resources)
         self.update_cache()
 
-    def _execute(self, resources: CallbackResourcesT):
-        super().execute(resources=resources)
-
     def update_cache(self):
         self._cache = {}
         for callback in self._ls_callbacks:
             self._cache.update(callback.cache)
+
+    def clear(self):
+        for callback in self._ls_callbacks:
+            callback.clear()
+        self.update_cache()
+
+    def _execute(self, resources: CallbackResourcesT):
+        super().execute(resources=resources)
 
     @staticmethod
     def _get_active_cache(
