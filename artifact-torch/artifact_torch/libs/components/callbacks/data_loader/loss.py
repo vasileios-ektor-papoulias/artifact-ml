@@ -22,10 +22,10 @@ class LoaderLossCallback(DataLoaderScoreCallback[ModelInput, ModelOutput]):
 class TrainLossCallback(LoaderLossCallback):
     @classmethod
     def _get_key(cls):
-        return "train_loss"
+        return "TRAIN_LOSS"
 
 
 class ValLossCallback(LoaderLossCallback):
     @classmethod
     def _get_key(cls):
-        return "val_loss"
+        return "VAL_LOSS"
