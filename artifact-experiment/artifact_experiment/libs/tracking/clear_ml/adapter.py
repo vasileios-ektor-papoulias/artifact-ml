@@ -1,3 +1,4 @@
+import os
 import time
 from typing import Any, Dict, List, Mapping, Optional, Sequence
 
@@ -6,6 +7,7 @@ from clearml.binding.artifacts import Artifact
 from matplotlib.figure import Figure
 
 from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
+from artifact_experiment.libs.tracking.clear_ml.config import ARTIFACT_ML_ROOT_DIR
 
 
 class InactiveClearMLRunError(InactiveRunError):
@@ -13,6 +15,7 @@ class InactiveClearMLRunError(InactiveRunError):
 
 
 class ClearMLRunAdapter(RunAdapter[Task]):
+    _root_dir = ARTIFACT_ML_ROOT_DIR
     _time_to_wait_before_stopping_seconds: int = 1
     _tup_active_statuses = (
         Task.TaskStatusEnum.queued,
@@ -55,6 +58,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
     def upload(self, path_source: str, dir_target: str, delete_after_upload: bool = False):
         if not self.is_active:
             raise InactiveClearMLRunError("Run is inactive")
+        dir_target = self._prepend_root_dir(path=dir_target)
         self._native_run.upload_artifact(
             name=dir_target,
             artifact_object=path_source,
@@ -72,6 +76,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
     ):
         if not self.is_active:
             raise InactiveClearMLRunError("Run is inactive")
+        title = self._prepend_root_dir(path=title)
         logger = self._native_run.get_logger()
         logger.report_scalar(
             title=title,
@@ -89,6 +94,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
     ):
         if not self.is_active:
             raise InactiveClearMLRunError("Run is inactive")
+        title = self._prepend_root_dir(path=title)
         logger = self._native_run.get_logger()
         logger.report_matplotlib_figure(
             title=title,
@@ -118,3 +124,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
             task_type=cls._new_task_type,
             reuse_last_task_id=False,
         )
+
+    @classmethod
+    def _prepend_root_dir(cls, path: str) -> str:
+        return os.path.join(cls._root_dir, path)
