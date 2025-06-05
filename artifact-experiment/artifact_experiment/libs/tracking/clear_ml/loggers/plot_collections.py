@@ -22,10 +22,7 @@ class ClearMLPlotCollectionLogger(ClearMLArtifactLogger[Dict[str, Figure]]):
 
     @classmethod
     def _get_plot_collection_iteration(cls, run: ClearMLRunAdapter, path: str) -> int:
-        ls_all_plots = ClearMLPlotReader.get_all_plots(run=run)
-        ls_series_metadata = ClearMLPlotReader.get_series_from_path(
-            ls_all_plots=ls_all_plots, plot_path=path
-        )
+        ls_series_metadata = ClearMLPlotReader.get_series_metadata(run=run, plot_path=path)
         if ls_series_metadata:
             iteration = 1 + max(
                 ClearMLPlotReader.get_plot_iter_from_metadata(dict_plot_metadata=dict_plot_metadata)

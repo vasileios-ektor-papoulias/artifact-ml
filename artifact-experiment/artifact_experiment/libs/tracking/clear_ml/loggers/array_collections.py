@@ -33,9 +33,6 @@ class ClearMLArrayCollectionLogger(ClearMLArtifactLogger[Dict[str, np.ndarray]])
 
     @staticmethod
     def _get_array_collection_iteration(run: ClearMLRunAdapter, path: str) -> int:
-        dict_all_files = ClearMLFileReader.get_all_files(run=run)
-        dict_array_history = ClearMLFileReader.get_file_history(
-            dict_all_files=dict_all_files, remote_path=path
-        )
+        dict_array_history = ClearMLFileReader.get_file_history(run=run, path=path)
         iteration = len(dict_array_history)
         return iteration

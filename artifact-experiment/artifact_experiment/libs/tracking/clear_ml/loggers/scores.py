@@ -22,11 +22,8 @@ class ClearMLScoreLogger(ClearMLArtifactLogger[float]):
 
     @staticmethod
     def _get_score_iteration(run: ClearMLRunAdapter, path: str, series: str) -> int:
-        dict_all_scores = ClearMLScoreReader.get_all_scores(run=run)
         try:
-            dict_score_history = ClearMLScoreReader.get_score_history(
-                dict_all_scores=dict_all_scores, score_path=path
-            )
+            dict_score_history = ClearMLScoreReader.get_score_history(run=run, score_path=path)
             dict_score_series = ClearMLScoreReader.get_series_from_score_history(
                 score_history=dict_score_history, series_name=series
             )
