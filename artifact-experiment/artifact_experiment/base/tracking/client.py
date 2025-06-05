@@ -78,3 +78,6 @@ class TrackingClient(Generic[runAdapterT]):
 
     def log_plot_collection(self, plot_collection: Dict[str, Figure], name: str):
         self._plot_collection_logger.log(artifact=plot_collection, artifact_name=name)
+
+    def upload(self, path_source: str, dir_target: str):
+        self._run.upload(path_source=path_source, dir_target=dir_target)

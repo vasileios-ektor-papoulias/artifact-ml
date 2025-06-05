@@ -47,24 +47,23 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
     def is_active(self) -> bool:
         return self.run_status.upper() == RunStatus.to_string(RunStatus.RUNNING)
 
-    def log_score(self, backend_path: str, value: float, step: int = 0):
-        if self.is_active:
-            key = backend_path.replace("\\", "/")
-            self._native_run.client.log_metric(
-                run_id=self.run_uuid, key=key, value=value, step=step
-            )
-        else:
-            raise InactiveMlflowRunError("Run is inactive")
+    def stop(self):
+        self._native_run.client.set_terminated(run_id=self.run_uuid)
 
-    def upload(self, backend_path: str, local_path: str):
-        if self.is_active:
-            self._native_run.client.log_artifact(
-                run_id=self.run_uuid,
-                local_path=local_path,
-                artifact_path=backend_path,
-            )
-        else:
+    def upload(self, path_source: str, dir_target: str):
+        if not self.is_active:
             raise InactiveMlflowRunError("Run is inactive")
+        self._native_run.client.log_artifact(
+            run_id=self.run_uuid,
+            local_path=path_source,
+            artifact_path=dir_target,
+        )
+
+    def log_score(self, backend_path: str, value: float, step: int = 0):
+        if not self.is_active:
+            raise InactiveMlflowRunError("Run is inactive")
+        key = backend_path.replace("\\", "/")
+        self._native_run.client.log_metric(run_id=self.run_uuid, key=key, value=value, step=step)
 
     def get_ls_artifact_info(self, backend_path: str) -> List[FileInfo]:
         ls_artifact_infos = self._native_run.client.list_artifacts(
@@ -78,9 +77,6 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
             run_id=self.run_uuid, key=key
         )
         return ls_metric_history
-
-    def stop(self):
-        self._native_run.client.set_terminated(run_id=self.run_uuid)
 
     @classmethod
     def _build_native_run(cls, experiment_id: str, run_id: str) -> MlflowNativeClient:

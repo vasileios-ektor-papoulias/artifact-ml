@@ -45,16 +45,19 @@ class RunAdapter(ABC, Generic[nativeRunT]):
     @abstractmethod
     def stop(self): ...
 
+    @abstractmethod
+    def upload(self, path_source: str, dir_target: str): ...
+
+    @classmethod
+    @abstractmethod
+    def _build_native_run(cls, experiment_id: str, run_id: str) -> nativeRunT: ...
+
     @contextmanager
     def native(self) -> Iterator[nativeRunT]:
         try:
             yield self._native_run
         finally:
             pass
-
-    @classmethod
-    @abstractmethod
-    def _build_native_run(cls, experiment_id: str, run_id: str) -> nativeRunT: ...
 
     @staticmethod
     def _generate_random_id() -> str:

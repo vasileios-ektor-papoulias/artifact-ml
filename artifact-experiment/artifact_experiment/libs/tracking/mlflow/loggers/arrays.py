@@ -25,10 +25,7 @@ class MlflowArrayLogger(MlflowArtifactLogger[np.ndarray]):
                 fmt=self._fmt,
             )
             np.save(file=local_path, arr=artifact)
-            self._run.upload(
-                backend_path=artifact_path,
-                local_path=local_path,
-            )
+            self._run.upload(path_source=local_path, dir_target=artifact_path)
 
     @staticmethod
     def _get_array_history(run: MlflowRunAdapter, path: str) -> List[FileInfo]:

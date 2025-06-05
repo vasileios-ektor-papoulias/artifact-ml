@@ -52,6 +52,17 @@ class ClearMLRunAdapter(RunAdapter[Task]):
             time.sleep(self._time_to_wait_before_stopping_seconds)
             self._native_run.close()
 
+    def upload(self, path_source: str, dir_target: str, delete_after_upload: bool = False):
+        if not self.is_active:
+            raise InactiveClearMLRunError("Run is inactive")
+        self._native_run.upload_artifact(
+            name=dir_target,
+            artifact_object=path_source,
+            delete_after_upload=delete_after_upload,
+            auto_pickle=False,
+            wait_on_upload=True,
+        )
+
     def log_score(
         self,
         value: float,
@@ -84,17 +95,6 @@ class ClearMLRunAdapter(RunAdapter[Task]):
             series=series,
             iteration=iteration,
             figure=plot,
-        )
-
-    def upload(self, name: str, filepath: str, delete_after_upload: bool = False):
-        if not self.is_active:
-            raise InactiveClearMLRunError("Run is inactive")
-        self._native_run.upload_artifact(
-            name=name,
-            artifact_object=filepath,
-            delete_after_upload=delete_after_upload,
-            auto_pickle=False,
-            wait_on_upload=True,
         )
 
     def get_exported_scores(

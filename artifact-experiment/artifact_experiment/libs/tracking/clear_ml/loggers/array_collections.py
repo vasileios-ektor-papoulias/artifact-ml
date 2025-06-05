@@ -23,7 +23,9 @@ class ClearMLArrayCollectionLogger(ClearMLArtifactLogger[Dict[str, np.ndarray]])
                 dir_path=temp_dir, next_idx=iteration, fmt=self._fmt
             )
             np.savez_compressed(file=local_filepath, allow_pickle=True, **artifact)
-            self._run.upload(name=artifact_name, filepath=local_filepath, delete_after_upload=False)
+            self._run.upload(
+                dir_target=artifact_name, path_source=local_filepath, delete_after_upload=False
+            )
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:

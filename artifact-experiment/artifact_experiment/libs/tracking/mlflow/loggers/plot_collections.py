@@ -32,10 +32,7 @@ class MLFlowPlotCollectionLogger(MlflowArtifactLogger[Dict[str, Figure]]):
                     collection_path=collection_local_path, plot_name=plot_name, fmt=self._fmt
                 )
                 plot.savefig(fname=plot_local_path, format="png", bbox_inches="tight")
-                self._run.upload(
-                    backend_path=collection_backend_path,
-                    local_path=plot_local_path,
-                )
+                self._run.upload(path_source=plot_local_path, dir_target=collection_backend_path)
 
     @staticmethod
     def _get_plot_collection_history(

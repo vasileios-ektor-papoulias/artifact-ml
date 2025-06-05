@@ -57,16 +57,20 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
         run_metadata = self._native_run.fetch()
         return run_metadata
 
-    def log(self, path: str, artifact: ArtifactResult):
-        if self.is_active:
-            self._native_run[path.replace("\\", "/")].append(artifact)
-        else:
-            raise InactiveNeptuneRunError("Run is inactive")
-
     def stop(self):
         if self.is_active:
             time.sleep(self._time_to_wait_before_stopping_seconds)
             self._native_run.stop()
+
+    def upload(self, path_source: str, dir_target: str):
+        if not self.is_active:
+            raise InactiveNeptuneRunError("Run is inactive")
+        self._native_run[dir_target].upload(path_source)
+
+    def log(self, path: str, artifact: ArtifactResult):
+        if not self.is_active:
+            raise InactiveNeptuneRunError("Run is inactive")
+        self._native_run[path.replace("\\", "/")].append(artifact)
 
     @classmethod
     def _build_native_run(cls, experiment_id: str, run_id: str) -> neptune.Run:

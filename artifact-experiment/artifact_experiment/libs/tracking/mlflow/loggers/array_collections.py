@@ -25,10 +25,7 @@ class MlflowArrayCollectionLogger(MlflowArtifactLogger[Dict[str, np.ndarray]]):
                 fmt=self._fmt,
             )
             np.savez_compressed(file=local_path, allow_pickle=True, **artifact)
-            self._run.upload(
-                backend_path=artifact_path,
-                local_path=local_path,
-            )
+            self._run.upload(path_source=local_path, dir_target=artifact_path)
 
     @staticmethod
     def _get_array_collection_history(run: MlflowRunAdapter, path: str) -> List[FileInfo]:

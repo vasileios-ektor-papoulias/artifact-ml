@@ -1,4 +1,5 @@
 import os
+import shutil
 from pathlib import Path
 
 from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
@@ -70,6 +71,13 @@ class FilesystemRunAdapter(RunAdapter[FilesystemRun]):
 
     def stop(self):
         self._native_run.stop()
+
+    def upload(self, path_source: str, dir_target: str):
+        if not self.is_active:
+            raise InactiveFilesystemRunError("Cannot upload: run is not active.")
+        dir_target_abs = os.path.join(self.run_dir, dir_target)
+        os.makedirs(dir_target_abs, exist_ok=True)
+        shutil.copy2(path_source, dir_target_abs)
 
     @classmethod
     def _build_native_run(cls, experiment_id: str, run_id: str) -> FilesystemRun:

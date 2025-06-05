@@ -25,10 +25,7 @@ class MLFlowPlotLogger(MlflowArtifactLogger[Figure]):
                 fmt=self._fmt,
             )
             artifact.savefig(fname=local_path, format="png", bbox_inches="tight")
-            self._run.upload(
-                backend_path=artifact_path,
-                local_path=local_path,
-            )
+            self._run.upload(path_source=local_path, dir_target=artifact_path)
 
     @staticmethod
     def _get_plot_history(run: MlflowRunAdapter, path: str) -> List[FileInfo]:
