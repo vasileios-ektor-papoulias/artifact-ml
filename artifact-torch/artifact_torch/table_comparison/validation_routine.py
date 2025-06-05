@@ -5,7 +5,7 @@ import pandas as pd
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.base import TableComparisonArtifactResources
 from artifact_experiment.base.tracking.client import TrackingClient
-from artifact_experiment.table_comparison.validation_plan import TableComparisonValidationPlan
+from artifact_experiment.table_comparison.validation_plan import TableComparisonPlan
 
 from artifact_torch.base.components.callbacks.data_loader import (
     DataLoaderArrayCallback,
@@ -35,7 +35,7 @@ class TableComparisonValidationRoutine(
         TabularGenerativeModel[ModelInputT, ModelOutputT, GenerationParamsT],
         ModelInputT,
         ModelOutputT,
-        TableComparisonValidationPlan,
+        TableComparisonPlan,
         TableComparisonArtifactResources,
     ],
     Generic[ModelInputT, ModelOutputT, GenerationParamsT],
@@ -78,7 +78,7 @@ class TableComparisonValidationRoutine(
     def _get_validation_plan(
         tabular_data_spec: TabularDataSpecProtocol,
         tracking_client: Optional[TrackingClient],
-    ) -> TableComparisonValidationPlan: ...
+    ) -> TableComparisonPlan: ...
 
     @staticmethod
     @abstractmethod

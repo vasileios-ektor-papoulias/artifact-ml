@@ -3,15 +3,15 @@ from typing import List
 from artifact_experiment.table_comparison.validation_plan import (
     TableComparisonArrayCollectionType,
     TableComparisonArrayType,
+    TableComparisonPlan,
     TableComparisonPlotCollectionType,
     TableComparisonPlotType,
     TableComparisonScoreCollectionType,
     TableComparisonScoreType,
-    TableComparisonValidationPlan,
 )
 
 
-class TabularVAEValidationPlan(TableComparisonValidationPlan):
+class TabularVAEValidationPlan(TableComparisonPlan):
     @staticmethod
     def _get_score_types() -> List[TableComparisonScoreType]:
         return [
