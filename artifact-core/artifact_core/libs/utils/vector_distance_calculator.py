@@ -24,7 +24,7 @@ class VectorDistanceCalculator:
         elif metric == VectorDistanceMetric.MAE:
             return np.mean(np.abs(v_1 - v_2)).item()
         elif metric == VectorDistanceMetric.RMSE:
-            return np.sqrt(np.mean((v_1 - v_2) ** 2))
+            return np.sqrt(np.mean((v_1 - v_2) ** 2).item())
         elif metric == VectorDistanceMetric.COSINE_SIMILARITY:
             norm_product = np.linalg.norm(v_1) * np.linalg.norm(v_2)
             if norm_product == 0:
