@@ -1,13 +1,14 @@
 import os
 import time
-from typing import Any, Dict, List, Mapping, Optional, Sequence
+from typing import Optional
 
 from clearml import Task, TaskTypes
-from clearml.binding.artifacts import Artifact
 from matplotlib.figure import Figure
 
 from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
-from artifact_experiment.libs.tracking.clear_ml.config import ARTIFACT_ML_ROOT_DIR
+from artifact_experiment.libs.tracking.clear_ml.stores.files import ClearMLFileStore
+from artifact_experiment.libs.tracking.clear_ml.stores.plots import ClearMLPlotStore
+from artifact_experiment.libs.tracking.clear_ml.stores.scores import ClearMLScoreStore
 
 
 class InactiveClearMLRunError(InactiveRunError):
@@ -15,7 +16,7 @@ class InactiveClearMLRunError(InactiveRunError):
 
 
 class ClearMLRunAdapter(RunAdapter[Task]):
-    _root_dir = ARTIFACT_ML_ROOT_DIR
+    _root_dir = "artifact_ml"
     _time_to_wait_before_stopping_seconds: int = 1
     _tup_active_statuses = (
         Task.TaskStatusEnum.queued,
