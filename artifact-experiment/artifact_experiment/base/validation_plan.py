@@ -122,28 +122,28 @@ class ValidationPlan(
         return validation_plan
 
     @property
-    def scores(self) -> Dict[str, Optional[float]]:
-        return self._score_handler.cache
+    def scores(self) -> Dict[str, float]:
+        return self._score_handler.active_cache
 
     @property
-    def arrays(self) -> Dict[str, Optional[ndarray]]:
-        return self._array_handler.cache
+    def arrays(self) -> Dict[str, ndarray]:
+        return self._array_handler.active_cache
 
     @property
-    def plots(self) -> Dict[str, Optional[Figure]]:
-        return self._plot_handler.cache
+    def plots(self) -> Dict[str, Figure]:
+        return self._plot_handler.active_cache
 
     @property
-    def score_collections(self) -> Dict[str, Optional[Dict[str, float]]]:
-        return self._score_collection_handler.cache
+    def score_collections(self) -> Dict[str, Dict[str, float]]:
+        return self._score_collection_handler.active_cache
 
     @property
-    def array_collections(self) -> Dict[str, Optional[Dict[str, ndarray]]]:
-        return self._array_collection_handler.cache
+    def array_collections(self) -> Dict[str, Dict[str, ndarray]]:
+        return self._array_collection_handler.active_cache
 
     @property
-    def plot_collections(self) -> Dict[str, Optional[Dict[str, Figure]]]:
-        return self._plot_collection_handler.cache
+    def plot_collections(self) -> Dict[str, Dict[str, Figure]]:
+        return self._plot_collection_handler.active_cache
 
     @staticmethod
     @abstractmethod
@@ -191,6 +191,14 @@ class ValidationPlan(
         self._score_collection_handler.execute(resources=resources)
         self._array_collection_handler.execute(resources=resources)
         self._plot_collection_handler.execute(resources=resources)
+
+    def clear_cache(self):
+        self._score_handler.clear()
+        self._array_handler.clear()
+        self._plot_handler.clear()
+        self._score_collection_handler.clear()
+        self._array_collection_handler.clear()
+        self._plot_collection_handler.clear()
 
     @classmethod
     def _build_score_handler(
