@@ -26,7 +26,7 @@ class PeriodicActionTrigger:
     def should_trigger(step: int, period: int) -> bool:
         if period <= 0:
             return False
-        return (1 + step) % period == 0
+        return step % period == 0
 
 
 class PeriodicCallback(

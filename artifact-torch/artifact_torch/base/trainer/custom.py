@@ -185,11 +185,11 @@ class CustomTrainer(
         )
 
     def _execute_epoch_postprocessing(self):
+        super()._execute_epoch_postprocessing()
         self._execute_validation_routine()
         self._execute_checkpoint_callback()
         self._update_tracker()
         self._update_stopper()
-        super()._execute_epoch_postprocessing()
 
     def _execute_batch_callbacks(
         self,
