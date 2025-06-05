@@ -5,7 +5,6 @@ import numpy as np
 
 from artifact_experiment.libs.tracking.clear_ml.adapter import ClearMLRunAdapter
 from artifact_experiment.libs.tracking.clear_ml.loggers.base import ClearMLArtifactLogger
-from artifact_experiment.libs.tracking.clear_ml.readers.files import ClearMLFileReader
 from artifact_experiment.libs.utils.filesystem import IncrementalPathGenerator
 
 
@@ -32,6 +31,6 @@ class ClearMLArrayLogger(ClearMLArtifactLogger[np.ndarray]):
 
     @staticmethod
     def _get_array_iteration(run: ClearMLRunAdapter, path: str) -> int:
-        dict_array_history = ClearMLFileReader.get_file_history(run=run, path=path)
-        iteration = len(dict_array_history)
+        file_store = run.get_exported_files()
+        iteration = file_store.get_n_files(path=path)
         return iteration
