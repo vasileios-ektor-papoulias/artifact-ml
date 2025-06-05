@@ -104,18 +104,20 @@ class ClearMLRunAdapter(RunAdapter[Task]):
             figure=plot,
         )
 
-    def get_exported_scores(
-        self, max_iterations: int = 0
-    ) -> Mapping[str, Mapping[str, Mapping[str, Sequence[float]]]]:
-        score_data = self._native_run.get_reported_scalars(max_samples=max_iterations)
-        return score_data
+    def get_exported_scores(self, max_iterations: int = 0) -> ClearMLScoreStore:
+        raw_store_data = self._native_run.get_reported_scalars(max_samples=max_iterations)
+        store = ClearMLScoreStore.build(raw_store_data=raw_store_data, root_dir=self._root_dir)
+        return store
 
-    def get_exported_plots(self, max_iterations: int = 0) -> List[Dict[str, Any]]:
-        plot_data = self._native_run.get_reported_plots(max_iterations=max_iterations)
-        return plot_data
+    def get_exported_plots(self, max_iterations: int = 0) -> ClearMLPlotStore:
+        raw_plot_data = self._native_run.get_reported_plots(max_iterations=max_iterations)
+        store = ClearMLPlotStore.build(raw_plot_data=raw_plot_data, root_dir=self._root_dir)
+        return store
 
-    def get_uploaded_files(self) -> Dict[str, Artifact]:
-        return self._native_run.artifacts
+    def get_exported_files(self) -> ClearMLFileStore:
+        dict_all_files = self._native_run.artifacts
+        store = ClearMLFileStore.build(dict_all_files=dict_all_files, root_dir=self._root_dir)
+        return store
 
     @classmethod
     def _build_native_run(cls, experiment_id: str, run_id: str) -> Task:
@@ -129,3 +131,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
     @classmethod
     def _prepend_root_dir(cls, path: str) -> str:
         return os.path.join(cls._root_dir, path)
+
+    @classmethod
+    def _is_artifact_ml_export(cls, path: str) -> bool:
+        return path.startswith(cls._root_dir)
