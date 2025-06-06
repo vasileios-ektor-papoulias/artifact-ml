@@ -1,51 +1,12 @@
 import os
 import shutil
-from pathlib import Path
 
 from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
+from artifact_experiment.libs.tracking.filesystem.native_run import FilesystemRun
 
 
 class InactiveFilesystemRunError(InactiveRunError):
     pass
-
-
-class FilesystemRun:
-    _root_dir = Path.home() / "artifact_ml"
-
-    def __init__(self, experiment_id: str, run_id: str):
-        self._experiment_id = experiment_id
-        self._start(id=run_id)
-
-    @property
-    def experiment_id(self) -> str:
-        return self._experiment_id
-
-    @property
-    def id(self) -> str:
-        return self._id
-
-    @property
-    def is_active(self) -> bool:
-        return self._is_active
-
-    @property
-    def experiment_dir(self) -> str:
-        return os.path.join(str(self._root_dir), self._experiment_id)
-
-    @property
-    def run_dir(self) -> str:
-        return os.path.join(self.experiment_dir, self._id)
-
-    def stop(self):
-        self._is_active = False
-
-    def _start(self, id: str):
-        self._is_active = True
-        self._id = id
-        self._create_run_dir()
-
-    def _create_run_dir(self):
-        os.makedirs(name=self.run_dir, exist_ok=True)
 
 
 class FilesystemRunAdapter(RunAdapter[FilesystemRun]):
