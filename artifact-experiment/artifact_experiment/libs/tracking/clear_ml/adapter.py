@@ -131,7 +131,3 @@ class ClearMLRunAdapter(RunAdapter[Task]):
     @classmethod
     def _prepend_root_dir(cls, path: str) -> str:
         return os.path.join(cls._root_dir, path)
-
-    @classmethod
-    def _is_artifact_ml_export(cls, path: str) -> bool:
-        return path.startswith(cls._root_dir)
