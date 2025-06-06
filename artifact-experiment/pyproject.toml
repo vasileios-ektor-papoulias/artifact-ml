@@ -21,6 +21,7 @@ neptune = ">=1.14.0,<2.0.0"
 mlflow = ">=2.22.0,<3.0.0"
 artifact-core = { path = "../artifact-core", develop = true }
 clearml = "^2.0.0"
+ipywidgets = "^8.1.7"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.11.4"
