@@ -6,9 +6,9 @@ authors = ["Vasileios Ektor Papoulias <hector.papoulias@gmail.com>"]
 
 [tool.poetry.workspace]
 packages = [
-    { include = "packages/artifact-core" },
-    { include = "packages/artifact-experiment" },
-    { include = "packages/artifact-torch" }
+    { include = "artifact-core" },
+    { include = "artifact-experiment" },
+    { include = "artifact-torch" }
 ]
 
 [build-system]
