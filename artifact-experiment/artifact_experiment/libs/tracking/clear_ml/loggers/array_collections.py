@@ -6,8 +6,7 @@ import numpy as np
 
 from artifact_experiment.libs.tracking.clear_ml.adapter import ClearMLRunAdapter
 from artifact_experiment.libs.tracking.clear_ml.loggers.base import ClearMLArtifactLogger
-from artifact_experiment.libs.tracking.clear_ml.readers.files import ClearMLFileReader
-from artifact_experiment.libs.utils.filesystem import IncrementalPathGenerator
+from artifact_experiment.libs.utils.incremental_path_generator import IncrementalPathGenerator
 
 
 class ClearMLArrayCollectionLogger(ClearMLArtifactLogger[Dict[str, np.ndarray]]):
@@ -33,9 +32,6 @@ class ClearMLArrayCollectionLogger(ClearMLArtifactLogger[Dict[str, np.ndarray]])
 
     @staticmethod
     def _get_array_collection_iteration(run: ClearMLRunAdapter, path: str) -> int:
-        dict_all_files = ClearMLFileReader.get_all_files(run=run)
-        dict_array_history = ClearMLFileReader.get_file_history(
-            dict_all_files=dict_all_files, remote_path=path
-        )
-        iteration = len(dict_array_history)
+        file_store = run.get_exported_files()
+        iteration = file_store.get_n_files(path=path)
         return iteration

@@ -9,7 +9,7 @@ from artifact_experiment.libs.tracking.mlflow.adapter import (
     MlflowRunAdapter,
 )
 from artifact_experiment.libs.tracking.mlflow.loggers.base import MlflowArtifactLogger
-from artifact_experiment.libs.utils.filesystem import IncrementalPathGenerator
+from artifact_experiment.libs.utils.incremental_path_generator import IncrementalPathGenerator
 
 
 class MLFlowPlotLogger(MlflowArtifactLogger[Figure]):

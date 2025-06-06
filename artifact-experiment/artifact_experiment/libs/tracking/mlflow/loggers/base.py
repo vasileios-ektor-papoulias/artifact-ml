@@ -12,7 +12,7 @@ artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
 class MlflowArtifactLogger(
     ArtifactLogger[artifactResultT, MlflowRunAdapter], Generic[artifactResultT]
 ):
-    _root_dir = "artifact_ml"
+    _root_dir = "artifacts"
 
     @abstractmethod
     def _append(self, artifact_path: str, artifact: artifactResultT): ...

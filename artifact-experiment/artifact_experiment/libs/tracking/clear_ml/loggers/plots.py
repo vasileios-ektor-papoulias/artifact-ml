@@ -4,7 +4,6 @@ from matplotlib.figure import Figure
 
 from artifact_experiment.libs.tracking.clear_ml.adapter import ClearMLRunAdapter
 from artifact_experiment.libs.tracking.clear_ml.loggers.base import ClearMLArtifactLogger
-from artifact_experiment.libs.tracking.clear_ml.readers.plots import ClearMLPlotReader
 
 
 class ClearMLPlotLogger(ClearMLArtifactLogger[Figure]):
@@ -22,15 +21,11 @@ class ClearMLPlotLogger(ClearMLArtifactLogger[Figure]):
 
     @staticmethod
     def _get_plot_iteration(run: ClearMLRunAdapter, path: str) -> int:
-        ls_all_plots = ClearMLPlotReader.get_all_plots(run=run)
-        ls_series_metadata = ClearMLPlotReader.get_series_from_path(
-            ls_all_plots=ls_all_plots, plot_path=path
-        )
-        if ls_series_metadata:
-            dict_plot_metadata = ls_series_metadata[0]
-            iteration = 1 + ClearMLPlotReader.get_plot_iter_from_metadata(
-                dict_plot_metadata=dict_plot_metadata
-            )
+        plot_store = run.get_exported_plots()
+        plot_series = plot_store.get(path=path)
+        if plot_series:
+            plot = plot_series[0]
+            iteration = 1 + plot.n_entries
         else:
             iteration = 0
         return iteration

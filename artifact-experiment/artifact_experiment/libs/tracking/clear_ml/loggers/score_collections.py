@@ -3,7 +3,6 @@ from typing import Dict
 
 from artifact_experiment.libs.tracking.clear_ml.adapter import ClearMLRunAdapter
 from artifact_experiment.libs.tracking.clear_ml.loggers.base import ClearMLArtifactLogger
-from artifact_experiment.libs.tracking.clear_ml.readers.scores import ClearMLScoreReader
 
 
 class ClearMLScoreCollectionLogger(ClearMLArtifactLogger[Dict[str, float]]):
@@ -20,14 +19,11 @@ class ClearMLScoreCollectionLogger(ClearMLArtifactLogger[Dict[str, float]]):
 
     @staticmethod
     def _get_score_collection_iteration(run: ClearMLRunAdapter, path: str) -> int:
-        dict_all_scores = ClearMLScoreReader.get_all_scores(run=run)
+        score_store = run.get_exported_scores()
         try:
-            dict_score_history = ClearMLScoreReader.get_score_history(
-                dict_all_scores=dict_all_scores, score_path=path
-            )
+            score = score_store.get(path=path)
             ls_series_iterations = [
-                len(ClearMLScoreReader.get_xvalues_from_score_series(score_series=score_series))
-                for score_series in dict_score_history.values()
+                len(score_series) for score_series in score.dict_series.values()
             ]
             iteration = max(ls_series_iterations)
         except KeyError:

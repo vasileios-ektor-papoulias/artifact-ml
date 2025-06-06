@@ -1,11 +1,14 @@
+import os
 import time
-from typing import Any, Dict, List, Mapping, Optional, Sequence
+from typing import Optional
 
 from clearml import Task, TaskTypes
-from clearml.binding.artifacts import Artifact
 from matplotlib.figure import Figure
 
 from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
+from artifact_experiment.libs.tracking.clear_ml.stores.files import ClearMLFileStore
+from artifact_experiment.libs.tracking.clear_ml.stores.plots import ClearMLPlotStore
+from artifact_experiment.libs.tracking.clear_ml.stores.scores import ClearMLScoreStore
 
 
 class InactiveClearMLRunError(InactiveRunError):
@@ -13,6 +16,7 @@ class InactiveClearMLRunError(InactiveRunError):
 
 
 class ClearMLRunAdapter(RunAdapter[Task]):
+    _root_dir = "artifact_ml"
     _time_to_wait_before_stopping_seconds: int = 1
     _tup_active_statuses = (
         Task.TaskStatusEnum.queued,
@@ -55,6 +59,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
     def upload(self, path_source: str, dir_target: str, delete_after_upload: bool = False):
         if not self.is_active:
             raise InactiveClearMLRunError("Run is inactive")
+        dir_target = self._prepend_root_dir(path=dir_target)
         self._native_run.upload_artifact(
             name=dir_target,
             artifact_object=path_source,
@@ -72,6 +77,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
     ):
         if not self.is_active:
             raise InactiveClearMLRunError("Run is inactive")
+        title = self._prepend_root_dir(path=title)
         logger = self._native_run.get_logger()
         logger.report_scalar(
             title=title,
@@ -89,6 +95,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
     ):
         if not self.is_active:
             raise InactiveClearMLRunError("Run is inactive")
+        title = self._prepend_root_dir(path=title)
         logger = self._native_run.get_logger()
         logger.report_matplotlib_figure(
             title=title,
@@ -97,18 +104,20 @@ class ClearMLRunAdapter(RunAdapter[Task]):
             figure=plot,
         )
 
-    def get_exported_scores(
-        self, max_iterations: int = 0
-    ) -> Mapping[str, Mapping[str, Mapping[str, Sequence[float]]]]:
-        score_data = self._native_run.get_reported_scalars(max_samples=max_iterations)
-        return score_data
+    def get_exported_scores(self, max_iterations: int = 0) -> ClearMLScoreStore:
+        raw_store_data = self._native_run.get_reported_scalars(max_samples=max_iterations)
+        store = ClearMLScoreStore.build(raw_store_data=raw_store_data, root_dir=self._root_dir)
+        return store
 
-    def get_exported_plots(self, max_iterations: int = 0) -> List[Dict[str, Any]]:
-        plot_data = self._native_run.get_reported_plots(max_iterations=max_iterations)
-        return plot_data
+    def get_exported_plots(self, max_iterations: int = 0) -> ClearMLPlotStore:
+        raw_plot_data = self._native_run.get_reported_plots(max_iterations=max_iterations)
+        store = ClearMLPlotStore.build(raw_plot_data=raw_plot_data, root_dir=self._root_dir)
+        return store
 
-    def get_uploaded_files(self) -> Dict[str, Artifact]:
-        return self._native_run.artifacts
+    def get_exported_files(self) -> ClearMLFileStore:
+        dict_all_files = self._native_run.artifacts
+        store = ClearMLFileStore.build(dict_all_files=dict_all_files, root_dir=self._root_dir)
+        return store
 
     @classmethod
     def _build_native_run(cls, experiment_id: str, run_id: str) -> Task:
@@ -118,3 +127,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
             task_type=cls._new_task_type,
             reuse_last_task_id=False,
         )
+
+    @classmethod
+    def _prepend_root_dir(cls, path: str) -> str:
+        return os.path.join(cls._root_dir, path)

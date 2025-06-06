@@ -14,7 +14,7 @@ artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
 class NeptuneArtifactLogger(
     ArtifactLogger[artifactResultT, NeptuneRunAdapter], Generic[artifactResultT]
 ):
-    _root_dir = "artifact_ml"
+    _root_dir = "artifacts"
 
     def _append(self, artifact_path: str, artifact: artifactResultT):
         self._run.log(path=artifact_path, artifact=artifact)
