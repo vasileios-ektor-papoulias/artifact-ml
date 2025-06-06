@@ -2,13 +2,13 @@
 name = "artifact-ml"
 version = "0.1.0"
 description = "Monorepo for the Artifact validation suite"
-authors = ["Your Name <you@example.com>"]
+authors = ["Vasileios Ektor Papoulias <hector.papoulias@gmail.com>"]
 
 [tool.poetry.workspace]
 packages = [
-    { include = "packages/artifact-core" },
-    { include = "packages/artifact-experiment" },
-    { include = "packages/artifact-torch" }
+    { include = "artifact-core" },
+    { include = "artifact-experiment" },
+    { include = "artifact-torch" }
 ]
 
 [build-system]
