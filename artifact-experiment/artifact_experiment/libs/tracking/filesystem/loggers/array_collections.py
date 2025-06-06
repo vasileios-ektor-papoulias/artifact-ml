@@ -7,7 +7,7 @@ from artifact_experiment.libs.tracking.filesystem.adapter import (
     InactiveFilesystemRunError,
 )
 from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemArtifactLogger
-from artifact_experiment.libs.utils.filesystem import (
+from artifact_experiment.libs.utils.incremental_path_generator import (
     IncrementalPathGenerator,
 )
 

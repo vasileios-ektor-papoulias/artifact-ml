@@ -6,7 +6,7 @@ import numpy as np
 
 from artifact_experiment.libs.tracking.clear_ml.adapter import ClearMLRunAdapter
 from artifact_experiment.libs.tracking.clear_ml.loggers.base import ClearMLArtifactLogger
-from artifact_experiment.libs.utils.filesystem import IncrementalPathGenerator
+from artifact_experiment.libs.utils.incremental_path_generator import IncrementalPathGenerator
 
 
 class ClearMLArrayCollectionLogger(ClearMLArtifactLogger[Dict[str, np.ndarray]]):
