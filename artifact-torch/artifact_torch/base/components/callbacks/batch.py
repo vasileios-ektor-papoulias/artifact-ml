@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import Dict, Generic, TypeVar
+from typing import Dict, Generic, Optional, TypeVar
 
 from artifact_experiment.base.callbacks.tracking import (
     ArrayCollectionExportMixin,
@@ -46,9 +46,9 @@ class BatchCallback(
     ],
     Generic[ModelInputTContr, ModelOutputTContr, CacheDataT],
 ):
-    def __init__(self, period: int):
+    def __init__(self, period: int, tracking_client: Optional[TrackingClient] = None):
         key = self._get_key()
-        super().__init__(key=key, period=period)
+        super().__init__(key=key, period=period, tracking_client=tracking_client)
 
     @classmethod
     @abstractmethod
