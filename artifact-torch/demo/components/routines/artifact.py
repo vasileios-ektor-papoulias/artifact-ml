@@ -1,5 +1,7 @@
-from typing import List
+from typing import List, Optional
 
+from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_experiment.table_comparison.validation_plan import (
     TableComparisonArrayCollectionType,
     TableComparisonArrayType,
@@ -9,9 +11,17 @@ from artifact_experiment.table_comparison.validation_plan import (
     TableComparisonScoreCollectionType,
     TableComparisonScoreType,
 )
+from artifact_torch.table_comparison.routine import TableComparisonRoutine
+
+from demo.config.constants import (
+    ARTIFACT_VALIDATION_PERIOD,
+    GENERATION_NUM_SAMPLES,
+    GENERATION_USE_MEAN,
+)
+from demo.model.synthesizer import TabularVAEGenerationParams
 
 
-class TabularVAEValidationPlan(TableComparisonPlan):
+class DemoTableComparisonPlan(TableComparisonPlan):
     @staticmethod
     def _get_score_types() -> List[TableComparisonScoreType]:
         return [
@@ -54,3 +64,25 @@ class TabularVAEValidationPlan(TableComparisonPlan):
             TableComparisonPlotCollectionType.PDF_PLOTS,
             TableComparisonPlotCollectionType.CDF_PLOTS,
         ]
+
+
+class DemoTableComparisonRoutine(TableComparisonRoutine[TabularVAEGenerationParams]):
+    @classmethod
+    def _get_period(cls) -> int:
+        return ARTIFACT_VALIDATION_PERIOD
+
+    @classmethod
+    def _get_generation_params(cls) -> TabularVAEGenerationParams:
+        return TabularVAEGenerationParams(
+            num_samples=GENERATION_NUM_SAMPLES, use_mean=GENERATION_USE_MEAN
+        )
+
+    @classmethod
+    def _get_validation_plan(
+        cls,
+        artifact_resource_spec: TabularDataSpecProtocol,
+        tracking_client: Optional[TrackingClient],
+    ) -> TableComparisonPlan:
+        return DemoTableComparisonPlan.build(
+            resource_spec=artifact_resource_spec, tracking_client=tracking_client
+        )

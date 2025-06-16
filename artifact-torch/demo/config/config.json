@@ -4,21 +4,21 @@
     },
     "architecture": {
         "ls_encoder_layer_sizes": [
-            1024,
-            512,
-            256
+            64,
+            32,
+            16
         ],
         "loss_beta": 0.1,
         "leaky_relu_slope": 0.1,
         "bn_momentum": 0.00001,
-        "bn_epsilon": 0.1,
+        "bn_epsilon": 0.01,
         "dropout_rate": 0.1
     },
     "training": {
         "device": "cpu",
         "max_n_epochs": 20,
         "learning_rate": 0.001,
-        "batch_size": 8,
+        "batch_size": 256,
         "drop_last": false,
         "shuffle": true,
         "checkpoint_period": 5,
@@ -27,7 +27,7 @@
     "validation": {
         "train_loader_callback_period": 1,
         "validation_plan_callback_period": 5,
-        "generation_num_samples": 10000,
+        "generation_num_samples": 1000,
         "generation_use_mean": false
     }
 }

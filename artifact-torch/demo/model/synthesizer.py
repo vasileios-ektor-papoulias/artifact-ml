@@ -3,7 +3,7 @@ from typing import List, Type, TypeVar
 
 import pandas as pd
 from artifact_torch.core.model.generative import GenerationParams
-from artifact_torch.table_comparison.model import TabularGenerativeModel
+from artifact_torch.table_comparison.model import TableSynthesizer
 
 from demo.data.feature_flattener import FeatureFlattener
 from demo.model.architecture import VariationalAutoencoder
@@ -30,7 +30,7 @@ TabularVAESynthesizerT = TypeVar("TabularVAESynthesizerT", bound="TabularVAESynt
 
 
 class TabularVAESynthesizer(
-    TabularGenerativeModel[TabularVAEInput, TabularVAEOutput, TabularVAEGenerationParams]
+    TableSynthesizer[TabularVAEInput, TabularVAEOutput, TabularVAEGenerationParams]
 ):
     def __init__(self, vae: VariationalAutoencoder, flattener: FeatureFlattener):
         super().__init__()

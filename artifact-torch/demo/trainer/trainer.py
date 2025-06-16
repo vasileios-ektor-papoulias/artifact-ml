@@ -1,47 +1,46 @@
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 import torch
 from artifact_experiment.base.tracking.client import TrackingClient
-from artifact_torch.base.components.callbacks.batch import (
-    BatchCallback,
-)
 from artifact_torch.base.components.callbacks.checkpoint import CheckpointCallback
 from artifact_torch.base.components.early_stopping.stopper import EarlyStopper, StopperUpdateData
-from artifact_torch.base.components.logging.trainer_logger import TrainerLogger
 from artifact_torch.base.components.model_tracking.tracker import (
     ModelTracker,
     ModelTrackingCriterion,
 )
+from artifact_torch.base.components.routines.batch import BatchRoutine
+from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
+from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.trainer.custom import CustomTrainer
-from artifact_torch.libs.components.callbacks.batch.loss import BatchLossCallback
 from artifact_torch.libs.components.callbacks.checkpoint.standard import StandardCheckpointCallback
 from artifact_torch.libs.components.early_stopping.epoch_bound import EpochBoundStopper
+from artifact_torch.table_comparison.model import TableSynthesizer
 from torch import optim
 
+from demo.components.routines.batch import DemoBatchRoutine
+from demo.components.routines.loader import DemoLoaderRoutine
 from demo.config.constants import (
-    BATCH_LOSS_PERIOD,
     CHECKPOINT_PERIOD,
     DEVICE,
     LEARNING_RATE,
     MAX_N_EPOCHS,
 )
 from demo.model.io import TabularVAEInput, TabularVAEOutput
-from demo.model.synthesizer import TabularVAESynthesizer
-from demo.trainer.validation_routine import TabularVAEValidationRoutine
 
 
 class TabularVAETrainer(
     CustomTrainer[
-        TabularVAESynthesizer,
+        TableSynthesizer[TabularVAEInput, TabularVAEOutput, Any],
         TabularVAEInput,
         TabularVAEOutput,
-        TabularVAEValidationRoutine,
         ModelTrackingCriterion,
         StopperUpdateData,
     ]
 ):
     @staticmethod
-    def _get_optimizer(model: TabularVAESynthesizer) -> optim.Optimizer:
+    def _get_optimizer(
+        model: TableSynthesizer[TabularVAEInput, TabularVAEOutput, Any],
+    ) -> optim.Optimizer:
         return optim.Adam(params=model.parameters(), lr=LEARNING_RATE)
 
     @staticmethod
@@ -78,15 +77,14 @@ class TabularVAETrainer(
             )
 
     @staticmethod
-    def _get_batch_callbacks(
+    def _get_batch_routine(
         tracking_client: Optional[TrackingClient],
-    ) -> List[BatchCallback[TabularVAEInput, TabularVAEOutput, Any]]:
-        _ = tracking_client
-        return [BatchLossCallback(period=BATCH_LOSS_PERIOD)]
+    ) -> Optional[BatchRoutine[TabularVAEInput, TabularVAEOutput]]:
+        return DemoBatchRoutine.build(tracking_client=tracking_client)
 
-    def _get_progress_bar_description(self) -> str:
-        train_loss = self._epoch_score_cache.get_latest_non_null(key="TRAIN_LOSS")
-        desc = TrainerLogger.get_progress_bar_desc(
-            n_epochs_elapsed=self.n_epochs_elapsed, train_loss=train_loss
-        )
-        return desc
+    @staticmethod
+    def _get_train_loader_routine(
+        data_loader: DataLoader[TabularVAEInput],
+        tracking_client: Optional[TrackingClient],
+    ) -> Optional[DataLoaderRoutine[TabularVAEInput, TabularVAEOutput]]:
+        return DemoLoaderRoutine.build(data_loader=data_loader, tracking_client=tracking_client)

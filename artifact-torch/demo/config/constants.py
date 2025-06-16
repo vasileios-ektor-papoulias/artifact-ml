@@ -41,6 +41,6 @@ with _config_file.open() as f:
 
     # Validation Config
     TRAIN_LOADER_CALLBACK_PERIOD: int = _validation_config["train_loader_callback_period"]
-    VALIDATION_PLAN_CALLBACK_PERIOD: int = _validation_config["validation_plan_callback_period"]
+    ARTIFACT_VALIDATION_PERIOD: int = _validation_config["validation_plan_callback_period"]
     GENERATION_NUM_SAMPLES: int = _validation_config["generation_num_samples"]
     GENERATION_USE_MEAN: bool = _validation_config["generation_use_mean"]
