@@ -10,6 +10,8 @@ from artifact_experiment.base.callbacks.cache import CacheCallback
 from artifact_experiment.base.callbacks.tracking import TrackingCallback
 from artifact_experiment.base.tracking.client import TrackingClient
 
+from artifact_torch.base.components.utils.periodic_action_trigger import PeriodicActionTrigger
+
 CacheDataT = TypeVar("CacheDataT")
 PeriodicCallbackResourcesTContr = TypeVar(
     "PeriodicCallbackResourcesTContr", bound="PeriodicCallbackResources", contravariant=True
@@ -19,14 +21,6 @@ PeriodicCallbackResourcesTContr = TypeVar(
 @dataclass
 class PeriodicCallbackResources(CallbackResources):
     step: int
-
-
-class PeriodicActionTrigger:
-    @staticmethod
-    def should_trigger(step: int, period: int) -> bool:
-        if period <= 0:
-            return False
-        return step % period == 0
 
 
 class PeriodicCallback(
