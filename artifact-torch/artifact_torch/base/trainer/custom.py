@@ -10,32 +10,31 @@ from artifact_torch.base.components.cache.cache import StandardCache
 from artifact_torch.base.components.cache.score_cache import (
     ScoreCache,
 )
-from artifact_torch.base.components.callbacks.batch import (
-    BatchCallback,
-    BatchCallbackHandler,
-    BatchCallbackResources,
-)
 from artifact_torch.base.components.callbacks.checkpoint import (
     CheckpointCallback,
     CheckpointCallbackResources,
 )
 from artifact_torch.base.components.early_stopping.stopper import EarlyStopper, StopperUpdateData
-from artifact_torch.base.components.logging.trainer_logger import TrainerLogger
+from artifact_torch.base.components.logging.progress import TrainingProgressLogger
 from artifact_torch.base.components.model_tracking.tracker import (
     ModelTracker,
     ModelTrackingCriterion,
 )
+from artifact_torch.base.components.routines.artifact import (
+    ArtifactValidationRoutine,
+)
+from artifact_torch.base.components.routines.batch import BatchRoutine
+from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
 from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.base.trainer.base import TrainerBase
+from artifact_torch.base.trainer.evaluation import EvaluationFlow
 from artifact_torch.base.trainer.training_state import TrainingState
-from artifact_torch.base.trainer.validation_routine import ValidationRoutine
 
 ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
 ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
 ModelT = TypeVar("ModelT", bound=Model[Any, Any])
-ValidationRoutineT = TypeVar("ValidationRoutineT", bound=ValidationRoutine)
 ModelTrackingCriterionT = TypeVar("ModelTrackingCriterionT", bound=ModelTrackingCriterion)
 StopperUpdateDataT = TypeVar("StopperUpdateDataT", bound=StopperUpdateData)
 CustomTrainerT = TypeVar("CustomTrainerT", bound="CustomTrainer")
@@ -47,11 +46,12 @@ class CustomTrainer(
         ModelT,
         ModelInputT,
         ModelOutputT,
-        ValidationRoutineT,
         ModelTrackingCriterionT,
         StopperUpdateDataT,
     ],
 ):
+    _train_loss_key = "TRAIN_LOSS"
+    _val_loss_key = "VAL_LOSS"
     _maintain_batch_scores = False
 
     def __init__(
@@ -59,18 +59,18 @@ class CustomTrainer(
         training_state: TrainingState,
         train_loader: DataLoader[ModelInputT],
         device: torch.device,
-        validation_routine: ValidationRoutineT,
-        model_tracker: Optional[ModelTracker[ModelTrackingCriterionT]],
+        evaluation_flow: EvaluationFlow[ModelT, ModelInputT, ModelOutputT],
         early_stopper: EarlyStopper[StopperUpdateDataT],
+        model_tracker: Optional[ModelTracker[ModelTrackingCriterionT]],
         checkpoint_callback: Optional[CheckpointCallback],
-        batch_callback_handler: BatchCallbackHandler[ModelInputT, ModelOutputT, Any],
+        batch_routine: Optional[BatchRoutine[ModelInputT, ModelOutputT]],
     ):
         super().__init__(training_state=training_state, train_loader=train_loader, device=device)
-        self._validation_routine = validation_routine
+        self._evaluation_flow = evaluation_flow
         self._model_tracker = model_tracker
         self._early_stopper = early_stopper
         self._checkpoint_callback = checkpoint_callback
-        self._batch_callback_handler = batch_callback_handler
+        self._batch_routine = batch_routine
         self._batch_cache = StandardCache[Any]()
         self._epoch_score_cache = ScoreCache()
 
@@ -79,34 +79,23 @@ class CustomTrainer(
         cls: Type[CustomTrainerT],
         model: ModelT,
         train_loader: DataLoader[ModelInputT],
-        validation_routine: ValidationRoutineT,
+        artifact_routine: Optional[ArtifactValidationRoutine[ModelT, Any, Any, Any, Any]] = None,
+        val_loader_routine: Optional[DataLoaderRoutine[ModelInputT, ModelOutputT]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> CustomTrainerT:
-        optimizer = cls._get_optimizer(model=model)
-        scheduler = cls._get_scheduler(optimizer=optimizer)
-        training_state = TrainingState[ModelT](
+        batch_routine = cls._get_batch_routine(tracking_client=tracking_client)
+        train_loader_routine = cls._get_train_loader_routine(
+            data_loader=train_loader, tracking_client=tracking_client
+        )
+        ls_loader_routines = [
+            routine for routine in [train_loader_routine, val_loader_routine] if routine is not None
+        ]
+        trainer = cls._build(
             model=model,
-            optimizer=optimizer,
-            scheduler=scheduler,
-        )
-        device = cls._get_device()
-        early_stopper = cls._get_early_stopper()
-        model_tracker = cls._get_model_tracker()
-
-        checkpoint_callback = cls._get_checkpoint_callback(tracking_client=tracking_client)
-        ls_batch_callbacks = cls._get_batch_callbacks(tracking_client=tracking_client)
-        batch_callback_handler = BatchCallbackHandler[ModelInputT, ModelOutputT, Any](
-            ls_callbacks=ls_batch_callbacks
-        )
-        trainer = cls(
-            training_state=training_state,
             train_loader=train_loader,
-            device=device,
-            validation_routine=validation_routine,
-            model_tracker=model_tracker,
-            early_stopper=early_stopper,
-            checkpoint_callback=checkpoint_callback,
-            batch_callback_handler=batch_callback_handler,
+            artifact_routine=artifact_routine,
+            batch_routine=batch_routine,
+            ls_loader_routines=ls_loader_routines,
         )
         return trainer
 
@@ -163,50 +152,60 @@ class CustomTrainer(
 
     @staticmethod
     @abstractmethod
-    def _get_batch_callbacks(
+    def _get_batch_routine(
         tracking_client: Optional[TrackingClient],
-    ) -> List[BatchCallback[ModelInputT, ModelOutputT, Any]]: ...
+    ) -> Optional[BatchRoutine[ModelInputT, ModelOutputT]]: ...
 
+    @staticmethod
     @abstractmethod
-    def _get_progress_bar_description(self) -> str:
-        desc = TrainerLogger.get_progress_bar_desc(n_epochs_elapsed=self.n_epochs_elapsed)
-        return desc
+    def _get_train_loader_routine(
+        data_loader: DataLoader[ModelInputT],
+        tracking_client: Optional[TrackingClient],
+    ) -> Optional[
+        DataLoaderRoutine[
+            ModelInputT,
+            ModelOutputT,
+        ]
+    ]: ...
 
     def _should_stop(self) -> bool:
         return self._early_stopper.stopped
 
     def _execute_batch_postprocessing(
-        self, batch_idx: int, batch: ModelInputT, model_output: ModelOutputT
+        self,
+        model_input: ModelInputT,
+        model_output: ModelOutputT,
+        batch_idx: int,
     ):
-        self._execute_batch_callbacks(
-            batch_idx=batch_idx,
-            batch=batch,
+        self._execute_batch_routine(
+            model_input=model_input,
             model_output=model_output,
+            batch_idx=batch_idx,
         )
 
     def _execute_epoch_postprocessing(self):
         super()._execute_epoch_postprocessing()
-        self._execute_validation_routine()
+        self._execute_evaluation_flow()
         self._execute_checkpoint_callback()
         self._update_tracker()
         self._update_stopper()
 
-    def _execute_batch_callbacks(
+    def _execute_batch_routine(
         self,
-        batch_idx: int,
-        batch: ModelInputT,
+        model_input: ModelInputT,
         model_output: ModelOutputT,
+        batch_idx: int,
     ):
-        batch_callback_resources = BatchCallbackResources[ModelInputT, ModelOutputT](
-            step=batch_idx, model_input=batch, model_output=model_output
-        )
-        self._batch_callback_handler.execute(resources=batch_callback_resources)
-        self._batch_cache.append(items=self._batch_callback_handler.cache)
+        if self._batch_routine is not None:
+            self._batch_routine.execute(
+                model_input=model_input, model_output=model_output, batch_idx=batch_idx
+            )
+            self._batch_cache.append(items=self._batch_routine.cache)
 
-    def _execute_validation_routine(self):
-        self._validation_routine.clear_cache()
-        self._validation_routine.execute(model=self.model, n_epochs_elapsed=self.n_epochs_elapsed)
-        self._epoch_score_cache.append(self._validation_routine.scores)
+    def _execute_evaluation_flow(self):
+        self._evaluation_flow.clear_cache()
+        self._evaluation_flow.execute(model=self.model, n_epochs_elapsed=self.n_epochs_elapsed)
+        self._epoch_score_cache.append(self._evaluation_flow.scores)
 
     def _execute_checkpoint_callback(self):
         if self._checkpoint_callback is not None:
@@ -229,3 +228,49 @@ class CustomTrainer(
     def _update_stopper(self):
         update_data = self._get_stopper_update_data()
         self._early_stopper.update(update_data=update_data)
+
+    def _get_progress_bar_description(self) -> str:
+        train_loss = self._epoch_score_cache.get_latest_non_null(key=self._train_loss_key)
+        val_loss = self._epoch_score_cache.get_latest_non_null(key=self._val_loss_key)
+        desc = TrainingProgressLogger.get_progress_update(
+            n_epochs_elapsed=self.n_epochs_elapsed, train_loss=train_loss, val_loss=val_loss
+        )
+        return desc
+
+    @classmethod
+    def _build(
+        cls: Type[CustomTrainerT],
+        model: ModelT,
+        train_loader: DataLoader[ModelInputT],
+        batch_routine: Optional[BatchRoutine[ModelInputT, ModelOutputT]] = None,
+        artifact_routine: Optional[ArtifactValidationRoutine[ModelT, Any, Any, Any, Any]] = None,
+        ls_loader_routines: Optional[List[DataLoaderRoutine[ModelInputT, ModelOutputT]]] = None,
+        tracking_client: Optional[TrackingClient] = None,
+    ) -> CustomTrainerT:
+        optimizer = cls._get_optimizer(model=model)
+        scheduler = cls._get_scheduler(optimizer=optimizer)
+        training_state = TrainingState[ModelT](
+            model=model,
+            optimizer=optimizer,
+            scheduler=scheduler,
+        )
+        device = cls._get_device()
+        evaluation_flow = EvaluationFlow(
+            artifact_routine=artifact_routine,
+            ls_loader_routines=ls_loader_routines,
+        )
+        early_stopper = cls._get_early_stopper()
+        model_tracker = cls._get_model_tracker()
+
+        checkpoint_callback = cls._get_checkpoint_callback(tracking_client=tracking_client)
+        trainer = cls(
+            training_state=training_state,
+            train_loader=train_loader,
+            device=device,
+            evaluation_flow=evaluation_flow,
+            model_tracker=model_tracker,
+            early_stopper=early_stopper,
+            checkpoint_callback=checkpoint_callback,
+            batch_routine=batch_routine,
+        )
+        return trainer
