@@ -9,17 +9,17 @@ from artifact_torch.base.model.io import (
 )
 from artifact_torch.core.model.generative import GenerationParams, GenerativeModel
 
-ModelInputT = TypeVar("ModelInputT", bound="ModelInput")
-ModelOutputT = TypeVar("ModelOutputT", bound="ModelOutput")
+ModelInputTContr = TypeVar("ModelInputTContr", bound="ModelInput", contravariant=True)
+ModelOutputTCov = TypeVar("ModelOutputTCov", bound="ModelOutput", covariant=True)
 GenerationParamsT = TypeVar("GenerationParamsT", bound=GenerationParams)
 
 
-class TabularGenerativeModel(
-    GenerativeModel[ModelInputT, ModelOutputT, GenerationParamsT, pd.DataFrame],
-    Generic[ModelInputT, ModelOutputT, GenerationParamsT],
+class TableSynthesizer(
+    GenerativeModel[ModelInputTContr, ModelOutputTCov, GenerationParamsT, pd.DataFrame],
+    Generic[ModelInputTContr, ModelOutputTCov, GenerationParamsT],
 ):
     @abstractmethod
-    def forward(self, model_input: ModelInputT, *args, **kwargs) -> ModelOutputT: ...
+    def forward(self, model_input: ModelInputTContr, *args, **kwargs) -> ModelOutputTCov: ...
 
     @abstractmethod
     def generate(self, params: GenerationParamsT) -> pd.DataFrame: ...
