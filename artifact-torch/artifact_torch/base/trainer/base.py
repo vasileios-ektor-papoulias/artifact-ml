@@ -69,7 +69,10 @@ class TrainerBase(ABC, Generic[ModelT, ModelInputT, ModelOutputT]):
 
     @abstractmethod
     def _execute_batch_postprocessing(
-        self, batch_idx: int, batch: ModelInputT, model_output: ModelOutputT
+        self,
+        model_input: ModelInputT,
+        model_output: ModelOutputT,
+        batch_idx: int,
     ): ...
 
     @abstractmethod
@@ -82,6 +85,9 @@ class TrainerBase(ABC, Generic[ModelT, ModelInputT, ModelOutputT]):
             self._train_one_epoch()
             self._execute_epoch_postprocessing()
 
+    def load_checkpoint(self, path: Path):
+        self._training_state.load(path=path, map_location=self.device)
+
     def _train_one_epoch(self):
         self._training_state.model.train()
         self._train_loader.device = self._training_state.model.device
@@ -91,7 +97,7 @@ class TrainerBase(ABC, Generic[ModelT, ModelInputT, ModelOutputT]):
         ):
             model_output = self._train_one_batch(batch=batch)
             self._execute_batch_postprocessing(
-                batch_idx=batch_idx, batch=batch, model_output=model_output
+                model_input=batch, model_output=model_output, batch_idx=batch_idx
             )
         self._training_state.model.eval()
 
@@ -125,9 +131,6 @@ class TrainerBase(ABC, Generic[ModelT, ModelInputT, ModelOutputT]):
         loss = model_output.get("t_loss")
         assert loss is not None
         return loss
-
-    def load_checkpoint(self, path: Path):
-        self._training_state.load(path=path, map_location=self.device)
 
     def _get_checkpoint(self) -> Dict[str, Any]:
         return self._training_state.serialize()
