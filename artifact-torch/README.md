@@ -44,7 +44,8 @@ graph TD
     
     subgraph config [" "]
         direction LR
-        Trainer["CustomTrainer<br/>(Hook implementations & orchestration)"]
+        Trainer["CustomTrainer<br/>(Training orchestration)"]
+        ConfigSpacer[" "]
         Routines["Validation Routines<br/>(Artifact, Batch & DataLoader)"]
     end
     
@@ -74,7 +75,9 @@ graph TD
     Trainer --> EarlyStopping
     Trainer --> ModelTracking
     Trainer --> Device
-    Trainer --> Callbacks
+    
+    %% Configuration to Configuration
+    Trainer --> Routines
     
     %% Routine to Infrastructure
     Routines --> Callbacks
@@ -117,8 +120,9 @@ graph TD
     linkStyle 8 stroke-width:3px
     linkStyle 9 stroke-width:3px
     
-    %% Hide external spacer
+    %% Hide spacers
     style ExternalSpacer fill:transparent,stroke:transparent
+    style ConfigSpacer fill:transparent,stroke:transparent
 ```
 
 ### User Implementation Layer
