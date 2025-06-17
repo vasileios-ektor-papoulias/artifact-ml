@@ -60,7 +60,11 @@ graph TD
     
     subgraph external [" "]
         direction LR
-        ExternalSpacer[" "]
+        ExternalSpacer1[" "]
+        ExternalSpacer2[" "]
+        ExternalSpacer3[" "]
+        ExternalSpacer4[" "]
+        ExternalSpacer5[" "]
         ArtifactExp["artifact-experiment<br/>(Experiment tracking)"]
         ArtifactCore["artifact-core<br/>(Validation artifacts)"]
     end
@@ -121,7 +125,11 @@ graph TD
     linkStyle 9 stroke-width:3px
     
     %% Hide spacers
-    style ExternalSpacer fill:transparent,stroke:transparent
+    style ExternalSpacer1 fill:transparent,stroke:transparent
+    style ExternalSpacer2 fill:transparent,stroke:transparent
+    style ExternalSpacer3 fill:transparent,stroke:transparent
+    style ExternalSpacer4 fill:transparent,stroke:transparent
+    style ExternalSpacer5 fill:transparent,stroke:transparent
     style ConfigSpacer fill:transparent,stroke:transparent
 ```
 
