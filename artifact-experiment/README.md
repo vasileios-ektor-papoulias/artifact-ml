@@ -64,9 +64,60 @@ Framework infrastructure that handles validation workflow execution automaticall
 ### Backend Integration Layer
 Concrete tracking client implementations that handle experiment logging to different backends. Run adapters normalize backend-specific run objects, while artifact loggers handle the actual export of computed artifacts to the target experiment tracking system.
 
+## 🚀 Core Entities
+
+The framework achieves executable validation plans with experiment tracking through coordinated interaction of specialized entities across three architectural layers:
+
+### **ValidationPlan: Validation Specification Interface**
+Users define validation requirements through simple subclass hooks, eliminating complex implementation details:
 
 ```python
-import pandas as pd
+class MyValidationPlan(TableComparisonPlan):
+    @staticmethod
+    def _get_score_types() -> List[TableComparisonScoreType]:
+        return [TableComparisonScoreType.MEAN_JS_DISTANCE]
+    
+    @staticmethod 
+    def _get_plot_types() -> List[TableComparisonPlotType]:
+        return [TableComparisonPlotType.PDF_PLOT]
+```
+
+**Architecture Role**: ValidationPlan orchestrates the entire validation workflow by using ArtifactFactories to create computation callbacks and CallbackHandlers to execute them, transforming specifications into executable validation workflows.
+
+**Result Management**: ValidationPlan caches all computed artifacts in RAM for immediate access and inspection, while simultaneously leveraging experiment tracking exports for persistent storage and collaboration.
+
+### **Execution Orchestration: From Specification to Computation**
+The orchestration layer transforms user specifications into executable workflows through coordinated entity interaction:
+
+- **ArtifactFactories**: Create callbacks that integrate with artifact-core's computation engine, bridging validation specification with actual computation
+- **Callbacks**: Execute individual validation computations and report results to tracking clients for export
+- **CallbackHandlers**: Orchestrate callback execution across artifact types, managing validation workflow execution and coordinating with tracking clients
+
+### **Backend Integration: Unified Experiment Tracking**
+The integration layer provides backend-agnostic experiment tracking through specialized components:
+
+```python
+# Unified interface across backends
+mlflow_client = MlflowTrackingClient.build(experiment_id="my_experiment")
+clearml_client = ClearMLTrackingClient.build(experiment_id="my_project") 
+neptune_client = NeptuneTrackingClient.build(experiment_id="my_project")
+filesystem_client = FilesystemTrackingClient.build(experiment_id="my_experiment")
+```
+
+**Entity Coordination**: TrackingClients coordinate experiment export by using ArtifactLoggers for artifact-specific export logic and RunAdapters for backend normalization. RunAdapters interface directly with experiment backends while ArtifactLoggers depend on adapters for actual export execution.
+
+### **Seamless Integration Flow**
+The complete flow demonstrates how entities collaborate to achieve the framework's goals:
+
+1. **ValidationPlan** defines artifacts through subclass hooks
+2. **ArtifactFactories** create callbacks integrating with artifact-core computation
+3. **CallbackHandlers** orchestrate callback execution workflows
+4. **Callbacks** perform computations and report to tracking clients
+5. **TrackingClients** coordinate export using loggers and adapters  
+6. **RunAdapters** normalize backend interfaces for seamless integration
+7. **ArtifactLoggers** handle artifact-specific export to experiment backends
+
+This coordinated interaction transforms artifact-core's raw validation capabilities into reusable, executable validation plans with automatic experiment tracking across multiple backends.
 from typing import List
 from artifact_core.libs.resource_spec.tabular.spec import TabularDataSpec
 from artifact_experiment.libs.tracking.mlflow.client import MlflowTrackingClient
