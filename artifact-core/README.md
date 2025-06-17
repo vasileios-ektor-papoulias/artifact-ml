@@ -445,7 +445,7 @@ class CustomArtifactEngine(ArtifactEngine[
         return self.produce_score(score_type=score_type, resources=resources)
 ```
 
-## 🚀 Configuring and Using the Framework
+## 🚀 Configuring and Using Artifact-Core
 
 ### 1. Configuring Existing Artifacts in Your Project
 
@@ -506,7 +506,7 @@ Only include the sections and parameters you want to override.
 
 Your configuration will be merged with the default one automatically, with your settings taking precedence.
 
-## 🔧 Extending the Framework
+## 🔧 Framework Extension
 
 ### 1. Contributing New Artifacts
 
