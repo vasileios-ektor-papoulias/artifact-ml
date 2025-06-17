@@ -14,6 +14,18 @@
 
 ## 📋 Overview
 
+**artifact-experiment** bridges the gap between validation computation and experiment tracking by providing **executable validation plan abstractions** that leverage `artifact-core` for computation and export results to popular experiment tracking backends.
+
+It extends the Artifact framework ecosystem alongside:
+- **artifact-core**: Framework foundation providing flexible interfaces for heterogeneous validation artifact computation
+- **artifact-torch**: PyTorch integration enabling rapid prototyping with seamless validation integration
+
+## 🎯 Key Value Propositions
+
+- **Reusable Validation Workflows**: Define validation plans once, execute across different models and datasets
+- **Backend-Agnostic Tracking**: Unified interface supporting MLflow, ClearML, Neptune, and local filesystem
+- **Seamless Integration**: Direct integration with artifact-core's computation engine
+- **Flexible Callback Architecture**: Extensible system for custom artifact computation and tracking workflows
 
 ## 🏗️ Architecture
 
