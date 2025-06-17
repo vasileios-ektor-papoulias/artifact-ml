@@ -15,13 +15,41 @@
 
 **artifact-torch** provides PyTorch integration for the Artifact framework, delivering a type-safe training infrastructure that automatically integrates with artifact-core's validation capabilities.
 
-The framework abstracts common deep learning engineering patterns—training loops, device management, callback systems, and validation orchestration—allowing researchers to focus on model architecture and domain-specific logic rather than infrastructure concerns.
+The framework abstracts common deep learning engineering patterns—training loops, device management, callback systems, and validation orchestration—allowing researchers to focus on architectural innovation rather than mundane infrastructure development.
 
 **Core Value Proposition:**
 - **Interface-driven design**: Implement clean contracts rather than complex training infrastructure
 - **Automatic validation integration**: Seamless connection to artifact-core's validation ecosystem
 - **Type safety throughout**: Full type checking for models, data flow, and component compatibility
 - **Domain-specific extensions**: Specialized toolkits for different problem domains
+
+## 🚀 Basic Usage Pattern
+
+```python
+from artifact_experiment.libs.tracking.filesystem.client import FilesystemTrackingClient
+
+# Component configuration
+model = MyModel.build(architecture_config)
+dataset = MyDataset(processed_data)
+validation_routine = MyValidationRoutine.build(reference_data, tracking_client)
+
+# Experiment tracking
+tracking_client = FilesystemTrackingClient.build(experiment_id="research_experiment")
+
+# Framework orchestration
+trainer = DomainTrainer.build(
+    model=model,
+    train_loader=DataLoader(dataset, batch_size=config.batch_size),
+    artifact_routine=validation_routine,
+    tracking_client=tracking_client
+)
+
+# Execution with integrated validation
+training_metrics = trainer.train()
+```
+
+**For comprehensive usage examples and detailed implementation patterns, refer to the demo documentation in `demo/README.md`.**
+
 
 ## 🏗️ Architecture
 
@@ -309,48 +337,6 @@ project_root/
 - Descriptive statistics comparisons
 
 **Reference Implementation**: The `demo/` directory contains a complete VAE-based tabular synthesizer demonstrating all toolkit components.
-
-### Extension Framework
-
-The architecture supports domain-specific toolkit development through:
-
-1. **Interface Definition**: Create domain-specific model protocols
-2. **Validation Integration**: Develop artifact-experiment validation plans (defining which artifacts to compute) and validation routines that execute them (including preparatory work like data generation)
-
-## 🚀 Usage Patterns
-
-### Basic Training Workflow
-
-```python
-# Component configuration
-model = DomainModel.build(architecture_config)
-dataset = TypedDataset(processed_data)
-validation_routine = DomainValidationRoutine.build(reference_data, tracking_client)
-
-# Framework orchestration
-trainer = DomainTrainer.build(
-    model=model,
-    train_loader=DataLoader(dataset, batch_size=config.batch_size),
-    artifact_routine=validation_routine,
-    tracking_client=experiment_tracker
-)
-
-# Execution with integrated validation
-training_metrics = trainer.train()
-```
-
-### Experiment Tracking Integration
-
-The framework integrates with artifact-experiment for automatic result persistence:
-
-```python
-from artifact_experiment.libs.tracking.filesystem.client import FilesystemTrackingClient
-
-tracking_client = FilesystemTrackingClient.build(experiment_id="research_experiment")
-# All training artifacts automatically saved to structured directories
-```
-
-**For comprehensive usage examples and detailed implementation patterns, refer to the demo documentation in `demo/README.md`.**
 
 ## 🔧 Framework Extension
 
