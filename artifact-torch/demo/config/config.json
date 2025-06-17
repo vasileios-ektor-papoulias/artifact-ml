@@ -27,7 +27,7 @@
         "batch_size": 512,
         "drop_last": false,
         "shuffle": true,
-        "checkpoint_period": 100,
+        "checkpoint_period": 5,
         "batch_loss_period": 1
     },
     "validation": {
