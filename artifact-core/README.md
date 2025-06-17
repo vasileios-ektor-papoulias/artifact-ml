@@ -18,8 +18,8 @@
 This repository serves as the foundation of the **Artifact** framework.
 
 It stands alongside::
-- **artifact-experiment**: Executable validation plans exporting results to popular experiment tracking services.
-- **artifact-torch**: PyTorch integration for rapid prototyping: flexible model types and trainers supporting seamless validation using Artifact-ML.
+- `artifact-experiment`: Executable validation plans exporting results to popular experiment tracking services.
+- `artifact-torch`: PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
 
 `artifact-core` provides a **flexible minimal interface** for the computation of heterogeneous validation artifacts in machine learning experiments.
 

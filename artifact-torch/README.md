@@ -13,9 +13,13 @@
 
 ## 📋 Overview
 
-**artifact-torch** provides PyTorch integration for the Artifact framework, delivering a type-safe training infrastructure that automatically integrates with artifact-core's validation capabilities.
+`artifact-torch` provides PyTorch integration for the Artifact framework.
 
-The framework abstracts common deep learning engineering patterns—training loops, device management, callback systems, and validation orchestration—allowing researchers to focus on architectural innovation over infrastructure development.
+It stands alongside:
+- `artifact-core`:  The framework core, providing a flexible minimal interface for the computation of heterogeneous validation artifacts.
+- `artifact-experiment`: The framework's experiment tracking extension, providing **executable validation plan abstractions** that utilize `artifact-core` to export results to popular tracking backends (e.g. Mlflow).
+
+`artifact-torch` abstracts common deep learning engineering patterns—training loops, device management, callback systems, and validation orchestration—allowing researchers to focus on architectural innovation over infrastructure development.
 
 **Core Value Proposition:**
 - **Interface-driven design**: Implement clean contracts rather than complex training infrastructure
@@ -51,7 +55,7 @@ trainer = DomainTrainer.build(
 # Execution with integrated validation
 training_metrics = trainer.train()
 ```
-**For a conceptual illustration of artifact-torch entities and abstractions refer to the `Architecture` section below.**
+**For a conceptual illustration of `artifact-torch` entities and abstractions refer to the `Architecture` section below.**
 **For comprehensive usage examples and detailed implementation patterns, refer to the demo project in `./demo` as well as its documentation in `./demo/README.md`.**
 
 ## 🏗️ Architecture
@@ -332,7 +336,7 @@ project_root/
 
 **Validation Integration**: `TableComparisonRoutine` managing the execution of Artifact-ML table comparison validation plans.
 
-**Reference Implementation**: The `demo/` directory contains a complete VAE-based tabular data synthesis project built with artifact-torch demonstrating all toolkit components.
+**Reference Implementation**: The `demo/` directory contains a complete VAE-based tabular data synthesis project built with `artifact-torch` demonstrating all toolkit components.
 
 ## 🔧 Framework Extension
 

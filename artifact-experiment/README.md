@@ -18,10 +18,10 @@
 This repository constitutes the experiment tracking extension to the **Artifact** framework.
 
 It stands alongside:
-- **artifact-core**: The foundation providing a flexible minimal interface for computing heterogeneous validation artifacts.
-- **artifact-torch**: PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
+- `artifact-core`:  The framework core, providing a flexible minimal interface for the computation of heterogeneous validation artifacts.
+- `artifact-torch`: PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
 
-`artifact-experiment` provides **executable validation plan abstractions** that utilize `artifact-core` and export results to various experiment tracking backends (e.g. Mlflow).
+`artifact-experiment` provides **executable validation plan abstractions** that utilize `artifact-core` to export results to popular tracking backends (e.g. Mlflow).
 
 ## 🚀 Key Features
 
