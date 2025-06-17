@@ -185,7 +185,23 @@ New artifacts can be registered with the appropriate registry. In doing so abstr
 
 All artifacts associated to a given engine share resources and resource spec types.
 
-## 📊 Table Comparison Engine
+## 🎯 Domain-Specific Validation Toolkits
+
+`artifact-core` enables domain-specific validation toolkits through resource type specialization.
+
+Different domains (tabular data, images, text, time series, etc.) implement the core abstractions with their specific resource types, creating focused validation ecosystems while sharing the common infrastructure.
+
+**Resource Type Specialization**: Each domain defines its own resource specification protocol and artifact resources, enabling type-safe validation workflows tailored to domain characteristics.
+
+**Domain Registries**: For each domain, we provide specialized registries that group relevant artifacts by type (scores, plots, arrays, collections), enabling organized artifact management and dynamic instantiation within the domain.
+
+**Domain Engines**: Specialized engines coordinate artifacts within a domain, providing unified interfaces for comprehensive validation while ensuring all artifacts share compatible resource types.
+
+**Complete Toolkits**: Each domain provides both registries for artifact organization and engines for deployment, creating self-contained validation toolkits that leverage the common framework infrastructure.
+
+**Extensible Ecosystems**: New domains can implement the core abstractions to create complete validation toolkits that integrate seamlessly with the broader Artifact framework.
+
+### 📊 Table Comparison Engine
 
 `artifact-core` provides a concrete implementation for the comparison of tabular datasets: the **TableComparisonEngine**.
 
