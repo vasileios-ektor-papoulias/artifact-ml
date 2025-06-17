@@ -194,16 +194,16 @@ graph TD
 ```
 
 ### User Implementation Layer
-Users implement domain-specific components: model interfaces defining training and generation behavior, data pipelines for loading and processing, and validation routines specifying artifact computation workflows.
+Component implementations that encode the core logic of the research problem. Components include: model interfaces defining training and generation behavior, and data pipelines for loading and processing datasets.
 
 ### User Configuration Layer
-Users extend `CustomTrainer` through subclassing and hook method implementations to configure training behavior—optimization, early stopping, checkpointing, and routine integration—while the framework handles the core orchestration logic.
+Abstractions that eliminate implementation burden by requiring only configuration through subclass hooks, with the rest of the logic being pre-built. Users leverage existing orchestration logic by specifying how they want it configured rather than implementing complex execution flows from scratch. Components include: `CustomTrainer` extensions configuring training behavior (optimization, early stopping, checkpointing), and validation routines (`BatchRoutine`, `DataLoaderRoutine`, `ArtifactRoutine`) specifying callback execution workflows at different training phases.
 
 ### Framework Infrastructure Layer
-Pure framework components that users don't directly implement: the callback execution system and automatic device management. These provide the underlying infrastructure that powers the user-configured training process.
+Concrete framework classes that handle training infrastructure automatically, requiring no programming effort from users. These components operate behind the scenes to execute training tasks, freeing users from infrastructure concerns. Components include: the callback execution system, automatic device management, RAM caching, early stopping mechanisms, and model state tracking.
 
 ### External Integration Layer
-Automatic connections to the broader Artifact ecosystem: artifact-core for validation artifact computation and artifact-experiment for experiment tracking and result export.
+Automatic connections to the broader Artifact ecosystem for validation and experiment tracking. Components include: `artifact-core` integration for validation artifact computation and `artifact-experiment` integration for experiment tracking and result export.
 
 ## 🔧 Core Abstractions
 
