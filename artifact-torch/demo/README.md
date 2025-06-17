@@ -45,21 +45,31 @@ demo/
 ├── model/
 │   ├── synthesizer.py             # VAE model implementation
 │   ├── io.py                      # Model I/O utilities
-│   ├── architectures/
-│   │   └── vae.py                 # VAE architecture definition
-│   ├── layers/                    # Custom neural network layers
-│   └── losses/                    # Custom loss functions
+│   └── architectures/
+│       └── vae.py                 # VAE architecture definition
 ├── trainer/
 │   └── trainer.py                 # Extends CustomTrainer for VAE
-├── routines/
-│   ├── artifact.py                # Integrates artifact-ML validation into training loop
-│   ├── batch.py                   # Provides batch-level performance evaluation callbacks
-│   └── loader.py                  # Handles epoch-end performance monitoring through dataloader iteration
+├── components/
+│   └── routines/
+│       ├── artifact.py            # Integrates artifact-ML validation into training loop
+│       ├── batch.py               # Provides batch-level performance evaluation callbacks
+│       └── loader.py              # Handles epoch-end performance monitoring through dataloader iteration
 ├── data/
 │   └── dataset.py                 # Dataset implementation for VAE
-└── transformers/
-    ├── discretizer.py             # Continuous feature discretization
-    └── encoder.py                 # Categorical feature encoding
+└── libs/
+    ├── transformers/
+    │   ├── discretizer.py         # Continuous feature discretization
+    │   └── encoder.py             # Categorical feature encoding
+    ├── layers/
+    │   ├── mlp.py                 # Multi-layer perceptron implementation
+    │   ├── diagonal_gaussian_latent.py  # Gaussian latent layer
+    │   ├── embedder.py            # Feature embedding layer
+    │   ├── multi_feature_predictor.py   # Multi-feature prediction
+    │   └── lin_bn_drop.py         # Linear + BatchNorm + Dropout layer
+    ├── losses/
+    │   └── beta_loss.py           # Beta-VAE loss implementation
+    └── utils/
+        └── sampler.py             # Sampling utilities
 ```
 
 ## 📊 Dataset
@@ -248,9 +258,9 @@ class TabularVAEModelOutput(ModelOutput):
 
 **Configuration Purpose:**
 - **Type Contracts**: Framework knows exactly what data flows through your pipeline
-- **Auto-compatibility**: Trainer automatically works with your types
+- **Auto-compatibility**: Trainer is designed to work with your type definitions
 - **IDE Support**: Full autocomplete and type checking
-- **Callback Compatibility**: These I/O types determine which batch and dataloader callbacks you can use, as the framework's callbacks have specific type requirements that your model I/O types must satisfy through the framework's type variance system
+- **Callback Compatibility**: These I/O types determine which batch and dataloader callbacks you can use, as static type analysis can verify that your model I/O types satisfy the framework's callback type requirements through the type variance system
 
 ### Step 3: Configure Your Model Interface
 
@@ -317,7 +327,7 @@ loader = DataLoader(
 
 **What you need to do**: Configure which validation artifacts you want the framework to compute. This determines what metrics and visualizations are generated.
 
-#### **Validation Plan Configuration** (`routines/artifact.py`)
+#### **Validation Plan Configuration** (`components/routines/artifact.py`)
 ```python
 class DemoTableComparisonPlan(TableComparisonPlan):
     @staticmethod
@@ -368,7 +378,7 @@ class DemoTableComparisonPlan(TableComparisonPlan):
 
 **What you need to do**: Configure how the framework handles different aspects of training. Each routine is a configuration telling the framework what to do at specific points.
 
-#### **Validation Routine Configuration** (`routines/artifact.py`)
+#### **Validation Routine Configuration** (`components/routines/artifact.py`)
 ```python
 class DemoTableComparisonRoutine(TableComparisonRoutine):
     @classmethod
@@ -394,7 +404,7 @@ class DemoTableComparisonRoutine(TableComparisonRoutine):
         )
 ```
 
-#### **Batch Routine Configuration** (`routines/batch.py`)
+#### **Batch Routine Configuration** (`components/routines/batch.py`)
 ```python
 class DemoBatchRoutine(BatchRoutine[TabularVAEInput, TabularVAEOutput]):
     @staticmethod
@@ -403,7 +413,7 @@ class DemoBatchRoutine(BatchRoutine[TabularVAEInput, TabularVAEOutput]):
         return [BatchLossCallback(period=BATCH_LOSS_PERIOD, tracking_client=None)]
 ```
 
-#### **Data Loader Routine Configuration** (`routines/loader.py`)
+#### **Data Loader Routine Configuration** (`components/routines/loader.py`)
 ```python
 class DemoLoaderRoutine(DataLoaderRoutine[TabularVAEInput, TabularVAEOutput]):
     @staticmethod
