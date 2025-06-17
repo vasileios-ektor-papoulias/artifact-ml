@@ -15,22 +15,45 @@
 
 ## 📋 Overview
 
-This repository constitutes the experiment tracking extension to the **Artifact** framework.
 
-It stands alongside:
-- `artifact-core`:  The framework core, providing a flexible minimal interface for the computation of heterogeneous validation artifacts.
-- `artifact-torch`: PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
+## 🏗️ Architecture
 
-`artifact-experiment` provides **executable validation plan abstractions** that utilize `artifact-core` to export results to popular tracking backends (e.g. Mlflow).
+artifact-experiment follows a three-layer architecture that separates validation specification, execution orchestration, and backend integration:
 
-## 🚀 Key Features
-
-- **Validation Plans**: Define reusable validation workflows that can be executed across different models and datasets
-- **Experiment Tracking Integration**: Export validation artifacts to popular experiment tracking tools
-- **Callback System**: Flexible callback architecture for artifact computation and tracking
-- **Multiple Backend Support**: Integration with MLflow, ClearML, Neptune, and local filesystem
-
-## 📚 Examples
+```mermaid
+graph TB
+    subgraph "User Specification Layer"
+        VP[ValidationPlan]
+    end
+    
+    subgraph "Execution Orchestration Layer"  
+        AF[Artifact Factories]
+        CB[Callbacks]
+        CBH[Callback Handlers]
+    end
+    
+    subgraph "Backend Integration Layer"
+        RA[Run Adapters]
+        AL[Artifact Loggers]
+        TC[Tracking Clients]
+    end
+    
+    subgraph "External Dependencies"
+        AC["artifact-core<br/>Computation Engine"]
+        EB["Experiment Backends<br/>MLflow, ClearML, Neptune"]
+    end
+    
+    VP --> AF
+    VP --> CBH
+    CBH --> CB
+    CBH --> TC
+    CB --> TC
+    TC --> AL
+    TC --> RA
+    AL --> RA
+    AF --> AC
+    RA --> EB
+```
 
 ```python
 import pandas as pd
