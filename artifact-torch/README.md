@@ -103,7 +103,7 @@ graph TD
     ArtifactRoutine --> ArtifactCore
     ArtifactRoutine --> ArtifactExp
     
-    %% Callback systems to External (framework needs)
+    %% Callback systems to External (both need both dependencies)
     BatchCallbacks --> ArtifactCore
     BatchCallbacks --> ArtifactExp
     DataLoaderCallbacks --> ArtifactCore
@@ -151,7 +151,6 @@ graph TD
     linkStyle 13 stroke-width:3px
     linkStyle 14 stroke-width:3px
     linkStyle 15 stroke-width:3px
-    linkStyle 16 stroke-width:3px
     
     %% Hide spacers
     style ExternalSpacer1 fill:transparent,stroke:transparent
