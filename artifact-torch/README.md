@@ -28,37 +28,77 @@ The framework abstracts common deep learning engineering patterns—training loo
 The framework employs a three-layer architecture that separates domain logic from infrastructure concerns:
 
 ```mermaid
-graph TB
-    subgraph "User Implementation Layer"
+graph TD
+    %% Layer labels
+    ImplLabel["<b>User Implementation Layer</b>"]
+    ConfigLabel["<b>User Configuration Layer</b>"]
+    InfraLabel["<b>Framework Infrastructure Layer</b>"]
+    ExternalLabel["<b>External Integration Layer</b>"]
+    
+    %% Layer groupings with better horizontal distribution
+    subgraph impl [" "]
+        direction LR
         Model["Model Interface<br/>(Domain-specific logic)"]
         Data["Data Pipeline<br/>(Dataset & DataLoader)"]
     end
     
-    subgraph "User Configuration Layer"
+    subgraph config [" "]
+        direction LR
         Trainer["CustomTrainer<br/>(Hook implementations & orchestration)"]
         Routines["Validation Routines<br/>(Artifact, Batch & DataLoader)"]
     end
     
-    subgraph "Framework Infrastructure Layer"
-        Callbacks["Callback System<br/>(Hook execution)"]
+    subgraph infra [" "]
+        direction LR
+        Components["Other Components<br/>(Early stoppers, Model trackers)"]
         Device["Device Management<br/>(Automatic placement)"]
+        Callbacks["Callback System<br/>(Hook execution)"]
     end
     
-    subgraph "External Integration Layer"
-        ArtifactCore["artifact-core<br/>(Validation artifacts)"]
+    subgraph external [" "]
+        direction LR
         ArtifactExp["artifact-experiment<br/>(Experiment tracking)"]
+        ArtifactCore["artifact-core<br/>(Validation artifacts)"]
     end
     
+    %% Component connections with optimal ordering
+    %% Implementation to Configuration
     Model --> Trainer
     Data --> Trainer
-    Routines --> Trainer
+    
+    %% Configuration to Infrastructure (left to right order)
+    Trainer --> Device
+    Trainer --> Components  
+    Trainer --> Callbacks
+    
+    %% Routine to Infrastructure
     Routines --> Callbacks
     
-    Trainer --> Callbacks
-    Trainer --> Device
-    
+    %% Infrastructure to External
     Callbacks --> ArtifactCore
     Callbacks --> ArtifactExp
+    
+    %% Style layer labels with positioning
+    style ImplLabel fill:#e1f5fe,stroke:#0066cc,stroke-width:3px,color:#000000
+    style ConfigLabel fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px,color:#000000
+    style InfraLabel fill:#e8f5e8,stroke:#388e3c,stroke-width:3px,color:#000000
+    style ExternalLabel fill:#fff3e0,stroke:#f57c00,stroke-width:3px,color:#000000
+    
+    %% Style layer boxes
+    style impl fill:#ffffff,stroke:#0066cc,stroke-width:2px
+    style config fill:#ffffff,stroke:#7b1fa2,stroke-width:2px
+    style infra fill:#ffffff,stroke:#388e3c,stroke-width:2px
+    style external fill:#ffffff,stroke:#f57c00,stroke-width:2px
+    
+    %% Clean vertical spacing only
+    ImplLabel --- impl
+    ConfigLabel --- config  
+    InfraLabel --- infra
+    ExternalLabel --- external
+    
+    impl ~~~ config
+    config ~~~ infra
+    infra ~~~ external
 ```
 
 ### User Implementation Layer
