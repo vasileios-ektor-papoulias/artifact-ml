@@ -332,13 +332,6 @@ project_root/
 
 **Validation Integration**: `TableComparisonRoutine` with artifact-core's table comparison validation plans.
 
-**Available Artifacts**:
-- Distribution analysis (PDF/CDF comparisons)
-- Dimensionality reduction visualizations (PCA projections)
-- Correlation structure analysis
-- Statistical distance metrics (Jensen-Shannon divergence, correlation distance)
-- Descriptive statistics comparisons
-
 **Reference Implementation**: The `demo/` directory contains a complete VAE-based tabular synthesizer demonstrating all toolkit components.
 
 ## 🔧 Framework Extension
