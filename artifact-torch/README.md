@@ -39,7 +39,7 @@ graph TD
     subgraph impl [" "]
         direction LR
         Model["Model Interface<br/>(Domain-specific logic)"]
-        Data["Data Pipeline<br/>(Dataset & DataLoader)"]
+        Data["Data Pipeline<br/>(Dataset)"]
     end
     
     subgraph config [" "]
