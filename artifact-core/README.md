@@ -1,6 +1,6 @@
 # ⚙️ artifact-core
 
-> The core component of the Artifact framework, providing a flexible minimal interface for the computation of heterogeneous validation artifacts in machine learning experiments.
+> The core component of the Artifact framework, providing a flexible interface for the computation of heterogeneous validation artifacts in machine learning experiments.
 
 
 <p align="center">
@@ -21,9 +21,9 @@ It stands alongside::
 - `artifact-experiment`: Executable validation plans exporting results to popular experiment tracking services.
 - `artifact-torch`: PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
 
-`artifact-core` provides a **flexible minimal interface** for the computation of heterogeneous validation artifacts in machine learning experiments.
+`artifact-core` provides a **flexible interface** for the computation of heterogeneous validation artifacts in machine learning experiments.
 
-It defines the core abstractions, interfaces, and implementations that enable standardized validation across different models and datasets.
+It defines the core abstractions and implementations that enable standardized validation across different models and datasets.
 
 ## 📚 Examples
 
