@@ -344,11 +344,13 @@ project_root/
 
 ### Component Extension
 
+**Model Type Contract Development**: Define new `Model`, `ModelInput` and `ModelOutput` contracts in `core/model` for domain-specific data flow patterns, enabling type-safe callback development and static compatibility verification.
+
 **Callback Development**: Place in `libs/components/callbacks/`, inherit from appropriate base classes, implement required hook methods.
 
-**Early Stopping Criteria**: Extend `EarlyStopper[T]` in `libs/components/early_stopping/` with domain-specific termination logic.
+**Model Tracker Development**: Extend `ModelTracker[T]` in `libs/components/model_tracking/` with domain-specific best model tracking criteria (e.g., validation loss improvement, custom metric optimization).
 
-**Model Interface Extension**: Define new protocols in domain directories with integration points for trainer and validation systems.
+**Early Stopping Criteria**: Extend `EarlyStopper[T]` in `libs/components/early_stopping/` with domain-specific termination logic.
 
 ## 🚀 Installation
 
