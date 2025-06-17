@@ -291,7 +291,7 @@ js_distance = engine.produce_dataset_comparison_score(
 
 ## 🔧 Implementation Guide
 
-To better understand how the architecture works in practice, let's examine the components needed to create an artifact engine:
+To better understand how the architecture works in practice, we go through the steps required to create a complete validation toolkit from scratch:
 
 ### 1. Define Artifact Types
 
