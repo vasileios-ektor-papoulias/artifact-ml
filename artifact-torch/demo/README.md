@@ -25,9 +25,9 @@ The demo implements a VAE-based tabular synthesizer using artifact-torch:
 - **`TabularVAE`**: High-level interface orchestrating the entire synthesis pipeline
 - **`TabularVAESynthesizer`**: Implements artifact-torch's `TableSynthesizer` interface for VAE-based synthesis
 - **`TabularVAETrainer`**: Extends artifact-torch's `CustomTrainer` to create a concrete training loop for the VAE model
-- **`DemoTableComparisonRoutine`**: Integrates artifact-ML validation capabilities into the training loop
-- **`DemoBatchRoutine`**: Provides batch-level performance evaluation callbacks
-- **`DemoLoaderRoutine`**: Handles epoch-end performance monitoring through dataloader iteration
+- **`DemoTableComparisonRoutine`**: Configures `TableComparisonRoutine` (`ArtifactRoutine` subclass for tabular data synthesis) to integrate artifact-ML validation into the training loop
+- **`DemoBatchRoutine`**: Configures `BatchRoutine` to provides batch-level performance evaluation callbacks
+- **`DemoLoaderRoutine`**: Configures `DataLoaderRoutine` to handles epoch-end performance monitoring through dataloader iteration
 
 ### File Structure
 
