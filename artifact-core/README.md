@@ -1,6 +1,6 @@
 # ⚙️ artifact-core
 
-> The core component of the Artifact framework, providing a flexible minimal interface for the computation of heterogeneous validation artifacts in machine learning experiments.
+> The core component of the Artifact framework, providing a flexible interface for the computation of heterogeneous validation artifacts in machine learning experiments.
 
 
 <p align="center">
@@ -9,7 +9,7 @@
 
 
 ![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
-![License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-core)
+![License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-ml)
 
 ---
 
@@ -21,9 +21,9 @@ It stands alongside::
 - `artifact-experiment`: Executable validation plans exporting results to popular experiment tracking services.
 - `artifact-torch`: PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
 
-`artifact-core` provides a **flexible minimal interface** for the computation of heterogeneous validation artifacts in machine learning experiments.
+`artifact-core` provides a **flexible interface** for the computation of heterogeneous validation artifacts in machine learning experiments.
 
-It defines the core abstractions, interfaces, and implementations that enable standardized validation across different models and datasets.
+It defines the core abstractions and implementations that enable standardized validation across different models and datasets.
 
 ## 📚 Examples
 
@@ -112,11 +112,55 @@ pip install .
 
 ## 🏗️ Architecture
 
+`artifact-core` follows a layered architecture offering maximal extendibility while exposing a simple minimal interface to end-users:
+
+```mermaid
+graph TB
+    subgraph "User Interaction Layer"
+        AE[ArtifactEngine]
+    end
+    
+    subgraph "Framework Infrastructure Layer"
+        A[Artifact]
+        AREG[ArtifactRegistry]
+        AT[ArtifactType]
+        AR[ArtifactResources]
+        AH[ArtifactHyperparams]
+    end
+    
+    subgraph "External Dependencies"
+        Config["Configuration Files"]
+        Data["Resource Data"]
+    end
+    
+    %% Dependencies (A uses B)
+    AE --> A
+    AE --> AREG
+    AREG --> AT
+    A --> AR
+    A --> AH
+    AH --> Config
+    AR --> Data
+```
+
+### User Interaction Layer
+The primary interface for orchestrating validation workflows. **ArtifactEngine** provides the main entry point that users interact with to execute collections of artifacts, manage configurations, and coordinate comprehensive validation processes across different artifact types.
+
+### Framework Infrastructure Layer
+Internal framework components that provide the computational foundation. **Artifact** defines the abstract `compute()` method that all validation computations implement, **ArtifactRegistry** manages the mapping between **ArtifactType** enums and concrete implementations, **ArtifactResources** defines input data contracts, and **ArtifactHyperparams** enables configurable artifact behavior. These components work together to provide the extensible infrastructure that powers domain-specific implementations.
+
+### External Dependencies
+Configuration and data inputs that drive artifact computation. **Configuration Files** define artifact parameters and behavior, while **Input Data** provides the datasets or resources that artifacts operate on.
+
+This architecture enables artifact-core to provide a clean separation between user-facing interfaces and internal framework infrastructure. Users interact primarily with ArtifactEngine while the framework handles the complexity of artifact registration, instantiation, and execution through its internal infrastructure components.
+
 The framework follows a modular architecture with the following key components:
 
 1. **Artifact**: A flexible computation unit utilizing generic resources, static resource specifications and hyperparameters to evaluate model outputs.
 2. **ArtifactRegistry**: Manages the registration and retrieval of artifacts.
 3. **ArtifactEngine**: High-level interface orchestrating the production of validation artifacts.
+
+## 📊 Core Entities
 
 Artifacts are reusable components that compute specific validation metrics or visualizations.
 
@@ -141,7 +185,23 @@ New artifacts can be registered with the appropriate registry. In doing so abstr
 
 All artifacts associated to a given engine share resources and resource spec types.
 
-## 📊 Table Comparison Engine
+## 🎯 Domain-Specific Validation Toolkits
+
+`artifact-core` enables domain-specific validation toolkits through resource type specialization.
+
+Different domains (tabular data, images, text, time series, etc.) implement the core abstractions with their specific resource types, creating focused validation ecosystems while sharing the common infrastructure.
+
+**Resource Type Specialization**: Each domain defines its own resource specification protocol and artifact resources, enabling type-safe validation workflows tailored to domain characteristics.
+
+**Domain Registries**: For each domain, we provide specialized registries that group relevant artifacts by type (scores, plots, arrays, collections), enabling organized artifact management and dynamic instantiation within the domain.
+
+**Domain Engines**: Specialized engines coordinate artifacts within a domain, providing unified interfaces for comprehensive validation while ensuring all artifacts share compatible resource types.
+
+**Complete Toolkits**: Each domain provides both registries for artifact organization and engines for deployment, creating self-contained validation toolkits that leverage the common framework infrastructure.
+
+**Extensible Ecosystems**: New domains can implement the core abstractions to create complete validation toolkits that integrate seamlessly with the broader Artifact framework.
+
+### 📊 Table Comparison Engine
 
 `artifact-core` provides a concrete implementation for the comparison of tabular datasets: the **TableComparisonEngine**.
 
@@ -229,9 +289,9 @@ js_distance = engine.produce_dataset_comparison_score(
 )
 ```
 
-## 🔧 Architecture Deep Dive
+## 🔧 Implementation Guide
 
-To better understand how the architecture works in practice, let's examine the components needed to create an artifact engine:
+To better understand how the architecture works in practice, we go through the steps required to create a complete validation toolkit from scratch:
 
 ### 1. Define Artifact Types
 
@@ -385,7 +445,7 @@ class CustomArtifactEngine(ArtifactEngine[
         return self.produce_score(score_type=score_type, resources=resources)
 ```
 
-## 🚀 Configuring and Using the Framework
+## 🚀 Configuring and Using Artifact-Core
 
 ### 1. Configuring Existing Artifacts in Your Project
 
@@ -446,7 +506,7 @@ Only include the sections and parameters you want to override.
 
 Your configuration will be merged with the default one automatically, with your settings taking precedence.
 
-## 🔧 Extending the Framework
+## 🔧 Framework Extension
 
 ### 1. Contributing New Artifacts
 
