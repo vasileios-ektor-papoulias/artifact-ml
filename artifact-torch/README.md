@@ -1,12 +1,10 @@
 # ⚙️ artifact-torch
 
-> A deep learning framework built on top of artifact-core—abstracting engineering aspects of deep learning research to enable researchers to focus on what matters.
-
+> A PyTorch deep learning framework that abstracts training infrastructure complexity to enable researchers to focus on model innovation
 
 <p align="center">
   <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
 </p>
-
 
 ![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
 ![License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-core)
@@ -15,223 +13,282 @@
 
 ## 📋 Overview
 
-This repository provides PyTorch integration for the **Artifact** framework.
+**artifact-torch** provides PyTorch integration for the Artifact framework, delivering a type-safe training infrastructure that automatically integrates with artifact-core's validation capabilities.
 
-It stands alongside:
-- **artifact-core**: The foundation providing a flexible minimal interface for computing heterogeneous validation artifacts.
-- **artifact-experiment**: Executable validation plans exporting results to popular experiment tracking services.
+The framework abstracts common deep learning engineering patterns—training loops, device management, callback systems, and validation orchestration—allowing researchers to focus on model architecture and domain-specific logic rather than infrastructure concerns.
 
-`artifact-torch` is a deep learning framework built on top of artifact-core—abstracting engineering aspects of deep learning research (data pipelines, device management, training, monitoring, validation) to enable researchers to focus on innovation.
+**Core Value Proposition:**
+- **Interface-driven design**: Implement clean contracts rather than complex training infrastructure
+- **Automatic validation integration**: Seamless connection to artifact-core's validation ecosystem
+- **Type safety throughout**: Full type checking for models, data flow, and component compatibility
+- **Domain-specific extensions**: Specialized toolkits for different problem domains
 
-## 🚀 Key Features
+## 🏗️ Architecture
 
-- **PyTorch Integration**: Lightweight PyTorch extension ensuring type-safety and compatibility with Artifact's validation plans
-- **Extendible Trainer Abstraction**: Covers the full training/validation pipeline for thematically related neural networks
-- **Model Management**: Standardized interfaces for model definition, saving, and loading
-- **Data Pipeline Utilities**: Simplified data handling with type-safe interfaces
-- **Validation Integration**: Seamless integration with artifact-core validation components
+The framework employs a three-layer architecture that separates domain logic from infrastructure concerns:
 
-## 🏗️ Architecture and Components
+```mermaid
+graph TB
+    subgraph "User Implementation Layer"
+        Model["Model Interface<br/>Domain-specific logic"]
+        Data["Data Pipeline<br/>Dataset & DataLoader"]
+        Validation["Validation Routine<br/>Artifact configuration"]
+    end
+    
+    subgraph "Framework Infrastructure Layer"
+        Trainer["CustomTrainer<br/>Training orchestration"]
+        Callbacks["Callback System<br/>Hook execution"]
+        Device["Device Management<br/>Automatic placement"]
+    end
+    
+    subgraph "Integration Layer"
+        ArtifactCore["artifact-core<br/>Validation artifacts"]
+        ArtifactExp["artifact-experiment<br/>Experiment tracking"]
+    end
+    
+    Model --> Trainer
+    Data --> Trainer
+    Validation --> Trainer
+    
+    Trainer --> Callbacks
+    Trainer --> Device
+    
+    Callbacks --> ArtifactCore
+    Callbacks --> ArtifactExp
+```
 
-### Trainer: The Backbone
+### Model Interface Layer
+Defines domain-specific contracts for model behavior, including training forward passes and validation data generation. Models implement these interfaces while maintaining full control over internal architecture.
 
-The Trainer is the central architectural component of the framework, orchestrating the entire training process. It follows a clear hierarchical structure with the following responsibilities:
+### Training Infrastructure Layer
+Provides the training orchestration engine through `CustomTrainer`, which handles training loops, optimization, device management, and callback execution. The framework manages infrastructure complexity while exposing configuration hooks for customization.
 
-- **Training Loop Management**: Handles epoch iteration, batch processing, and stopping conditions
-- **Device Management**: Ensures models and data are on the correct device
-- **Optimization**: Coordinates optimizer and learning rate scheduler updates
-- **State Management**: Maintains training state including model, optimizer, and metrics
-- **Validation Integration**: Executes validation routines at configurable intervals
+### Validation Integration Layer
+Automatically connects training processes to artifact-core's validation ecosystem. During training, validation routines generate synthetic data, compute domain-specific artifacts, and export results to experiment tracking platforms.
 
-The trainer works with models that implement specific input/output interfaces, ensuring type safety and consistency across the framework. It utilizes data pipelines to feed the model and captures the results for validation and logging.
+## 🔧 Core Abstractions
 
-### Pluggable Component System
+### Model Interfaces
 
-The framework's strength comes from its pluggable architecture, allowing components to be combined and configured for specific use cases:
+**Purpose**: Define contracts for model integration with the training framework.
 
-1. **Models**: Implement the `Model` interface with standardized I/O through `ModelInput` and `ModelOutput` TypedDict interfaces
-2. **Data Loaders**: Provide data to the trainer through the `DataLoader` interface
-3. **Validation Routines**: Configure how and when validation is performed during training
-4. **Callbacks**: Hook into the training process at specific points to add custom behaviors
-5. **Stoppers**: Determine when training should terminate based on configurable conditions
+**Implementation Requirement**: Extend domain-specific interfaces (e.g., `TableSynthesizer` for tabular synthesis) and implement required methods for training and validation.
 
-These components can be mixed and matched to create custom training pipelines without modifying the core trainer logic.
+**Framework Integration**: The trainer uses these interfaces to execute training while validation routines use generation methods for artifact computation.
 
-### Component Details
+### Model I/O Types
 
-#### Callback System
+**Purpose**: Ensure type safety and component compatibility through standardized input/output definitions.
 
-The callback system allows injecting custom behavior at various points in the training process:
+**Design Pattern**: Define `ModelInput` and `ModelOutput` TypedDict classes that specify exactly what flows through your model during training.
 
-- **Epoch Callbacks**: Execute at the beginning and end of each epoch
-- **Batch Callbacks**: Execute before and after processing each batch
-- **Validation Callbacks**: Execute during validation phases
-- **Tracking Callbacks**: Integrate with experiment tracking platforms
-- **Score, Array, and Plot Callbacks**: Generate and track metrics and visualizations
+**Type Variance Benefits**: I/O types determine callback compatibility—the framework's type system ensures only compatible callbacks can be used with your model.
 
-Callbacks can be combined and prioritized to create complex behaviors while keeping the trainer implementation clean.
+### CustomTrainer
 
-#### Early Stopping System
+**Purpose**: Orchestrate the complete training process while providing configuration hooks for domain-specific requirements.
 
-The early stopping system provides mechanisms to terminate training based on various conditions:
+**Framework Responsibilities**: Training loop execution, device management, gradient computation, checkpoint handling, and metric aggregation.
 
-- **Patience-Based Stopping**: Stops when metrics fail to improve for a specified number of epochs
-- **Performance-Based Stopping**: Stops when metrics reach specified thresholds
-- **Time-Based Stopping**: Limits training duration
-- **Custom Stopping Criteria**: Allows implementing domain-specific stopping logic
+**User Configuration**: Implement hook methods for optimizer selection, early stopping criteria, callback configuration, and validation routine integration.
 
-The system is designed to be extensible, allowing new stopping conditions to be added without modifying existing code.
 
-#### Model Tracking System
 
-The model tracking system provides:
+### Callback System
 
-- **Metric Logging**: Records training and validation metrics
-- **Artifact Storage**: Saves model checkpoints, visualizations, and other artifacts
-- **Experiment Versioning**: Maintains history of training runs
-- **Integration with External Tools**: Connects to tracking platforms like MLflow, Weights & Biases, etc.
+**Purpose**: Provide extensible hooks for custom behavior injection at specific training points.
 
-This system ensures training progress is monitored and models are properly preserved for later use.
+**Type Variance Architecture**: Callbacks are model I/O type-aware through variance-based type parameters. The framework uses type variance to automatically determine which callbacks are accessible to your model—only callbacks compatible with your specific `ModelInput` and `ModelOutput` types can be used.
 
-### Trainer Public Interface
+**Core Callback Types**:
 
-The trainer's public interface provides methods for:
+- **Batch Callbacks**: Execute on individual training batches, providing immediate per-batch computations
+  - `BatchScoreCallback`: Compute scalar metrics from single batches
+  - `BatchArrayCallback`: Generate arrays from single batches  
+  - `BatchPlotCallback`: Create visualizations from single batches
+  - Collection variants: `BatchScoreCollectionCallback`, `BatchArrayCollectionCallback`, `BatchPlotCollectionCallback`
 
-- **Training**: `train()` to initiate the training process
-- **Validation**: `validate()` to manually trigger validation
-- **Checkpoint Management**: `save_checkpoint()` and `load_checkpoint()` for model persistence
-- **Metrics Access**: Methods to retrieve training and validation metrics
+- **DataLoader Callbacks**: Execute after processing entire dataloaders, aggregating results across all batches
+  - `DataLoaderScoreCallback`: Compute metrics by aggregating batch results
+  - `DataLoaderArrayCallback`: Generate arrays by combining batch outputs
+  - `DataLoaderPlotCallback`: Create visualizations from aggregated data
+  - Collection variants: `DataLoaderScoreCollectionCallback`, `DataLoaderArrayCollectionCallback`, `DataLoaderPlotCollectionCallback`
 
-### Trainer Subclass Hooks
+**Type Safety Mechanism**: Through variance-based generics, the framework ensures compile-time verification that only compatible callbacks can be instantiated with your model's I/O types.
 
-Trainers can be customized by implementing the following hooks in subclasses:
+### Routines
 
-- **`_should_stop()`**: Determines when training should terminate
-- **`_execute_batch_preprocessing()`**: Prepares each batch before model processing
-- **`_execute_batch_postprocessing()`**: Handles model outputs after each batch
-- **`_execute_epoch_preprocessing()`**: Prepares for each training epoch
-- **`_execute_epoch_postprocessing()`**: Finalizes each training epoch
-- **`_log_batch_metrics()`**: Defines what metrics to log from each batch
-- **`_log_epoch_metrics()`**: Defines what metrics to log from each epoch
+**Purpose**: Combine multiple callbacks into standalone execution flows that are injected into the training loop at specific points.
 
-### Validation Routine Abstraction
+**Architectural Relationship**: Routines operate one abstraction level above callbacks—they orchestrate collections of related callbacks into cohesive execution units rather than executing individual behaviors.
 
-The validation routine provides a standardized way to evaluate models during training:
+**Type Variance Integration**: Like callbacks, routines use type variance to determine compatibility. The framework automatically restricts which routine types can be used with your model based on I/O type compatibility.
 
-- **Validation Scheduling**: Controls when validation occurs during training
-- **Validation Logic**: Defines how the model is evaluated
-- **Artifact Generation**: Creates validation artifacts using artifact-core components
-- **Metric Tracking**: Records validation metrics for monitoring and early stopping
+**Core Routine Types**:
 
-### Validation Routine Subclass Hooks
+- **BatchRoutine**: Combines batch callbacks into execution flows triggered during individual batch processing
+  - Configures which batch callbacks to execute and when
+  - Provides batch-level cache management and result aggregation
+  - Executes during the training loop's batch processing phase
 
-Validation routines can be customized by implementing:
+- **DataLoaderRoutine**: Orchestrates dataloader callbacks into flows executed after processing complete dataloaders  
+  - Manages multiple callback handler types (scores, arrays, plots, collections)
+  - Provides dataloader-level cache management and result aggregation
+  - Executes at epoch boundaries or when explicitly triggered
 
-- **`_get_validation_period()`**: Determines how often validation runs
-- **`_get_validation_plan()`**: Specifies which validation components to use
-- **`_get_train_loader_callbacks()`**: Configures callbacks for training data
-- **`_get_val_loader_callbacks()`**: Configures callbacks for validation data
-- **`_execute_validation()`**: Implements the validation logic
+- **ArtifactRoutine**: Integrates artifact-core validation capabilities into periodic training evaluation
+  - Orchestrates model-specific actions required for validation plan execution (e.g., synthetic data generation for generative models, prediction generation for classification models)
+  - Coordinates artifact computation through artifact-core based on model outputs
+  - Manages validation plan execution and result export across different model domains
 
-### Core Folder Organization
+**Execution Integration**: The `CustomTrainer` integrates these routines at appropriate training loop hooks, ensuring proper execution timing and resource management.
 
-The `core/` folder contains common logic shared across different implementations:
+### Data Abstractions
 
-- **Base Classes**: Abstract classes defining interfaces
-- **Utility Functions**: Common operations used throughout the framework
-- **Shared Components**: Components that apply to multiple domains
+**Purpose**: Provide type-safe wrappers around PyTorch's data primitives with enhanced functionality.
 
-This organization promotes code reuse and ensures consistent behavior across different implementations.
+**Components**: Generic `Dataset[T]` wrapper, enhanced `DataLoader` with automatic device management, and `DeviceManager` for placement handling.
 
-### Artifact Group Organization
+**Integration Benefits**: Automatic device management and type-safe data flow through the training pipeline.
 
-Each artifact group from artifact-core has its own directory in the root of this project:
+## 📁 Implementation Guidelines
 
-- **table_comparison/**: Components for tabular data synthesis and comparison
-- **image_comparison/**: Components for image generation and comparison (future)
-- **text_comparison/**: Components for text generation and comparison (future)
+### Project Organization
 
-#### Table Comparison Module
+The framework expects a specific project structure that separates concerns and promotes maintainability:
 
-The table comparison module provides specialized components for tabular data:
+```
+project_root/
+├── model/
+│   ├── io.py                    # ModelInput/ModelOutput type definitions
+│   ├── synthesizer.py           # Framework interface implementation
+│   └── architectures/           # Neural network implementations
+├── data/
+│   ├── dataset.py              # Type-safe dataset implementation
+│   └── preprocessing/          # Data transformation pipeline
+├── trainer/
+│   └── trainer.py              # CustomTrainer extension
+├── routines/
+│   ├── artifact.py             # Validation routine configuration
+│   ├── batch.py                # Batch-level callback routines
+│   └── loader.py               # DataLoader-level callback routines
+└── config/
+    └── configuration files
+```
 
-- **TabularGenerativeModel**: Base class for models that generate tabular data
-- **TableComparisonValidationRoutine**: Validation routine for comparing real and synthetic tabular data
-- **TableComparisonTrainer**: Specialized trainer for tabular data synthesis models
+### Implementation Sequence
 
-These components integrate with artifact-core's table comparison validation plans to enable comprehensive evaluation of synthetic tabular data.
+1. **Define I/O Types**: Establish type contracts for model inputs and outputs
+2. **Implement Model Interface**: Extend domain-specific interfaces with your architecture
+3. **Configure Data Pipeline**: Implement type-safe dataset and dataloader components
+4. **Configure Validation**: Define validation routines and artifact generation plans
+5. **Configure Training**: Extend CustomTrainer with domain-specific hooks
+6. **Orchestration**: Create high-level APIs for simplified usage (optional)
 
-## 🚀 Building Projects with artifact-torch
+**Detailed Implementation Example**: See the comprehensive tabular VAE demo in `demo/` which demonstrates the complete implementation pattern for tabular data synthesis.
 
-To build a project based on artifact-torch, you need to develop the following components:
+## 🎯 Domain-Specific Toolkits
 
-1. **Model Implementation**: Create a model that implements the appropriate interfaces for your task
-2. **Data Pipeline**: Implement data loading and preprocessing for your specific data
-3. **Validation Configuration**: Configure validation routines specific to your task
-4. **Training Configuration**: Set up a trainer with appropriate parameters and callbacks
+### Table Comparison
 
-The demo in this repository shows a complete implementation of a tabular data synthesizer, including:
+**Scope**: Complete toolkit for tabular data synthesis and evaluation.
 
-- A VAE-based model implementing the TabularGenerativeModel interface
-- Data preprocessing for mixed continuous and categorical features
-- A validation routine with metrics specific to tabular data synthesis
-- A trainer configured for the tabular synthesis task
+**Core Interface**: `TableSynthesizer` protocol defining tabular generation contracts.
 
-By following this pattern and leveraging the existing components, you can quickly develop sophisticated deep learning systems with built-in validation capabilities.
+**Validation Integration**: `TableComparisonRoutine` with artifact-core's table comparison validation plans.
 
-## 🔧 Extending the Framework
+**Available Artifacts**:
+- Distribution analysis (PDF/CDF comparisons)
+- Dimensionality reduction visualizations (PCA projections)
+- Correlation structure analysis
+- Statistical distance metrics (Jensen-Shannon divergence, correlation distance)
+- Descriptive statistics comparisons
 
-### 1. Adding New Component Implementations
+**Reference Implementation**: The `demo/` directory contains a complete VAE-based tabular synthesizer demonstrating all toolkit components.
 
-To add new implementations of existing components, place them in the appropriate `libs/components` directory:
+### Extension Framework
 
-1. Identify the component type you want to extend (e.g., callback, stopper, model)
-2. Create a new class that inherits from the appropriate base class
-3. Implement the required methods and interfaces
-4. Register the component if required by the component system
+The architecture supports domain-specific toolkit development through:
 
-For example, to add a new callback:
+1. **Interface Definition**: Create domain-specific model protocols
+2. **Validation Integration**: Develop corresponding validation routines
+3. **Trainer Specialization**: Implement domain-optimized training procedures
+4. **Data Handling**: Create domain-specific data processing components
 
-1. Identify the callback type (epoch, batch, validation)
-2. Create a class that inherits from the appropriate callback base class
-3. Implement the required callback methods
+## 🚀 Usage Patterns
 
-### 2. Adding New Artifact Groups
+### Basic Training Workflow
 
-To add support for a new artifact group (similar to table_comparison):
+```python
+# Component configuration
+model = DomainModel.build(architecture_config)
+dataset = TypedDataset(processed_data)
+validation_routine = DomainValidationRoutine.build(reference_data, tracking_client)
 
-1. Create a new directory at the root level named after the artifact group
-2. Define the base interfaces for the new domain
-3. Implement model interfaces specific to the domain
-4. Create specialized trainers and validation routines
-5. Implement data handling components for the domain
-6. Ensure integration with corresponding artifact-core validation components
+# Framework orchestration
+trainer = DomainTrainer.build(
+    model=model,
+    train_loader=DataLoader(dataset, batch_size=config.batch_size),
+    artifact_routine=validation_routine,
+    tracking_client=experiment_tracker
+)
 
-This structure allows the framework to be extended to new domains while maintaining consistency with the existing architecture.
+# Execution with integrated validation
+training_metrics = trainer.train()
+```
+
+### Experiment Tracking Integration
+
+The framework integrates with artifact-experiment for automatic result persistence:
+
+```python
+from artifact_experiment.libs.tracking.filesystem.client import FilesystemTrackingClient
+
+tracking_client = FilesystemTrackingClient.build(experiment_id="research_experiment")
+# All training artifacts automatically saved to structured directories
+```
+
+**For comprehensive usage examples and detailed implementation patterns, refer to the demo documentation in `demo/README.md`.**
+
+## 🔧 Framework Extension
+
+### Adding Domain Toolkits
+
+1. **Domain Directory**: Create `domain_name/` in project root
+2. **Interface Definition**: Define domain-specific model protocols
+3. **Validation Integration**: Implement corresponding validation routines
+4. **Trainer Specialization**: Create domain-optimized trainer extensions
+5. **Artifact Integration**: Ensure compatibility with artifact-core validation plans
+
+### Component Extension
+
+**Callback Development**: Place in `libs/components/callbacks/`, inherit from appropriate base classes, implement required hook methods.
+
+**Early Stopping Criteria**: Extend `EarlyStopper[T]` in `libs/components/early_stopping/` with domain-specific termination logic.
+
+**Model Interface Extension**: Define new protocols in domain directories with integration points for trainer and validation systems.
 
 ## 🚀 Installation
 
 ### Using Poetry (Recommended)
 
 ```bash
-git clone https://github.com/vasileios-ektor-papoulias/artifact-torch.git
-cd artifact-torch
+git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
+cd artifact-ml/artifact-torch
 poetry install
 ```
 
 ### Using Pip
 
 ```bash
-git clone https://github.com/vasileios-ektor-papoulias/artifact-torch.git
-cd artifact-torch
+git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
+cd artifact-ml/artifact-torch  
 pip install .
 ```
 
 ## 🤝 Contributing
 
-Contributions are welcome! 
-
-Please feel free to submit a Pull Request following the guidelines in [the general Artifact-ML README](https://github.com/vasileios-ektor-papoulias/artifact-ml/blob/main/README.md).
+Contributions are welcome. Please refer to the [main Artifact-ML contribution guidelines](https://github.com/vasileios-ektor-papoulias/artifact-ml/blob/main/README.md) for development standards and submission procedures.
 
 ## 📄 License
 
