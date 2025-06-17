@@ -289,7 +289,7 @@ js_distance = engine.produce_dataset_comparison_score(
 )
 ```
 
-## 🔧 Architecture Deep Dive
+## 🔧 Implementation Guide
 
 To better understand how the architecture works in practice, let's examine the components needed to create an artifact engine:
 
