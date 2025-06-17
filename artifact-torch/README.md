@@ -98,7 +98,7 @@ Automatically connects training processes to artifact-core's validation ecosyste
 
 **Purpose**: Provide extensible hooks for custom behavior injection at specific training points.
 
-**Type Variance Architecture**: Callbacks are model I/O type-aware through variance-based type parameters. The framework uses type variance to automatically determine which callbacks are accessible to your model—only callbacks compatible with your specific `ModelInput` and `ModelOutput` types can be used.
+**Type Variance Architecture**: Callbacks are model I/O type-aware through variance-based type parameters. The framework uses type variance to enable static type analysis tools to determine which callbacks are compatible with your model—only callbacks compatible with your specific `ModelInput` and `ModelOutput` types can be correctly instantiated.
 
 **Core Callback Types**:
 
@@ -114,7 +114,7 @@ Automatically connects training processes to artifact-core's validation ecosyste
   - `DataLoaderPlotCallback`: Create visualizations from aggregated data
   - Collection variants: `DataLoaderScoreCollectionCallback`, `DataLoaderArrayCollectionCallback`, `DataLoaderPlotCollectionCallback`
 
-**Type Safety Mechanism**: Through variance-based generics, the framework ensures compile-time verification that only compatible callbacks can be instantiated with your model's I/O types.
+**Type Safety Mechanism**: Through variance-based generics, the framework enables static type analysis to verify that only compatible callbacks can be instantiated with your model's I/O types.
 
 ### Routines
 
@@ -122,7 +122,7 @@ Automatically connects training processes to artifact-core's validation ecosyste
 
 **Architectural Relationship**: Routines operate one abstraction level above callbacks—they orchestrate collections of related callbacks into cohesive execution units rather than executing individual behaviors.
 
-**Type Variance Integration**: Like callbacks, routines use type variance to determine compatibility. The framework automatically restricts which routine types can be used with your model based on I/O type compatibility.
+**Type Variance Integration**: Like callbacks, routines use type variance to enable static type analysis to determine compatibility. Static type checkers can verify which routine types are compatible with your model based on I/O type compatibility.
 
 **Core Routine Types**:
 
