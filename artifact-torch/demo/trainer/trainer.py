@@ -24,8 +24,8 @@ from demo.config.constants import (
     MAX_N_EPOCHS,
 )
 from demo.model.io import TabularVAEInput, TabularVAEOutput
-from demo.trainer.batch_routine import DemoBatchRoutine
-from demo.trainer.loader_routine import DemoLoaderRoutine
+from demo.routines.batch import DemoBatchRoutine
+from demo.routines.loader import DemoLoaderRoutine
 
 
 class TabularVAETrainer(

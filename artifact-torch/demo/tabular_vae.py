@@ -21,7 +21,7 @@ from demo.model.synthesizer import (
     TabularVAESynthesizer,
     VAEArchitectureConfig,
 )
-from demo.trainer.artifact_routine import DemoTableComparisonRoutine
+from demo.routines.artifact import DemoTableComparisonRoutine
 from demo.trainer.trainer import TabularVAETrainer
 from demo.transformers.discretizer import Discretizer
 from demo.transformers.encoder import Encoder
