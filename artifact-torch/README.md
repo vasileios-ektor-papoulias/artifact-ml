@@ -112,9 +112,9 @@ graph TD
     end
     
     %% Component connections with optimal ordering
-    %% Implementation to Configuration
-    Model --> Trainer
-    Data --> Trainer
+    %% Configuration uses Implementation
+    Trainer --> Model
+    Trainer --> Data
     
     %% Configuration to Infrastructure (left to right order)
     Trainer --> Cache
