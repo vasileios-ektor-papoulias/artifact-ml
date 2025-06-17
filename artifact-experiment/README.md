@@ -55,6 +55,16 @@ graph TB
     RA --> EB
 ```
 
+### User Specification Layer
+Configuration abstractions that eliminate validation implementation complexity by requiring only specification of desired artifacts through subclass hooks. Users define which validation artifacts they want computed without worrying about execution details.
+
+### Execution Orchestration Layer
+Framework infrastructure that handles validation workflow execution automatically. The callback system manages artifact computation scheduling, the handlers coordinate execution across artifact types, and factories integrate with `artifact-core`'s computation engine.
+
+### Backend Integration Layer
+Concrete tracking client implementations that handle experiment logging to different backends. Run adapters normalize backend-specific run objects, while artifact loggers handle the actual export of computed artifacts to the target experiment tracking system.
+
+
 ```python
 import pandas as pd
 from typing import List
