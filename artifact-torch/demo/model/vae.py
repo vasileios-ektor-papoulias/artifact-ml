@@ -15,13 +15,13 @@ from demo.config.constants import (
     LS_ENCODER_LAYER_SIZES,
     N_EMBD,
 )
-from demo.model.layers.diagonal_gaussian_latent import DiagonalGaussianLatent
-from demo.model.layers.embedder import MultiFeatureEmbedder
-from demo.model.layers.lin_bn_drop import LinBnDrop
-from demo.model.layers.mlp import MLP
-from demo.model.layers.multi_feature_predictor import MultiFeaturePredictor
-from demo.model.losses.beta_loss import BetaVAELoss
-from demo.model.utils.sampler import LogitSampler, SamplingStrategy
+from demo.libs.layers.diagonal_gaussian_latent import DiagonalGaussianLatent
+from demo.libs.layers.embedder import MultiFeatureEmbedder
+from demo.libs.layers.lin_bn_drop import LinBnDrop
+from demo.libs.layers.mlp import MLP
+from demo.libs.layers.multi_feature_predictor import MultiFeaturePredictor
+from demo.libs.losses.beta_loss import BetaVAELoss
+from demo.libs.utils.sampler import LogitSampler, SamplingStrategy
 
 
 @dataclass(frozen=True)

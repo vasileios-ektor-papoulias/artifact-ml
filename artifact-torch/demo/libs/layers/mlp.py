@@ -2,7 +2,7 @@ from typing import List, Type
 
 import torch
 import torch.nn as nn
-from demo.model.layers.lin_bn_drop import LinBnDrop
+from demo.libs.layers.lin_bn_drop import LinBnDrop
 
 
 class MLP(nn.Module):

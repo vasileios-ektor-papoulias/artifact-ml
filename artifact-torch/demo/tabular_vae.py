@@ -7,6 +7,7 @@ from artifact_core.libs.resource_spec.tabular.spec import TabularDataSpec
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_torch.base.data.data_loader import DataLoader
 
+from demo.components.routines.artifact import DemoTableComparisonRoutine
 from demo.config.constants import (
     BATCH_SIZE,
     DROP_LAST,
@@ -16,15 +17,14 @@ from demo.config.constants import (
     SHUFFLE,
 )
 from demo.data.dataset import TabularVAEDataset
+from demo.libs.transformers.discretizer import Discretizer
+from demo.libs.transformers.encoder import Encoder
 from demo.model.synthesizer import (
     TabularVAEGenerationParams,
     TabularVAESynthesizer,
     VAEArchitectureConfig,
 )
-from demo.routines.artifact import DemoTableComparisonRoutine
 from demo.trainer.trainer import TabularVAETrainer
-from demo.transformers.discretizer import Discretizer
-from demo.transformers.encoder import Encoder
 
 
 @dataclass

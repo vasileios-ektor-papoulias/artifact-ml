@@ -6,10 +6,10 @@ from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecPro
 from artifact_torch.core.model.generative import GenerationParams
 from artifact_torch.table_comparison.model import TableSynthesizer
 
-from demo.model.architectures.vae import VAEArchitectureConfig, VariationalAutoencoder
+from demo.libs.transformers.discretizer import Discretizer
+from demo.libs.transformers.encoder import Encoder
 from demo.model.io import TabularVAEInput, TabularVAEOutput
-from demo.transformers.discretizer import Discretizer
-from demo.transformers.encoder import Encoder
+from demo.model.vae import VAEArchitectureConfig, VariationalAutoencoder
 
 
 @dataclass
