@@ -53,8 +53,8 @@ graph TD
         direction LR
         Trainer["CustomTrainer<br/>(Training orchestration)"]
         ConfigSpacer[" "]
-        BatchRoutine["Batch Routine<br/>(Batch hooks)"]
-        DataLoaderRoutine["DataLoader Routine<br/>(Data loader hooks)"]
+        BatchRoutine["Batch Routine<br/>(Batch processing hook)"]
+        DataLoaderRoutine["DataLoader Routine<br/>(Data loader processing hook)"]
         ArtifactRoutine["Artifact Validation Routine<br/>(Artifact-ML validation hook)"]
     end
     
@@ -64,8 +64,7 @@ graph TD
         EarlyStopping["Early Stopping<br/>(Training termination)"]
         ModelTracking["Model Tracking<br/>(State management)"]
         Device["Device Management<br/>(Automatic placement)"]
-        BatchCallbacks["Batch Callbacks<br/>(Per-batch execution)"]
-        DataLoaderCallbacks["DataLoader Callbacks<br/>(Per-loader execution)"]
+        Callbacks["Callbacks<br/>(hook execution atoms)"]
     end
     
     subgraph external [" "]
@@ -75,8 +74,8 @@ graph TD
         ExternalSpacer3[" "]
         ExternalSpacer4[" "]
         ExternalSpacer5[" "]
-        ArtifactCore["artifact-core<br/>(Validation artifacts)"]
         ArtifactExp["artifact-experiment<br/>(Experiment tracking)"]
+        ArtifactCore["artifact-core<br/>(Validation artifacts)"]
     end
     
     %% Component connections with optimal ordering
@@ -89,25 +88,25 @@ graph TD
     Trainer --> EarlyStopping
     Trainer --> ModelTracking
     Trainer --> Device
+    Trainer --> Callbacks
     
     %% Configuration to Configuration (routine orchestration)
     Trainer --> BatchRoutine
     Trainer --> DataLoaderRoutine
     Trainer --> ArtifactRoutine
     
-    %% Infrastructure routines to specific Callback types
-    BatchRoutine --> BatchCallbacks
-    DataLoaderRoutine --> DataLoaderCallbacks
+    %% Infrastructure routines to Callback System
+    BatchRoutine --> Callbacks
+    DataLoaderRoutine --> Callbacks
     
-    %% Domain-specific routine to External (direct integration)
-    ArtifactRoutine --> ArtifactCore
+    %% Domain-specific routine to External (via experiment tracking)
     ArtifactRoutine --> ArtifactExp
     
-    %% Callback systems to External (both need both dependencies)
-    BatchCallbacks --> ArtifactCore
-    BatchCallbacks --> ArtifactExp
-    DataLoaderCallbacks --> ArtifactCore
-    DataLoaderCallbacks --> ArtifactExp
+    %% Callback System to External (via experiment tracking)
+    Callbacks --> ArtifactExp
+    
+    %% External integration flow
+    ArtifactExp --> ArtifactCore
     
     %% Style layer labels with positioning
     style ImplLabel fill:#e1f5fe,stroke:#0066cc,stroke-width:3px,color:#000000
@@ -125,14 +124,14 @@ graph TD
     ImplLabel --- impl
     ConfigLabel --- config  
     InfraLabel --- infra
-    ExternalLabel --- external
     
     impl ~~~ config
     config ~~~ infra
     infra ~~~ VerticalSpacer1
     VerticalSpacer1 ~~~ VerticalSpacer2
     VerticalSpacer2 ~~~ VerticalSpacer3
-    VerticalSpacer3 ~~~ external
+    VerticalSpacer3 ~~~ ExternalLabel
+    ExternalLabel --- external
     
     %% Make all component arrows thicker
     linkStyle 0 stroke-width:3px
@@ -148,9 +147,6 @@ graph TD
     linkStyle 10 stroke-width:3px
     linkStyle 11 stroke-width:3px
     linkStyle 12 stroke-width:3px
-    linkStyle 13 stroke-width:3px
-    linkStyle 14 stroke-width:3px
-    linkStyle 15 stroke-width:3px
     
     %% Hide spacers
     style ExternalSpacer1 fill:transparent,stroke:transparent
