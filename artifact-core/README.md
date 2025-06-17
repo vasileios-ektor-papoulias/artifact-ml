@@ -112,6 +112,48 @@ pip install .
 
 ## 🏗️ Architecture
 
+`artifact-core` follows a layered architecture offering maximal extendibility while exposing a simple minimal interface to end-users:
+
+```mermaid
+graph TB
+    subgraph "User Interaction Layer"
+        AE[ArtifactEngine]
+    end
+    
+    subgraph "Framework Infrastructure Layer"
+        A[Artifact]
+        AREG[ArtifactRegistry]
+        AT[ArtifactType]
+        AR[ArtifactResources]
+        AH[ArtifactHyperparams]
+    end
+    
+    subgraph "External Dependencies"
+        Config["Configuration Files"]
+        Data["Resource Data"]
+    end
+    
+    %% Dependencies (A uses B)
+    AE --> A
+    AE --> AREG
+    AREG --> AT
+    A --> AR
+    A --> AH
+    AH --> Config
+    AR --> Data
+```
+
+### User Interaction Layer
+The primary interface for orchestrating validation workflows. **ArtifactEngine** provides the main entry point that users interact with to execute collections of artifacts, manage configurations, and coordinate comprehensive validation processes across different artifact types.
+
+### Framework Infrastructure Layer
+Internal framework components that provide the computational foundation. **Artifact** defines the abstract `compute()` method that all validation computations implement, **ArtifactRegistry** manages the mapping between **ArtifactType** enums and concrete implementations, **ArtifactResources** defines input data contracts, and **ArtifactHyperparams** enables configurable artifact behavior. These components work together to provide the extensible infrastructure that powers domain-specific implementations.
+
+### External Dependencies
+Configuration and data inputs that drive artifact computation. **Configuration Files** define artifact parameters and behavior, while **Input Data** provides the datasets or resources that artifacts operate on.
+
+This architecture enables artifact-core to provide a clean separation between user-facing interfaces and internal framework infrastructure. Users interact primarily with ArtifactEngine while the framework handles the complexity of artifact registration, instantiation, and execution through its internal infrastructure components.
+
 The framework follows a modular architecture with the following key components:
 
 1. **Artifact**: A flexible computation unit utilizing generic resources, static resource specifications and hyperparameters to evaluate model outputs.
