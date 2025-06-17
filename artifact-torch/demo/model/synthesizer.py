@@ -1,29 +1,23 @@
 from dataclasses import dataclass
-from typing import List, Type, TypeVar
+from typing import Type, TypeVar
 
 import pandas as pd
+from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_torch.core.model.generative import GenerationParams
 from artifact_torch.table_comparison.model import TableSynthesizer
 
-from demo.data.feature_flattener import FeatureFlattener
-from demo.model.architecture import VariationalAutoencoder
+from demo.model.architectures.vae import VAEArchitectureConfig, VariationalAutoencoder
 from demo.model.io import TabularVAEInput, TabularVAEOutput
-
-
-@dataclass
-class TabularVAESynthesizerConfig:
-    ls_encoder_layer_sizes: List[int]
-    loss_beta: float
-    leaky_relu_slope: float
-    bn_momentum: float
-    bn_epsilon: float
-    dropout_rate: float
+from demo.transformers.discretizer import Discretizer
+from demo.transformers.encoder import Encoder
 
 
 @dataclass
 class TabularVAEGenerationParams(GenerationParams):
-    num_samples: int
-    use_mean: bool = False
+    n_records: int
+    use_mean: bool
+    temperature: float
+    sample: bool
 
 
 TabularVAESynthesizerT = TypeVar("TabularVAESynthesizerT", bound="TabularVAESynthesizer")
@@ -32,39 +26,35 @@ TabularVAESynthesizerT = TypeVar("TabularVAESynthesizerT", bound="TabularVAESynt
 class TabularVAESynthesizer(
     TableSynthesizer[TabularVAEInput, TabularVAEOutput, TabularVAEGenerationParams]
 ):
-    def __init__(self, vae: VariationalAutoencoder, flattener: FeatureFlattener):
+    def __init__(
+        self,
+        data_spec: TabularDataSpecProtocol,
+        discretizer: Discretizer,
+        encoder: Encoder,
+        vae: VariationalAutoencoder,
+    ):
         super().__init__()
+        self._data_spec = data_spec
+        self._discretizer = discretizer
+        self._encoder = encoder
         self._vae = vae
-        self._flattener = flattener
 
     @classmethod
     def build(
         cls: Type[TabularVAESynthesizerT],
-        config: TabularVAESynthesizerConfig,
-        flattener: FeatureFlattener,
+        data_spec: TabularDataSpecProtocol,
+        discretizer: Discretizer,
+        encoder: Encoder,
+        architecture_config: VAEArchitectureConfig = VAEArchitectureConfig(),
     ) -> TabularVAESynthesizerT:
-        vae = VariationalAutoencoder(
-            ls_encoder_layer_sizes=config.ls_encoder_layer_sizes,
-            loss_beta=config.loss_beta,
-            leaky_relu_slope=config.leaky_relu_slope,
-            bn_momentum=config.bn_momentum,
-            bn_epsilon=config.bn_epsilon,
-            dropout_rate=config.dropout_rate,
+        vae = VariationalAutoencoder.build(data_spec=data_spec, config=architecture_config)
+        synthesizer = cls(
+            data_spec=data_spec,
+            discretizer=discretizer,
+            encoder=encoder,
+            vae=vae,
         )
-        tabular_vae_model = cls(vae=vae, flattener=flattener)
-        return tabular_vae_model
-
-    @property
-    def input_dim(self) -> int:
-        return self._vae.input_dim
-
-    @property
-    def latent_dim(self) -> int:
-        return self._vae.latent_dim
-
-    @property
-    def beta(self) -> float:
-        return self._vae.loss_beta
+        return synthesizer
 
     def forward(self, model_input: TabularVAEInput) -> TabularVAEOutput:
         t_features = model_input.get("t_features")
@@ -79,9 +69,17 @@ class TabularVAESynthesizer(
 
     def generate(self, params: TabularVAEGenerationParams) -> pd.DataFrame:
         self.eval()
-        arr_synthetic_flat = self._vae.generate(
-            num_samples=params.num_samples, use_mean=params.use_mean, device=self.device
+        t_preds = self._vae.generate(
+            n_records=params.n_records,
+            use_mean=params.use_mean,
+            temperature=params.temperature,
+            device=self.device,
         )
-        arr_synthetic = self._flattener.inverse_transform(arr_flat=arr_synthetic_flat)
-        df_synthetic = pd.DataFrame(arr_synthetic, columns=self._flattener.ls_original_column_names)
+        df_synthetic_encoded = pd.DataFrame(
+            t_preds.cpu().numpy(), columns=self._data_spec.ls_features
+        ).astype(int)
+        df_synthetic = self._encoder.inverse_transform(df_encoded=df_synthetic_encoded)
+        if params.sample:
+            df_synthetic = self._discretizer.inverse_transform(df_binned=df_synthetic)
+
         return df_synthetic

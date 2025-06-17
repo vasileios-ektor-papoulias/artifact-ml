@@ -15,7 +15,8 @@ from artifact_torch.table_comparison.routine import TableComparisonRoutine
 
 from demo.config.constants import (
     ARTIFACT_VALIDATION_PERIOD,
-    GENERATION_NUM_SAMPLES,
+    GENERATION_N_RECORDS,
+    GENERATION_TEMPERATURE,
     GENERATION_USE_MEAN,
 )
 from demo.model.synthesizer import TabularVAEGenerationParams
@@ -74,7 +75,10 @@ class DemoTableComparisonRoutine(TableComparisonRoutine[TabularVAEGenerationPara
     @classmethod
     def _get_generation_params(cls) -> TabularVAEGenerationParams:
         return TabularVAEGenerationParams(
-            num_samples=GENERATION_NUM_SAMPLES, use_mean=GENERATION_USE_MEAN
+            n_records=GENERATION_N_RECORDS,
+            use_mean=GENERATION_USE_MEAN,
+            temperature=GENERATION_TEMPERATURE,
+            sample=True,
         )
 
     @classmethod

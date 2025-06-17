@@ -17,8 +17,6 @@ from artifact_torch.libs.components.early_stopping.epoch_bound import EpochBound
 from artifact_torch.table_comparison.model import TableSynthesizer
 from torch import optim
 
-from demo.components.routines.batch import DemoBatchRoutine
-from demo.components.routines.loader import DemoLoaderRoutine
 from demo.config.constants import (
     CHECKPOINT_PERIOD,
     DEVICE,
@@ -26,6 +24,8 @@ from demo.config.constants import (
     MAX_N_EPOCHS,
 )
 from demo.model.io import TabularVAEInput, TabularVAEOutput
+from demo.trainer.batch_routine import DemoBatchRoutine
+from demo.trainer.loader_routine import DemoLoaderRoutine
 
 
 class TabularVAETrainer(
