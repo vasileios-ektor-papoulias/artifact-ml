@@ -98,7 +98,7 @@ Automatically connects training processes to artifact-core's validation ecosyste
 
 **Purpose**: Provide extensible hooks for custom behavior injection at specific training points.
 
-**Type Variance Architecture**: Callbacks are model I/O type-aware through variance-based type parameters. The framework uses type variance to enable static type analysis tools to determine which callbacks are compatible with your model—only callbacks compatible with your specific `ModelInput` and `ModelOutput` types can be correctly instantiated.
+**Type Variance Architecture**: Callbacks are model I/O type-aware through variance-based type parameters. The framework uses type variance to enable static type analysis tools to determine which callbacks are compatible with your model: only callbacks compatible with your specific `ModelInput` and `ModelOutput` types can be correctly instantiated.
 
 **Core Callback Types**:
 
