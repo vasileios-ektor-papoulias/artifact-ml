@@ -45,7 +45,7 @@ graph TD
     %% Layer groupings with better horizontal distribution
     subgraph impl [" "]
         direction LR
-        Model["Model Interface<br/>(Domain-specific logic)"]
+        Model["Model<br/>(Architecture)"]
         Data["Data Pipeline<br/>(Dataset)"]
     end
     
@@ -53,9 +53,9 @@ graph TD
         direction LR
         Trainer["CustomTrainer<br/>(Training orchestration)"]
         ConfigSpacer[" "]
-        BatchRoutine["Batch Routine<br/>(Infrastructure)"]
-        DataLoaderRoutine["DataLoader Routine<br/>(Infrastructure)"]
-        ArtifactRoutine["Artifact Validation Routine<br/>(Domain-specific)"]
+        BatchRoutine["Batch Routine<br/>(Batch hooks)"]
+        DataLoaderRoutine["DataLoader Routine<br/>(Data loader hooks)"]
+        ArtifactRoutine["Artifact Validation Routine<br/>(Artifact-ML validation hook)"]
     end
     
     subgraph infra [" "]
@@ -65,7 +65,7 @@ graph TD
         ModelTracking["Model Tracking<br/>(State management)"]
         Device["Device Management<br/>(Automatic placement)"]
         BatchCallbacks["Batch Callbacks<br/>(Per-batch execution)"]
-        DataLoaderCallbacks["DataLoader Callbacks<br/>(Per-dataloader execution)"]
+        DataLoaderCallbacks["DataLoader Callbacks<br/>(Per-loader execution)"]
     end
     
     subgraph external [" "]
