@@ -1,6 +1,6 @@
 # ⚙️ artifact-torch
 
-> A PyTorch deep learning framework that abstracts training infrastructure complexity to enable researchers to focus on model innovation
+> PyTorch integration for the Artifact framework, abstracting training infrastructure to let researchers focus on model innovation
 
 <p align="center">
   <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
@@ -32,23 +32,27 @@ graph TB
     subgraph "User Implementation Layer"
         Model["Model Interface<br/>Domain-specific logic"]
         Data["Data Pipeline<br/>Dataset & DataLoader"]
-        Validation["Validation Routine<br/>Artifact configuration"]
+        Routines["Validation Routines<br/>Artifact, Batch & DataLoader"]
+    end
+    
+    subgraph "User Configuration Layer"
+        Trainer["CustomTrainer<br/>Hook implementations & orchestration"]
     end
     
     subgraph "Framework Infrastructure Layer"
-        Trainer["CustomTrainer<br/>Training orchestration"]
         Callbacks["Callback System<br/>Hook execution"]
         Device["Device Management<br/>Automatic placement"]
     end
     
-    subgraph "Integration Layer"
+    subgraph "External Integration Layer"
         ArtifactCore["artifact-core<br/>Validation artifacts"]
         ArtifactExp["artifact-experiment<br/>Experiment tracking"]
     end
     
     Model --> Trainer
     Data --> Trainer
-    Validation --> Trainer
+    Routines --> Trainer
+    Routines --> Callbacks
     
     Trainer --> Callbacks
     Trainer --> Device
@@ -57,14 +61,17 @@ graph TB
     Callbacks --> ArtifactExp
 ```
 
-### Model Interface Layer
-Defines domain-specific contracts for model behavior, including training forward passes and validation data generation. Models implement these interfaces while maintaining full control over internal architecture.
+### User Implementation Layer
+Users implement domain-specific components: model interfaces defining training and generation behavior, data pipelines for loading and processing, and validation routines specifying artifact computation workflows.
 
-### Training Infrastructure Layer
-Provides the training orchestration engine through `CustomTrainer`, which handles training loops, optimization, device management, and callback execution. The framework manages infrastructure complexity while exposing configuration hooks for customization.
+### User Configuration Layer
+Users extend `CustomTrainer` through subclassing and hook method implementations to configure training behavior—optimization, early stopping, checkpointing, and routine integration—while the framework handles the core orchestration logic.
 
-### Validation Integration Layer
-Automatically connects training processes to artifact-core's validation ecosystem. During training, validation routines generate synthetic data, compute domain-specific artifacts, and export results to experiment tracking platforms.
+### Framework Infrastructure Layer
+Pure framework components that users don't directly implement: the callback execution system and automatic device management. These provide the underlying infrastructure that powers the user-configured training process.
+
+### External Integration Layer
+Automatic connections to the broader Artifact ecosystem: artifact-core for validation artifact computation and artifact-experiment for experiment tracking and result export.
 
 ## 🔧 Core Abstractions
 
@@ -211,9 +218,7 @@ project_root/
 The architecture supports domain-specific toolkit development through:
 
 1. **Interface Definition**: Create domain-specific model protocols
-2. **Validation Integration**: Develop corresponding validation routines
-3. **Trainer Specialization**: Implement domain-optimized training procedures
-4. **Data Handling**: Create domain-specific data processing components
+2. **Validation Integration**: Develop artifact-experiment validation plans (defining which artifacts to compute) and validation routines that execute them (including preparatory work like data generation)
 
 ## 🚀 Usage Patterns
 
@@ -257,8 +262,6 @@ tracking_client = FilesystemTrackingClient.build(experiment_id="research_experim
 1. **Domain Directory**: Create `domain_name/` in project root
 2. **Interface Definition**: Define domain-specific model protocols
 3. **Validation Integration**: Implement corresponding validation routines
-4. **Trainer Specialization**: Create domain-optimized trainer extensions
-5. **Artifact Integration**: Ensure compatibility with artifact-core validation plans
 
 ### Component Extension
 
