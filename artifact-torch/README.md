@@ -30,23 +30,23 @@ The framework employs a three-layer architecture that separates domain logic fro
 ```mermaid
 graph TB
     subgraph "User Implementation Layer"
-        Model["Model Interface<br/>Domain-specific logic"]
-        Data["Data Pipeline<br/>Dataset & DataLoader"]
-        Routines["Validation Routines<br/>Artifact, Batch & DataLoader"]
+        Model["Model Interface<br/>(Domain-specific logic)"]
+        Data["Data Pipeline<br/>(Dataset & DataLoader)"]
     end
     
     subgraph "User Configuration Layer"
-        Trainer["CustomTrainer<br/>Hook implementations & orchestration"]
+        Trainer["CustomTrainer<br/>(Hook implementations & orchestration)"]
+        Routines["Validation Routines<br/>(Artifact, Batch & DataLoader)"]
     end
     
     subgraph "Framework Infrastructure Layer"
-        Callbacks["Callback System<br/>Hook execution"]
-        Device["Device Management<br/>Automatic placement"]
+        Callbacks["Callback System<br/>(Hook execution)"]
+        Device["Device Management<br/>(Automatic placement)"]
     end
     
     subgraph "External Integration Layer"
-        ArtifactCore["artifact-core<br/>Validation artifacts"]
-        ArtifactExp["artifact-experiment<br/>Experiment tracking"]
+        ArtifactCore["artifact-core<br/>(Validation artifacts)"]
+        ArtifactExp["artifact-experiment<br/>(Experiment tracking)"]
     end
     
     Model --> Trainer
