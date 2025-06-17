@@ -1,6 +1,6 @@
 # ⚙️ artifact-core
 
-> The core component of the Artifact framework, providing a flexible interface for the computation of heterogeneous validation artifacts in machine learning experiments.
+> The core component of the Artifact framework, providing a flexible minimal interface for the computation of heterogeneous validation artifacts in machine learning experiments.
 
 
 <p align="center">
@@ -17,15 +17,23 @@
 
 This repository serves as the foundation of the **Artifact** framework.
 
-It stands alongside::
-- `artifact-experiment`: Executable validation plans exporting results to popular experiment tracking services.
-- `artifact-torch`: PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
+It stands alongside:
+- [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment): The framework's experiment tracking extension, providing **executable validation plan abstractions** exporting results to popular tracking backends (e.g. Mlflow).
+- [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch): PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
 
-`artifact-core` provides a **flexible interface** for the computation of heterogeneous validation artifacts in machine learning experiments.
+`artifact-core` provides a **flexible minimal interface** for the computation of heterogeneous validation artifacts in machine learning experiments.
 
-It defines the core abstractions and implementations that enable standardized validation across different models and datasets.
+It defines the core abstractions and implementations that enable standardized validation across different domains, models and data modalities.
 
-## 📚 Examples
+Here, we use the word *minimal* to express that public interfaces and method signatures are as thin as possible.
+
+Standardized interfaces with minimal method signatures enable automated experiment orchestration through simple enum-based specifications.
+
+By abstracting away unique parameter requirements (static data specifications, hyperparameters) into framework-managed components, `artifact-core` enables downstream client code (e.g. experiment scripts) to invoke a wide array of validation artifacts using only type enumerations---as opposed to artifact-specific argument profiles.
+
+This design eliminates the need for custom integration code per artifact, enabling generic experiment scripts that scale seamlessly across diverse validation requirements with zero modification/ friction.
+
+## 📚 Usage Sketch
 
 ```python
 import pandas as pd
@@ -92,27 +100,9 @@ pdf_plots
   <img src="./assets/pdf_comparison_artifact.png" width="1700" alt="PDF Comparison Artifact">
 </p>
 
-## 🚀 Installation
-
-### Using Poetry (Recommended)
-
-```bash
-git clone https://github.com/vasileios-ektor-papoulias/artifact-core.git
-cd artifact-core
-poetry install
-```
-
-### Using Pip
-
-```bash
-git clone https://github.com/vasileios-ektor-papoulias/artifact-core.git
-cd artifact-core
-pip install .
-```
-
 ## 🏗️ Architecture
 
-`artifact-core` follows a layered architecture offering maximal extendibility while exposing a simple minimal interface to end-users:
+`artifact-core` follows a layered architecture offering maximal extendibility while exposing a simple interface to end-users:
 
 ```mermaid
 graph TB
@@ -125,6 +115,7 @@ graph TB
         AREG[ArtifactRegistry]
         AT[ArtifactType]
         AR[ArtifactResources]
+        ARS[ArtifactResourceSpec]
         AH[ArtifactHyperparams]
     end
     
@@ -134,56 +125,75 @@ graph TB
     end
     
     %% Dependencies (A uses B)
-    AE --> A
     AE --> AREG
     AREG --> AT
+    AREG --> A
     A --> AR
+    A --> ARS
     A --> AH
     AH --> Config
     AR --> Data
 ```
 
 ### User Interaction Layer
-The primary interface for orchestrating validation workflows. **ArtifactEngine** provides the main entry point that users interact with to execute collections of artifacts, manage configurations, and coordinate comprehensive validation processes across different artifact types.
+The interface boundary between users and the framework's validation capabilities.
 
 ### Framework Infrastructure Layer
-Internal framework components that provide the computational foundation. **Artifact** defines the abstract `compute()` method that all validation computations implement, **ArtifactRegistry** manages the mapping between **ArtifactType** enums and concrete implementations, **ArtifactResources** defines input data contracts, and **ArtifactHyperparams** enables configurable artifact behavior. These components work together to provide the extensible infrastructure that powers domain-specific implementations.
+The internal computational and management infrastructure that powers artifact execution.
 
 ### External Dependencies
-Configuration and data inputs that drive artifact computation. **Configuration Files** define artifact parameters and behavior, while **Input Data** provides the datasets or resources that artifacts operate on.
+External inputs and configurations that the framework depends on for operation.
 
 This architecture enables artifact-core to provide a clean separation between user-facing interfaces and internal framework infrastructure. Users interact primarily with ArtifactEngine while the framework handles the complexity of artifact registration, instantiation, and execution through its internal infrastructure components.
 
-The framework follows a modular architecture with the following key components:
-
-1. **Artifact**: A flexible computation unit utilizing generic resources, static resource specifications and hyperparameters to evaluate model outputs.
-2. **ArtifactRegistry**: Manages the registration and retrieval of artifacts.
-3. **ArtifactEngine**: High-level interface orchestrating the production of validation artifacts.
-
 ## 📊 Core Entities
 
-Artifacts are reusable components that compute specific validation metrics or visualizations.
+The framework operates by coordinating the interaction of specialized entities across the three aforementioned layers:
 
-They are heterogeneous (multi-modal). Based on their return value, they are categorized in the following groups:
+### **User Interaction Layer**
+The primary interface layer that users interact with to orchestrate comprehensive validation workflows:
 
-- **Scores**: Single numerical metrics
-- **Arrays**: Numpy arrays containing computed data
-- **Plots**: Matplotlib figures for visualization
-- **Collections**: Groups of related artifacts (e.g., multiple scores or plots)
+- **ArtifactEngine**: Simple yet flexible entry point providing a unified interface for executing individual validation artifacts. It manages registry access, handles artifact instantiation with appropriate configurations, and provides straightforward methods for computing validation results. Crucially method signatures are minimal, relegating secondary arguments like static data spec information and hyperparameters to be handled by the framework.
+```python
+engine = TableComparisonEngine(resource_spec=spec)
+pca_plot = engine.produce_dataset_comparison_plot(
+    plot_type=TableComparisonPlotType.PCA_PROJECTION_PLOT,
+    dataset_real=df_real,
+    dataset_synthetic=df_synthetic,
+)
+```
 
-Artifacts consume generic *resources* tailored to each use case. Their action is configured through:
-* generic *hyperparameter* objects encoding configuration settings
-* generic *resource spec* objects encoding static structural properties of the validation resources (e.g. schema properties in the context of tabular data generation).
+**Architecture Role**: ArtifactEngine serves as the main entry point that abstracts artifact lookup, instantiation, and execution complexity while providing a clean interface for individual artifact computation - users specify what artifact they want and the data to compute it on, and get back the validation result.
 
-Artifacts are grouped in **registries**.
+### **Framework Infrastructure Layer**
+Internal framework components that provide the computational foundation and artifact management system:
 
-Artifacts in the same registry share the same resources, return type and resource specification type, but may differ in their hyperparams type.
+- **Artifact**: Abstract computation units that define the `compute()` method contract. Artifacts are heterogeneous (multi-modal) and categorized by return type:
+  - **Scores**: Single numerical metrics
+  - **Arrays**: Numpy arrays containing computed data  
+  - **Plots**: Matplotlib figures for visualization
+  - **Collections**: Groups of related artifacts (e.g., multiple scores or plots)
 
-New artifacts can be registered with the appropriate registry. In doing so abstract enumerations are associated to the relevant artifact and hyperparmeter classes.
+- **ArtifactRegistry**: Management system that organizes artifacts by type and coordinates registration, retrieval, and instantiation. Artifacts in the same registry share resources, return types, and resource specification types.
 
-**Engines** utilize a group of registries (one for each data type) to provide a uniform interface for executing artifacts.
+- **ArtifactType**: Enumeration system that provides unique identifiers for different artifact implementations, enabling dynamic lookup and instantiation within registries.
 
-All artifacts associated to a given engine share resources and resource spec types.
+- **ArtifactResources**: Generic data objects that artifacts operate on, providing the input datasets or resources required for validation computation. The design of resource types is central to the framework's extensibility—by defining domain-specific resource contracts, we naturally group thematically related models that share validation requirements, enabling them to leverage common validation logic regardless of their internal architectural differences.
+
+- **ArtifactResourceSpec**: Protocol definitions that capture the structural properties and schema characteristics of validation resources (e.g., feature types and data schemas for tabular data).
+
+- **ArtifactHyperparams**: Configuration objects that enable customizable artifact behavior through domain-specific parameter settings.
+
+**Entity Coordination**: ArtifactEngine coordinates with ArtifactRegistry for artifact lookup and instantiation using ArtifactResourceSpec for type validation, while Artifact implementations use ArtifactResources for computation and ArtifactHyperparams for configuration. The interplay between ArtifactResources and ArtifactResourceSpec ensures type safety while enabling the framework's core capability of grouping diverse models by their validation resource compatibility.
+
+### **External Dependencies**
+Configuration and data inputs that drive artifact computation and enable framework customization:
+
+- **Configuration Files**: JSON-based parameter definitions that control artifact behavior, enable project-specific customization, and support configuration inheritance through the `.artifact` directory system.
+
+- **Resource Data**: Input datasets and validation resources that provide the raw data for artifact computation, typically domain-specific data formats (e.g., pandas DataFrames for tabular data).
+
+**Integration Flow**: Configuration Files define artifact parameters loaded by ArtifactHyperparams, while Resource Data flows through ArtifactResources to enable domain-specific validation computations.
 
 ## 🎯 Domain-Specific Validation Toolkits
 
@@ -644,11 +654,19 @@ class NewTableComparisonScore(
         return score
 ```
 
+## 🚀 Installation
+
+### Using Poetry (Recommended)
+
+```bash
+git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
+cd artifact-ml/artifact-core
+poetry install
+```
+
 ## 🤝 Contributing
 
-Contributions are welcome! 
-
-Please feel free to submit a Pull Request following the guidelines in [the general Artifact-ML README](./README.md).
+Contributions are welcome. Please refer to the [central Artifact-ML contribution guidelines](https://github.com/vasileios-ektor-papoulias/artifact-ml/blob/main/README.md) for development standards and submission procedures.
 
 ## 📄 License
 

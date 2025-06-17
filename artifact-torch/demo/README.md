@@ -1,6 +1,6 @@
 # 🚀 Artifact-Torch Demo: Tabular Data Synthesis with VAE
 
-> A comprehensive demonstration of the artifact-torch framework showcasing tabular data synthesis using a Variational Autoencoder with integrated validation from artifact-core.
+> A comprehensive demonstration of the artifact-torch framework showcasing tabular data synthesis using a Variational Autoencoder.
 
 <p align="center">
   <img src="../assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
@@ -10,21 +10,22 @@
 
 ## 📋 Overview
 
-This demo showcases the full capabilities of the **artifact-torch** framework through a production-ready tabular data synthesis pipeline. It demonstrates how to:
+This demo showcases the full capabilities of `artifact-torch` through a production-ready tabular data synthesis pipeline.
+
+It demonstrates how to:
 
 1. **Build and train** a Variational Autoencoder (VAE) for tabular data synthesis
-2. **Integrate seamlessly** with artifact-core's validation artifacts
-3. **Track experiments** using artifact-experiment's tracking clients
+2. **Integrate seamlessly** with `artifact-core`'s validation artifacts and `artifact-experiment`'s validation plans through `artifact-torch`
 
 ## 🏗️ Architecture
 
-The demo implements a VAE-based tabular synthesizer using artifact-torch:
+The demo implements a VAE-based tabular synthesizer using `artifact-torch`:
 
 ### Core Components
 
 - **`TabularVAE`**: High-level interface orchestrating the entire synthesis pipeline
-- **`TabularVAESynthesizer`**: Implements artifact-torch's `TableSynthesizer` interface for VAE-based synthesis
-- **`TabularVAETrainer`**: Extends artifact-torch's `CustomTrainer` to create a concrete training loop for the VAE model
+- **`TabularVAESynthesizer`**: Implements `artifact-torch`'s `TableSynthesizer` interface for VAE-based synthesis
+- **`TabularVAETrainer`**: Extends `artifact-torch`'s `CustomTrainer` to create a concrete training loop for the VAE model
 - **`DemoTableComparisonRoutine`**: Configures `TableComparisonRoutine` (`ArtifactRoutine` subclass for tabular data synthesis) to integrate artifact-ML validation into the training loop
 - **`DemoBatchRoutine`**: Configures `BatchRoutine` to provides batch-level performance evaluation callbacks
 - **`DemoLoaderRoutine`**: Configures `DataLoaderRoutine` to handles epoch-end performance monitoring through dataloader iteration
@@ -68,31 +69,11 @@ demo/
         └── sampler.py             # Sampling utilities
 ```
 
-## 📊 Dataset
-
-The demo uses the **Heart Disease dataset** (`../assets/real.csv`) with:
-
-**Continuous Features:**
-- `Age`: Patient age
-- `RestingBP`: Resting blood pressure
-- `Cholesterol`: Cholesterol level
-- `MaxHR`: Maximum heart rate achieved
-- `Oldpeak`: ST depression induced by exercise
-
-**Categorical Features:**
-- `Sex`: Patient gender
-- `ChestPainType`: Type of chest pain
-- `FastingBS`: Fasting blood sugar
-- `RestingECG`: Resting electrocardiogram results
-- `ExerciseAngina`: Exercise-induced angina
-- `ST_Slope`: ST slope
-- `HeartDisease`: Target variable (heart disease presence)
-
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-Ensure you have the artifact-ml workspace properly set up:
+Ensure you have the `artifact-ml` workspace properly set up:
 
 ```bash
 git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
@@ -146,7 +127,7 @@ We've packaged this complete workflow in an interactive Jupyter notebook for eas
 
 #### Configuration
 
-The demo is fully configurable through `config/config.json`:
+The demo is configurable through `config/config.json`:
 
 ```json
 {
@@ -187,6 +168,26 @@ The `FilesystemTrackingClient` saves all results to `~/artifact_ml/demo/<run_id>
 
 When you start training, the client prints the exact directory path where results are being saved
 
+## 📊 Dataset
+
+The demo uses the **Heart Disease dataset** (`../assets/real.csv`) with:
+
+**Continuous Features:**
+- `Age`: Patient age
+- `RestingBP`: Resting blood pressure
+- `Cholesterol`: Cholesterol level
+- `MaxHR`: Maximum heart rate achieved
+- `Oldpeak`: ST depression induced by exercise
+
+**Categorical Features:**
+- `Sex`: Patient gender
+- `ChestPainType`: Type of chest pain
+- `FastingBS`: Fasting blood sugar
+- `RestingECG`: Resting electrocardiogram results
+- `ExerciseAngina`: Exercise-induced angina
+- `ST_Slope`: ST slope
+- `HeartDisease`: Target variable (heart disease presence)
+
 ## 🎯 Model Architecture
 
 The `TabularVAESynthesizer` implements a **β-VAE** (Beta Variational Autoencoder) specifically designed for tabular data:
@@ -215,18 +216,18 @@ Combines reconstruction and regularization terms:
 
 ## 🔧 Step-by-Step Guide: Building a Project with Artifact-Torch
 
-This section provides an **intuitive step-by-step guide** for building your own project using artifact-torch. Each step shows you how to configure the framework's interfaces for your specific use case - essentially, all implementations are configurations that tell the framework how to handle your particular ML task.
+This section provides an **intuitive step-by-step guide** for building your own project using `artifact-torch`. Each step shows you how to configure the framework's interfaces for your specific use case - essentially, all implementations are configurations that tell the framework how to handle your particular ML task.
 
 ### Step 1: Select Your ML Task and Framework Coverage
 
-The **first step** is identifying your ML task and checking if artifact-torch provides framework support for it. Currently supported tasks include:
+The **first step** is identifying your ML task and checking if `artifact-torch` provides framework support for it. Currently supported tasks include:
 
 - **Tabular Data Synthesis**: Generate synthetic tabular data (our demo focus)
 
-Once you select your project type, artifact-torch **always provides two interfaces** for you to implement:
+Once you select your project type, `artifact-torch` **always provides two interfaces** for you to implement:
 
 1. **The model interface** - defines how your model integrates with the training framework
-2. **The artifact validation routine** - leverages artifact-core and artifact-experiment to provide project-type specific validation capabilities that are periodically injected into the training loop
+2. **The artifact validation routine** - leverages `artifact-core` and `artifact-experiment` to provide project-type specific validation capabilities that are periodically injected into the training loop
 
 For **tabular data synthesis**, these interfaces are:
 - `TableSynthesizer` interface for models
@@ -334,11 +335,11 @@ loader = DataLoader(
 )
 ```
 
-### Step 5: Configure Artifact-Experiment Validation Plan
+### Step 5: Configure your custom `Validation Plan`
 
-**What you need to do**: Configure which validation artifacts you want the framework to compute. This determines what metrics and visualizations are generated.
+**What you need to do**: Select the artifact collection you'd like to track as training progresses. Your customized plan will help configure the `ArtifactRoutine` injected into the training loop---see step 6. 
 
-#### **Validation Plan Configuration** (`components/routines/artifact.py`)
+#### **Validation Plan Configuration** (`artifact_experiment/table_comparison/validation_plan.py`)
 ```python
 from typing import List
 from artifact_experiment.table_comparison.validation_plan import (
@@ -391,9 +392,12 @@ class DemoTableComparisonPlan(TableComparisonPlan):
         ]
 ```
 
-### Step 6: Configure Framework Routines
+### Step 6: Configure Validation Routines
 
-**What you need to do**: Configure how the framework handles different aspects of training. Each routine is a configuration telling the framework what to do at specific points.
+**What you need to do**: Configure all validation hooks you would like to inject into your training loop:
+- `ArtifactRoutine`: Artifact-ML validation flow (in the context of tabular data synthesis this becomes `TableComparisonRoutine`).
+- `DataLoaderRoutine`: Monitoring via post-epoch per-data loader execution,
+- `BatchRoutine`: Monitoring via per-batch execution
 
 #### **Validation Routine Configuration** (`components/routines/artifact.py`)
 ```python
