@@ -37,6 +37,11 @@ graph TD
     InfraLabel["<b>Framework Infrastructure Layer</b>"]
     ExternalLabel["<b>External Integration Layer</b>"]
     
+    %% Vertical spacing elements
+    VerticalSpacer1[" "]
+    VerticalSpacer2[" "]
+    VerticalSpacer3[" "]
+    
     %% Layer groupings with better horizontal distribution
     subgraph impl [" "]
         direction LR
@@ -59,7 +64,8 @@ graph TD
         EarlyStopping["Early Stopping<br/>(Training termination)"]
         ModelTracking["Model Tracking<br/>(State management)"]
         Device["Device Management<br/>(Automatic placement)"]
-        Callbacks["Callback System<br/>(Hook execution)"]
+        BatchCallbacks["Batch Callbacks<br/>(Per-batch execution)"]
+        DataLoaderCallbacks["DataLoader Callbacks<br/>(Per-dataloader execution)"]
     end
     
     subgraph external [" "]
@@ -69,8 +75,8 @@ graph TD
         ExternalSpacer3[" "]
         ExternalSpacer4[" "]
         ExternalSpacer5[" "]
-        ArtifactExp["artifact-experiment<br/>(Experiment tracking)"]
         ArtifactCore["artifact-core<br/>(Validation artifacts)"]
+        ArtifactExp["artifact-experiment<br/>(Experiment tracking)"]
     end
     
     %% Component connections with optimal ordering
@@ -89,17 +95,19 @@ graph TD
     Trainer --> DataLoaderRoutine
     Trainer --> ArtifactRoutine
     
-    %% Infrastructure routines to Callback System
-    BatchRoutine --> Callbacks
-    DataLoaderRoutine --> Callbacks
+    %% Infrastructure routines to specific Callback types
+    BatchRoutine --> BatchCallbacks
+    DataLoaderRoutine --> DataLoaderCallbacks
     
     %% Domain-specific routine to External (direct integration)
     ArtifactRoutine --> ArtifactCore
     ArtifactRoutine --> ArtifactExp
     
-    %% Infrastructure to External (other framework needs)
-    Callbacks --> ArtifactCore
-    Callbacks --> ArtifactExp
+    %% Callback systems to External (framework needs)
+    BatchCallbacks --> ArtifactCore
+    BatchCallbacks --> ArtifactExp
+    DataLoaderCallbacks --> ArtifactCore
+    DataLoaderCallbacks --> ArtifactExp
     
     %% Style layer labels with positioning
     style ImplLabel fill:#e1f5fe,stroke:#0066cc,stroke-width:3px,color:#000000
@@ -113,7 +121,7 @@ graph TD
     style infra fill:#ffffff,stroke:#388e3c,stroke-width:2px
     style external fill:#ffffff,stroke:#f57c00,stroke-width:2px
     
-    %% Clean vertical spacing only
+    %% Clean vertical spacing with extra space for external layer
     ImplLabel --- impl
     ConfigLabel --- config  
     InfraLabel --- infra
@@ -121,7 +129,10 @@ graph TD
     
     impl ~~~ config
     config ~~~ infra
-    infra ~~~ external
+    infra ~~~ VerticalSpacer1
+    VerticalSpacer1 ~~~ VerticalSpacer2
+    VerticalSpacer2 ~~~ VerticalSpacer3
+    VerticalSpacer3 ~~~ external
     
     %% Make all component arrows thicker
     linkStyle 0 stroke-width:3px
@@ -139,6 +150,8 @@ graph TD
     linkStyle 12 stroke-width:3px
     linkStyle 13 stroke-width:3px
     linkStyle 14 stroke-width:3px
+    linkStyle 15 stroke-width:3px
+    linkStyle 16 stroke-width:3px
     
     %% Hide spacers
     style ExternalSpacer1 fill:transparent,stroke:transparent
@@ -147,6 +160,9 @@ graph TD
     style ExternalSpacer4 fill:transparent,stroke:transparent
     style ExternalSpacer5 fill:transparent,stroke:transparent
     style ConfigSpacer fill:transparent,stroke:transparent
+    style VerticalSpacer1 fill:transparent,stroke:transparent
+    style VerticalSpacer2 fill:transparent,stroke:transparent
+    style VerticalSpacer3 fill:transparent,stroke:transparent
 ```
 
 ### User Implementation Layer
