@@ -25,9 +25,7 @@ The framework abstracts common deep learning engineering patterns—training loo
 
 ## 🏗️ Architecture
 
-The framework employs a three-layer architecture that enables domain-agnostic infrastructure reuse through standardized interface contracts, allowing diverse domain-specific applications to leverage shared infrastructure components:
-
-**Domain-Specific Components**: Beyond model interfaces, artifact validation routines also contain domain-dependent logic, statically enforced through generic type parameters that demand specific model interface contracts at class definition time. This ensures type-safe integration while maintaining the flexibility for domain-specific validation behaviors across different problem domains.
+The framework employs a three-layer architecture with standardized interface contracts that enable maximal infrastructure reuse. Beyond abstracting engineering concerns, adherence to these type contracts unlocks instant access to comprehensive validation capabilities. Researchers select a problem domain (e.g., tabular data synthesis), adhere to its contracts and focus solely on architectural innovations. They no longer need to write lengthy experiment scripts with messy logic tailored to individual models. Training infrastructure can be shared. This eliminates implementation overhead and accelerates research velocity.
 
 ```mermaid
 graph TD
