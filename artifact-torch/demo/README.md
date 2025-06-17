@@ -258,8 +258,6 @@ class TabularVAEModelOutput(ModelOutput):
 
 **Configuration Purpose:**
 - **Type Contracts**: Framework knows exactly what data flows through your pipeline
-- **Auto-compatibility**: Trainer is designed to work with your type definitions
-- **IDE Support**: Full autocomplete and type checking
 - **Callback Compatibility**: These I/O types determine which batch and dataloader callbacks you can use, as static type analysis can verify that your model I/O types satisfy the framework's callback type requirements through the type variance system
 
 ### Step 3: Configure Your Model Interface
@@ -434,7 +432,7 @@ class DemoLoaderRoutine(DataLoaderRoutine[TabularVAEInput, TabularVAEOutput]):
 
 ### Step 7: Configure the Trainer
 
-**What you need to do**: Configure the trainer by extending CustomTrainer and implementing its hook methods. You're configuring how your specific model integrates with the framework's training infrastructure.
+**What you need to do**: Configure the trainer by extending CustomTrainer and implementing its hook methods. You're configuring the parameters and behavior of the training loop—optimization strategy, learning rate scheduling, early stopping criteria, and checkpointing behavior.
 
 #### **Trainer Configuration** (`trainer/trainer.py`)
 ```python
