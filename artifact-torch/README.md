@@ -50,13 +50,16 @@ graph TD
     
     subgraph infra [" "]
         direction LR
-        Components["Other Components<br/>(Early stoppers, Model trackers)"]
+        Cache["RAM Score Cache<br/>(Caching system)"]
+        EarlyStopping["Early Stopping<br/>(Training termination)"]
+        ModelTracking["Model Tracking<br/>(State management)"]
         Device["Device Management<br/>(Automatic placement)"]
         Callbacks["Callback System<br/>(Hook execution)"]
     end
     
     subgraph external [" "]
         direction LR
+        ExternalSpacer[" "]
         ArtifactExp["artifact-experiment<br/>(Experiment tracking)"]
         ArtifactCore["artifact-core<br/>(Validation artifacts)"]
     end
@@ -67,8 +70,10 @@ graph TD
     Data --> Trainer
     
     %% Configuration to Infrastructure (left to right order)
+    Trainer --> Cache
+    Trainer --> EarlyStopping
+    Trainer --> ModelTracking
     Trainer --> Device
-    Trainer --> Components  
     Trainer --> Callbacks
     
     %% Routine to Infrastructure
@@ -99,6 +104,21 @@ graph TD
     impl ~~~ config
     config ~~~ infra
     infra ~~~ external
+    
+    %% Make all component arrows thicker
+    linkStyle 0 stroke-width:3px
+    linkStyle 1 stroke-width:3px
+    linkStyle 2 stroke-width:3px
+    linkStyle 3 stroke-width:3px
+    linkStyle 4 stroke-width:3px
+    linkStyle 5 stroke-width:3px
+    linkStyle 6 stroke-width:3px
+    linkStyle 7 stroke-width:3px
+    linkStyle 8 stroke-width:3px
+    linkStyle 9 stroke-width:3px
+    
+    %% Hide external spacer
+    style ExternalSpacer fill:transparent,stroke:transparent
 ```
 
 ### User Implementation Layer
