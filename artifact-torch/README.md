@@ -1,6 +1,6 @@
 # ⚙️ artifact-torch
 
-> PyTorch integration for the Artifact framework that abstracts training infrastructure, enabling researchers to focus on architectural innovation. 
+> PyTorch integration for the Artifact framework: `artifact-torch` abstracts training infrastructure, enabling researchers to focus on architectural innovation.
 
 <p align="center">
   <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
