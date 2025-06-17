@@ -27,6 +27,8 @@ The framework abstracts common deep learning engineering patterns—training loo
 
 The framework employs a three-layer architecture that enables domain-agnostic infrastructure reuse through standardized interface contracts, allowing diverse domain-specific applications to leverage shared infrastructure components:
 
+**Domain-Specific Components**: Beyond model interfaces, artifact validation routines also contain domain-dependent logic, statically enforced through generic type parameters that demand specific model interface contracts at class definition time. This ensures type-safe integration while maintaining the flexibility for domain-specific validation behaviors across different problem domains.
+
 ```mermaid
 graph TD
     %% Layer labels
@@ -46,7 +48,9 @@ graph TD
         direction LR
         Trainer["CustomTrainer<br/>(Training orchestration)"]
         ConfigSpacer[" "]
-        Routines["Validation Routines<br/>(Artifact, Batch & DataLoader)"]
+        BatchRoutine["Batch Routine<br/>(Infrastructure)"]
+        DataLoaderRoutine["DataLoader Routine<br/>(Infrastructure)"]
+        ArtifactRoutine["Artifact Validation Routine<br/>(Domain-specific)"]
     end
     
     subgraph infra [" "]
@@ -80,13 +84,20 @@ graph TD
     Trainer --> ModelTracking
     Trainer --> Device
     
-    %% Configuration to Configuration
-    Trainer --> Routines
+    %% Configuration to Configuration (routine orchestration)
+    Trainer --> BatchRoutine
+    Trainer --> DataLoaderRoutine
+    Trainer --> ArtifactRoutine
     
-    %% Routine to Infrastructure
-    Routines --> Callbacks
+    %% Infrastructure routines to Callback System
+    BatchRoutine --> Callbacks
+    DataLoaderRoutine --> Callbacks
     
-    %% Infrastructure to External
+    %% Domain-specific routine to External (direct integration)
+    ArtifactRoutine --> ArtifactCore
+    ArtifactRoutine --> ArtifactExp
+    
+    %% Infrastructure to External (other framework needs)
     Callbacks --> ArtifactCore
     Callbacks --> ArtifactExp
     
@@ -123,6 +134,11 @@ graph TD
     linkStyle 7 stroke-width:3px
     linkStyle 8 stroke-width:3px
     linkStyle 9 stroke-width:3px
+    linkStyle 10 stroke-width:3px
+    linkStyle 11 stroke-width:3px
+    linkStyle 12 stroke-width:3px
+    linkStyle 13 stroke-width:3px
+    linkStyle 14 stroke-width:3px
     
     %% Hide spacers
     style ExternalSpacer1 fill:transparent,stroke:transparent
