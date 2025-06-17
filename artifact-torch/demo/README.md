@@ -10,25 +10,21 @@
 
 ## 📋 Overview
 
-This demo showcases the full capabilities of the **artifact-torch** framework by implementing a complete tabular data synthesis pipeline. It demonstrates how to:
+This demo showcases the full capabilities of the **artifact-torch** framework through a production-ready tabular data synthesis pipeline. It demonstrates how to:
 
 1. **Build and train** a Variational Autoencoder (VAE) for tabular data synthesis
 2. **Integrate seamlessly** with artifact-core's validation artifacts
 3. **Track experiments** using artifact-experiment's tracking clients
-4. **Evaluate synthetic data quality** using comprehensive validation metrics
-5. **Visualize results** with rich plots and comparisons
-
-The demo provides a production-ready template for building tabular data synthesizers with built-in validation and experiment tracking.
 
 ## 🏗️ Architecture
 
-The demo follows artifact-torch's modular architecture with the following components:
+The demo implements a VAE-based tabular synthesizer using artifact-torch:
 
 ### Core Components
 
 - **`TabularVAE`**: High-level interface orchestrating the entire synthesis pipeline
 - **`TabularVAESynthesizer`**: Implements artifact-torch's `TableSynthesizer` interface for VAE-based synthesis
-- **`TabularVAETrainer`**: Extends artifact-torch's `CustomTrainer` for VAE-specific training logic
+- **`TabularVAETrainer`**: Extends artifact-torch's `CustomTrainer` to create a concrete training loop for the VAE model
 - **`DemoTableComparisonRoutine`**: Integrates artifact-ML validation capabilities into the training loop
 - **`DemoBatchRoutine`**: Provides batch-level performance evaluation callbacks
 - **`DemoLoaderRoutine`**: Handles epoch-end performance monitoring through dataloader iteration
@@ -216,10 +212,6 @@ Combines reconstruction and regularization terms:
 - **Reconstruction Loss**: Cross-entropy for categorical features
 - **KL Divergence**: Regularizes latent space distribution
 - **β Parameter**: Controls regularization strength (`β = 0.1`)
-
-## 📊 Validation & Evaluation
-
-During training, the demo generates validation artifacts, model checkpoints, and callback results that are automatically saved to `~/artifact_ml/demo/<run_id>/artifacts/`.
 
 ## 🔧 Step-by-Step Guide: Building a Project with Artifact-Torch
 
