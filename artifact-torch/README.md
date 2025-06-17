@@ -25,7 +25,7 @@ The framework abstracts common deep learning engineering patterns—training loo
 
 ## 🏗️ Architecture
 
-The framework employs a three-layer architecture that separates domain logic from infrastructure concerns:
+The framework employs a three-layer architecture that enables domain-agnostic infrastructure reuse through standardized interface contracts, allowing diverse domain-specific applications to leverage shared infrastructure components:
 
 ```mermaid
 graph TD
