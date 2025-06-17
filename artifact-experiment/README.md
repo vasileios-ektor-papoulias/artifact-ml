@@ -6,7 +6,6 @@
   <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
 </p>
 
-
 ![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
 ![License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-core)
 
@@ -129,45 +128,37 @@ The complete flow demonstrates how entities collaborate to achieve the framework
 7. **ArtifactLoggers** handle artifact-specific export to experiment backends
 
 This coordinated interaction transforms artifact-core's raw validation capabilities into reusable, executable validation plans with automatic experiment tracking across multiple backends.
+
+## 📚 Usage Examples
+
+### Basic Validation Plan
+
+```python
 from typing import List
+import pandas as pd
 from artifact_core.libs.resource_spec.tabular.spec import TabularDataSpec
-from artifact_experiment.libs.tracking.mlflow.client import MlflowTrackingClient
 from artifact_experiment.table_comparison.validation_plan import (
-    TableComparisonArrayCollectionType,
-    TableComparisonArrayType,
-    TableComparisonPlotCollectionType,
+    TableComparisonPlan,
+    TableComparisonScoreType,
     TableComparisonPlotType,
     TableComparisonScoreCollectionType,
-    TableComparisonScoreType,
-    TableComparisonPlan,
+    TableComparisonArrayCollectionType,
+    TableComparisonPlotCollectionType,
 )
 
-# Load datasets
-df_real = pd.read_csv("real_data.csv")
-df_synthetic = pd.read_csv("synthetic_data.csv")
-
-# Define resource specification
-continuous_features = ["feature1", "feature2", "feature3"]
-resource_spec = TabularDataSpec.from_df(
-    df=df_real,
-    ls_cts_features=continuous_features,
-    ls_cat_features=[col for col in df_real.columns if col not in continuous_features]
-)
-
-# Define a custom validation plan
-class MyValidationPlan(TableComparisonPlan):
+class ComprehensiveValidationPlan(TableComparisonPlan):
     @staticmethod
     def _get_score_types() -> List[TableComparisonScoreType]:
-        return [TableComparisonScoreType.MEAN_JS_DISTANCE]
-
-    @staticmethod
-    def _get_array_types() -> List[TableComparisonArrayType]:
-        return []
+        return [
+            TableComparisonScoreType.MEAN_JS_DISTANCE,
+            TableComparisonScoreType.PAIRWISE_CORRELATION_DISTANCE,
+        ]
 
     @staticmethod
     def _get_plot_types() -> List[TableComparisonPlotType]:
         return [
             TableComparisonPlotType.PDF_PLOT,
+            TableComparisonPlotType.CDF_PLOT,
             TableComparisonPlotType.PCA_PROJECTION_PLOT,
         ]
 
@@ -182,130 +173,148 @@ class MyValidationPlan(TableComparisonPlan):
             TableComparisonArrayCollectionType.STDS,
         ]
 
-    @staticmethod
+    @staticmethod  
     def _get_plot_collection_types() -> List[TableComparisonPlotCollectionType]:
-        return [
-            TableComparisonPlotCollectionType.PDF_PLOTS,
-        ]
+        return [TableComparisonPlotCollectionType.PDF_PLOTS]
 
-# Create and execute the validation plan
-plan = MyValidationPlan.build(resource_spec=resource_spec)
-plan.execute(dataset_real=df_real, dataset_synthetic=df_synthetic)
+# Load and prepare data
+df_real = pd.read_csv("real_data.csv")
+df_synthetic = pd.read_csv("synthetic_data.csv")
+
+continuous_features = ["feature1", "feature2", "feature3"]
+resource_spec = TabularDataSpec.from_df(
+    df=df_real,
+    ls_cts_features=continuous_features,
+    ls_cat_features=[col for col in df_real.columns if col not in continuous_features]
+)
+
+# Execute validation plan
+plan = ComprehensiveValidationPlan.build(resource_spec=resource_spec)
+plan.execute_table_comparison(dataset_real=df_real, dataset_synthetic=df_synthetic)
 
 # Access computed artifacts
 js_distance = plan.scores.get("MEAN_JS_DISTANCE")
 pca_plot = plan.plots.get("PCA_PROJECTION_PLOT")
+feature_means = plan.array_collections.get("MEANS")
 ```
 
-## 🔄 Experiment Tracking Integration
+### Experiment Tracking Integration
 
-### MLflow
-
+#### MLflow Integration
 ```python
-# Create or get an MLflow experiment
-MLFLOW_EXPERIMENT_NAME = "My Experiment"
+from artifact_experiment.libs.tracking.mlflow.client import MlflowTrackingClient
+
+# Setup MLflow experiment
+MLFLOW_EXPERIMENT_NAME = "Synthetic Data Validation"
 experiment_id = MlflowTrackingClient.create_experiment(experiment_name=MLFLOW_EXPERIMENT_NAME)
 
-# Create a tracking client
+# Create tracking client and build validation plan
 mlflow_client = MlflowTrackingClient.build(experiment_id=experiment_id)
+plan = ComprehensiveValidationPlan.build(resource_spec=resource_spec, tracking_client=mlflow_client)
 
-# Build the validation plan with tracking
-plan = MyValidationPlan.build(resource_spec=resource_spec, tracking_client=mlflow_client)
+# Execute validation (results automatically logged to MLflow)
+plan.execute_table_comparison(dataset_real=df_real, dataset_synthetic=df_synthetic)
 
-# Execute the plan (results will be logged to MLflow)
-plan.execute(dataset_real=df_real, dataset_synthetic=df_synthetic)
-
-# Stop the run when done
+# Stop MLflow run
 mlflow_client.run.stop()
 ```
 
-### ClearML
-
+#### ClearML Integration
 ```python
 from artifact_experiment.libs.tracking.clear_ml.client import ClearMLTrackingClient
 
-# Create a ClearML tracking client
-CLEAR_ML_PROJECT_NAME = "My Project"
-clear_ml_client = ClearMLTrackingClient.build(experiment_id=CLEAR_ML_PROJECT_NAME)
+# Create ClearML tracking client
+CLEAR_ML_PROJECT_NAME = "Data Synthesis Validation"
+clearml_client = ClearMLTrackingClient.build(experiment_id=CLEAR_ML_PROJECT_NAME)
 
-# Build and execute the validation plan
-plan = MyValidationPlan.build(resource_spec=resource_spec, tracking_client=clear_ml_client)
-plan.execute(dataset_real=df_real, dataset_synthetic=df_synthetic)
-clear_ml_client.run.stop()
+# Build and execute validation plan
+plan = ComprehensiveValidationPlan.build(resource_spec=resource_spec, tracking_client=clearml_client)
+plan.execute_table_comparison(dataset_real=df_real, dataset_synthetic=df_synthetic)
+clearml_client.run.stop()
 ```
 
-### Neptune
-
+#### Neptune Integration
 ```python
 from artifact_experiment.libs.tracking.neptune.client import NeptuneTrackingClient
 
-# Create a Neptune tracking client
-NEPTUNE_PROJECT_NAME = "My Project"
+# Create Neptune tracking client
+NEPTUNE_PROJECT_NAME = "data-validation/experiments"
 neptune_client = NeptuneTrackingClient.build(experiment_id=NEPTUNE_PROJECT_NAME)
 
-# Build and execute the validation plan
-plan = MyValidationPlan.build(resource_spec=resource_spec, tracking_client=neptune_client)
-plan.execute(dataset_real=df_real, dataset_synthetic=df_synthetic)
+# Build and execute validation plan
+plan = ComprehensiveValidationPlan.build(resource_spec=resource_spec, tracking_client=neptune_client)
+plan.execute_table_comparison(dataset_real=df_real, dataset_synthetic=df_synthetic)
 neptune_client.run.stop()
 ```
 
-### Local Filesystem
-
+#### Local Filesystem Integration
 ```python
 from artifact_experiment.libs.tracking.filesystem.client import FilesystemTrackingClient
 
-# Create a filesystem tracking client
-filesystem_tracker = FilesystemTrackingClient.build(experiment_id="my_experiment")
+# Create filesystem tracking client (saves to ~/artifact_ml/)
+filesystem_client = FilesystemTrackingClient.build(experiment_id="my_validation_experiment")
 
-# Build and execute the validation plan
-plan = MyValidationPlan.build(resource_spec=resource_spec, tracking_client=filesystem_tracker)
-plan.execute(dataset_real=df_real, dataset_synthetic=df_synthetic)
-filesystem_tracker.run.stop()
+# Build and execute validation plan
+plan = ComprehensiveValidationPlan.build(resource_spec=resource_spec, tracking_client=filesystem_client)
+plan.execute_table_comparison(dataset_real=df_real, dataset_synthetic=df_synthetic)
+filesystem_client.run.stop()
+
+# Results saved to ~/artifact_ml/my_validation_experiment/
 ```
 
-## 🏗️ Architecture
+## 🔧 Framework Extension
 
-The framework follows a modular architecture with the following key components:
+### Creating ValidationPlans for New Domains
 
-### 1. Validation Plans
-
-Validation plans define what artifacts to compute and how to execute them.
-
-They are built on top of the `artifact-core` engine and provide a high-level interface for executing validation workflows.
-
-They are configured by implementing subcalss hooks determining the artifacts of interest:
+Each ArtifactEngine in `artifact-core` should have a corresponding ValidationPlan in `artifact-experiment`. When contributing new artifact types to `artifact-core`, extend `artifact-experiment` with the corresponding validation plan:
 
 ```python
-class MyValidationPlan(TableComparisonPlan):
+from artifact_experiment.base.validation_plan import ValidationPlan
+
+class NewDomainValidationPlan(ValidationPlan[...]):
     @staticmethod
-    def _get_score_types() -> List[TableComparisonScoreType]:
-        return [...]  # Define which scores to compute
-    
-    # Define other artifact types to compute...
+    def _get_callback_factory() -> Type[NewDomainCallbackFactory]:
+        return NewDomainCallbackFactory
+        
+    # Implement required artifact type methods...
 ```
 
-### 2. Callbacks
+### Adding New Tracking Backends
 
-Callbacks handle the computation of artifacts and their tracking. The framework provides a flexible callback system that allows for easy extension and customization.
+To support a new experiment tracking backend:
 
-- **Callback**: Base class for all callbacks
-- **Callback Handlers**: Manage groups of related callbacks
+1. **Create RunAdapter**: Normalize the backend's native run object
+2. **Create TrackingClient**: Implement the unified tracking interface  
+3. **Implement ArtifactLoggers**: Handle backend-specific artifact export
 
-Each callback subtype comes with an associated handler.
+```python
+from artifact_experiment.base.tracking.adapter import RunAdapter
+from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_experiment.base.tracking.logger import ArtifactLogger
 
-Callback subtypes:
+# 1. Create RunAdapter
+class MyBackendRunAdapter(RunAdapter[MyNativeRunType]):
+    def upload(self, path_source: str, dir_target: str):
+        # Implement backend-specific file upload
+        pass
+    
+    def stop(self):
+        # Implement run termination logic
+        pass
 
-- **CacheCallback**: Executes a computation and stores output in state.
-- **TrackingCallback**: Executes a computation, stores output in state and exports to an experiment tracking run.
-- **ArtifactCallback**: Integration with `artifact-core`: a **TrackingCallback** whose computation delegates to an **Artifact**.
+# 2. Create TrackingClient
+class MyBackendTrackingClient(TrackingClient[MyBackendRunAdapter]):
+    @staticmethod
+    def _get_score_logger(run: MyBackendRunAdapter) -> ArtifactLogger[float, MyBackendRunAdapter]:
+        return MyBackendScoreLogger(run=run)
+    
+    # Implement other logger getters...
 
-### 3. Tracking
-
-The tracking system provides a unified interface for logging artifacts to different experiment tracking backends.
-
-- **TrackingClient**: Base class for all tracking clients.
-- **RunAdapter**: Adapts native run objects from different backends.
-- **ArtifactLogger**: Handles the logging of specific artifact types.
+# 3. Implement ArtifactLoggers  
+class MyBackendScoreLogger(ArtifactLogger[float, MyBackendRunAdapter]):
+    def log(self, artifact: float, artifact_name: str):
+        # Implement backend-specific score logging
+        pass
 ```
 
 ## 🚀 Installation
@@ -326,45 +335,9 @@ cd artifact-experiment
 pip install .
 ```
 
-## 🔧 Extending the Framework
-
-### 1. Creating a **ValidationPlan** to Match a New **ArtifactEngine**
-
-Each **ArtifactEngine** in `artifac-core` has a **ValidationPlan** counterpart defined in `artifact-experiment`.
-
-To illustrate: the **TableComparisonEngine** provides an interface for executing table comarison artifacts. The same artifact collection is made available for tracking (through `artifact-experiment`) using the **TableComparisonPlan** class.
-
-When contributing new artifact types to `artifact-core`, it's suggested to also provide the relevant extension to `artifact-experiment` as in the the example above.
-
-### 2. Adding Support for a New Tracking Backend
-
-To add support for a new tracking backend:
-
-1. Create a new **RunAdapter** for the backend
-2. Create a new **TrackingClient** for the backend
-3. Implement the necessary loggers (**ArtifactLogger**) for different artifact types
-
-```python
-# Example: Implementing a new tracking backend
-
-# 1. Create a RunAdapter
-class MyBackendRunAdapter(RunAdapter[MyNativeRunType]):
-    # Implement required methods...
-
-# 2. Create a TrackingClient
-class MyBackendTrackingClient(TrackingClient[MyBackendRunAdapter]):
-    # Implement required methods...
-
-# 3. Implement loggers
-class MyBackendScoreLogger(ArtifactLogger[float, MyBackendRunAdapter]):
-    # Implement required methods...
-```
-
 ## 🤝 Contributing
 
-Contributions are welcome! 
-
-Please feel free to submit a Pull Request following the guidelines in [the general Artifact-ML README](https://github.com/vasileios-ektor-papoulias/artifact-ml/blob/main/README.md).
+Contributions are welcome! Please feel free to submit a Pull Request following the guidelines in [the general Artifact-ML README](https://github.com/vasileios-ektor-papoulias/artifact-ml/blob/main/README.md).
 
 ## 📄 License
 
