@@ -232,12 +232,16 @@ For **tabular data synthesis**, these interfaces are:
 - `TableSynthesizer` interface for models
 - `TableComparisonRoutine` for validation
 
-### Step 2: Configure Model Input/Output Types
+### Step 2: Define the Model Input/Output Types
 
-**What you need to do**: Define typed interfaces that describe your model's inputs and outputs. This is pure configuration - you're telling the framework what data types to expect.
+**What you need to do**: Define typed interfaces that describe your model's inputs and outputs.
 
-#### **Model I/O Configuration** (`model/io.py`)
+#### **Model I/O Definition** (`model/io.py`)
 ```python
+import torch
+
+from artifact_torch.base.model.io import ModelInput, ModelOutput
+
 class TabularVAEModelInput(ModelInput):
     batch: torch.Tensor                    # Input tensor for VAE
 
@@ -252,14 +256,21 @@ class TabularVAEModelOutput(ModelOutput):
 - **Type Contracts**: Framework knows exactly what data flows through your pipeline
 - **Callback Compatibility**: These I/O types determine which batch and dataloader callbacks you can use, as static type analysis can verify that your model I/O types satisfy the framework's callback type requirements through the type variance system
 
-### Step 3: Configure Your Model Interface
+### Step 3: Implement the Model
 
-**What you need to do**: Implement the framework's model interface for your specific architecture. This allows you to build whatever architecture you want while hooking into the API the framework expects. You're implementing the required interface methods while maintaining full control over your model's internal structure and behavior.
+**What you need to do**: Implement the model interface for your specific architecture while respecting the expected contracts. This allows you to build whatever architecture you want while maintaining full control over your model's internal structure and behavior.
 
 In general, implementing one of the model interfaces—in this case for table synthesis—might require implementing secondary configuration objects, such as generation parameters.
 
-#### **Model Configuration** (`model/synthesizer.py`)
+#### **Model Implementation** (`model/synthesizer.py`)
 ```python
+from dataclasses import dataclass
+from typing import Optional
+
+import pandas as pd
+
+from artifact_torch.table_comparison.model import TableSynthesizer
+
 class TabularVAESynthesizer(TableSynthesizer):
     def __init__(self, vae_model: VAE, discretizer: Discretizer, encoder: Encoder):
         self._vae_model = vae_model           # Your actual neural network
@@ -273,20 +284,29 @@ class TabularVAESynthesizer(TableSynthesizer):
 
 #### **Secondary Configuration Objects** (`model/synthesizer.py`)
 ```python
+from dataclasses import dataclass
+
+from artifact_torch.core.model.generative import GenerationParams
+
 @dataclass
-class TabularVAEGenerationParams:
+class TabularVAEGenerationParams(GenerationParams):
     n_records: int
     use_mean: bool = False
     temperature: float = 1.0
     sample: bool = True
 ```
 
-### Step 4: Configure Dataset and DataLoader
+### Step 4: Implement the Dataset
 
-**What you need to do**: Configure how to load individual training samples and create batches. The framework provides lightweight wrappers around PyTorch's native objects with type annotations and enhanced functionality.
+**What you need to do**: Implement how to load individual training samples by extending the Dataset interface while respecting the expected contracts. The framework provides lightweight wrappers around PyTorch's native objects with type annotations and enhanced functionality.
 
-#### **Dataset Configuration** (`data/dataset.py`)
+#### **Dataset Implementation** (`data/dataset.py`)
 ```python
+import pandas as pd
+import torch
+
+from artifact_torch.base.data.dataset import Dataset
+
 class TabularVAEDataset(Dataset[TabularVAEModelInput]):
     def __init__(self, df_encoded: pd.DataFrame):
         self._df_encoded = df_encoded
@@ -301,7 +321,8 @@ class TabularVAEDataset(Dataset[TabularVAEModelInput]):
         return len(self._df_encoded)
 ```
 
-#### **DataLoader Configuration** (used in orchestration)
+**Using Dataset with DataLoader**: Once you've implemented your dataset, you can use it with the framework's DataLoader wrapper for batching during training:
+
 ```python
 from artifact_torch.base.data.data_loader import DataLoader
 
@@ -319,6 +340,16 @@ loader = DataLoader(
 
 #### **Validation Plan Configuration** (`components/routines/artifact.py`)
 ```python
+from typing import List
+from artifact_experiment.table_comparison.validation_plan import (
+    TableComparisonPlan,
+    TableComparisonScoreType,
+    TableComparisonPlotType,
+    TableComparisonScoreCollectionType,
+    TableComparisonArrayCollectionType,
+    TableComparisonPlotCollectionType,
+)
+
 class DemoTableComparisonPlan(TableComparisonPlan):
     @staticmethod
     def _get_score_types() -> List[TableComparisonScoreType]:
@@ -360,16 +391,18 @@ class DemoTableComparisonPlan(TableComparisonPlan):
         ]
 ```
 
-**Configuration Benefits:**
-- **Automatic Validation**: Framework generates all specified artifacts during training
-- **Experiment Tracking**: All artifacts automatically logged to your tracking client
-
 ### Step 6: Configure Framework Routines
 
 **What you need to do**: Configure how the framework handles different aspects of training. Each routine is a configuration telling the framework what to do at specific points.
 
 #### **Validation Routine Configuration** (`components/routines/artifact.py`)
 ```python
+from typing import Optional
+from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_experiment.table_comparison.validation_plan import TableComparisonPlan
+from artifact_torch.table_comparison.routine import TableComparisonRoutine
+
 class DemoTableComparisonRoutine(TableComparisonRoutine):
     @classmethod
     def _get_period(cls) -> int:
@@ -396,6 +429,12 @@ class DemoTableComparisonRoutine(TableComparisonRoutine):
 
 #### **Batch Routine Configuration** (`components/routines/batch.py`)
 ```python
+from typing import List
+from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_torch.base.components.callbacks.batch import BatchCallback
+from artifact_torch.base.components.routines.batch import BatchRoutine
+from artifact_torch.libs.components.callbacks.batch.loss import BatchLossCallback
+
 class DemoBatchRoutine(BatchRoutine[TabularVAEInput, TabularVAEOutput]):
     @staticmethod
     def _get_batch_callbacks(tracking_client) -> List[BatchCallback]:
@@ -405,6 +444,15 @@ class DemoBatchRoutine(BatchRoutine[TabularVAEInput, TabularVAEOutput]):
 
 #### **Data Loader Routine Configuration** (`components/routines/loader.py`)
 ```python
+from typing import List
+from artifact_torch.base.components.callbacks.data_loader import (
+    DataLoaderScoreCallback,
+    DataLoaderArrayCallback,
+    DataLoaderPlotCallback,
+)
+from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
+from artifact_torch.libs.components.callbacks.data_loader.loss import TrainLossCallback
+
 class DemoLoaderRoutine(DataLoaderRoutine[TabularVAEInput, TabularVAEOutput]):
     @staticmethod
     def _get_score_callbacks() -> List[DataLoaderScoreCallback]:
@@ -422,12 +470,28 @@ class DemoLoaderRoutine(DataLoaderRoutine[TabularVAEInput, TabularVAEOutput]):
     # Similar methods for score_collection, array_collection, plot_collection callbacks
 ```
 
+**Custom Callback Development**: For project-specific requirements, you can create custom callbacks tailored to your model's I/O profile by extending the appropriate base callback classes in your project's `libs/components/callbacks/` directory. These custom callbacks will seamlessly integrate with existing framework callbacks compatible with your model's I/O types, giving you both flexibility and access to the full ecosystem of pre-built functionality.
+
 ### Step 7: Configure the Trainer
 
 **What you need to do**: Configure the trainer by extending CustomTrainer and implementing its hook methods. You're configuring the parameters and behavior of the training loop—optimization strategy, learning rate scheduling, early stopping criteria, and checkpointing behavior.
 
 #### **Trainer Configuration** (`trainer/trainer.py`)
 ```python
+from typing import Any, Optional
+import torch
+from torch import optim
+from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_torch.base.components.callbacks.checkpoint import CheckpointCallback
+from artifact_torch.base.components.early_stopping.stopper import EarlyStopper, StopperUpdateData
+from artifact_torch.base.components.model_tracking.tracker import ModelTrackingCriterion
+from artifact_torch.base.components.routines.batch import BatchRoutine
+from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
+from artifact_torch.base.trainer.custom import CustomTrainer
+from artifact_torch.libs.components.callbacks.checkpoint.standard import StandardCheckpointCallback
+from artifact_torch.libs.components.early_stopping.epoch_bound import EpochBoundStopper
+from artifact_torch.table_comparison.model import TableSynthesizer
+
 class TabularVAETrainer(CustomTrainer[
     TableSynthesizer[TabularVAEInput, TabularVAEOutput, Any],
     TabularVAEInput,
