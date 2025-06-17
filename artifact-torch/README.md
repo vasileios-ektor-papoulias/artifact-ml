@@ -330,7 +330,7 @@ project_root/
 
 **Core Interface**: `TableSynthesizer` protocol defining tabular generation contracts.
 
-**Validation Integration**: `TableComparisonRoutine` with artifact-core's table comparison validation plans.
+**Validation Integration**: `TableComparisonRoutine` managing the execution of Artifact-ML table comparison validation plans.
 
 **Reference Implementation**: The `demo/` directory contains a complete VAE-based tabular synthesizer demonstrating all toolkit components.
 
