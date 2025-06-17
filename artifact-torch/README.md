@@ -1,6 +1,6 @@
 # ⚙️ artifact-torch
 
-> PyTorch integration for the Artifact framework, abstracting training infrastructure to let researchers focus on model innovation
+> PyTorch integration for the Artifact framework that abstracts training infrastructure, enabling researchers to focus on architectural innovation. 
 
 <p align="center">
   <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
@@ -15,7 +15,7 @@
 
 **artifact-torch** provides PyTorch integration for the Artifact framework, delivering a type-safe training infrastructure that automatically integrates with artifact-core's validation capabilities.
 
-The framework abstracts common deep learning engineering patterns—training loops, device management, callback systems, and validation orchestration—allowing researchers to focus on architectural innovation rather than mundane infrastructure development.
+The framework abstracts common deep learning engineering patterns—training loops, device management, callback systems, and validation orchestration—allowing researchers to focus on architectural innovation over infrastructure development.
 
 **Core Value Proposition:**
 - **Interface-driven design**: Implement clean contracts rather than complex training infrastructure
@@ -330,16 +330,9 @@ project_root/
 
 **Core Interface**: `TableSynthesizer` protocol defining tabular generation contracts.
 
-**Validation Integration**: `TableComparisonRoutine` with artifact-core's table comparison validation plans.
+**Validation Integration**: `TableComparisonRoutine` managing the execution of Artifact-ML table comparison validation plans.
 
-**Available Artifacts**:
-- Distribution analysis (PDF/CDF comparisons)
-- Dimensionality reduction visualizations (PCA projections)
-- Correlation structure analysis
-- Statistical distance metrics (Jensen-Shannon divergence, correlation distance)
-- Descriptive statistics comparisons
-
-**Reference Implementation**: The `demo/` directory contains a complete VAE-based tabular synthesizer demonstrating all toolkit components.
+**Reference Implementation**: The `demo/` directory contains a complete VAE-based tabular data synthesis project built with artifact-torch demonstrating all toolkit components.
 
 ## 🔧 Framework Extension
 
@@ -351,11 +344,13 @@ project_root/
 
 ### Component Extension
 
+**Model Type Contract Development**: Define new `Model`, `ModelInput` and `ModelOutput` contracts in `core/model` for domain-specific data flow patterns, enabling type-safe callback development and static compatibility verification.
+
 **Callback Development**: Place in `libs/components/callbacks/`, inherit from appropriate base classes, implement required hook methods.
 
-**Early Stopping Criteria**: Extend `EarlyStopper[T]` in `libs/components/early_stopping/` with domain-specific termination logic.
+**Model Tracker Development**: Extend `ModelTracker[T]` in `libs/components/model_tracking/` with domain-specific best model tracking criteria (e.g., validation loss improvement, custom metric optimization).
 
-**Model Interface Extension**: Define new protocols in domain directories with integration points for trainer and validation systems.
+**Early Stopping Criteria**: Extend `EarlyStopper[T]` in `libs/components/early_stopping/` with domain-specific termination logic.
 
 ## 🚀 Installation
 
