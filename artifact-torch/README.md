@@ -1,6 +1,6 @@
 # ⚙️ artifact-torch
 
-> A PyTorch deep learning framework that abstracts training infrastructure complexity to enable researchers to focus on model innovation
+> PyTorch integration for the Artifact framework, abstracting training infrastructure to let researchers focus on model innovation
 
 <p align="center">
   <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
@@ -25,46 +25,150 @@ The framework abstracts common deep learning engineering patterns—training loo
 
 ## 🏗️ Architecture
 
-The framework employs a three-layer architecture that separates domain logic from infrastructure concerns:
+The framework employs a three-layer architecture with standardized interface contracts that enable maximal infrastructure reuse. Beyond abstracting engineering concerns, adherence to these type contracts unlocks instant access to comprehensive validation capabilities. Researchers select a problem domain (e.g., tabular data synthesis), adhere to its contracts and focus solely on architectural innovations. They no longer need to write lengthy experiment scripts with messy logic tailored to individual models. Training infrastructure can be shared. This eliminates implementation overhead and accelerates research velocity.
 
 ```mermaid
-graph TB
-    subgraph "User Implementation Layer"
-        Model["Model Interface<br/>Domain-specific logic"]
-        Data["Data Pipeline<br/>Dataset & DataLoader"]
-        Validation["Validation Routine<br/>Artifact configuration"]
+graph TD
+    %% Layer labels
+    ImplLabel["<b>User Implementation Layer</b>"]
+    ConfigLabel["<b>User Configuration Layer</b>"]
+    InfraLabel["<b>Framework Infrastructure Layer</b>"]
+    ExternalLabel["<b>External Integration Layer</b>"]
+    
+    %% Vertical spacing elements
+    VerticalSpacer1[" "]
+    VerticalSpacer2[" "]
+    VerticalSpacer3[" "]
+    
+    %% Layer groupings with better horizontal distribution
+    subgraph impl [" "]
+        direction LR
+        Model["Model<br/>(Architecture)"]
+        Data["Data Pipeline<br/>(Dataset)"]
     end
     
-    subgraph "Framework Infrastructure Layer"
-        Trainer["CustomTrainer<br/>Training orchestration"]
-        Callbacks["Callback System<br/>Hook execution"]
-        Device["Device Management<br/>Automatic placement"]
+    subgraph config [" "]
+        direction LR
+        Trainer["CustomTrainer<br/>(Training orchestration)"]
+        ConfigSpacer[" "]
+        BatchRoutine["Batch Routine<br/>(Batch processing hook)"]
+        DataLoaderRoutine["DataLoader Routine<br/>(Data loader processing hook)"]
+        ArtifactRoutine["Artifact Validation Routine<br/>(Artifact-ML validation hook)"]
     end
     
-    subgraph "Integration Layer"
-        ArtifactCore["artifact-core<br/>Validation artifacts"]
-        ArtifactExp["artifact-experiment<br/>Experiment tracking"]
+    subgraph infra [" "]
+        direction LR
+        Cache["RAM Score Cache<br/>(Caching system)"]
+        EarlyStopping["Early Stopping<br/>(Training termination)"]
+        ModelTracking["Model Tracking<br/>(State management)"]
+        Device["Device Management<br/>(Automatic placement)"]
+        Callbacks["Callbacks<br/>(hook execution atoms)"]
     end
     
+    subgraph external [" "]
+        direction LR
+        ExternalSpacer1[" "]
+        ExternalSpacer2[" "]
+        ExternalSpacer3[" "]
+        ExternalSpacer4[" "]
+        ExternalSpacer5[" "]
+        ArtifactExp["artifact-experiment<br/>(Experiment tracking)"]
+        ArtifactCore["artifact-core<br/>(Validation artifacts)"]
+    end
+    
+    %% Component connections with optimal ordering
+    %% Implementation to Configuration
     Model --> Trainer
     Data --> Trainer
-    Validation --> Trainer
     
-    Trainer --> Callbacks
+    %% Configuration to Infrastructure (left to right order)
+    Trainer --> Cache
+    Trainer --> EarlyStopping
+    Trainer --> ModelTracking
     Trainer --> Device
+    Trainer --> Callbacks
     
-    Callbacks --> ArtifactCore
+    %% Configuration to Configuration (routine orchestration)
+    Trainer --> BatchRoutine
+    Trainer --> DataLoaderRoutine
+    Trainer --> ArtifactRoutine
+    
+    %% Infrastructure routines to Callback System
+    BatchRoutine --> Callbacks
+    DataLoaderRoutine --> Callbacks
+    
+    %% Domain-specific routine to External (via experiment tracking)
+    ArtifactRoutine --> ArtifactExp
+    
+    %% Callback System to External (via experiment tracking)
     Callbacks --> ArtifactExp
+    
+    %% External integration flow
+    ArtifactExp --> ArtifactCore
+    
+    %% Style layer labels with positioning
+    style ImplLabel fill:#e1f5fe,stroke:#0066cc,stroke-width:3px,color:#000000
+    style ConfigLabel fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px,color:#000000
+    style InfraLabel fill:#e8f5e8,stroke:#388e3c,stroke-width:3px,color:#000000
+    style ExternalLabel fill:#fff3e0,stroke:#f57c00,stroke-width:3px,color:#000000
+    
+    %% Style layer boxes
+    style impl fill:#ffffff,stroke:#0066cc,stroke-width:2px
+    style config fill:#ffffff,stroke:#7b1fa2,stroke-width:2px
+    style infra fill:#ffffff,stroke:#388e3c,stroke-width:2px
+    style external fill:#ffffff,stroke:#f57c00,stroke-width:2px
+    
+    %% Clean vertical spacing with extra space for external layer
+    ImplLabel --- impl
+    ConfigLabel --- config  
+    InfraLabel --- infra
+    
+    impl ~~~ config
+    config ~~~ infra
+    infra ~~~ VerticalSpacer1
+    VerticalSpacer1 ~~~ VerticalSpacer2
+    VerticalSpacer2 ~~~ VerticalSpacer3
+    VerticalSpacer3 ~~~ ExternalLabel
+    ExternalLabel --- external
+    
+    %% Make all component arrows thicker
+    linkStyle 0 stroke-width:3px
+    linkStyle 1 stroke-width:3px
+    linkStyle 2 stroke-width:3px
+    linkStyle 3 stroke-width:3px
+    linkStyle 4 stroke-width:3px
+    linkStyle 5 stroke-width:3px
+    linkStyle 6 stroke-width:3px
+    linkStyle 7 stroke-width:3px
+    linkStyle 8 stroke-width:3px
+    linkStyle 9 stroke-width:3px
+    linkStyle 10 stroke-width:3px
+    linkStyle 11 stroke-width:3px
+    linkStyle 12 stroke-width:3px
+    
+    %% Hide spacers
+    style ExternalSpacer1 fill:transparent,stroke:transparent
+    style ExternalSpacer2 fill:transparent,stroke:transparent
+    style ExternalSpacer3 fill:transparent,stroke:transparent
+    style ExternalSpacer4 fill:transparent,stroke:transparent
+    style ExternalSpacer5 fill:transparent,stroke:transparent
+    style ConfigSpacer fill:transparent,stroke:transparent
+    style VerticalSpacer1 fill:transparent,stroke:transparent
+    style VerticalSpacer2 fill:transparent,stroke:transparent
+    style VerticalSpacer3 fill:transparent,stroke:transparent
 ```
 
-### Model Interface Layer
-Defines domain-specific contracts for model behavior, including training forward passes and validation data generation. Models implement these interfaces while maintaining full control over internal architecture.
+### User Implementation Layer
+Users implement domain-specific components: model interfaces defining training and generation behavior, data pipelines for loading and processing, and validation routines specifying artifact computation workflows.
 
-### Training Infrastructure Layer
-Provides the training orchestration engine through `CustomTrainer`, which handles training loops, optimization, device management, and callback execution. The framework manages infrastructure complexity while exposing configuration hooks for customization.
+### User Configuration Layer
+Users extend `CustomTrainer` through subclassing and hook method implementations to configure training behavior—optimization, early stopping, checkpointing, and routine integration—while the framework handles the core orchestration logic.
 
-### Validation Integration Layer
-Automatically connects training processes to artifact-core's validation ecosystem. During training, validation routines generate synthetic data, compute domain-specific artifacts, and export results to experiment tracking platforms.
+### Framework Infrastructure Layer
+Pure framework components that users don't directly implement: the callback execution system and automatic device management. These provide the underlying infrastructure that powers the user-configured training process.
+
+### External Integration Layer
+Automatic connections to the broader Artifact ecosystem: artifact-core for validation artifact computation and artifact-experiment for experiment tracking and result export.
 
 ## 🔧 Core Abstractions
 
@@ -211,9 +315,7 @@ project_root/
 The architecture supports domain-specific toolkit development through:
 
 1. **Interface Definition**: Create domain-specific model protocols
-2. **Validation Integration**: Develop corresponding validation routines
-3. **Trainer Specialization**: Implement domain-optimized training procedures
-4. **Data Handling**: Create domain-specific data processing components
+2. **Validation Integration**: Develop artifact-experiment validation plans (defining which artifacts to compute) and validation routines that execute them (including preparatory work like data generation)
 
 ## 🚀 Usage Patterns
 
@@ -257,8 +359,6 @@ tracking_client = FilesystemTrackingClient.build(experiment_id="research_experim
 1. **Domain Directory**: Create `domain_name/` in project root
 2. **Interface Definition**: Define domain-specific model protocols
 3. **Validation Integration**: Implement corresponding validation routines
-4. **Trainer Specialization**: Create domain-optimized trainer extensions
-5. **Artifact Integration**: Ensure compatibility with artifact-core validation plans
 
 ### Component Extension
 
