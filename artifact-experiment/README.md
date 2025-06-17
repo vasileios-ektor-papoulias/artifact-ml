@@ -1,7 +1,6 @@
 # ⚙️ artifact-experiment
 
-> Executable validation plans for the Artifact framework, exporting results to popular experiment tracking services.
-
+> Experiment tracking extension for the Artifact framework providing a configurable validation plan abstraction that orchestrates the execution of artifact collections and manages the storage of results to popular experiment tracking services.
 
 <p align="center">
   <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
