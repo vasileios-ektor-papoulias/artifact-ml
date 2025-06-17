@@ -160,6 +160,8 @@ The framework follows a modular architecture with the following key components:
 2. **ArtifactRegistry**: Manages the registration and retrieval of artifacts.
 3. **ArtifactEngine**: High-level interface orchestrating the production of validation artifacts.
 
+## 📊 Core Entities
+
 Artifacts are reusable components that compute specific validation metrics or visualizations.
 
 They are heterogeneous (multi-modal). Based on their return value, they are categorized in the following groups:
