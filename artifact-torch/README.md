@@ -1,6 +1,6 @@
 # ⚙️ artifact-torch
 
-> PyTorch integration for the Artifact framework, abstracting training infrastructure to let researchers focus on model innovation
+> PyTorch integration for the Artifact framework that abstracts training infrastructure, enabling researchers to focus on architectural innovation. 
 
 <p align="center">
   <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
@@ -15,7 +15,7 @@
 
 **artifact-torch** provides PyTorch integration for the Artifact framework, delivering a type-safe training infrastructure that automatically integrates with artifact-core's validation capabilities.
 
-The framework abstracts common deep learning engineering patterns—training loops, device management, callback systems, and validation orchestration—allowing researchers to focus on architectural innovation rather than mundane infrastructure development.
+The framework abstracts common deep learning engineering patterns—training loops, device management, callback systems, and validation orchestration—allowing researchers to focus on architectural innovation over infrastructure development.
 
 **Core Value Proposition:**
 - **Interface-driven design**: Implement clean contracts rather than complex training infrastructure
