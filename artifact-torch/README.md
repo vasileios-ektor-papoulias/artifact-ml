@@ -332,7 +332,7 @@ project_root/
 
 **Validation Integration**: `TableComparisonRoutine` managing the execution of Artifact-ML table comparison validation plans.
 
-**Reference Implementation**: The `demo/` directory contains a complete VAE-based tabular synthesizer demonstrating all toolkit components.
+**Reference Implementation**: The `demo/` directory contains a complete VAE-based tabular data synthesis project built with artifact-torch demonstrating all toolkit components.
 
 ## 🔧 Framework Extension
 
