@@ -20,22 +20,22 @@ from artifact_experiment.libs.tracking.mlflow.loggers.score_collections import (
 )
 from artifact_experiment.libs.tracking.mlflow.loggers.scores import MlflowScoreLogger
 
-mflowTrackingClientT = TypeVar("mflowTrackingClientT", bound="MlflowTrackingClient")
+MlflowTrackingClientT = TypeVar("MlflowTrackingClientT", bound="MlflowTrackingClient")
 
 
 class MlflowTrackingClient(TrackingClient[MlflowRunAdapter]):
     @classmethod
     def build(
-        cls: Type[mflowTrackingClientT], experiment_id: str, run_id: Optional[str] = None
-    ) -> mflowTrackingClientT:
+        cls: Type[MlflowTrackingClientT], experiment_id: str, run_id: Optional[str] = None
+    ) -> MlflowTrackingClientT:
         run = MlflowRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
         client = cls(run=run)
         return client
 
     @classmethod
     def from_native_run(
-        cls: Type[mflowTrackingClientT], native_run: MlflowNativeClient
-    ) -> mflowTrackingClientT:
+        cls: Type[MlflowTrackingClientT], native_run: MlflowNativeClient
+    ) -> MlflowTrackingClientT:
         run = MlflowRunAdapter.from_native_run(native_run=native_run)
         client = cls(run=run)
         return client

@@ -21,14 +21,14 @@ from artifact_experiment.libs.tracking.filesystem.loggers.score_collections impo
 )
 from artifact_experiment.libs.tracking.filesystem.loggers.scores import FilesystemScoreLogger
 
-flesystemTrackingClientT = TypeVar("flesystemTrackingClientT", bound="FilesystemTrackingClient")
+FilesystemTrackingClientT = TypeVar("FilesystemTrackingClientT", bound="FilesystemTrackingClient")
 
 
 class FilesystemTrackingClient(TrackingClient[FilesystemRunAdapter]):
     @classmethod
     def build(
-        cls: Type[flesystemTrackingClientT], experiment_id: str, run_id: Optional[str] = None
-    ) -> flesystemTrackingClientT:
+        cls: Type[FilesystemTrackingClientT], experiment_id: str, run_id: Optional[str] = None
+    ) -> FilesystemTrackingClientT:
         run = FilesystemRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
         client = cls(run=run)
         return client

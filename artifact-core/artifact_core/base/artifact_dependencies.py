@@ -5,13 +5,13 @@ from typing import Dict, Protocol, Type, TypeVar, Union
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-artifactHyperparamsT = TypeVar("artifactHyperparamsT", bound="ArtifactHyperparams")
+ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound="ArtifactHyperparams")
 
 
 @dataclass(frozen=True)
 class ArtifactHyperparams(ABC):
     @classmethod
-    def build(cls: Type[artifactHyperparamsT], *args, **kwargs) -> artifactHyperparamsT:
+    def build(cls: Type[ArtifactHyperparamsT], *args, **kwargs) -> ArtifactHyperparamsT:
         return cls(*args, **kwargs)
 
 

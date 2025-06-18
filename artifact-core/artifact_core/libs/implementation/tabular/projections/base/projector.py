@@ -10,7 +10,7 @@ from artifact_core.libs.implementation.tabular.projections.base.plotter import (
     ProjectionPlotter,
 )
 
-projectorHyperparamsT = TypeVar("projectorHyperparamsT", bound="ProjectorHyperparams")
+ProjectorHyperparamsT = TypeVar("ProjectorHyperparamsT", bound="ProjectorHyperparams")
 
 
 @dataclass(frozen=True)
@@ -18,12 +18,12 @@ class ProjectorHyperparams:
     use_categorical: bool = True
 
 
-class ProjectorBase(ABC, Generic[projectorHyperparamsT]):
+class ProjectorBase(ABC, Generic[ProjectorHyperparamsT]):
     def __init__(
         self,
         ls_cat_features: List[str],
         ls_cts_features: List[str],
-        hyperparams: projectorHyperparamsT,
+        hyperparams: ProjectorHyperparamsT,
         plotter: ProjectionPlotter,
     ):
         self._validate_resource_spec(

@@ -8,16 +8,16 @@ from artifact_experiment.libs.tracking.clear_ml.adapter import (
     ClearMLRunAdapter,
 )
 
-artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
+ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 
 class ClearMLArtifactLogger(
-    ArtifactLogger[artifactResultT, ClearMLRunAdapter], Generic[artifactResultT]
+    ArtifactLogger[ArtifactResultT, ClearMLRunAdapter], Generic[ArtifactResultT]
 ):
     _root_dir = "artifacts"
 
     @abstractmethod
-    def _append(self, artifact_path: str, artifact: artifactResultT): ...
+    def _append(self, artifact_path: str, artifact: ArtifactResultT): ...
 
     @classmethod
     @abstractmethod

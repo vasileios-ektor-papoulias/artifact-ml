@@ -16,7 +16,7 @@ from artifact_core.libs.implementation.tabular.projections.base.projector import
     ProjectorHyperparams,
 )
 
-truncatedSVDProjectorType = TypeVar("truncatedSVDProjectorType", bound="TruncatedSVDProjector")
+TruncatedSVDProjectorT = TypeVar("TruncatedSVDProjectorT", bound="TruncatedSVDProjector")
 
 
 @dataclass(frozen=True)
@@ -29,12 +29,12 @@ class TruncatedSVDProjector(ProjectorBase[TruncatedSVDHyperparams]):
 
     @classmethod
     def build(
-        cls: Type[truncatedSVDProjectorType],
+        cls: Type[TruncatedSVDProjectorT],
         ls_cat_features: List[str],
         ls_cts_features: List[str],
         projector_config: Optional[TruncatedSVDHyperparams] = None,
         plotter_config: Optional[ProjectionPlotterConfig] = None,
-    ) -> truncatedSVDProjectorType:
+    ) -> TruncatedSVDProjectorT:
         if projector_config is None:
             projector_config = TruncatedSVDHyperparams()
         if plotter_config is None:

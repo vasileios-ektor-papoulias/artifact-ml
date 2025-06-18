@@ -20,22 +20,22 @@ from artifact_experiment.libs.tracking.neptune.loggers.score_collections import 
 )
 from artifact_experiment.libs.tracking.neptune.loggers.scores import NeptuneScoreLogger
 
-neptuneTrackingClientT = TypeVar("neptuneTrackingClientT", bound="NeptuneTrackingClient")
+NeptuneTrackingClientT = TypeVar("NeptuneTrackingClientT", bound="NeptuneTrackingClient")
 
 
 class NeptuneTrackingClient(TrackingClient[NeptuneRunAdapter]):
     @classmethod
     def build(
-        cls: Type[neptuneTrackingClientT], experiment_id: str, run_id: Optional[str] = None
-    ) -> neptuneTrackingClientT:
+        cls: Type[NeptuneTrackingClientT], experiment_id: str, run_id: Optional[str] = None
+    ) -> NeptuneTrackingClientT:
         run = NeptuneRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
         client = cls(run=run)
         return client
 
     @classmethod
     def from_native_run(
-        cls: Type[neptuneTrackingClientT], native_run: neptune.Run
-    ) -> neptuneTrackingClientT:
+        cls: Type[NeptuneTrackingClientT], native_run: neptune.Run
+    ) -> NeptuneTrackingClientT:
         run = NeptuneRunAdapter.from_native_run(native_run=native_run)
         client = cls(run=run)
         return client

@@ -16,7 +16,7 @@ from artifact_core.libs.implementation.tabular.projections.base.projector import
     ProjectorHyperparams,
 )
 
-tsneProjectorType = TypeVar("tsneProjectorType", bound="TSNEProjector")
+TSNEProjectorT = TypeVar("TSNEProjectorT", bound="TSNEProjector")
 
 
 @dataclass(frozen=True)
@@ -31,12 +31,12 @@ class TSNEProjector(ProjectorBase[TSNEHyperparams]):
 
     @classmethod
     def build(
-        cls: Type[tsneProjectorType],
+        cls: Type[TSNEProjectorT],
         ls_cat_features: List[str],
         ls_cts_features: List[str],
         projector_config: Optional[TSNEHyperparams] = None,
         plotter_config: Optional[ProjectionPlotterConfig] = None,
-    ) -> tsneProjectorType:
+    ) -> TSNEProjectorT:
         if projector_config is None:
             projector_config = TSNEHyperparams()
         if plotter_config is None:

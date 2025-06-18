@@ -12,12 +12,12 @@ from artifact_core.base.artifact_dependencies import (
     ResourceSpecProtocol,
 )
 
-resourceSpecProtocol = TypeVar("resourceSpecProtocol", bound="ResourceSpecProtocol")
-artifactHyperparamsT = TypeVar("artifactHyperparamsT", bound="ArtifactHyperparams")
-artifactResourcesT = TypeVar("artifactResourcesT", bound="ArtifactResources")
-artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
-artifactT = TypeVar("artifactT", bound=Artifact)
-artifactTypeT = TypeVar("artifactTypeT", bound="ArtifactType")
+ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound="ResourceSpecProtocol")
+ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound="ArtifactHyperparams")
+ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound="ArtifactResources")
+ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
+ArtifactT = TypeVar("ArtifactT", bound=Artifact)
+ArtifactTypeT = TypeVar("ArtifactTypeT", bound="ArtifactType")
 
 
 class ArtifactType(Enum):
@@ -25,20 +25,20 @@ class ArtifactType(Enum):
 
 
 class ArtifactRegistry(
-    Generic[artifactTypeT, artifactResourcesT, artifactResultT, resourceSpecProtocol]
+    Generic[ArtifactTypeT, ArtifactResourcesT, ArtifactResultT, ResourceSpecProtocolT]
 ):
     _artifact_registry: Dict[
-        artifactTypeT,
+        ArtifactTypeT,
         Type[
             Artifact[
-                artifactResourcesT,
-                artifactResultT,
+                ArtifactResourcesT,
+                ArtifactResultT,
                 ArtifactHyperparams,
-                resourceSpecProtocol,
+                ResourceSpecProtocolT,
             ]
         ],
     ] = {}
-    _artifact_config_registry: Dict[artifactTypeT, Type[ArtifactHyperparams]] = {}
+    _artifact_config_registry: Dict[ArtifactTypeT, Type[ArtifactHyperparams]] = {}
 
     @classmethod
     @abstractmethod
@@ -51,11 +51,11 @@ class ArtifactRegistry(
 
     @classmethod
     def register_artifact(
-        cls, artifact_type: artifactTypeT
-    ) -> Callable[[Type[artifactT]], Type[artifactT]]:
+        cls, artifact_type: ArtifactTypeT
+    ) -> Callable[[Type[ArtifactT]], Type[ArtifactT]]:
         def artifact_registration_decorator(
-            subclass: Type[artifactT],
-        ) -> Type[artifactT]:
+            subclass: Type[ArtifactT],
+        ) -> Type[ArtifactT]:
             cls._artifact_registry[artifact_type] = subclass
             return subclass
 
@@ -63,11 +63,11 @@ class ArtifactRegistry(
 
     @classmethod
     def register_artifact_config(
-        cls, artifact_type: artifactTypeT
-    ) -> Callable[[Type[artifactHyperparamsT]], Type[artifactHyperparamsT]]:
+        cls, artifact_type: ArtifactTypeT
+    ) -> Callable[[Type[ArtifactHyperparamsT]], Type[ArtifactHyperparamsT]]:
         def artifact_config_registration_decorator(
-            subclass: Type[artifactHyperparamsT],
-        ) -> Type[artifactHyperparamsT]:
+            subclass: Type[ArtifactHyperparamsT],
+        ) -> Type[ArtifactHyperparamsT]:
             cls._artifact_config_registry[artifact_type] = subclass
             return subclass
 
@@ -75,12 +75,12 @@ class ArtifactRegistry(
 
     @classmethod
     def get(
-        cls, artifact_type: artifactTypeT, resource_spec: resourceSpecProtocol
+        cls, artifact_type: ArtifactTypeT, resource_spec: ResourceSpecProtocolT
     ) -> Artifact[
-        artifactResourcesT,
-        artifactResultT,
+        ArtifactResourcesT,
+        ArtifactResultT,
         ArtifactHyperparams,
-        resourceSpecProtocol,
+        ResourceSpecProtocolT,
     ]:
         artifact_class = cls._get_artifact_class(artifact_type=artifact_type)
         artifact_hyperparams_class = cls._get_artifact_hyperparams_class(
@@ -95,13 +95,13 @@ class ArtifactRegistry(
 
     @classmethod
     def _get_artifact_class(
-        cls, artifact_type: artifactTypeT
+        cls, artifact_type: ArtifactTypeT
     ) -> Type[
         Artifact[
-            artifactResourcesT,
-            artifactResultT,
+            ArtifactResourcesT,
+            ArtifactResultT,
             ArtifactHyperparams,
-            resourceSpecProtocol,
+            ResourceSpecProtocolT,
         ]
     ]:
         artifact_class = cls._artifact_registry.get(artifact_type, None)
@@ -133,7 +133,7 @@ class ArtifactRegistry(
 
     @classmethod
     def _get_artifact_hyperparams_class(
-        cls, artifact_type: artifactTypeT
+        cls, artifact_type: ArtifactTypeT
     ) -> Type[ArtifactHyperparams]:
         artifact_hyperparams_class = cls._artifact_config_registry.get(
             artifact_type, NoArtifactHyperparams
@@ -141,7 +141,7 @@ class ArtifactRegistry(
         return artifact_hyperparams_class
 
     @classmethod
-    def _read_artifact_config(cls, artifact_type: artifactTypeT) -> Optional[Dict[str, Any]]:
+    def _read_artifact_config(cls, artifact_type: ArtifactTypeT) -> Optional[Dict[str, Any]]:
         dict_artifact_configs = cls._get_artifact_configurations()
         artifact_config = dict_artifact_configs.get(artifact_type.name, None)
         return artifact_config

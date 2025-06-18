@@ -7,18 +7,18 @@ from artifact_core.table_comparison.artifacts.base import (
 
 from artifact_experiment.base.callbacks.artifact import ArtifactCallbackResources
 
-tableComparisonCallbackResourcesT = TypeVar(
-    "tableComparisonCallbackResourcesT", bound="TableComparisonCallbackResources"
+TableComparisonCallbackResourcesT = TypeVar(
+    "TableComparisonCallbackResourcesT", bound="TableComparisonCallbackResources"
 )
 
 
 class TableComparisonCallbackResources(ArtifactCallbackResources[TableComparisonArtifactResources]):
     @classmethod
     def build(
-        cls: Type[tableComparisonCallbackResourcesT],
+        cls: Type[TableComparisonCallbackResourcesT],
         dataset_real: pd.DataFrame,
         dataset_synthetic: pd.DataFrame,
-    ) -> tableComparisonCallbackResourcesT:
+    ) -> TableComparisonCallbackResourcesT:
         artifact_resources = TableComparisonArtifactResources(
             dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
         )

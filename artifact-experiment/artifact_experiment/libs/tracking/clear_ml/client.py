@@ -20,22 +20,22 @@ from artifact_experiment.libs.tracking.clear_ml.loggers.score_collections import
 )
 from artifact_experiment.libs.tracking.clear_ml.loggers.scores import ClearMLScoreLogger
 
-clearMLTrackingClientT = TypeVar("clearMLTrackingClientT", bound="ClearMLTrackingClient")
+ClearMLTrackingClientT = TypeVar("ClearMLTrackingClientT", bound="ClearMLTrackingClient")
 
 
 class ClearMLTrackingClient(TrackingClient[ClearMLRunAdapter]):
     @classmethod
     def build(
-        cls: Type[clearMLTrackingClientT], experiment_id: str, run_id: Optional[str] = None
-    ) -> clearMLTrackingClientT:
+        cls: Type[ClearMLTrackingClientT], experiment_id: str, run_id: Optional[str] = None
+    ) -> ClearMLTrackingClientT:
         run = ClearMLRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
         client = cls(run=run)
         return client
 
     @classmethod
     def from_native_run(
-        cls: Type[clearMLTrackingClientT], native_run: Task
-    ) -> clearMLTrackingClientT:
+        cls: Type[ClearMLTrackingClientT], native_run: Task
+    ) -> ClearMLTrackingClientT:
         run = ClearMLRunAdapter.from_native_run(native_run=native_run)
         client = cls(run=run)
         return client

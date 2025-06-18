@@ -9,15 +9,15 @@ from artifact_core.core.dataset_comparison.artifact import (
     DatasetComparisonArtifactResources,
 )
 
-artifactTypeT = TypeVar("artifactTypeT", bound="ArtifactType")
-datasetT = TypeVar("datasetT")
-artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
-resourceSpecProtocolT = TypeVar("resourceSpecProtocolT", bound=ResourceSpecProtocol)
+ArtifactTypeT = TypeVar("ArtifactTypeT", bound="ArtifactType")
+DatasetT = TypeVar("DatasetT")
+ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
+ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
 
 
 DatasetComparisonArtifactRegistry = ArtifactRegistry[
-    artifactTypeT,
-    DatasetComparisonArtifactResources[datasetT],
-    artifactResultT,
-    resourceSpecProtocolT,
+    ArtifactTypeT,
+    DatasetComparisonArtifactResources[DatasetT],
+    ArtifactResultT,
+    ResourceSpecProtocolT,
 ]

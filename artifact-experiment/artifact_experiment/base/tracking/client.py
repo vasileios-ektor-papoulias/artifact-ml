@@ -7,12 +7,12 @@ from numpy import ndarray
 from artifact_experiment.base.tracking.adapter import RunAdapter
 from artifact_experiment.base.tracking.logger import ArtifactLogger
 
-runAdapterT = TypeVar("runAdapterT", bound=RunAdapter)
-trackingClientT = TypeVar("trackingClientT", bound="TrackingClient")
+RunAdapterT = TypeVar("RunAdapterT", bound=RunAdapter)
+TrackingClientT = TypeVar("TrackingClientT", bound="TrackingClient")
 
 
-class TrackingClient(Generic[runAdapterT]):
-    def __init__(self, run: runAdapterT):
+class TrackingClient(Generic[RunAdapterT]):
+    def __init__(self, run: RunAdapterT):
         self._run = run
         self._score_logger = self._get_score_logger(run=self._run)
         self._array_logger = self._get_array_logger(run=self._run)
@@ -22,44 +22,44 @@ class TrackingClient(Generic[runAdapterT]):
         self._plot_collection_logger = self._get_plot_collection_logger(run=self._run)
 
     @property
-    def run(self) -> runAdapterT:
+    def run(self) -> RunAdapterT:
         return self._run
 
     @run.setter
-    def run(self, run: runAdapterT):
+    def run(self, run: RunAdapterT):
         self._run = run
 
     @staticmethod
     @abstractmethod
-    def _get_score_logger(run: runAdapterT) -> ArtifactLogger[float, runAdapterT]: ...
+    def _get_score_logger(run: RunAdapterT) -> ArtifactLogger[float, RunAdapterT]: ...
 
     @staticmethod
     @abstractmethod
     def _get_array_logger(
-        run: runAdapterT,
-    ) -> ArtifactLogger[ndarray, runAdapterT]: ...
+        run: RunAdapterT,
+    ) -> ArtifactLogger[ndarray, RunAdapterT]: ...
 
     @staticmethod
     @abstractmethod
-    def _get_plot_logger(run: runAdapterT) -> ArtifactLogger[Figure, runAdapterT]: ...
+    def _get_plot_logger(run: RunAdapterT) -> ArtifactLogger[Figure, RunAdapterT]: ...
 
     @staticmethod
     @abstractmethod
     def _get_score_collection_logger(
-        run: runAdapterT,
-    ) -> ArtifactLogger[Dict[str, float], runAdapterT]: ...
+        run: RunAdapterT,
+    ) -> ArtifactLogger[Dict[str, float], RunAdapterT]: ...
 
     @staticmethod
     @abstractmethod
     def _get_array_collection_logger(
-        run: runAdapterT,
-    ) -> ArtifactLogger[Dict[str, ndarray], runAdapterT]: ...
+        run: RunAdapterT,
+    ) -> ArtifactLogger[Dict[str, ndarray], RunAdapterT]: ...
 
     @staticmethod
     @abstractmethod
     def _get_plot_collection_logger(
-        run: runAdapterT,
-    ) -> ArtifactLogger[Dict[str, Figure], runAdapterT]: ...
+        run: RunAdapterT,
+    ) -> ArtifactLogger[Dict[str, Figure], RunAdapterT]: ...
 
     def log_score(self, score: float, name: str):
         self._score_logger.log(artifact=score, artifact_name=name)

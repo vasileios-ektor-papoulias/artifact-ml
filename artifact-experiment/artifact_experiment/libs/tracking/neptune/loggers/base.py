@@ -8,15 +8,15 @@ from artifact_experiment.libs.tracking.neptune.adapter import (
     NeptuneRunAdapter,
 )
 
-artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
+ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 
 class NeptuneArtifactLogger(
-    ArtifactLogger[artifactResultT, NeptuneRunAdapter], Generic[artifactResultT]
+    ArtifactLogger[ArtifactResultT, NeptuneRunAdapter], Generic[ArtifactResultT]
 ):
     _root_dir = "artifacts"
 
-    def _append(self, artifact_path: str, artifact: artifactResultT):
+    def _append(self, artifact_path: str, artifact: ArtifactResultT):
         self._run.log(path=artifact_path, artifact=artifact)
 
     @classmethod

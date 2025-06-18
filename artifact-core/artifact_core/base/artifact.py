@@ -8,49 +8,49 @@ from artifact_core.base.artifact_dependencies import (
     ResourceSpecProtocol,
 )
 
-resourceSpecProtocolT = TypeVar("resourceSpecProtocolT", bound=ResourceSpecProtocol)
-artifactHyperparamsT = TypeVar("artifactHyperparamsT", bound="ArtifactHyperparams")
-artifactResourcesT = TypeVar("artifactResourcesT", bound="ArtifactResources")
-artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
+ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
+ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound="ArtifactHyperparams")
+ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound="ArtifactResources")
+ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 
 class Artifact(
     ABC,
     Generic[
-        artifactResourcesT,
-        artifactResultT,
-        artifactHyperparamsT,
-        resourceSpecProtocolT,
+        ArtifactResourcesT,
+        ArtifactResultT,
+        ArtifactHyperparamsT,
+        ResourceSpecProtocolT,
     ],
 ):
     def __init__(
         self,
-        resource_spec: resourceSpecProtocolT,
-        hyperparams: artifactHyperparamsT,
+        resource_spec: ResourceSpecProtocolT,
+        hyperparams: ArtifactHyperparamsT,
     ):
         self._resource_spec = resource_spec
         self._hyperparams = hyperparams
 
     @property
-    def hyperparams(self) -> artifactHyperparamsT:
+    def hyperparams(self) -> ArtifactHyperparamsT:
         return self._hyperparams
 
     @property
-    def resource_spec(self) -> resourceSpecProtocolT:
+    def resource_spec(self) -> ResourceSpecProtocolT:
         return self._resource_spec
 
-    def __call__(self, resources: artifactResourcesT) -> artifactResultT:
+    def __call__(self, resources: ArtifactResourcesT) -> ArtifactResultT:
         return self.compute(resources=resources)
 
     @abstractmethod
-    def _compute(self, resources: artifactResourcesT) -> artifactResultT:
+    def _compute(self, resources: ArtifactResourcesT) -> ArtifactResultT:
         pass
 
     @abstractmethod
-    def _validate(self, resources: artifactResourcesT) -> artifactResourcesT:
+    def _validate(self, resources: ArtifactResourcesT) -> ArtifactResourcesT:
         pass
 
-    def compute(self, resources: artifactResourcesT) -> artifactResultT:
+    def compute(self, resources: ArtifactResourcesT) -> ArtifactResultT:
         resources = self._validate(resources=resources)
         result = self._compute(resources=resources)
         return result

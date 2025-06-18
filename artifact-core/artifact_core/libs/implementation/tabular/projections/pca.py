@@ -15,7 +15,7 @@ from artifact_core.libs.implementation.tabular.projections.base.projector import
     ProjectorHyperparams,
 )
 
-pcaProjectorType = TypeVar("pcaProjectorType", bound="PCAProjector")
+PCAProjectorT = TypeVar("PCAProjectorT", bound="PCAProjector")
 
 
 @dataclass(frozen=True)
@@ -28,12 +28,12 @@ class PCAProjector(ProjectorBase[PCAHyperparams]):
 
     @classmethod
     def build(
-        cls: Type[pcaProjectorType],
+        cls: Type[PCAProjectorT],
         ls_cat_features: List[str],
         ls_cts_features: List[str],
         projector_config: Optional[PCAHyperparams] = None,
         plotter_config: Optional[ProjectionPlotterConfig] = None,
-    ) -> pcaProjectorType:
+    ) -> PCAProjectorT:
         if projector_config is None:
             projector_config = PCAHyperparams()
         if plotter_config is None:

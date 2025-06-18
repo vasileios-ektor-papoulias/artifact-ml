@@ -10,78 +10,78 @@ from artifact_core.core.dataset_comparison.artifact import (
     DatasetComparisonArtifactResources,
 )
 
-scoreTypeT = TypeVar("scoreTypeT", bound="ArtifactType")
-arrayTypeT = TypeVar("arrayTypeT", bound="ArtifactType")
-plotTypeT = TypeVar("plotTypeT", bound="ArtifactType")
-scoreCollectionTypeT = TypeVar("scoreCollectionTypeT", bound="ArtifactType")
-arrayCollectionTypeT = TypeVar("arrayCollectionTypeT", bound="ArtifactType")
-plotCollectionTypeT = TypeVar("plotCollectionTypeT", bound="ArtifactType")
-resourceSpecProtocolT = TypeVar("resourceSpecProtocolT", bound=ResourceSpecProtocol)
-datasetT = TypeVar("datasetT")
+ScoreTypeT = TypeVar("ScoreTypeT", bound="ArtifactType")
+ArrayTypeT = TypeVar("ArrayTypeT", bound="ArtifactType")
+PlotTypeT = TypeVar("PlotTypeT", bound="ArtifactType")
+ScoreCollectionTypeT = TypeVar("ScoreCollectionTypeT", bound="ArtifactType")
+ArrayCollectionTypeT = TypeVar("ArrayCollectionTypeT", bound="ArtifactType")
+PlotCollectionTypeT = TypeVar("PlotCollectionTypeT", bound="ArtifactType")
+ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
+DatasetT = TypeVar("DatasetT")
 
 
 class DatasetComparisonEngine(
     ArtifactEngine[
-        DatasetComparisonArtifactResources[datasetT],
-        resourceSpecProtocolT,
-        scoreTypeT,
-        arrayTypeT,
-        plotTypeT,
-        scoreCollectionTypeT,
-        arrayCollectionTypeT,
-        plotCollectionTypeT,
+        DatasetComparisonArtifactResources[DatasetT],
+        ResourceSpecProtocolT,
+        ScoreTypeT,
+        ArrayTypeT,
+        PlotTypeT,
+        ScoreCollectionTypeT,
+        ArrayCollectionTypeT,
+        PlotCollectionTypeT,
     ],
     Generic[
-        datasetT,
-        resourceSpecProtocolT,
-        scoreTypeT,
-        arrayTypeT,
-        plotTypeT,
-        scoreCollectionTypeT,
-        arrayCollectionTypeT,
-        plotCollectionTypeT,
+        DatasetT,
+        ResourceSpecProtocolT,
+        ScoreTypeT,
+        ArrayTypeT,
+        PlotTypeT,
+        ScoreCollectionTypeT,
+        ArrayCollectionTypeT,
+        PlotCollectionTypeT,
     ],
 ):
     def produce_dataset_comparison_score(
         self,
-        score_type: scoreTypeT,
-        dataset_real: datasetT,
-        dataset_synthetic: datasetT,
+        score_type: ScoreTypeT,
+        dataset_real: DatasetT,
+        dataset_synthetic: DatasetT,
     ) -> float:
-        resources = DatasetComparisonArtifactResources[datasetT](
+        resources = DatasetComparisonArtifactResources[DatasetT](
             dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
         )
         return super().produce_score(score_type=score_type, resources=resources)
 
     def produce_dataset_comparison_array(
         self,
-        array_type: arrayTypeT,
-        dataset_real: datasetT,
-        dataset_synthetic: datasetT,
+        array_type: ArrayTypeT,
+        dataset_real: DatasetT,
+        dataset_synthetic: DatasetT,
     ) -> ndarray:
-        resources = DatasetComparisonArtifactResources[datasetT](
+        resources = DatasetComparisonArtifactResources[DatasetT](
             dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
         )
         return super().produce_array(array_type=array_type, resources=resources)
 
     def produce_dataset_comparison_plot(
         self,
-        plot_type: plotTypeT,
-        dataset_real: datasetT,
-        dataset_synthetic: datasetT,
+        plot_type: PlotTypeT,
+        dataset_real: DatasetT,
+        dataset_synthetic: DatasetT,
     ) -> Figure:
-        resources = DatasetComparisonArtifactResources[datasetT](
+        resources = DatasetComparisonArtifactResources[DatasetT](
             dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
         )
         return super().produce_plot(plot_type=plot_type, resources=resources)
 
     def produce_dataset_comparison_score_collection(
         self,
-        score_collection_type: scoreCollectionTypeT,
-        dataset_real: datasetT,
-        dataset_synthetic: datasetT,
+        score_collection_type: ScoreCollectionTypeT,
+        dataset_real: DatasetT,
+        dataset_synthetic: DatasetT,
     ) -> Dict[str, float]:
-        resources = DatasetComparisonArtifactResources[datasetT](
+        resources = DatasetComparisonArtifactResources[DatasetT](
             dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
         )
         return super().produce_score_collection(
@@ -90,11 +90,11 @@ class DatasetComparisonEngine(
 
     def produce_dataset_comparison_array_collection(
         self,
-        array_collection_type: arrayCollectionTypeT,
-        dataset_real: datasetT,
-        dataset_synthetic: datasetT,
+        array_collection_type: ArrayCollectionTypeT,
+        dataset_real: DatasetT,
+        dataset_synthetic: DatasetT,
     ) -> Dict[str, ndarray]:
-        resources = DatasetComparisonArtifactResources[datasetT](
+        resources = DatasetComparisonArtifactResources[DatasetT](
             dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
         )
         return super().produce_array_collection(
@@ -103,11 +103,11 @@ class DatasetComparisonEngine(
 
     def produce_dataset_comparison_plot_collection(
         self,
-        plot_collection_type: plotCollectionTypeT,
-        dataset_real: datasetT,
-        dataset_synthetic: datasetT,
+        plot_collection_type: PlotCollectionTypeT,
+        dataset_real: DatasetT,
+        dataset_synthetic: DatasetT,
     ) -> Dict[str, Figure]:
-        resources = DatasetComparisonArtifactResources[datasetT](
+        resources = DatasetComparisonArtifactResources[DatasetT](
             dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
         )
         return super().produce_plot_collection(

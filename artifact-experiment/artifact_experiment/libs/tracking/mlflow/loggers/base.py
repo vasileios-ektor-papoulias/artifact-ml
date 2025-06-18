@@ -6,16 +6,16 @@ from artifact_core.base.artifact_dependencies import ArtifactResult
 from artifact_experiment.base.tracking.logger import ArtifactLogger
 from artifact_experiment.libs.tracking.mlflow.adapter import MlflowRunAdapter
 
-artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
+ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 
 class MlflowArtifactLogger(
-    ArtifactLogger[artifactResultT, MlflowRunAdapter], Generic[artifactResultT]
+    ArtifactLogger[ArtifactResultT, MlflowRunAdapter], Generic[ArtifactResultT]
 ):
     _root_dir = "artifacts"
 
     @abstractmethod
-    def _append(self, artifact_path: str, artifact: artifactResultT): ...
+    def _append(self, artifact_path: str, artifact: ArtifactResultT): ...
 
     @classmethod
     @abstractmethod

@@ -9,14 +9,14 @@ from artifact_experiment.libs.tracking.filesystem.adapter import (
     FilesystemRunAdapter,
 )
 
-artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
+ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 
 class FilesystemArtifactLogger(
-    ArtifactLogger[artifactResultT, FilesystemRunAdapter], Generic[artifactResultT]
+    ArtifactLogger[ArtifactResultT, FilesystemRunAdapter], Generic[ArtifactResultT]
 ):
     @abstractmethod
-    def _append(self, artifact_path: str, artifact: artifactResultT): ...
+    def _append(self, artifact_path: str, artifact: ArtifactResultT): ...
 
     @classmethod
     @abstractmethod

@@ -6,16 +6,16 @@ from artifact_core.base.artifact_dependencies import ArtifactResult
 
 from artifact_experiment.base.tracking.adapter import RunAdapter
 
-artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
-runAdapterT = TypeVar("runAdapterT", bound=RunAdapter)
+ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
+RunAdapterT = TypeVar("RunAdapterT", bound=RunAdapter)
 
 
-class ArtifactLogger(ABC, Generic[artifactResultT, runAdapterT]):
-    def __init__(self, run: runAdapterT):
+class ArtifactLogger(ABC, Generic[ArtifactResultT, RunAdapterT]):
+    def __init__(self, run: RunAdapterT):
         self._run = run
 
     @abstractmethod
-    def _append(self, artifact_path: str, artifact: artifactResultT):
+    def _append(self, artifact_path: str, artifact: ArtifactResultT):
         pass
 
     @classmethod
@@ -32,7 +32,7 @@ class ArtifactLogger(ABC, Generic[artifactResultT, runAdapterT]):
         artifact_path = os.path.join(root_dir, relative_path)
         return artifact_path
 
-    def log(self, artifact_name: str, artifact: artifactResultT):
+    def log(self, artifact_name: str, artifact: ArtifactResultT):
         root_dir = self._get_root_dir()
         path = self._get_artifact_path(root_dir=root_dir, artifact_name=artifact_name)
         self._append(artifact_path=path, artifact=artifact)
