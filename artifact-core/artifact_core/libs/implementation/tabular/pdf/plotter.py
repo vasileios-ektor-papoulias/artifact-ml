@@ -5,13 +5,26 @@ import pandas as pd
 import seaborn as sns
 from matplotlib.figure import Figure
 
-from artifact_core.libs.utils.plot_combiner import (
-    PlotCombinationConfig,
-    PlotCombiner,
+from artifact_core.libs.utils.autoscale.categorical import (
+    CategoricalAutoscaler,
+    CategoricalAutoscalerArgs,
+    CategoricalAutoscalerHyperparams,
 )
+from artifact_core.libs.utils.autoscale.combined import (
+    CombinedAutoscalerHyperparams,
+    CombinedPlotAutoscaler,
+)
+from artifact_core.libs.utils.plot_combiner import PlotCombinationConfig, PlotCombiner
 
 
 class PDFPlotter:
+    # Private base sizing attributes for continuous plots
+    _base_font_size = 16.0
+    _base_title_font_size = 18.0
+    _base_tick_font_size = 12.0
+    _base_figure_width = 8.0
+    _base_figure_height = 6.0
+
     _plot_color = "olive"
     _gridline_color = "black"
     _gridline_style = ":"
@@ -21,6 +34,24 @@ class PDFPlotter:
     _cts_density_n_bins = 50
     _cts_density_enable_kde = True
     _cts_densitiy_alpha = 0.7
+
+    _cat_autoscaler_hyperparams = CategoricalAutoscalerHyperparams(
+        min_scale_factor=0.5,
+        max_scale_factor=100.0,
+        categories_per_base_width=5,
+        base_figure_width=4.0,
+        base_figure_height=7.0,
+        base_font_size=14.0,
+        base_title_font_size=16.0,
+        base_tick_font_size=12.0,
+        base_legend_font_size=12.0,
+        base_marker_size=5.0,
+        base_line_width=2.0,
+    )
+    _combination_scale_config = CombinedAutoscalerHyperparams(
+        min_scale_factor=0.5,
+        max_scale_factor=10.0,
+    )
     _plot_combiner_config = PlotCombinationConfig(
         n_cols=3,
         dpi=150,
@@ -33,6 +64,7 @@ class PDFPlotter:
         fig_title_fontsize=5,
         include_fig_titles=False,
         combined_title="Probability Density Functions",
+        combined_title_fontsize=8,
         combined_title_vertical_position=1,
     )
 
@@ -52,9 +84,13 @@ class PDFPlotter:
             ls_cat_features=ls_cat_features,
             cat_unique_map=cat_unique_map,
         )
-        combined_plot = PlotCombiner.combine(
-            dict_plots=dict_plots, config=cls._plot_combiner_config
+        autoscaled_config = CombinedPlotAutoscaler.get_scaled_combiner_config(
+            base_config=cls._plot_combiner_config,
+            num_plots=len(dict_plots),
+            ls_subplot_dims=[plot.get_size_inches() for plot in dict_plots.values()],
+            scale_config=cls._combination_scale_config,
         )
+        combined_plot = PlotCombiner.combine(dict_plots=dict_plots, config=autoscaled_config)
         return combined_plot
 
     @classmethod
@@ -94,24 +130,40 @@ class PDFPlotter:
         freq_series = sr_data.value_counts(normalize=True).reindex(
             ls_unique_categories, fill_value=0
         )
-        fig, ax = plt.subplots()
+
+        # Get autoscaled figure size and font sizes
+        num_categories = len(ls_unique_categories)
+        categorical_args = CategoricalAutoscalerArgs(num_categories=num_categories)
+        scale_result = CategoricalAutoscaler.compute(
+            args=categorical_args, params=cls._cat_autoscaler_hyperparams
+        )
+        fig_width = scale_result.figure_width
+        fig_height = scale_result.figure_height
+
+        fig, ax = plt.subplots(figsize=(fig_width, fig_height))
         plt.close(fig)
         positions = range(len(freq_series.index))
         ax.bar(positions, freq_series.values, color=cls._plot_color, alpha=0.7)
         ax.set_xticks(positions)
-        ax.set_xticklabels(freq_series.index.astype(str), rotation="vertical")
+        ax.set_xticklabels(
+            freq_series.index.astype(str), rotation="vertical", fontsize=scale_result.tick_font_size
+        )
 
-        ax.set_xlabel(feature_name, fontsize=cls._axis_font_size)
-        ax.set_ylabel("Probability", fontsize=cls._axis_font_size)
-        fig.suptitle(f"PMF: {feature_name}")
+        ax.set_xlabel(feature_name, fontsize=scale_result.font_size)
+        ax.set_ylabel("Probability", fontsize=scale_result.font_size)
+        fig.suptitle(f"PMF: {feature_name}", fontsize=scale_result.title_font_size)
         return fig
 
     @classmethod
     def _plot_pdf_continuous(cls, sr_data: pd.Series, feature_name: str) -> Figure:
-        fig, ax = plt.subplots()
+        # Use base configuration for consistent sizing
+        fig_width = cls._base_figure_width
+        fig_height = cls._base_figure_height
+
+        fig, ax = plt.subplots(figsize=(fig_width, fig_height))
         plt.close(fig)
-        ax.set_xlabel("Values", fontsize=cls._axis_font_size)
-        ax.set_ylabel("Probability Density", fontsize=cls._axis_font_size)
+        ax.set_xlabel("Values", fontsize=cls._base_font_size)
+        ax.set_ylabel("Probability Density", fontsize=cls._base_font_size)
         ax.set_axisbelow(True)
         ax.grid(
             True,
@@ -137,5 +189,9 @@ class PDFPlotter:
             ax=ax,
         )
 
-        fig.suptitle(f"PDF: {feature_name}")
+        # Set tick label font sizes
+        ax.tick_params(axis="both", which="major", labelsize=cls._base_tick_font_size)
+        ax.tick_params(axis="both", which="minor", labelsize=cls._base_tick_font_size * 0.8)
+
+        fig.suptitle(f"PDF: {feature_name}", fontsize=cls._base_title_font_size)
         return fig

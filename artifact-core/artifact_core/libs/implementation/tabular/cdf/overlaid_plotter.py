@@ -5,6 +5,10 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure, SubFigure
 
+from artifact_core.libs.utils.autoscale.combined import (
+    CombinedAutoscalerHyperparams,
+    CombinedPlotAutoscaler,
+)
 from artifact_core.libs.utils.plot_combiner import (
     PlotCombinationConfig,
     PlotCombiner,
@@ -34,6 +38,10 @@ class OverlaidCDFPlotter:
     _major_ax_grid_linewidth = 1
     _axis_font_size = "14"
 
+    _combination_scale_config = CombinedAutoscalerHyperparams(
+        min_scale_factor=0.5,
+        max_scale_factor=10.0,
+    )
     _plot_combiner_config = PlotCombinationConfig(
         n_cols=3,
         dpi=150,
@@ -46,6 +54,7 @@ class OverlaidCDFPlotter:
         fig_title_fontsize=5,
         include_fig_titles=False,
         combined_title="Cumulative Density Function Comparison",
+        combined_title_fontsize=8,
         combined_title_vertical_position=1,
     )
 
@@ -61,9 +70,13 @@ class OverlaidCDFPlotter:
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=ls_cts_features,
         )
-        combined_plot = PlotCombiner.combine(
-            dict_plots=dict_plots, config=cls._plot_combiner_config
+        autoscaled_config = CombinedPlotAutoscaler.get_scaled_combiner_config(
+            base_config=cls._plot_combiner_config,
+            num_plots=len(dict_plots),
+            ls_subplot_dims=[plot.get_size_inches() for plot in dict_plots.values()],
+            scale_config=cls._combination_scale_config,
         )
+        combined_plot = PlotCombiner.combine(dict_plots=dict_plots, config=autoscaled_config)
         return combined_plot
 
     @classmethod

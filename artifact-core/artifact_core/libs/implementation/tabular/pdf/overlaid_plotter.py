@@ -6,10 +6,16 @@ import pandas as pd
 import seaborn as sns
 from matplotlib.figure import Figure
 
-from artifact_core.libs.utils.plot_combiner import (
-    PlotCombinationConfig,
-    PlotCombiner,
+from artifact_core.libs.utils.autoscale.categorical import (
+    CategoricalAutoscaler,
+    CategoricalAutoscalerArgs,
+    CategoricalAutoscalerHyperparams,
 )
+from artifact_core.libs.utils.autoscale.combined import (
+    CombinedAutoscalerHyperparams,
+    CombinedPlotAutoscaler,
+)
+from artifact_core.libs.utils.plot_combiner import PlotCombinationConfig, PlotCombiner
 
 
 class OverlaidPDFPlotter:
@@ -30,11 +36,28 @@ class OverlaidPDFPlotter:
     _cts_densitiy_alpha_real = 0.8
     _cts_densitiy_alpha_synthetic = 0.4
 
+    _cat_autoscaler_hyperparams = CategoricalAutoscalerHyperparams(
+        min_scale_factor=0.5,
+        max_scale_factor=100.0,
+        base_figure_width=4.0,
+        base_figure_height=7.0,
+        base_font_size=14.0,
+        base_title_font_size=16.0,
+        base_tick_font_size=12.0,
+        base_legend_font_size=12.0,
+        base_marker_size=5.0,
+        base_line_width=2.0,
+        categories_per_base_width=5,
+    )
+    _combination_scale_config = CombinedAutoscalerHyperparams(
+        min_scale_factor=0.5,
+        max_scale_factor=10.0,
+    )
     _plot_combiner_config = PlotCombinationConfig(
         n_cols=3,
         dpi=150,
-        figsize_horizontal_multiplier=6,
-        figsize_vertical_multiplier=4,
+        figsize_horizontal_multiplier=4,
+        figsize_vertical_multiplier=7,
         tight_layout_rect=(0, 0, 1, 0.95),
         tight_layout_pad=0.1,
         subplots_adjust_hspace=0.1,
@@ -42,6 +65,7 @@ class OverlaidPDFPlotter:
         fig_title_fontsize=5,
         include_fig_titles=False,
         combined_title="Probability Density Function Comparison",
+        combined_title_fontsize=8,
         combined_title_vertical_position=1,
     )
 
@@ -63,9 +87,13 @@ class OverlaidPDFPlotter:
             ls_cat_features=ls_cat_features,
             cat_unique_map=cat_unique_map,
         )
-        combined_plot = PlotCombiner.combine(
-            dict_plots=dict_plots, config=cls._plot_combiner_config
+        autoscaled_config = CombinedPlotAutoscaler.get_scaled_combiner_config(
+            base_config=cls._plot_combiner_config,
+            num_plots=len(dict_plots),
+            ls_subplot_dims=[plot.get_size_inches() for plot in dict_plots.values()],
+            scale_config=cls._combination_scale_config,
         )
+        combined_plot = PlotCombiner.combine(dict_plots=dict_plots, config=autoscaled_config)
         return combined_plot
 
     @classmethod
@@ -113,7 +141,13 @@ class OverlaidPDFPlotter:
             index=ls_unique_categories, fill_value=0
         )
 
-        fig, ax = plt.subplots()
+        # Get autoscaled figure size and font sizes
+        num_categories = len(ls_unique_categories)
+        categorical_args = CategoricalAutoscalerArgs(num_categories=num_categories)
+        scale_result = CategoricalAutoscaler.compute(
+            args=categorical_args, params=cls._cat_autoscaler_hyperparams
+        )
+        fig, ax = plt.subplots(figsize=(scale_result.figure_width, scale_result.figure_height))
         plt.close(fig)
         positions = np.arange(len(ls_unique_categories))
         bar_width = cls._cat_pmf_bar_width
@@ -134,11 +168,13 @@ class OverlaidPDFPlotter:
             label="Synthetic",
         )
         ax.set_xticks(positions)
-        ax.set_xticklabels(ls_unique_categories, rotation="vertical")
-        ax.set_xlabel(feature_name, fontsize=cls._axis_font_size)
-        ax.set_ylabel("Probability", fontsize=cls._axis_font_size)
-        ax.legend()
-        fig.suptitle(f"PMF Comparison: {feature_name}")
+        ax.set_xticklabels(
+            ls_unique_categories, rotation="vertical", fontsize=scale_result.tick_font_size
+        )
+        ax.set_xlabel(feature_name, fontsize=scale_result.font_size)
+        ax.set_ylabel("Probability", fontsize=scale_result.font_size)
+        ax.legend(fontsize=scale_result.legend_font_size)
+        fig.suptitle(f"PMF Comparison: {feature_name}", fontsize=scale_result.title_font_size)
         return fig
 
     @classmethod

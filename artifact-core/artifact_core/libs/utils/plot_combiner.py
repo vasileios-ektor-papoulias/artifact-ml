@@ -23,6 +23,7 @@ class PlotCombinationConfig:
     include_fig_titles: bool = False
     fig_title_fontsize: float = 5
     combined_title: Optional[str] = None
+    combined_title_fontsize: float = 8
     combined_title_vertical_position: float = 1
 
 
@@ -42,6 +43,7 @@ class PlotCombiner:
             combined_fig.suptitle(
                 t=config.combined_title,
                 y=config.combined_title_vertical_position,
+                fontsize=config.combined_title_fontsize,
             )
         return combined_fig
 
@@ -50,9 +52,9 @@ class PlotCombiner:
         cls, dict_plots: Dict[str, Figure], config: PlotCombinationConfig
     ) -> Figure:
         combined_fig, axs = cls._create_combined_subplots(dict_plots, config)
-        cls._draw_all_content(axs, dict_plots, config)
-        cls._turn_off_extra_axes(axs, dict_plots)
-        cls._apply_layout_adjustments(combined_fig, config)
+        cls._draw_all_content(axs=axs, dict_plots=dict_plots, config=config)
+        cls._turn_off_extra_axes(axs=axs, dict_plots=dict_plots)
+        cls._apply_layout_adjustments(fig=combined_fig, config=config)
         return combined_fig
 
     @classmethod
