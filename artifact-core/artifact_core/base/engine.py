@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Generic, Type, TypeVar
+from typing import Dict, Generic, Type, TypeVar, Union
 
 from matplotlib.figure import Figure
 from numpy import ndarray
@@ -151,19 +151,25 @@ class ArtifactEngine(
         ]
     ]: ...
 
-    def produce_score(self, score_type: ScoreTypeT, resources: ArtifactResourcesT) -> float:
+    def produce_score(
+        self, score_type: Union[ScoreTypeT, str], resources: ArtifactResourcesT
+    ) -> float:
         artifact = self._score_registry.get(
             artifact_type=score_type, resource_spec=self._resource_spec
         )
         return artifact.compute(resources=resources)
 
-    def produce_array(self, array_type: ArrayTypeT, resources: ArtifactResourcesT) -> ndarray:
+    def produce_array(
+        self, array_type: Union[ArrayTypeT, str], resources: ArtifactResourcesT
+    ) -> ndarray:
         artifact = self._array_registry.get(
             artifact_type=array_type, resource_spec=self._resource_spec
         )
         return artifact.compute(resources=resources)
 
-    def produce_plot(self, plot_type: PlotTypeT, resources: ArtifactResourcesT) -> Figure:
+    def produce_plot(
+        self, plot_type: Union[PlotTypeT, str], resources: ArtifactResourcesT
+    ) -> Figure:
         artifact = self._plot_registry.get(
             artifact_type=plot_type, resource_spec=self._resource_spec
         )
@@ -171,7 +177,7 @@ class ArtifactEngine(
 
     def produce_score_collection(
         self,
-        score_collection_type: ScoreCollectionTypeT,
+        score_collection_type: Union[ScoreCollectionTypeT, str],
         resources: ArtifactResourcesT,
     ) -> Dict[str, float]:
         artifact = self._score_collection_registry.get(
@@ -181,7 +187,7 @@ class ArtifactEngine(
 
     def produce_array_collection(
         self,
-        array_collection_type: ArrayCollectionTypeT,
+        array_collection_type: Union[ArrayCollectionTypeT, str],
         resources: ArtifactResourcesT,
     ) -> Dict[str, ndarray]:
         artifact = self._array_collection_registry.get(
@@ -191,7 +197,7 @@ class ArtifactEngine(
 
     def produce_plot_collection(
         self,
-        plot_collection_type: PlotCollectionTypeT,
+        plot_collection_type: Union[PlotCollectionTypeT, str],
         resources: ArtifactResourcesT,
     ) -> Dict[str, Figure]:
         artifact = self._plot_collection_registry.get(

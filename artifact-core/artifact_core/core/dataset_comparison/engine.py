@@ -1,4 +1,4 @@
-from typing import Dict, Generic, TypeVar
+from typing import Dict, Generic, TypeVar, Union
 
 from matplotlib.figure import Figure
 from numpy import ndarray
@@ -44,7 +44,7 @@ class DatasetComparisonEngine(
 ):
     def produce_dataset_comparison_score(
         self,
-        score_type: ScoreTypeT,
+        score_type: Union[ScoreTypeT, str],
         dataset_real: DatasetT,
         dataset_synthetic: DatasetT,
     ) -> float:
@@ -55,7 +55,7 @@ class DatasetComparisonEngine(
 
     def produce_dataset_comparison_array(
         self,
-        array_type: ArrayTypeT,
+        array_type: Union[ArrayTypeT, str],
         dataset_real: DatasetT,
         dataset_synthetic: DatasetT,
     ) -> ndarray:
@@ -66,7 +66,7 @@ class DatasetComparisonEngine(
 
     def produce_dataset_comparison_plot(
         self,
-        plot_type: PlotTypeT,
+        plot_type: Union[PlotTypeT, str],
         dataset_real: DatasetT,
         dataset_synthetic: DatasetT,
     ) -> Figure:
@@ -77,7 +77,7 @@ class DatasetComparisonEngine(
 
     def produce_dataset_comparison_score_collection(
         self,
-        score_collection_type: ScoreCollectionTypeT,
+        score_collection_type: Union[ScoreCollectionTypeT, str],
         dataset_real: DatasetT,
         dataset_synthetic: DatasetT,
     ) -> Dict[str, float]:
@@ -90,7 +90,7 @@ class DatasetComparisonEngine(
 
     def produce_dataset_comparison_array_collection(
         self,
-        array_collection_type: ArrayCollectionTypeT,
+        array_collection_type: Union[ArrayCollectionTypeT, str],
         dataset_real: DatasetT,
         dataset_synthetic: DatasetT,
     ) -> Dict[str, ndarray]:
@@ -103,7 +103,7 @@ class DatasetComparisonEngine(
 
     def produce_dataset_comparison_plot_collection(
         self,
-        plot_collection_type: PlotCollectionTypeT,
+        plot_collection_type: Union[PlotCollectionTypeT, str],
         dataset_real: DatasetT,
         dataset_synthetic: DatasetT,
     ) -> Dict[str, Figure]:
