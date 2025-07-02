@@ -33,6 +33,9 @@
         "JS_DISTANCE": {
             "n_bins_cts_histogram": 100,
             "categorical_only": false
+        },
+        "bani": {
+            "bani_result": 0
         }
     },
     "array_collections": {},
