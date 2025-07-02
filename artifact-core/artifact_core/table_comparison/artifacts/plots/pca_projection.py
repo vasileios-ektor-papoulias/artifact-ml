@@ -8,9 +8,6 @@ from artifact_core.libs.implementation.tabular.projections.pca import (
     PCAHyperparams,
     PCAProjector,
 )
-from artifact_core.libs.resource_spec.tabular.protocol import (
-    TabularDataSpecProtocol,
-)
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonPlot,
 )
@@ -28,14 +25,6 @@ class PCAProjectionComparisonPlotConfig(ArtifactHyperparams):
 
 @TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.PCA_PROJECTION_PLOT)
 class PCAProjectionComparisonPlot(TableComparisonPlot[PCAProjectionComparisonPlotConfig]):
-    def __init__(
-        self,
-        resource_spec: TabularDataSpecProtocol,
-        hyperparams: PCAProjectionComparisonPlotConfig,
-    ):
-        self._resource_spec = resource_spec
-        self._hyperparams = hyperparams
-
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:

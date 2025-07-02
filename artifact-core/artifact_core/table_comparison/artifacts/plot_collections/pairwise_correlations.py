@@ -12,7 +12,6 @@ from artifact_core.libs.implementation.tabular.pairwise_correlation.calculator i
 from artifact_core.libs.implementation.tabular.pairwise_correlation.plotter import (
     PairwiseCorrelationHeatmapPlotter,
 )
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.base import TableComparisonPlotCollection
 from artifact_core.table_comparison.registries.plot_collections.registry import (
     TableComparisonPlotCollectionRegistry,
@@ -57,14 +56,6 @@ class CorrelationPlotCollectionConfig(ArtifactHyperparams):
     TableComparisonPlotCollectionType.PAIRWISE_CORRELATION_PLOTS
 )
 class CorrelationPlotCollection(TableComparisonPlotCollection[CorrelationPlotCollectionConfig]):
-    def __init__(
-        self,
-        resource_spec: TabularDataSpecProtocol,
-        hyperparams: CorrelationPlotCollectionConfig,
-    ):
-        self._resource_spec = resource_spec
-        self._hyperparams = hyperparams
-
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Dict[str, Figure]:

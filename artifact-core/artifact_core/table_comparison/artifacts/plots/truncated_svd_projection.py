@@ -8,9 +8,6 @@ from artifact_core.libs.implementation.tabular.projections.truncated_svd import 
     TruncatedSVDHyperparams,
     TruncatedSVDProjector,
 )
-from artifact_core.libs.resource_spec.tabular.protocol import (
-    TabularDataSpecProtocol,
-)
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonPlot,
 )
@@ -34,14 +31,6 @@ class TruncatedSVDProjectionComparisonPlotConfig(ArtifactHyperparams):
 class TruncatedSVDProjectionComparisonPlot(
     TableComparisonPlot[TruncatedSVDProjectionComparisonPlotConfig]
 ):
-    def __init__(
-        self,
-        resource_spec: TabularDataSpecProtocol,
-        hyperparams: TruncatedSVDProjectionComparisonPlotConfig,
-    ):
-        self._resource_spec = resource_spec
-        self._hyperparams = hyperparams
-
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:

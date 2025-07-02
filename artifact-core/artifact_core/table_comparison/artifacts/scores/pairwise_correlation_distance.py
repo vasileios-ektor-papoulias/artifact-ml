@@ -9,9 +9,6 @@ from artifact_core.libs.implementation.tabular.pairwise_correlation.calculator i
     ContinuousAssociationType,
     PairwiseCorrelationCalculator,
 )
-from artifact_core.libs.resource_spec.tabular.protocol import (
-    TabularDataSpecProtocol,
-)
 from artifact_core.libs.utils.vector_distance_calculator import (
     VectorDistanceMetric,
 )
@@ -72,14 +69,6 @@ class PairwiseCorrelationDistanceConfig(ArtifactHyperparams):
     TableComparisonScoreType.PAIRWISE_CORRELATION_DISTANCE
 )
 class PairwiseCorrelationDistance(TableComparisonScore[PairwiseCorrelationDistanceConfig]):
-    def __init__(
-        self,
-        resource_spec: TabularDataSpecProtocol,
-        hyperparams: PairwiseCorrelationDistanceConfig,
-    ):
-        self._resource_spec = resource_spec
-        self._hyperparams = hyperparams
-
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> float:

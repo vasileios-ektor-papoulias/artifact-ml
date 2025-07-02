@@ -8,9 +8,6 @@ from artifact_core.libs.implementation.tabular.projections.tsne import (
     TSNEHyperparams,
     TSNEProjector,
 )
-from artifact_core.libs.resource_spec.tabular.protocol import (
-    TabularDataSpecProtocol,
-)
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonPlot,
 )
@@ -31,14 +28,6 @@ class TSNEProjectionComparisonPlotConfig(ArtifactHyperparams):
 
 @TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.TSNE_PROJECTION_PLOT)
 class TSNEProjectionComparisonPlot(TableComparisonPlot[TSNEProjectionComparisonPlotConfig]):
-    def __init__(
-        self,
-        resource_spec: TabularDataSpecProtocol,
-        hyperparams: TSNEProjectionComparisonPlotConfig,
-    ):
-        self._resource_spec = resource_spec
-        self._hyperparams = hyperparams
-
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
