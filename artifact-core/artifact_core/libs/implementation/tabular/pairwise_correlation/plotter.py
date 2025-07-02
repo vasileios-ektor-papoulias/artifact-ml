@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import Dict, List
 
 import pandas as pd
 import seaborn as sns
@@ -57,6 +57,37 @@ class PairwiseCorrelationHeatmapPlotter:
     _combined_plot_real_key = "Real"
     _combined_plot_synthetic_key = "Synthetic"
     _combined_plor_difference_key = "Absolute Difference"
+
+    @classmethod
+    def get_correlation_plot_collection(
+        cls,
+        categorical_correlation_type: CategoricalAssociationType,
+        continuous_correlation_type: ContinuousAssociationType,
+        dataset_real: pd.DataFrame,
+        dataset_synthetic: pd.DataFrame,
+        ls_cat_features: List[str],
+    ) -> Dict[str, Figure]:
+        dict_plots = {}
+        dict_plots[cls._combined_plot_real_key] = cls.get_correlation_heatmap(
+            categorical_correlation_type=categorical_correlation_type,
+            continuous_correlation_type=continuous_correlation_type,
+            dataset=dataset_real,
+            ls_cat_features=ls_cat_features,
+        )
+        dict_plots[cls._combined_plot_synthetic_key] = cls.get_correlation_heatmap(
+            categorical_correlation_type=categorical_correlation_type,
+            continuous_correlation_type=continuous_correlation_type,
+            dataset=dataset_synthetic,
+            ls_cat_features=ls_cat_features,
+        )
+        dict_plots[cls._combined_plor_difference_key] = cls.get_correlation_difference_heatmap(
+            categorical_correlation_type=categorical_correlation_type,
+            continuous_correlation_type=continuous_correlation_type,
+            dataset_real=dataset_real,
+            dataset_synthetic=dataset_synthetic,
+            ls_cat_features=ls_cat_features,
+        )
+        return dict_plots
 
     @classmethod
     def get_combined_correlation_plot(
