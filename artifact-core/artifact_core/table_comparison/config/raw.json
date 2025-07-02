@@ -36,5 +36,10 @@
         }
     },
     "array_collections": {},
-    "plot_collections": {}
+    "plot_collections": {
+        "PAIRWISE_CORRELATION_PLOTS": {
+            "categorical_association_type": "CRAMERS_V",
+            "continuous_association_type": "PEARSON"
+        }
+    }
 }
