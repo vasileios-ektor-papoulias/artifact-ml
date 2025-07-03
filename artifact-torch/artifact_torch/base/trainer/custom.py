@@ -63,7 +63,7 @@ class CustomTrainer(
         early_stopper: EarlyStopper[StopperUpdateDataT],
         model_tracker: Optional[ModelTracker[ModelTrackingCriterionT]],
         checkpoint_callback: Optional[CheckpointCallback],
-        batch_routine: Optional[BatchRoutine[ModelInputT, ModelOutputT]],
+        batch_routine: Optional[BatchRoutine[ModelInputT, ModelOutputT, ModelT]],
     ):
         super().__init__(training_state=training_state, train_loader=train_loader, device=device)
         self._evaluation_flow = evaluation_flow
@@ -154,7 +154,7 @@ class CustomTrainer(
     @abstractmethod
     def _get_batch_routine(
         tracking_client: Optional[TrackingClient],
-    ) -> Optional[BatchRoutine[ModelInputT, ModelOutputT]]: ...
+    ) -> Optional[BatchRoutine[ModelInputT, ModelOutputT, ModelT]]: ...
 
     @staticmethod
     @abstractmethod
@@ -198,7 +198,10 @@ class CustomTrainer(
     ):
         if self._batch_routine is not None:
             self._batch_routine.execute(
-                model_input=model_input, model_output=model_output, batch_idx=batch_idx
+                model_input=model_input,
+                model_output=model_output,
+                model=self.model,
+                batch_idx=batch_idx,
             )
             self._batch_cache.append(items=self._batch_routine.cache)
 
@@ -242,7 +245,7 @@ class CustomTrainer(
         cls: Type[CustomTrainerT],
         model: ModelT,
         train_loader: DataLoader[ModelInputT],
-        batch_routine: Optional[BatchRoutine[ModelInputT, ModelOutputT]] = None,
+        batch_routine: Optional[BatchRoutine[ModelInputT, ModelOutputT, ModelT]] = None,
         artifact_routine: Optional[ArtifactValidationRoutine[ModelT, Any, Any, Any, Any]] = None,
         ls_loader_routines: Optional[List[DataLoaderRoutine[ModelInputT, ModelOutputT]]] = None,
         tracking_client: Optional[TrackingClient] = None,
