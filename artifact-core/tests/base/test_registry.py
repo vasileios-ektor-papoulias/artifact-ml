@@ -136,7 +136,7 @@ def test_get(
     expect_raise_missing_param: bool,
 ):
     if expect_raise_unregistered_artifact:
-        with pytest.raises(ValueError, match=f"Artifact {artifact_type} not registered"):
+        with pytest.raises(ValueError, match=f"Artifact {artifact_type.name} not registered"):
             artifact_registry.get(artifact_type=artifact_type, resource_spec=resource_spec)
     elif expect_raise_missing_config:
         with pytest.raises(
