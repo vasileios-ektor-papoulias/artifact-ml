@@ -79,7 +79,13 @@ class TabularVAETrainer(
     @staticmethod
     def _get_batch_routine(
         tracking_client: Optional[TrackingClient],
-    ) -> Optional[BatchRoutine[TabularVAEInput, TabularVAEOutput]]:
+    ) -> Optional[
+        BatchRoutine[
+            TabularVAEInput,
+            TabularVAEOutput,
+            TableSynthesizer[TabularVAEInput, TabularVAEOutput, Any],
+        ]
+    ]:
         return DemoBatchRoutine.build(tracking_client=tracking_client)
 
     @staticmethod
