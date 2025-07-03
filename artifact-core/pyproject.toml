@@ -1,9 +1,10 @@
 [project]
 name = "artifact-core"
+packages = [{ include = "artifact-core" }]
 version = "0.1.0"
 description = "A flexible minimal interface for the computation of heterogeneous validation artifacts in thematically related ML experiments."
 authors = [
-    {name = "Your Name",email = "you@example.com"}
+    {name = "Vasileios Ektor Papoulias",email = "hector.papoulias@gmail.com"}
 ]
 license = {text = "MIT"}
 readme = "README.md"
