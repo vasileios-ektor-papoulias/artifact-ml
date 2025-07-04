@@ -9,7 +9,7 @@ from artifact_core.table_comparison.artifacts.base import (
     DatasetComparisonArtifactResources,
 )
 from artifact_core.table_comparison.artifacts.plot_collections.cdf import (
-    CDFComparisonPlotCollection,
+    CDFPlotCollection,
 )
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
@@ -30,9 +30,7 @@ def test_compute(
         attribute="get_overlaid_cdf_plot_collection",
         return_value=fake_plots,
     )
-    artifact = CDFComparisonPlotCollection(
-        resource_spec=resource_spec, hyperparams=NO_ARTIFACT_HYPERPARAMS
-    )
+    artifact = CDFPlotCollection(resource_spec=resource_spec, hyperparams=NO_ARTIFACT_HYPERPARAMS)
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )

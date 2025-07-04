@@ -19,12 +19,12 @@ from artifact_core.table_comparison.registries.plots.registry import (
 
 @TableComparisonPlotRegistry.register_artifact_config(TableComparisonPlotType.PCA_PROJECTION_PLOT)
 @dataclass(frozen=True)
-class PCAProjectionComparisonPlotConfig(ArtifactHyperparams):
+class PCAPlotHyperparams(ArtifactHyperparams):
     use_categorical: bool
 
 
 @TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.PCA_PROJECTION_PLOT)
-class PCAProjectionComparisonPlot(TableComparisonPlot[PCAProjectionComparisonPlotConfig]):
+class PCAPlot(TableComparisonPlot[PCAPlotHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:

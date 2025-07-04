@@ -5,10 +5,10 @@ from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecPro
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonScore,
 )
-from artifact_core.table_comparison.artifacts.scores.mean_js import MeanJSDistance
-from artifact_core.table_comparison.artifacts.scores.pairwise_correlation_distance import (
+from artifact_core.table_comparison.artifacts.scores.correlation import (
     PairwiseCorrelationDistance,
 )
+from artifact_core.table_comparison.artifacts.scores.mean_js import MeanJSDistance
 from artifact_core.table_comparison.registries.scores.registry import (
     TableComparisonScoreRegistry,
     TableComparisonScoreType,

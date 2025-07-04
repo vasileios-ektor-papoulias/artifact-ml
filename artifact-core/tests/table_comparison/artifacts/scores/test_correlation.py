@@ -10,16 +10,16 @@ from artifact_core.libs.implementation.tabular.pairwise_correlation.calculator i
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.libs.utils.vector_distance_calculator import VectorDistanceMetric
 from artifact_core.table_comparison.artifacts.base import DatasetComparisonArtifactResources
-from artifact_core.table_comparison.artifacts.scores.pairwise_correlation_distance import (
+from artifact_core.table_comparison.artifacts.scores.correlation import (
     PairwiseCorrelationDistance,
-    PairwiseCorrelationDistanceConfig,
+    PairwiseCorrelationDistanceHyperparams,
 )
 from pytest_mock import MockerFixture
 
 
 @pytest.fixture
-def hyperparams() -> PairwiseCorrelationDistanceConfig:
-    return PairwiseCorrelationDistanceConfig(
+def hyperparams() -> PairwiseCorrelationDistanceHyperparams:
+    return PairwiseCorrelationDistanceHyperparams(
         categorical_association_type=CategoricalAssociationType.THEILS_U,
         continuous_association_type=ContinuousAssociationType.PEARSON,
         vector_distance_metric=VectorDistanceMetric.L2,
@@ -31,7 +31,7 @@ def test_compute(
     resource_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
-    hyperparams: PairwiseCorrelationDistanceConfig,
+    hyperparams: PairwiseCorrelationDistanceHyperparams,
 ):
     fake_score: float = 0.314
     patch_compute_correlation_distance = mocker.patch.object(

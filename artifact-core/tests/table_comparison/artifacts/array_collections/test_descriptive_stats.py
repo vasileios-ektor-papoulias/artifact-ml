@@ -10,15 +10,15 @@ from artifact_core.libs.implementation.tabular.descriptive_statistics.calculator
     DescriptiveStatisticsCalculator,
 )
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.table_comparison.artifacts.array_collections.descriptive_statistics import (
-    ContinuousFeatureFirstQuartilesJuxtaposition,
-    ContinuousFeatureMaximaJuxtaposition,
-    ContinuousFeatureMeansJuxtaposition,
-    ContinuousFeatureMediansJuxtaposition,
-    ContinuousFeatureMinimaJuxtaposition,
-    ContinuousFeatureSTDsJuxtaposition,
-    ContinuousFeatureThirdQuartilesJuxtaposition,
-    ContinuousFeatureVariancesJuxtaposition,
+from artifact_core.table_comparison.artifacts.array_collections.descriptive_stats import (
+    FirstQuartileJuxtaposition,
+    MaxJuxtaposition,
+    MeanJuxtaposition,
+    MedianJuxtaposition,
+    MinJuxtaposition,
+    STDJuxtaposition,
+    ThirdQuartileJuxtaposition,
+    VarianceJuxtaposition,
 )
 from artifact_core.table_comparison.artifacts.base import (
     DatasetComparisonArtifactResources,
@@ -30,14 +30,14 @@ from pytest_mock import MockerFixture
 @pytest.mark.parametrize(
     "artifact_class, statistic",
     [
-        (ContinuousFeatureMeansJuxtaposition, DescriptiveStatistic.MEAN),
-        (ContinuousFeatureSTDsJuxtaposition, DescriptiveStatistic.STD),
-        (ContinuousFeatureVariancesJuxtaposition, DescriptiveStatistic.VARIANCE),
-        (ContinuousFeatureMediansJuxtaposition, DescriptiveStatistic.MEDIAN),
-        (ContinuousFeatureFirstQuartilesJuxtaposition, DescriptiveStatistic.Q1),
-        (ContinuousFeatureThirdQuartilesJuxtaposition, DescriptiveStatistic.Q3),
-        (ContinuousFeatureMinimaJuxtaposition, DescriptiveStatistic.MIN),
-        (ContinuousFeatureMaximaJuxtaposition, DescriptiveStatistic.MAX),
+        (MeanJuxtaposition, DescriptiveStatistic.MEAN),
+        (STDJuxtaposition, DescriptiveStatistic.STD),
+        (VarianceJuxtaposition, DescriptiveStatistic.VARIANCE),
+        (MedianJuxtaposition, DescriptiveStatistic.MEDIAN),
+        (FirstQuartileJuxtaposition, DescriptiveStatistic.Q1),
+        (ThirdQuartileJuxtaposition, DescriptiveStatistic.Q3),
+        (MinJuxtaposition, DescriptiveStatistic.MIN),
+        (MaxJuxtaposition, DescriptiveStatistic.MAX),
     ],
 )
 def test_compute(

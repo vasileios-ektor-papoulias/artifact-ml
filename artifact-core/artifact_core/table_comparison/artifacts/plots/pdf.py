@@ -15,7 +15,7 @@ from artifact_core.table_comparison.registries.plots.registry import (
 
 
 @TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.PDF_PLOT)
-class PDFComparisonCombinedPlot(TableComparisonPlot[NoArtifactHyperparams]):
+class PDFPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:

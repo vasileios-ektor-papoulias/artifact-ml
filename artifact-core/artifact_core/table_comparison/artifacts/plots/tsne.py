@@ -19,7 +19,7 @@ from artifact_core.table_comparison.registries.plots.registry import (
 
 @TableComparisonPlotRegistry.register_artifact_config(TableComparisonPlotType.TSNE_PROJECTION_PLOT)
 @dataclass(frozen=True)
-class TSNEProjectionComparisonPlotConfig(ArtifactHyperparams):
+class TSNEPlotHyperparams(ArtifactHyperparams):
     use_categorical: bool
     perplexity: float
     learning_rate: float | str
@@ -27,7 +27,7 @@ class TSNEProjectionComparisonPlotConfig(ArtifactHyperparams):
 
 
 @TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.TSNE_PROJECTION_PLOT)
-class TSNEProjectionComparisonPlot(TableComparisonPlot[TSNEProjectionComparisonPlotConfig]):
+class TSNEPlot(TableComparisonPlot[TSNEPlotHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:

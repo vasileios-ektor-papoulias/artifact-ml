@@ -5,7 +5,7 @@ from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
 from artifact_core.libs.implementation.tabular.pdf.overlaid_plotter import OverlaidPDFPlotter
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.base import DatasetComparisonArtifactResources
-from artifact_core.table_comparison.artifacts.plots.pdf import PDFComparisonCombinedPlot
+from artifact_core.table_comparison.artifacts.plots.pdf import PDFPlot
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
@@ -22,7 +22,7 @@ def test_compute(
         attribute="get_overlaid_pdf_plot",
         return_value=fake_fig,
     )
-    artifact = PDFComparisonCombinedPlot(
+    artifact = PDFPlot(
         resource_spec=resource_spec,
         hyperparams=NO_ARTIFACT_HYPERPARAMS,
     )

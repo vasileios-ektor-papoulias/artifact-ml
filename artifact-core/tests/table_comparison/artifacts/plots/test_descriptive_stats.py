@@ -15,22 +15,22 @@ from artifact_core.table_comparison.artifacts.base import (
     DatasetComparisonArtifactResources,
     TableComparisonPlot,
 )
-from artifact_core.table_comparison.artifacts.plots.descriptive_stat_comparison import (
-    ContinuousFeatureDescriptiveStatsComparisonPlot,
-    ContinuousFeatureFirstQuartileComparisonPlot,
-    ContinuousFeatureMaximaComparisonPlot,
-    ContinuousFeatureMeanComparisonPlot,
-    ContinuousFeatureMedianComparisonPlot,
-    ContinuousFeatureMinimaComparisonPlot,
-    ContinuousFeatureSTDComparisonPlot,
-    ContinuousFeatureThirdQuartileComparisonPlot,
-    ContinuousFeatureVarianceComparisonPlot,
+from artifact_core.table_comparison.artifacts.plots.descriptive_stats import (
+    DescriptiveStatsComparisonPlot,
+    FirstQuartileComparisonPlot,
+    MaxComparisonPlot,
+    MeanComparisonPlot,
+    MedianComparisonPlot,
+    MinComparisonPlot,
+    STDComparisonPlot,
+    ThirdQuartileComparisonPlot,
+    VarianceComparisonPlot,
 )
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
-def test_combined_stat_comparison_plot(
+def test_descriptive_stats_comparison_plot(
     mocker: MockerFixture,
     resource_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
@@ -42,7 +42,7 @@ def test_combined_stat_comparison_plot(
         attribute="get_combined_stat_comparison_plot",
         return_value=fake_plot,
     )
-    artifact = ContinuousFeatureDescriptiveStatsComparisonPlot(
+    artifact = DescriptiveStatsComparisonPlot(
         resource_spec=resource_spec, hyperparams=NO_ARTIFACT_HYPERPARAMS
     )
     resources = DatasetComparisonArtifactResources(
@@ -63,17 +63,17 @@ def test_combined_stat_comparison_plot(
 @pytest.mark.parametrize(
     "artifact_class, statistic",
     [
-        (ContinuousFeatureMeanComparisonPlot, DescriptiveStatistic.MEAN),
-        (ContinuousFeatureSTDComparisonPlot, DescriptiveStatistic.STD),
-        (ContinuousFeatureVarianceComparisonPlot, DescriptiveStatistic.VARIANCE),
-        (ContinuousFeatureMedianComparisonPlot, DescriptiveStatistic.MEDIAN),
-        (ContinuousFeatureFirstQuartileComparisonPlot, DescriptiveStatistic.Q1),
-        (ContinuousFeatureThirdQuartileComparisonPlot, DescriptiveStatistic.Q3),
-        (ContinuousFeatureMinimaComparisonPlot, DescriptiveStatistic.MIN),
-        (ContinuousFeatureMaximaComparisonPlot, DescriptiveStatistic.MAX),
+        (MeanComparisonPlot, DescriptiveStatistic.MEAN),
+        (STDComparisonPlot, DescriptiveStatistic.STD),
+        (VarianceComparisonPlot, DescriptiveStatistic.VARIANCE),
+        (MedianComparisonPlot, DescriptiveStatistic.MEDIAN),
+        (FirstQuartileComparisonPlot, DescriptiveStatistic.Q1),
+        (ThirdQuartileComparisonPlot, DescriptiveStatistic.Q3),
+        (MinComparisonPlot, DescriptiveStatistic.MIN),
+        (MaxComparisonPlot, DescriptiveStatistic.MAX),
     ],
 )
-def test_continuous_feature_stat_comparison_plots(
+def test_stat_comparison_plots(
     mocker: MockerFixture,
     resource_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,

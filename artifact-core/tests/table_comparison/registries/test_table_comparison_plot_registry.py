@@ -5,30 +5,30 @@ from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecPro
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonPlot,
 )
-from artifact_core.table_comparison.artifacts.plots.cdf import CDFComparisonCombinedPlot
-from artifact_core.table_comparison.artifacts.plots.descriptive_stat_comparison import (
-    ContinuousFeatureDescriptiveStatsComparisonPlot,
-    ContinuousFeatureFirstQuartileComparisonPlot,
-    ContinuousFeatureMaximaComparisonPlot,
-    ContinuousFeatureMeanComparisonPlot,
-    ContinuousFeatureMedianComparisonPlot,
-    ContinuousFeatureMinimaComparisonPlot,
-    ContinuousFeatureSTDComparisonPlot,
-    ContinuousFeatureThirdQuartileComparisonPlot,
-    ContinuousFeatureVarianceComparisonPlot,
+from artifact_core.table_comparison.artifacts.plots.cdf import CDFPlot
+from artifact_core.table_comparison.artifacts.plots.correlations import (
+    CorrelationPlot,
 )
-from artifact_core.table_comparison.artifacts.plots.pairwise_correlations import (
-    CorrelationComparisonCombinedPlot,
+from artifact_core.table_comparison.artifacts.plots.descriptive_stats import (
+    DescriptiveStatsComparisonPlot,
+    FirstQuartileComparisonPlot,
+    MaxComparisonPlot,
+    MeanComparisonPlot,
+    MedianComparisonPlot,
+    MinComparisonPlot,
+    STDComparisonPlot,
+    ThirdQuartileComparisonPlot,
+    VarianceComparisonPlot,
 )
-from artifact_core.table_comparison.artifacts.plots.pca_projection import (
-    PCAProjectionComparisonPlot,
+from artifact_core.table_comparison.artifacts.plots.pca import (
+    PCAPlot,
 )
-from artifact_core.table_comparison.artifacts.plots.pdf import PDFComparisonCombinedPlot
-from artifact_core.table_comparison.artifacts.plots.truncated_svd_projection import (
-    TruncatedSVDProjectionComparisonPlot,
+from artifact_core.table_comparison.artifacts.plots.pdf import PDFPlot
+from artifact_core.table_comparison.artifacts.plots.truncated_svd import (
+    TruncatedSVDPlot,
 )
-from artifact_core.table_comparison.artifacts.plots.tsne_projection import (
-    TSNEProjectionComparisonPlot,
+from artifact_core.table_comparison.artifacts.plots.tsne import (
+    TSNEPlot,
 )
 from artifact_core.table_comparison.registries.plots.registry import (
     TableComparisonPlotRegistry,
@@ -39,36 +39,36 @@ from artifact_core.table_comparison.registries.plots.registry import (
 @pytest.mark.parametrize(
     "artifact_type, artifact_class",
     [
-        (TableComparisonPlotType.PDF_PLOT, PDFComparisonCombinedPlot),
-        (TableComparisonPlotType.CDF_PLOT, CDFComparisonCombinedPlot),
+        (TableComparisonPlotType.PDF_PLOT, PDFPlot),
+        (TableComparisonPlotType.CDF_PLOT, CDFPlot),
         (
             TableComparisonPlotType.DESCRIPTIVE_STATS_COMPARISON_PLOT,
-            ContinuousFeatureDescriptiveStatsComparisonPlot,
+            DescriptiveStatsComparisonPlot,
         ),
-        (TableComparisonPlotType.MEAN_COMPARISON_PLOT, ContinuousFeatureMeanComparisonPlot),
-        (TableComparisonPlotType.STD_COMPARISON_PLOT, ContinuousFeatureSTDComparisonPlot),
-        (TableComparisonPlotType.VARIANCE_COMPARISON_PLOT, ContinuousFeatureVarianceComparisonPlot),
-        (TableComparisonPlotType.MEDIAN_COMPARISON_PLOT, ContinuousFeatureMedianComparisonPlot),
+        (TableComparisonPlotType.MEAN_COMPARISON_PLOT, MeanComparisonPlot),
+        (TableComparisonPlotType.STD_COMPARISON_PLOT, STDComparisonPlot),
+        (TableComparisonPlotType.VARIANCE_COMPARISON_PLOT, VarianceComparisonPlot),
+        (TableComparisonPlotType.MEDIAN_COMPARISON_PLOT, MedianComparisonPlot),
         (
             TableComparisonPlotType.FIRST_QUARTILE_COMPARISON_PLOT,
-            ContinuousFeatureFirstQuartileComparisonPlot,
+            FirstQuartileComparisonPlot,
         ),
         (
             TableComparisonPlotType.THIRD_QUARTILE_COMPARISON_PLOT,
-            ContinuousFeatureThirdQuartileComparisonPlot,
+            ThirdQuartileComparisonPlot,
         ),
-        (TableComparisonPlotType.MIN_COMPARISON_PLOT, ContinuousFeatureMinimaComparisonPlot),
-        (TableComparisonPlotType.MAX_COMPARISON_PLOT, ContinuousFeatureMaximaComparisonPlot),
+        (TableComparisonPlotType.MIN_COMPARISON_PLOT, MinComparisonPlot),
+        (TableComparisonPlotType.MAX_COMPARISON_PLOT, MaxComparisonPlot),
         (
             TableComparisonPlotType.PAIRWISE_CORRELATION_COMPARISON_HEATMAP,
-            CorrelationComparisonCombinedPlot,
+            CorrelationPlot,
         ),
-        (TableComparisonPlotType.PCA_PROJECTION_PLOT, PCAProjectionComparisonPlot),
+        (TableComparisonPlotType.PCA_PROJECTION_PLOT, PCAPlot),
         (
             TableComparisonPlotType.TRUNCATED_SVD_PROJECTION_PLOT,
-            TruncatedSVDProjectionComparisonPlot,
+            TruncatedSVDPlot,
         ),
-        (TableComparisonPlotType.TSNE_PROJECTION_PLOT, TSNEProjectionComparisonPlot),
+        (TableComparisonPlotType.TSNE_PROJECTION_PLOT, TSNEPlot),
     ],
 )
 def test_get(

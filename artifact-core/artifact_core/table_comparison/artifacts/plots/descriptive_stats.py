@@ -20,7 +20,7 @@ from artifact_core.table_comparison.registries.plots.registry import (
 @TableComparisonPlotRegistry.register_artifact(
     TableComparisonPlotType.DESCRIPTIVE_STATS_COMPARISON_PLOT
 )
-class ContinuousFeatureDescriptiveStatsComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+class DescriptiveStatsComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
@@ -33,7 +33,7 @@ class ContinuousFeatureDescriptiveStatsComparisonPlot(TableComparisonPlot[NoArti
 
 
 @TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MEAN_COMPARISON_PLOT)
-class ContinuousFeatureMeanComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+class MeanComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
@@ -47,7 +47,7 @@ class ContinuousFeatureMeanComparisonPlot(TableComparisonPlot[NoArtifactHyperpar
 
 
 @TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.STD_COMPARISON_PLOT)
-class ContinuousFeatureSTDComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+class STDComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
@@ -61,7 +61,7 @@ class ContinuousFeatureSTDComparisonPlot(TableComparisonPlot[NoArtifactHyperpara
 
 
 @TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.VARIANCE_COMPARISON_PLOT)
-class ContinuousFeatureVarianceComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+class VarianceComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
@@ -75,7 +75,7 @@ class ContinuousFeatureVarianceComparisonPlot(TableComparisonPlot[NoArtifactHype
 
 
 @TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MEDIAN_COMPARISON_PLOT)
-class ContinuousFeatureMedianComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+class MedianComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
@@ -91,7 +91,7 @@ class ContinuousFeatureMedianComparisonPlot(TableComparisonPlot[NoArtifactHyperp
 @TableComparisonPlotRegistry.register_artifact(
     TableComparisonPlotType.FIRST_QUARTILE_COMPARISON_PLOT
 )
-class ContinuousFeatureFirstQuartileComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+class FirstQuartileComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
@@ -107,7 +107,7 @@ class ContinuousFeatureFirstQuartileComparisonPlot(TableComparisonPlot[NoArtifac
 @TableComparisonPlotRegistry.register_artifact(
     TableComparisonPlotType.THIRD_QUARTILE_COMPARISON_PLOT
 )
-class ContinuousFeatureThirdQuartileComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+class ThirdQuartileComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
@@ -121,7 +121,7 @@ class ContinuousFeatureThirdQuartileComparisonPlot(TableComparisonPlot[NoArtifac
 
 
 @TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MAX_COMPARISON_PLOT)
-class ContinuousFeatureMaximaComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+class MaxComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
@@ -135,7 +135,7 @@ class ContinuousFeatureMaximaComparisonPlot(TableComparisonPlot[NoArtifactHyperp
 
 
 @TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MIN_COMPARISON_PLOT)
-class ContinuousFeatureMinimaComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+class MinComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:

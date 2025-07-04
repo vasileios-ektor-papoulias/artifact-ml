@@ -1,31 +1,33 @@
-from typing import Dict
 from unittest.mock import ANY
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.pairwise_correlation.plotter import (
+from artifact_core.libs.implementation.tabular.pairwise_correlation.calculator import (
     CategoricalAssociationType,
     ContinuousAssociationType,
+)
+from artifact_core.libs.implementation.tabular.pairwise_correlation.plotter import (
     PairwiseCorrelationHeatmapPlotter,
 )
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.base import (
     DatasetComparisonArtifactResources,
 )
-from artifact_core.table_comparison.artifacts.plot_collections.pairwise_correlations import (
-    CorrelationPlotCollection,
-    CorrelationPlotCollectionConfig,
+from artifact_core.table_comparison.artifacts.plots.correlations import (
+    CorrelationPlot,
+    CorrelationPlotHyperparams,
 )
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
 @pytest.fixture
-def hyperparams() -> CorrelationPlotCollectionConfig:
-    return CorrelationPlotCollectionConfig(
+def hyperparams() -> CorrelationPlotHyperparams:
+    hyperparams = CorrelationPlotHyperparams(
         categorical_association_type=CategoricalAssociationType.CRAMERS_V,
         continuous_association_type=ContinuousAssociationType.PEARSON,
     )
+    return hyperparams
 
 
 def test_compute(
@@ -33,32 +35,33 @@ def test_compute(
     resource_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
-    hyperparams: CorrelationPlotCollectionConfig,
+    hyperparams: CorrelationPlotHyperparams,
 ):
-    fake_plots: Dict[str, Figure] = {
-        "cts_1": Figure(),
-        "cts_2": Figure(),
-        "cat_1": Figure(),
-        "cat_2": Figure(),
-    }
-    patch_get_correlation_plot_collection = mocker.patch.object(
+    fake_plot = Figure()
+    patch_get_combined_correlation_plot = mocker.patch.object(
         target=PairwiseCorrelationHeatmapPlotter,
-        attribute="get_correlation_plot_collection",
-        return_value=fake_plots,
+        attribute="get_combined_correlation_plot",
+        return_value=fake_plot,
     )
-    artifact = CorrelationPlotCollection(resource_spec=resource_spec, hyperparams=hyperparams)
+    artifact = CorrelationPlot(
+        resource_spec=resource_spec,
+        hyperparams=hyperparams,
+    )
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
+
     result = artifact.compute(resources=resources)
-    patch_get_correlation_plot_collection.assert_called_once_with(
-        categorical_correlation_type=CategoricalAssociationType.CRAMERS_V,
-        continuous_correlation_type=ContinuousAssociationType.PEARSON,
+
+    patch_get_combined_correlation_plot.assert_called_once_with(
+        categorical_correlation_type=hyperparams.categorical_association_type,
+        continuous_correlation_type=hyperparams.continuous_association_type,
         dataset_real=ANY,
         dataset_synthetic=ANY,
         ls_cat_features=resource_spec.ls_cat_features,
     )
-    _, kwargs = patch_get_correlation_plot_collection.call_args
+
+    _, kwargs = patch_get_combined_correlation_plot.call_args
     pd.testing.assert_frame_equal(kwargs["dataset_real"], df_real)
     pd.testing.assert_frame_equal(kwargs["dataset_synthetic"], df_synthetic)
-    assert result == fake_plots
+    assert result == fake_plot

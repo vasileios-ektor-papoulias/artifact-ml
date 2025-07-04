@@ -21,16 +21,14 @@ from artifact_core.table_comparison.registries.plots.registry import (
     TableComparisonPlotType.TRUNCATED_SVD_PROJECTION_PLOT
 )
 @dataclass(frozen=True)
-class TruncatedSVDProjectionComparisonPlotConfig(ArtifactHyperparams):
+class TruncatedSVDPlotHyperparams(ArtifactHyperparams):
     use_categorical: bool
 
 
 @TableComparisonPlotRegistry.register_artifact(
     TableComparisonPlotType.TRUNCATED_SVD_PROJECTION_PLOT
 )
-class TruncatedSVDProjectionComparisonPlot(
-    TableComparisonPlot[TruncatedSVDProjectionComparisonPlotConfig]
-):
+class TruncatedSVDPlot(TableComparisonPlot[TruncatedSVDPlotHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
