@@ -284,7 +284,7 @@ class MyValidationPlan(TableComparisonPlan):
     @staticmethod
     def _get_plot_types() -> List[PlotType]:
         return [
-          PlotType.PDF_PLOT,
+          PlotType.PDF,
           PlotType.PCA_JUXTAPOSITION,
           ]
     
