@@ -1,14 +1,12 @@
 # Motivating Example: Ad Hoc vs. Systematic Experiment Logic
 
-This document provides a detailed motivating example that showcases the value of Artifact-ML by contrasting traditional ad hoc validation approaches with the systematic, reusable infrastructure that Artifact-ML provides.
-
-The example demonstrates how Artifact-ML eliminates code duplication, reduces maintenance overhead, and enables researchers to focus on architectural innovation.
+This document provides a practical schematic example showcasing the problem addressed by Artifact-ML.
 
 ---
 
 ## 🔧 Motivating Example: Ad Hoc vs. Systematic Experiment Logic
 
-The following exhibit the same tabular synthesis experiment implemented two ways:
+The following exhibits the same tabular synthesis experiment implemented two ways:
 
 ### Without Artifact-ML: Validation-Specific Experiment Scripts
 ```python
@@ -287,14 +285,14 @@ class MyValidationPlan(TableComparisonPlan):
     def _get_plot_types() -> List[PlotType]:
         return [
           PlotType.PDF_PLOT,
-          PlotType.PCA_PROJECTION,
+          PlotType.PCA_JUXTAPOSITION,
           ]
     
     @staticmethod
     def _get_array_collection_types() -> List[ArrayCollectionType]:
         return [
-          ArrayCollectionType.MEANS,
-          ArrayCollectionType.STDS
+          ArrayCollectionType.MEAN_JUXTAPOSITION,
+          ArrayCollectionType.STD_JUXTAPOSITION
           ]
 ```
 
@@ -363,4 +361,4 @@ results = trainer.train()  # Training + validation + tracking automatically hand
 - **Declarative workflows**: Researchers can express validation intent directly ("compute PCA projection," "generate marginal plots") without writing repetitive preparation code, eliminating the mismatch between declarative goals and imperative implementation.
 - **Elimination of code duplication**: Minor interface variations across competing models no longer necessitate the duplication of entire experiment scripts.
 - **Maintainable, decoupled logic**: Modular validation modifications no longer propagate changes through coupled monolithic scripts, reducing maintenance overhead.
-- **Reusable infrastructure**: The experiment infrastructure developed (validation plan and training loop) will work with ANY tabular synthesizer. Researchers can import and use it directly, enabling **full focus on innovation**: they might not need to produce any experiment script at all to begin with. 
+- **Reusable infrastructure**: The experiment infrastructure developed (validation plan and training loop) will work with ANY tabular synthesizer. Researchers can import and use it directly, enabling full focus on innovation: they might not need to produce any experiment script at all to begin with. 
