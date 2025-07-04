@@ -138,9 +138,11 @@ To contribute to Artifact-ML, follow these steps:
 
 ## Implementation
 
-The workflows enforcing our CI/CD conventions are powered by shell scripts. These are organized into a modular structure under the `.github/scripts` directory.
+The workflows enforcing our CI/CD conventions are powered by shell scripts. These are organized under the `.github/scripts` directory.
 
-All scripts are unit-tested using the [Bats](https://github.com/bats-core/bats-core) framework. Tests are organized in `.github/tests`. Their directory structure mirrors that of `.github/scripts`.
+All scripts are unit-tested using the [Bats](https://github.com/bats-core/bats-core) framework.
+
+Tests are organized in `.github/tests`. Their directory structure mirrors that of `.github/scripts`.
 
 ### GitHub Workflows
 
