@@ -26,9 +26,9 @@ _merged_artifact_configs = ConfigMerger.merge(
 
 
 NATIVE_ARTIFACT_PATH = os.path.join(
-    ARTIFACT_CORE_ROOT, _merged_artifact_configs.get("native_artifact_path", "")
+    ARTIFACT_CORE_ROOT, _merged_artifact_configs.get("native_artifact_path")
 )
-CUSTOM_ARTIFACT_PATH = _merged_artifact_configs.get("custom_artifact_path", "")
+CUSTOM_ARTIFACT_PATH = _merged_artifact_configs.get("custom_artifact_path")
 DICT_SCORES_CONFIG = _merged_artifact_configs.get("scores", {})
 DICT_ARRAYS_CONFIG = _merged_artifact_configs.get("arrays", {})
 DICT_PLOTS_CONFIG = _merged_artifact_configs.get("plots", {})

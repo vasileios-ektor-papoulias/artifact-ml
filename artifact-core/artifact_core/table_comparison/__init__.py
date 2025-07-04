@@ -15,17 +15,8 @@ from artifact_core.table_comparison.engine.engine import (
     TableComparisonScoreType,
 )
 
-# Define public API
-__all__ = [
-    "TabularDataSpec",
-    "TableComparisonArrayCollectionType",
-    "TableComparisonArrayType",
-    "TableComparisonEngine",
-    "TableComparisonPlotCollectionType",
-    "TableComparisonPlotType",
-    "TableComparisonScoreCollectionType",
-    "TableComparisonScoreType",
-]
-
+if NATIVE_ARTIFACT_PATH is None:
+    raise ValueError("Null native artifact path: edit the toolkit configuration file.")
 PackageImporter.import_all_from_package_path(path=NATIVE_ARTIFACT_PATH, root=ARTIFACT_CORE_ROOT)
-PackageImporter.import_all_from_package_path(path=CUSTOM_ARTIFACT_PATH)
+if CUSTOM_ARTIFACT_PATH is not None:
+    PackageImporter.import_all_from_package_path(path=CUSTOM_ARTIFACT_PATH)

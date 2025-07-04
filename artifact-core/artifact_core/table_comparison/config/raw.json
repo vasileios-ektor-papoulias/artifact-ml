@@ -1,6 +1,6 @@
 {
   "native_artifact_path": "table_comparison/artifacts",
-  "custom_artifact_path": "C:/Users/hecto/Codebase/artifact-ml/artifact-core/demo/custom_artifacts",
+  "custom_artifact_path": null,
   "scores": {
     "MEAN_JS_DISTANCE": {
       "n_bins_cts_histogram": 100,
