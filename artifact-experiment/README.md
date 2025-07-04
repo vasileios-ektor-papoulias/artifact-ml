@@ -15,7 +15,7 @@
 
 `artifact-experiment` constitutes the experiment management extension to the Artifact framework.
 
-It bridges the gap between validation computation and experiment tracking through a core **validation plan** abstraction responsible for the execution of artifact collections and the storage of associated results in popular experiment tracking backends.
+It bridges the gap between validation computation and experiment tracking through a core **validation plan** abstraction responsible for the execution and tracking of artifact collections.
 
 It stands alongside:
 - [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core): Framework foundation providing a flexible minimal interface for the computation of validation artifacts.
