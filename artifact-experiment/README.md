@@ -48,7 +48,7 @@ class MyValidationPlan(TableComparisonPlan):
     def _get_score_types() -> List[TableComparisonScoreType]:
         return [
             TableComparisonScoreType.MEAN_JS_DISTANCE,
-            TableComparisonScoreType.PAIRWISE_CORRELATION_DISTANCE,
+            TableComparisonScoreType.CORRELATION_DISTANCE,
         ]
 
     @staticmethod
@@ -68,8 +68,8 @@ class MyValidationPlan(TableComparisonPlan):
     @staticmethod
     def _get_array_collection_types() -> List[TableComparisonArrayCollectionType]:
         return [
-            TableComparisonArrayCollectionType.MEANS,
-            TableComparisonArrayCollectionType.STDS,
+            TableComparisonArrayCollectionType.MEAN_JUXTAPOSITION,
+            TableComparisonArrayCollectionType.STD_JUXTAPOSITION,
         ]
 
     @staticmethod  
@@ -104,7 +104,7 @@ plan.execute_table_comparison(dataset_real=df_real, dataset_synthetic=df_synthet
 # Access computed artifacts
 js_distance = plan.scores.get("MEAN_JS_DISTANCE")
 pca_plot = plan.plots.get("PCA_PROJECTION_PLOT")
-feature_means = plan.array_collections.get("MEANS")
+feature_means = plan.array_collections.get("MEAN_JUXTAPOSITION")
 ```
 
 ### Experiment Tracking Integration

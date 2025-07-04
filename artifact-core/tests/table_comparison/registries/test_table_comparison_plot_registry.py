@@ -7,7 +7,7 @@ from artifact_core.table_comparison.artifacts.base import (
 )
 from artifact_core.table_comparison.artifacts.plots.cdf import CDFPlot
 from artifact_core.table_comparison.artifacts.plots.correlations import (
-    CorrelationHeatmapPlot,
+    CorrelationHeatmaps,
 )
 from artifact_core.table_comparison.artifacts.plots.descriptive_stats import (
     DescriptiveStatsAlignmentPlot,
@@ -60,8 +60,8 @@ from artifact_core.table_comparison.registries.plots.registry import (
         (TableComparisonPlotType.MIN_ALIGNMENT_PLOT, MinAlignmentPlot),
         (TableComparisonPlotType.MAX_ALIGNMENT_PLOT, MaxAlignmentPlot),
         (
-            TableComparisonPlotType.CORRELATION_HEATMAP_PLOT,
-            CorrelationHeatmapPlot,
+            TableComparisonPlotType.CORRELATION_HEATMAPS,
+            CorrelationHeatmaps,
         ),
         (TableComparisonPlotType.PCA_PROJECTION_PLOT, PCAPlot),
         (

@@ -41,7 +41,7 @@ class DemoTableComparisonPlan(TableComparisonPlan):
             TableComparisonPlotType.CDF_PLOT,
             TableComparisonPlotType.DESCRIPTIVE_STATS_ALIGNMENT_PLOT,
             TableComparisonPlotType.PCA_PROJECTION_PLOT,
-            TableComparisonPlotType.CORRELATION_HEATMAP_PLOT,
+            TableComparisonPlotType.CORRELATION_HEATMAPS,
         ]
 
     @staticmethod

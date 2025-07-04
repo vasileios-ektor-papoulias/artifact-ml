@@ -20,29 +20,27 @@ from artifact_core.table_comparison.registries.plots.registry import (
     TableComparisonPlotType,
 )
 
-CorrelationHeatmapPlotHyperparamsT = TypeVar(
-    "CorrelationHeatmapPlotHyperparamsT", bound="CorrelationHeatmapPlotHyperparams"
+CorrelationHeatmapsHyperparamsT = TypeVar(
+    "CorrelationHeatmapsHyperparamsT", bound="CorrelationHeatmapsHyperparams"
 )
 
 
-@TableComparisonPlotRegistry.register_artifact_config(
-    TableComparisonPlotType.CORRELATION_HEATMAP_PLOT
-)
+@TableComparisonPlotRegistry.register_artifact_config(TableComparisonPlotType.CORRELATION_HEATMAPS)
 @dataclass(frozen=True)
-class CorrelationHeatmapPlotHyperparams(ArtifactHyperparams):
+class CorrelationHeatmapsHyperparams(ArtifactHyperparams):
     categorical_association_type: CategoricalAssociationType
     continuous_association_type: ContinuousAssociationType
 
     @classmethod
     def build(
-        cls: Type[CorrelationHeatmapPlotHyperparamsT],
+        cls: Type[CorrelationHeatmapsHyperparamsT],
         categorical_association_type: Union[
             CategoricalAssociationType, Literal["THEILS_U"], Literal["CRAMERS_V"]
         ],
         continuous_association_type: Union[
             ContinuousAssociationType, Literal["PEARSON"], Literal["SPEARMAN"], Literal["KENDALL"]
         ],
-    ) -> CorrelationHeatmapPlotHyperparamsT:
+    ) -> CorrelationHeatmapsHyperparamsT:
         if isinstance(categorical_association_type, str):
             categorical_association_type = CategoricalAssociationType[categorical_association_type]
         if isinstance(continuous_association_type, str):
@@ -55,7 +53,7 @@ class CorrelationHeatmapPlotHyperparams(ArtifactHyperparams):
 
 
 @TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.CORRELATION_HEATMAP_PLOT)
-class CorrelationHeatmapPlot(TableComparisonPlot[CorrelationHeatmapPlotHyperparams]):
+class CorrelationHeatmaps(TableComparisonPlot[CorrelationHeatmapsHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:

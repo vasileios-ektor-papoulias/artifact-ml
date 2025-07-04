@@ -14,16 +14,16 @@ from artifact_core.table_comparison.artifacts.base import (
     DatasetComparisonArtifactResources,
 )
 from artifact_core.table_comparison.artifacts.plots.correlations import (
-    CorrelationHeatmapPlot,
-    CorrelationHeatmapPlotHyperparams,
+    CorrelationHeatmaps,
+    CorrelationHeatmapsHyperparams,
 )
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
 @pytest.fixture
-def hyperparams() -> CorrelationHeatmapPlotHyperparams:
-    hyperparams = CorrelationHeatmapPlotHyperparams(
+def hyperparams() -> CorrelationHeatmapsHyperparams:
+    hyperparams = CorrelationHeatmapsHyperparams(
         categorical_association_type=CategoricalAssociationType.CRAMERS_V,
         continuous_association_type=ContinuousAssociationType.PEARSON,
     )
@@ -35,7 +35,7 @@ def test_compute(
     resource_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
-    hyperparams: CorrelationHeatmapPlotHyperparams,
+    hyperparams: CorrelationHeatmapsHyperparams,
 ):
     fake_plot = Figure()
     patch_get_combined_correlation_plot = mocker.patch.object(
@@ -43,7 +43,7 @@ def test_compute(
         attribute="get_combined_correlation_heatmaps",
         return_value=fake_plot,
     )
-    artifact = CorrelationHeatmapPlot(
+    artifact = CorrelationHeatmaps(
         resource_spec=resource_spec,
         hyperparams=hyperparams,
     )

@@ -13,7 +13,7 @@ class TableComparisonPlotType(ArtifactType):
     THIRD_QUARTILE_ALIGNMENT_PLOT = "third_quartile_alignment_plot"
     MIN_ALIGNMENT_PLOT = "min_alignment_plot"
     MAX_ALIGNMENT_PLOT = "max_alignment_plot"
-    CORRELATION_HEATMAP_PLOT = "correlation_heatmap_plot"
+    CORRELATION_HEATMAPS = "correlation_heatmaps"
     PCA_PROJECTION_PLOT = "pca_projection_plot"
     TRUNCATED_SVD_PROJECTION_PLOT = "truncated_svd_projection_plot"
     TSNE_PROJECTION_PLOT = "tsne_projection_plot"
