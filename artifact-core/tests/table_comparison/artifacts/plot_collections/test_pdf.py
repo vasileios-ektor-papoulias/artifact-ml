@@ -9,7 +9,7 @@ from artifact_core.table_comparison.artifacts.base import (
     DatasetComparisonArtifactResources,
 )
 from artifact_core.table_comparison.artifacts.plot_collections.pdf import (
-    PDFComparisonPlotCollection,
+    PDFPlots,
 )
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
@@ -32,9 +32,7 @@ def test_compute(
         attribute="get_overlaid_pdf_plot_collection",
         return_value=fake_plots,
     )
-    artifact = PDFComparisonPlotCollection(
-        resource_spec=resource_spec, hyperparams=NO_ARTIFACT_HYPERPARAMS
-    )
+    artifact = PDFPlots(resource_spec=resource_spec, hyperparams=NO_ARTIFACT_HYPERPARAMS)
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )

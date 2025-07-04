@@ -4,10 +4,7 @@ from typing import Dict
 import pandas as pd
 
 from artifact_core.base.artifact_dependencies import ArtifactHyperparams
-from artifact_core.libs.implementation.tabular.js.js_calculator import JSDistanceCalculator
-from artifact_core.libs.resource_spec.tabular.protocol import (
-    TabularDataSpecProtocol,
-)
+from artifact_core.libs.implementation.tabular.js.calculator import JSDistanceCalculator
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonScoreCollection,
 )
@@ -21,7 +18,7 @@ from artifact_core.table_comparison.registries.score_collections.registry import
     TableComparisonScoreCollectionType.JS_DISTANCE
 )
 @dataclass(frozen=True)
-class JSDistanceHyperparams(ArtifactHyperparams):
+class JSDistanceScoresHyperparams(ArtifactHyperparams):
     n_bins_cts_histogram: int
     categorical_only: bool
 
@@ -29,15 +26,7 @@ class JSDistanceHyperparams(ArtifactHyperparams):
 @TableComparisonScoreCollectionRegistry.register_artifact(
     TableComparisonScoreCollectionType.JS_DISTANCE
 )
-class JSDistance(TableComparisonScoreCollection[JSDistanceHyperparams]):
-    def __init__(
-        self,
-        resource_spec: TabularDataSpecProtocol,
-        hyperparams: JSDistanceHyperparams,
-    ):
-        self._resource_spec = resource_spec
-        self._hyperparams = hyperparams
-
+class JSDistanceScores(TableComparisonScoreCollection[JSDistanceScoresHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Dict[str, float]:

@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from enum import Enum
-from typing import Any, Callable, Dict, Generic, Optional, Type, TypeVar
+from typing import Any, Callable, Dict, Generic, Optional, Type, TypeVar, Union
 
 from artifact_core.base.artifact import Artifact
 from artifact_core.base.artifact_dependencies import (
@@ -28,7 +28,7 @@ class ArtifactRegistry(
     Generic[ArtifactTypeT, ArtifactResourcesT, ArtifactResultT, ResourceSpecProtocolT]
 ):
     _artifact_registry: Dict[
-        ArtifactTypeT,
+        str,
         Type[
             Artifact[
                 ArtifactResourcesT,
@@ -38,7 +38,7 @@ class ArtifactRegistry(
             ]
         ],
     ] = {}
-    _artifact_config_registry: Dict[ArtifactTypeT, Type[ArtifactHyperparams]] = {}
+    _artifact_config_registry: Dict[str, Type[ArtifactHyperparams]] = {}
 
     @classmethod
     @abstractmethod
@@ -50,9 +50,48 @@ class ArtifactRegistry(
         cls._artifact_config_registry = {}
 
     @classmethod
+    def get(
+        cls, artifact_type: Union[ArtifactTypeT, str], resource_spec: ResourceSpecProtocolT
+    ) -> Artifact[
+        ArtifactResourcesT,
+        ArtifactResultT,
+        ArtifactHyperparams,
+        ResourceSpecProtocolT,
+    ]:
+        str_artifact_type = cls._get_artifact_type_string(artifact_type=artifact_type)
+        return cls._get(artifact_type=str_artifact_type, resource_spec=resource_spec)
+
+    @classmethod
     def register_artifact(
         cls, artifact_type: ArtifactTypeT
     ) -> Callable[[Type[ArtifactT]], Type[ArtifactT]]:
+        str_artifact_type = cls._get_artifact_type_string(artifact_type=artifact_type)
+        return cls._register_artifact(artifact_type=str_artifact_type)
+
+    @classmethod
+    def register_artifact_config(
+        cls, artifact_type: ArtifactTypeT
+    ) -> Callable[[Type[ArtifactHyperparamsT]], Type[ArtifactHyperparamsT]]:
+        str_artifact_type = cls._get_artifact_type_string(artifact_type=artifact_type)
+        return cls._register_artifact_config(artifact_type=str_artifact_type)
+
+    @classmethod
+    def register_custom_artifact(
+        cls, artifact_type: str
+    ) -> Callable[[Type[ArtifactT]], Type[ArtifactT]]:
+        return cls._register_artifact(artifact_type=artifact_type)
+
+    @classmethod
+    def register_custom_artifact_config(
+        cls, artifact_type: str
+    ) -> Callable[[Type[ArtifactHyperparamsT]], Type[ArtifactHyperparamsT]]:
+        return cls._register_artifact_config(artifact_type=artifact_type)
+
+    @classmethod
+    def _register_artifact(cls, artifact_type: str) -> Callable[[Type[ArtifactT]], Type[ArtifactT]]:
+        if artifact_type in cls._artifact_registry.keys():
+            raise ValueError(f"Artifact type {artifact_type} already registered")
+
         def artifact_registration_decorator(
             subclass: Type[ArtifactT],
         ) -> Type[ArtifactT]:
@@ -62,9 +101,12 @@ class ArtifactRegistry(
         return artifact_registration_decorator
 
     @classmethod
-    def register_artifact_config(
-        cls, artifact_type: ArtifactTypeT
+    def _register_artifact_config(
+        cls, artifact_type: str
     ) -> Callable[[Type[ArtifactHyperparamsT]], Type[ArtifactHyperparamsT]]:
+        if artifact_type in cls._artifact_config_registry.keys():
+            raise ValueError(f"Artifact type {artifact_type} already registered")
+
         def artifact_config_registration_decorator(
             subclass: Type[ArtifactHyperparamsT],
         ) -> Type[ArtifactHyperparamsT]:
@@ -74,8 +116,8 @@ class ArtifactRegistry(
         return artifact_config_registration_decorator
 
     @classmethod
-    def get(
-        cls, artifact_type: ArtifactTypeT, resource_spec: ResourceSpecProtocolT
+    def _get(
+        cls, artifact_type: str, resource_spec: ResourceSpecProtocolT
     ) -> Artifact[
         ArtifactResourcesT,
         ArtifactResultT,
@@ -95,7 +137,7 @@ class ArtifactRegistry(
 
     @classmethod
     def _get_artifact_class(
-        cls, artifact_type: ArtifactTypeT
+        cls, artifact_type: str
     ) -> Type[
         Artifact[
             ArtifactResourcesT,
@@ -108,6 +150,13 @@ class ArtifactRegistry(
         if artifact_class is None:
             raise ValueError(f"Artifact {artifact_type} not registered")
         return artifact_class
+
+    @classmethod
+    def _get_artifact_hyperparams_class(cls, artifact_type: str) -> Type[ArtifactHyperparams]:
+        artifact_hyperparams_class = cls._artifact_config_registry.get(
+            artifact_type, NoArtifactHyperparams
+        )
+        return artifact_hyperparams_class
 
     @classmethod
     def _build_artifact_hyperparams(
@@ -132,16 +181,18 @@ class ArtifactRegistry(
         return artifact_hyperparams
 
     @classmethod
-    def _get_artifact_hyperparams_class(
-        cls, artifact_type: ArtifactTypeT
-    ) -> Type[ArtifactHyperparams]:
-        artifact_hyperparams_class = cls._artifact_config_registry.get(
-            artifact_type, NoArtifactHyperparams
-        )
-        return artifact_hyperparams_class
-
-    @classmethod
-    def _read_artifact_config(cls, artifact_type: ArtifactTypeT) -> Optional[Dict[str, Any]]:
+    def _read_artifact_config(
+        cls, artifact_type: Union[ArtifactTypeT, str]
+    ) -> Optional[Dict[str, Any]]:
         dict_artifact_configs = cls._get_artifact_configurations()
-        artifact_config = dict_artifact_configs.get(artifact_type.name, None)
+        key = cls._get_artifact_type_string(artifact_type=artifact_type)
+        artifact_config = dict_artifact_configs.get(key, None)
         return artifact_config
+
+    @staticmethod
+    def _get_artifact_type_string(artifact_type: Union[ArtifactTypeT, str]) -> str:
+        if isinstance(artifact_type, str):
+            key = artifact_type
+        else:
+            key = artifact_type.name
+        return key

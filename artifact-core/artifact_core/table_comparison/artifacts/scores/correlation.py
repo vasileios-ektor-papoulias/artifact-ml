@@ -2,81 +2,80 @@ from dataclasses import dataclass
 from typing import Literal, Type, TypeVar, Union
 
 import pandas as pd
-from matplotlib.figure import Figure
 
 from artifact_core.base.artifact_dependencies import ArtifactHyperparams
-from artifact_core.libs.implementation.tabular.pairwise_correlation.calculator import (
+from artifact_core.libs.implementation.tabular.correlations.calculator import (
     CategoricalAssociationType,
     ContinuousAssociationType,
+    CorrelationCalculator,
 )
-from artifact_core.libs.implementation.tabular.pairwise_correlation.plotter import (
-    PairwiseCorrelationHeatmapPlotter,
-)
-from artifact_core.libs.resource_spec.tabular.protocol import (
-    TabularDataSpecProtocol,
+from artifact_core.libs.utils.vector_distance_calculator import (
+    VectorDistanceMetric,
 )
 from artifact_core.table_comparison.artifacts.base import (
-    TableComparisonPlot,
+    TableComparisonScore,
 )
-from artifact_core.table_comparison.registries.plots.registry import (
-    TableComparisonPlotRegistry,
-    TableComparisonPlotType,
-)
-
-correlationComparisonHeatmapConfigT = TypeVar(
-    "correlationComparisonHeatmapConfigT", bound="CorrelationComparisonHeatmapConfig"
+from artifact_core.table_comparison.registries.scores.registry import (
+    TableComparisonScoreRegistry,
+    TableComparisonScoreType,
 )
 
+PairwiseCorrelationDistanceHyperparamsT = TypeVar(
+    "PairwiseCorrelationDistanceHyperparamsT", bound="CorrelationDistanceScoreHyperparams"
+)
 
-@TableComparisonPlotRegistry.register_artifact_config(
-    TableComparisonPlotType.PAIRWISE_CORRELATION_COMPARISON_HEATMAP
+
+@TableComparisonScoreRegistry.register_artifact_config(
+    TableComparisonScoreType.CORRELATION_DISTANCE
 )
 @dataclass(frozen=True)
-class CorrelationComparisonHeatmapConfig(ArtifactHyperparams):
+class CorrelationDistanceScoreHyperparams(ArtifactHyperparams):
     categorical_association_type: CategoricalAssociationType
     continuous_association_type: ContinuousAssociationType
+    vector_distance_metric: VectorDistanceMetric
 
     @classmethod
     def build(
-        cls: Type[correlationComparisonHeatmapConfigT],
+        cls: Type[PairwiseCorrelationDistanceHyperparamsT],
         categorical_association_type: Union[
             CategoricalAssociationType, Literal["THEILS_U"], Literal["CRAMERS_V"]
         ],
         continuous_association_type: Union[
             ContinuousAssociationType, Literal["PEARSON"], Literal["SPEARMAN"], Literal["KENDALL"]
         ],
-    ) -> correlationComparisonHeatmapConfigT:
+        vector_distance_metric: Union[
+            VectorDistanceMetric,
+            Literal["L2"],
+            Literal["MAE"],
+            Literal["RMSE"],
+            Literal["COSINE_SIMILARITY"],
+        ],
+    ) -> PairwiseCorrelationDistanceHyperparamsT:
         if isinstance(categorical_association_type, str):
             categorical_association_type = CategoricalAssociationType[categorical_association_type]
         if isinstance(continuous_association_type, str):
             continuous_association_type = ContinuousAssociationType[continuous_association_type]
+        if isinstance(vector_distance_metric, str):
+            vector_distance_metric = VectorDistanceMetric[vector_distance_metric]
         correlation_comparison_heatmap_hyperparams = cls(
             categorical_association_type=categorical_association_type,
             continuous_association_type=continuous_association_type,
+            vector_distance_metric=vector_distance_metric,
         )
         return correlation_comparison_heatmap_hyperparams
 
 
-@TableComparisonPlotRegistry.register_artifact(
-    TableComparisonPlotType.PAIRWISE_CORRELATION_COMPARISON_HEATMAP
-)
-class CorrelationComparisonCombinedPlot(TableComparisonPlot[CorrelationComparisonHeatmapConfig]):
-    def __init__(
-        self,
-        resource_spec: TabularDataSpecProtocol,
-        hyperparams: CorrelationComparisonHeatmapConfig,
-    ):
-        self._resource_spec = resource_spec
-        self._hyperparams = hyperparams
-
+@TableComparisonScoreRegistry.register_artifact(TableComparisonScoreType.CORRELATION_DISTANCE)
+class CorrelationDistanceScore(TableComparisonScore[CorrelationDistanceScoreHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Figure:
-        plot = PairwiseCorrelationHeatmapPlotter.get_combined_correlation_plot(
+    ) -> float:
+        pairwise_correlation_distance = CorrelationCalculator.compute_correlation_distance(
             categorical_correlation_type=self._hyperparams.categorical_association_type,
             continuous_correlation_type=self._hyperparams.continuous_association_type,
+            distance_metric=self._hyperparams.vector_distance_metric,
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cat_features=self._resource_spec.ls_cat_features,
         )
-        return plot
+        return pairwise_correlation_distance

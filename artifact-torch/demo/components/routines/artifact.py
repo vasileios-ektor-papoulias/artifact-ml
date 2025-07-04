@@ -27,7 +27,7 @@ class DemoTableComparisonPlan(TableComparisonPlan):
     def _get_score_types() -> List[TableComparisonScoreType]:
         return [
             TableComparisonScoreType.MEAN_JS_DISTANCE,
-            TableComparisonScoreType.PAIRWISE_CORRELATION_DISTANCE,
+            TableComparisonScoreType.CORRELATION_DISTANCE,
         ]
 
     @staticmethod
@@ -37,11 +37,11 @@ class DemoTableComparisonPlan(TableComparisonPlan):
     @staticmethod
     def _get_plot_types() -> List[TableComparisonPlotType]:
         return [
-            TableComparisonPlotType.PDF_PLOT,
-            TableComparisonPlotType.CDF_PLOT,
-            TableComparisonPlotType.DESCRIPTIVE_STATS_COMPARISON_PLOT,
-            TableComparisonPlotType.PCA_PROJECTION_PLOT,
-            TableComparisonPlotType.PAIRWISE_CORRELATION_COMPARISON_HEATMAP,
+            TableComparisonPlotType.PDF,
+            TableComparisonPlotType.CDF,
+            TableComparisonPlotType.DESCRIPTIVE_STATS_ALIGNMENT,
+            TableComparisonPlotType.PCA_JUXTAPOSITION,
+            TableComparisonPlotType.CORRELATION_HEATMAP_JUXTAPOSITION,
         ]
 
     @staticmethod
@@ -53,17 +53,17 @@ class DemoTableComparisonPlan(TableComparisonPlan):
     @staticmethod
     def _get_array_collection_types() -> List[TableComparisonArrayCollectionType]:
         return [
-            TableComparisonArrayCollectionType.MEANS,
-            TableComparisonArrayCollectionType.STDS,
-            TableComparisonArrayCollectionType.MINIMA,
-            TableComparisonArrayCollectionType.MAXIMA,
+            TableComparisonArrayCollectionType.MEAN_JUXTAPOSITION,
+            TableComparisonArrayCollectionType.STD_JUXTAPOSITION,
+            TableComparisonArrayCollectionType.MIN_JUXTAPOSITION,
+            TableComparisonArrayCollectionType.MAX_JUXTAPOSITION,
         ]
 
     @staticmethod
     def _get_plot_collection_types() -> List[TableComparisonPlotCollectionType]:
         return [
-            TableComparisonPlotCollectionType.PDF_PLOTS,
-            TableComparisonPlotCollectionType.CDF_PLOTS,
+            TableComparisonPlotCollectionType.PDF,
+            TableComparisonPlotCollectionType.CDF,
         ]
 
 

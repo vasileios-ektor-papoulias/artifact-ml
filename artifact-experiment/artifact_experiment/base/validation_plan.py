@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Generic, List, Optional, Type, TypeVar
+from typing import Dict, Generic, List, Optional, Type, TypeVar, Union
 
 from artifact_core.base.artifact_dependencies import (
     ArtifactResources,
@@ -184,6 +184,30 @@ class ValidationPlan(
         ]
     ]: ...
 
+    @staticmethod
+    def _get_custom_score_types() -> List[str]:
+        return []
+
+    @staticmethod
+    def _get_custom_array_types() -> List[str]:
+        return []
+
+    @staticmethod
+    def _get_custom_plot_types() -> List[str]:
+        return []
+
+    @staticmethod
+    def _get_custom_score_collection_types() -> List[str]:
+        return []
+
+    @staticmethod
+    def _get_custom_array_collection_types() -> List[str]:
+        return []
+
+    @staticmethod
+    def _get_custom_plot_collection_types() -> List[str]:
+        return []
+
     def execute(self, resources: ArtifactCallbackResources[ArtifactResourcesT]):
         self._score_handler.execute(resources=resources)
         self._array_handler.execute(resources=resources)
@@ -204,7 +228,7 @@ class ValidationPlan(
     def _build_score_handler(
         cls,
         resource_spec: ResourceSpecProtocolT,
-        ls_score_types: Optional[List[ScoreTypeT]] = None,
+        ls_score_types: Optional[List[Union[ScoreTypeT, str]]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ScoreCallbackHandler[
         ArtifactScoreCallback[ArtifactResourcesT, ResourceSpecProtocolT],
@@ -212,7 +236,7 @@ class ValidationPlan(
     ]:
         callback_factory = cls._get_callback_factory()
         if ls_score_types is None:
-            ls_score_types = cls._get_score_types()
+            ls_score_types = cls._get_score_types() + cls._get_custom_score_types()
         ls_callbacks = [
             callback_factory.build_score_callback(
                 score_type=score_type, resource_spec=resource_spec
@@ -228,7 +252,7 @@ class ValidationPlan(
     def _build_array_handler(
         cls,
         resource_spec: ResourceSpecProtocolT,
-        ls_array_types: Optional[List[ArrayTypeT]] = None,
+        ls_array_types: Optional[List[Union[ArrayTypeT, str]]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ArrayCallbackHandler[
         ArtifactArrayCallback[ArtifactResourcesT, ResourceSpecProtocolT],
@@ -236,7 +260,7 @@ class ValidationPlan(
     ]:
         callback_factory = cls._get_callback_factory()
         if ls_array_types is None:
-            ls_array_types = cls._get_array_types()
+            ls_array_types = cls._get_array_types() + cls._get_custom_array_types()
         ls_callbacks = [
             callback_factory.build_array_callback(
                 array_type=array_type, resource_spec=resource_spec
@@ -252,7 +276,7 @@ class ValidationPlan(
     def _build_plot_handler(
         cls,
         resource_spec: ResourceSpecProtocolT,
-        ls_plot_types: Optional[List[PlotTypeT]] = None,
+        ls_plot_types: Optional[List[Union[PlotTypeT, str]]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> PlotCallbackHandler[
         ArtifactPlotCallback[ArtifactResourcesT, ResourceSpecProtocolT],
@@ -260,7 +284,7 @@ class ValidationPlan(
     ]:
         callback_factory = cls._get_callback_factory()
         if ls_plot_types is None:
-            ls_plot_types = cls._get_plot_types()
+            ls_plot_types = cls._get_plot_types() + cls._get_custom_plot_types()
         ls_callbacks = [
             callback_factory.build_plot_callback(plot_type=plot_type, resource_spec=resource_spec)
             for plot_type in ls_plot_types
@@ -274,7 +298,7 @@ class ValidationPlan(
     def _build_score_collection_handler(
         cls,
         resource_spec: ResourceSpecProtocolT,
-        ls_score_collection_types: Optional[List[ScoreCollectionTypeT]] = None,
+        ls_score_collection_types: Optional[List[Union[ScoreCollectionTypeT, str]]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ScoreCollectionCallbackHandler[
         ArtifactScoreCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT],
@@ -282,7 +306,9 @@ class ValidationPlan(
     ]:
         callback_factory = cls._get_callback_factory()
         if ls_score_collection_types is None:
-            ls_score_collection_types = cls._get_score_collection_types()
+            ls_score_collection_types = (
+                cls._get_score_collection_types() + cls._get_custom_score_collection_types()
+            )
         ls_callbacks = [
             callback_factory.build_score_collection_callback(
                 score_collection_type=score_collection_type, resource_spec=resource_spec
@@ -298,7 +324,7 @@ class ValidationPlan(
     def _build_array_collection_handler(
         cls,
         resource_spec: ResourceSpecProtocolT,
-        ls_array_collection_types: Optional[List[ArrayCollectionTypeT]] = None,
+        ls_array_collection_types: Optional[List[Union[ArrayCollectionTypeT, str]]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ArrayCollectionCallbackHandler[
         ArtifactArrayCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT],
@@ -306,7 +332,9 @@ class ValidationPlan(
     ]:
         callback_factory = cls._get_callback_factory()
         if ls_array_collection_types is None:
-            ls_array_collection_types = cls._get_array_collection_types()
+            ls_array_collection_types = (
+                cls._get_array_collection_types() + cls._get_custom_array_collection_types()
+            )
         ls_callbacks = [
             callback_factory.build_array_collection_callback(
                 array_collection_type=array_collection_type, resource_spec=resource_spec
@@ -322,7 +350,7 @@ class ValidationPlan(
     def _build_plot_collection_handler(
         cls,
         resource_spec: ResourceSpecProtocolT,
-        ls_plot_collection_types: Optional[List[PlotCollectionTypeT]] = None,
+        ls_plot_collection_types: Optional[List[Union[PlotCollectionTypeT, str]]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> PlotCollectionCallbackHandler[
         ArtifactPlotCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT],
@@ -330,7 +358,9 @@ class ValidationPlan(
     ]:
         callback_factory = cls._get_callback_factory()
         if ls_plot_collection_types is None:
-            ls_plot_collection_types = cls._get_plot_collection_types()
+            ls_plot_collection_types = (
+                cls._get_plot_collection_types() + cls._get_custom_plot_collection_types()
+            )
         ls_callbacks = [
             callback_factory.build_plot_collection_callback(
                 plot_collection_type=plot_collection_type, resource_spec=resource_spec

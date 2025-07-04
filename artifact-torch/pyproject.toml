@@ -1,9 +1,10 @@
 [project]
 name = "artifact-torch"
+packages = [{ include = "artifact-torch" }]
 version = "0.1.0"
-description = "PyTorch integration for the Artifact framework. Provides model abstractions and training utilities that trigger validation plans during training."
+description = "PyTorch integration for the Artifact framework."
 authors = [
-    {name = "vasileios-ektor-papoulias",email = "hector.papoulias@gmail.com"}
+    {name = "Vasileios Ektor Papoulias",email = "hector.papoulias@gmail.com"}
 ]
 license = {text = "MIT"}
 readme = "README.md"

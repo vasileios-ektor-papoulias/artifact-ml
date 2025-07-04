@@ -16,10 +16,8 @@ from artifact_core.table_comparison.registries.plot_collections.registry import 
 )
 
 
-@TableComparisonPlotCollectionRegistry.register_artifact(
-    TableComparisonPlotCollectionType.CDF_PLOTS
-)
-class CDFComparisonPlotCollection(TableComparisonPlotCollection[NoArtifactHyperparams]):
+@TableComparisonPlotCollectionRegistry.register_artifact(TableComparisonPlotCollectionType.CDF)
+class CDFPlots(TableComparisonPlotCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Dict[str, Figure]:

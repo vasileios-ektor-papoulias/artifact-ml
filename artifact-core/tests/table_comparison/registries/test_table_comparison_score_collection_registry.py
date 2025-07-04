@@ -5,7 +5,7 @@ from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecPro
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonScoreCollection,
 )
-from artifact_core.table_comparison.artifacts.score_collections.js import JSDistance
+from artifact_core.table_comparison.artifacts.score_collections.js import JSDistanceScores
 from artifact_core.table_comparison.registries.score_collections.registry import (
     TableComparisonScoreCollectionRegistry,
     TableComparisonScoreCollectionType,
@@ -15,7 +15,7 @@ from artifact_core.table_comparison.registries.score_collections.registry import
 @pytest.mark.parametrize(
     "artifact_type, artifact_class",
     [
-        (TableComparisonScoreCollectionType.JS_DISTANCE, JSDistance),
+        (TableComparisonScoreCollectionType.JS_DISTANCE, JSDistanceScores),
     ],
 )
 def test_get(

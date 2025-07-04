@@ -55,13 +55,13 @@ spec = TabularDataSpec.from_df(
 
 engine = TableComparisonEngine(resource_spec=spec)
 
-dict_js_distance = engine.produce_dataset_comparison_score_collection(
+dict_js_distance_per_feature = engine.produce_dataset_comparison_score_collection(
     score_collection_type=TableComparisonScoreCollectionType.JS_DISTANCE,
     dataset_real=df_real,
     dataset_synthetic=df_synthetic,
 )
 
-dict_js_distance
+dict_js_distance_per_feature
 ```
 
 <p align="center">
@@ -74,7 +74,7 @@ from artifact_core.table_comparison import (
 )
 
 pca_plot = engine.produce_dataset_comparison_plot(
-    plot_type=TableComparisonPlotType.PCA_PROJECTION_PLOT,
+    plot_type=TableComparisonPlotType.PCA_JUXTAPOSITION,
     dataset_real=df_real,
     dataset_synthetic=df_synthetic,
 )
@@ -87,13 +87,13 @@ pca_plot
 </p>
 
 ```python
-pdf_plots = engine.produce_dataset_comparison_plot(
-    plot_type=TableComparisonPlotType.PDF_PLOT,
+pdf_plot = engine.produce_dataset_comparison_plot(
+    plot_type=TableComparisonPlotType.PDF,
     dataset_real=df_real,
     dataset_synthetic=df_synthetic,
 )
 
-pdf_plots
+pdf_plot
 ```
 
 <p align="center">
@@ -220,84 +220,43 @@ This is intended to serve research projects in synthetic tabular data generation
 ### TableComparisonEngine: Available Artifacts
 
 #### Plots
-- `PDF_PLOT`: Probability density function plots
-- `CDF_PLOT`: Cumulative distribution function plots
-- `DESCRIPTIVE_STATS_COMPARISON_PLOT`: Comparison of descriptive statistics
-- `MEAN_COMPARISON_PLOT`: Comparison of means between real and synthetic data
-- `STD_COMPARISON_PLOT`: Comparison of standard deviations
-- `VARIANCE_COMPARISON_PLOT`: Comparison of variances
-- `MEDIAN_COMPARISON_PLOT`: Comparison of medians
-- `FIRST_QUARTILE_COMPARISON_PLOT`: Comparison of first quartiles
-- `THIRD_QUARTILE_COMPARISON_PLOT`: Comparison of third quartiles
-- `MIN_COMPARISON_PLOT`: Comparison of minimum values
-- `MAX_COMPARISON_PLOT`: Comparison of maximum values
-- `PAIRWISE_CORRELATION_COMPARISON_HEATMAP`: Correlation comparison heatmap
-- `PCA_PROJECTION_PLOT`: PCA projection visualization
-- `TRUNCATED_SVD_PROJECTION_PLOT`: Truncated SVD projection visualization
-- `TSNE_PROJECTION_PLOT`: t-SNE projection visualization
+- `PDF`: Overlaid probability density (or mass) plots for real and synthetic data
+- `CDF`: Overlaid cumulative distribution plots for real and synthetic data
+- `DESCRIPTIVE_STATS_ALIGNMENT`: Alignment of descriptive statistics between real and synthetic data
+- `MEAN_ALIGNMENT`: Alignment of means between real and synthetic data
+- `STD_ALIGNMENT`: Alignment of standard deviations between real and synthetic data
+- `VARIANCE_ALIGNMENT`: Alignment of variances between real and synthetic data
+- `MEDIAN_ALIGNMENT`: Alignment of medians between real and synthetic data
+- `FIRST_QUARTILE_ALIGNMENT`: Alignment of first quartiles between real and synthetic data
+- `THIRD_QUARTILE_ALIGNMENT`: Alignment of third quartiles between real and synthetic data
+- `MIN_ALIGNMENT`: Alignment of minimum values between real and synthetic data
+- `MAX_ALIGNMENT`: Alignment of maximum values between real and synthetic data
+- `CORRELATION_HEATMAPS_JUXTAPOSITION`: Juxtaposed correlation matrix heatmaps for real and synthetic data
+- `PCA_JUXTAPOSITION`: Visual PCA projection comparison between real and synthetic data
+- `TRUNCATED_SVD_JUXTAPOSITION`: Visual truncated SVD projection comparison between real and synthetic data
+- `TSNE_JUXTAPOSITION`: Visual t-SNE projection comparison between real and synthetic data
 
 #### Scores
-- `MEAN_JS_DISTANCE`: Jensen-Shannon divergence between distributions
-- `PAIRWISE_CORRELATION_DISTANCE`: Distance between correlation matrices
+- `MEAN_JS_DISTANCE`: Average Jensen-Shannon divergence over all features
+- `CORRELATION_DISTANCE`: Distance between correlation matrices
 
 #### Score Collections
 - `JS_DISTANCE`: Collection of Jensen-Shannon distances for all features
 
 #### Array Collections
-- `MEANS`: Collection of mean values for all features
-- `STDS`: Collection of standard deviations for all features
-- `VARIANCES`: Collection of variances for all features
-- `MEDIANS`: Collection of median values for all features
-- `FIRST_QUARTILES`: Collection of first quartile values for all features
-- `THIRD_QUARTILES`: Collection of third quartile values for all features
-- `MINIMA`: Collection of minimum values for all features
-- `MAXIMA`: Collection of maximum values for all features
+- `MEAN_JUXTAPOSITION`: Juxtaposition of real and synthetic mean values for all continuous features
+- `STDS_JUXTAPOSITION`: Juxtaposition of real and synthetic standard deviations for all continuous features
+- `VARIANCES_JUXTAPOSITION`: Juxtaposition of real and synthetic variances for all continuous features
+- `MEDIANS_JUXTAPOSITION`: Juxtaposition of real and synthetic median values for all continuous features
+- `FIRST_QUARTILES_JUXTAPOSITION`: Juxtaposition of real and synthetic first quartile values for all continuous features
+- `THIRD_QUARTILES_JUXTAPOSITION`: Juxtaposition of real and synthetic third quartile values for all continuous features
+- `MIN_JUXTAPOSITION`: Juxtaposition of real and synthetic minimum values for all continuous features
+- `MAX_JUXTAPOSITION`: Juxtaposition of real and synthetic maximum values for all continuous features
 
 #### Plot Collections
-- `PDF_PLOTS`: Collection of PDF plots for all features
-- `CDF_PLOTS`: Collection of CDF plots for all features
-
-### 📊 Example: General Usage
-
-```python
-import pandas as pd
-from artifact_core.libs.resource_spec.tabular.spec import TabularDataSpec
-from artifact_core.table_comparison import (
-    TableComparisonEngine,
-    TableComparisonPlotType,
-    TableComparisonScoreType,
-)
-
-# Create or load your datasets
-df_real = pd.read_csv("real_data.csv")
-df_synthetic = pd.read_csv("synthetic_data.csv")
-
-# Define the resource specification
-categorical_features = ["cat_1", "cat_2", "cat_3"]
-continuous_features = ["num_1", "num_2", "num_3"]
-spec = TabularDataSpec.from_df(
-    df=df_real, 
-    cat_features=categorical_features, 
-    cont_features=continuous_features
-)
-
-# Create the engine
-engine = TableComparisonEngine(resource_spec=spec)
-
-# Compute a plot artifact
-pca_plot = engine.produce_dataset_comparison_plot(
-    plot_type=TableComparisonPlotType.PCA_PROJECTION_PLOT,
-    dataset_real=df_real,
-    dataset_synthetic=df_synthetic,
-)
-
-# Compute a score artifact
-js_distance = engine.produce_dataset_comparison_score(
-    score_type=TableComparisonScoreType.MEAN_JS_DISTANCE,
-    dataset_real=df_real,
-    dataset_synthetic=df_synthetic,
-)
-```
+- `PDF`: Collection of overlaid (real & synthetic) PDF plots for all features
+- `CDF`: Collection of overlaid (real & synthetic) CDF plots for all features
+- `CORRELATION_HEATMAPS`: Correlation matrix heatmaps for real and synthetic data
 
 ## 🔧 Implementation Guide
 
@@ -455,9 +414,22 @@ class CustomArtifactEngine(ArtifactEngine[
         return self.produce_score(score_type=score_type, resources=resources)
 ```
 
-## 🚀 Configuring and Using Artifact-Core
+## 🚀 Using Artifact-Core
 
-### 1. Configuring Existing Artifacts in Your Project
+### 1. Computing Artifacts Using an Artifact Engine
+
+Artifact engines provide the primary interface for computing validation artifacts. Create an engine instance with your resource specification, then use the engine's methods to compute individual artifacts or collections of artifacts by specifying the artifact type and input data. The engine handles all complexity of artifact lookup, instantiation, and execution, providing a clean interface where you specify what you want to compute and the data to compute it on. This declarative approach eliminates repetitive imperative code for artifact configuration, parameter management, and result handling.
+
+```python
+# Create engine with resource specification
+engine = TableComparisonEngine(resource_spec=spec)
+
+# Compute individual artifacts
+score = engine.produce_dataset_comparison_score(score_type=ScoreType.MEAN_JS_DISTANCE, dataset_real=df_real, dataset_synthetic=df_synthetic)
+plot = engine.produce_dataset_comparison_plot(plot_type=PlotType.PCA_JUXTAPOSITION, dataset_real=df_real, dataset_synthetic=df_synthetic)
+```
+
+### 2. Configuring Existing Artifacts in Your Project
 
 When using `artifact-core` as a package in your own project, you can override the default configuration of existing artifacts:
 
@@ -516,6 +488,109 @@ Only include the sections and parameters you want to override.
 
 Your configuration will be merged with the default one automatically, with your settings taking precedence.
 
+### 2. Creating Custom Artifacts
+
+`artifact-core` supports project-specific custom artifacts, enabling users to extend domain toolkits with specialized validation logic tailored to their unique requirements.
+
+Custom artifacts integrate seamlessly with the existing framework infrastructure while providing complete flexibility for domain-specific validation needs.
+
+#### Creating Custom Artifacts
+
+**A. Configure Custom Artifact Path**
+
+Update the relevant domain toolkit configuration file (see the relevant section above) to point to your custom artifacts directory.
+
+```json
+{
+  "custom_artifact_path": "/path/to/your/custom_artifacts",
+  "score_collections": {
+    "CUSTOM_SCORE": {
+      "param1": value1,
+      "param2": value2
+    }
+  }
+}
+```
+
+**B. Implement Custom Artifact**
+
+Create your custom artifact by extending the appropriate base class.
+
+Select the relevant domain-specific registry corresponding to your artifact's modality (e.g. score, array, plot etc.) and register your implementation.
+
+```python
+import pandas as pd
+from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
+from artifact_core.table_comparison.artifacts.base import TableComparisonScore
+from artifact_core.table_comparison.registries.scores.registry import TableComparisonScoreRegistry
+
+@TableComparisonScoreRegistry.register_custom_artifact("CUSTOM_SCORE")
+class CustomScore(TableComparisonScore[NO_ARTIFACT_HYPERPARAMS]):
+    def _compare_datasets(
+        self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
+    ) -> float:
+        # Implement your custom validation logic
+        custom_metric = compute_your_metric(dataset_real, dataset_synthetic)
+        return custom_metric
+```
+
+
+If your custom artifact requires configuration parameters create a corresponding hyperparameters class and pass the desired values in the toolkit config file:
+
+```python
+from dataclasses import dataclass
+from artifact_core.base.artifact_dependencies import ArtifactHyperparams
+
+@dataclass
+class CustomScoreHyperparams(ArtifactHyperparams):
+    threshold: float
+    use_weights: bool
+
+@TableComparisonScoreRegistry.register_custom_artifact_config("CUSTOM_SCORE")
+@dataclass
+class CustomScoreHyperparams(ArtifactHyperparams):
+    threshold: float
+    use_weights: bool
+
+@TableComparisonScoreRegistry.register_custom_artifact("CUSTOM_SCORE")
+class CustomScore(TableComparisonScore[CustomScoreHyperparams]):
+    def _compare_datasets(self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame) -> float:
+        # Access hyperparameters via self._hyperparams.threshold, self._hyperparams.use_weights
+        return computed_score
+```
+
+```json
+{
+  "scores": {
+    "CUSTOM_SCORE": {
+      "threshold": 0.5,
+      "use_weights": true
+    }
+  }
+}
+```
+
+#### Using Custom Artifacts
+
+Once configured, custom artifacts can be used exactly like built-in artifacts:
+
+```python
+# Use custom artifact with string identifier
+custom_score = engine.produce_dataset_comparison_score(
+    score_type="CUSTOM_SCORE",
+    dataset_real=df_real,
+    dataset_synthetic=df_synthetic,
+)
+```
+
+#### Contributing Custom Artifacts
+
+If you develop a custom artifact that could benefit the broader community, consider contributing it to the framework as a built-in artifact. Well-designed validation metrics that address common use cases are valuable additions to the artifact ecosystem.
+
+To contribute a custom artifact, submit a pull request following the [contribution guidelines](https://github.com/vasileios-ektor-papoulias/artifact-ml/blob/main/README.md).
+
+Custom artifacts that demonstrate broad applicability, statistical rigor, and clean implementation are excellent candidates for inclusion in the core framework.
+
 ## 🔧 Framework Extension
 
 ### 1. Contributing New Artifacts
@@ -537,7 +612,7 @@ First, add your new score type to the existing enum in: artifact_core/table_comp
 ```python
 class TableComparisonScoreType(ArtifactType):
     MEAN_JS_DISTANCE = "mean_js_distance"
-    PAIRWISE_CORRELATION_DISTANCE = "pairwise_correlation_distance"
+    CORRELATION_DISTANCE = "correlation_distance"
     # Add your new score type
     NEW_TABLE_COMPARISON_SCORE = "new_table_comparison_score"
 ```
@@ -598,7 +673,7 @@ However, note that we've provided more refined abstractions than the general art
 
 You should work with these instead: they implement core logic tailored to the specific artifact group in question.
 
-All table comparison scores should inherit the following base:
+To illustrate: all table comparison scores should inherit the following base:
 
 ```python
 import pandas as pd

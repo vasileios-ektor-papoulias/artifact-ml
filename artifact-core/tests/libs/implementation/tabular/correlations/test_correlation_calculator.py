@@ -3,10 +3,10 @@ from typing import List, Optional, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.pairwise_correlation.calculator import (
+from artifact_core.libs.implementation.tabular.correlations.calculator import (
     CategoricalAssociationType,
     ContinuousAssociationType,
-    PairwiseCorrelationCalculator,
+    CorrelationCalculator,
 )
 from artifact_core.libs.utils.vector_distance_calculator import (
     VectorDistanceMetric,
@@ -39,7 +39,7 @@ def test_compute_df_correlations(
     cont_corr: ContinuousAssociationType,
     expected_shape: Tuple[int, int],
 ):
-    result = PairwiseCorrelationCalculator.compute_df_correlations(
+    result = CorrelationCalculator.compute_df_correlations(
         categorical_correlation_type=cat_corr,
         continuous_correlation_type=cont_corr,
         dataset=df,
@@ -81,7 +81,7 @@ def test_compute_df_correlation_difference(
     cont_corr: ContinuousAssociationType,
     expected_shape: Tuple[int, int],
 ):
-    result = PairwiseCorrelationCalculator.compute_df_correlation_difference(
+    result = CorrelationCalculator.compute_df_correlation_difference(
         categorical_correlation_type=cat_corr,
         continuous_correlation_type=cont_corr,
         dataset_real=df_real,
@@ -127,7 +127,7 @@ def test_compute_correlation_distance(
     distance_metric: VectorDistanceMetric,
     expected_distance: Optional[float],
 ):
-    result = PairwiseCorrelationCalculator.compute_correlation_distance(
+    result = CorrelationCalculator.compute_correlation_distance(
         categorical_correlation_type=cat_corr,
         continuous_correlation_type=cont_corr,
         distance_metric=distance_metric,

@@ -2,28 +2,28 @@ from unittest.mock import ANY
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.pairwise_correlation.calculator import (
+from artifact_core.libs.implementation.tabular.correlations.calculator import (
     CategoricalAssociationType,
     ContinuousAssociationType,
 )
-from artifact_core.libs.implementation.tabular.pairwise_correlation.plotter import (
-    PairwiseCorrelationHeatmapPlotter,
+from artifact_core.libs.implementation.tabular.correlations.heatmap_plotter import (
+    CorrelationHeatmapPlotter,
 )
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.base import (
     DatasetComparisonArtifactResources,
 )
-from artifact_core.table_comparison.artifacts.plots.pairwise_correlations import (
-    CorrelationComparisonCombinedPlot,
-    CorrelationComparisonHeatmapConfig,
+from artifact_core.table_comparison.artifacts.plots.correlations import (
+    CorrelationHeatmapJuxtapositionPlot,
+    CorrelationHeatmapJuxtapositionPlotHyperparams,
 )
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
 @pytest.fixture
-def hyperparams() -> CorrelationComparisonHeatmapConfig:
-    hyperparams = CorrelationComparisonHeatmapConfig(
+def hyperparams() -> CorrelationHeatmapJuxtapositionPlotHyperparams:
+    hyperparams = CorrelationHeatmapJuxtapositionPlotHyperparams(
         categorical_association_type=CategoricalAssociationType.CRAMERS_V,
         continuous_association_type=ContinuousAssociationType.PEARSON,
     )
@@ -35,15 +35,15 @@ def test_compute(
     resource_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
-    hyperparams: CorrelationComparisonHeatmapConfig,
+    hyperparams: CorrelationHeatmapJuxtapositionPlotHyperparams,
 ):
     fake_plot = Figure()
     patch_get_combined_correlation_plot = mocker.patch.object(
-        target=PairwiseCorrelationHeatmapPlotter,
-        attribute="get_combined_correlation_plot",
+        target=CorrelationHeatmapPlotter,
+        attribute="get_combined_correlation_heatmaps",
         return_value=fake_plot,
     )
-    artifact = CorrelationComparisonCombinedPlot(
+    artifact = CorrelationHeatmapJuxtapositionPlot(
         resource_spec=resource_spec,
         hyperparams=hyperparams,
     )

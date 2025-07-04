@@ -50,9 +50,9 @@ class PlotCombiner:
         cls, dict_plots: Dict[str, Figure], config: PlotCombinationConfig
     ) -> Figure:
         combined_fig, axs = cls._create_combined_subplots(dict_plots, config)
-        cls._draw_all_content(axs, dict_plots, config)
-        cls._turn_off_extra_axes(axs, dict_plots)
-        cls._apply_layout_adjustments(combined_fig, config)
+        cls._draw_all_content(axs=axs, dict_plots=dict_plots, config=config)
+        cls._turn_off_extra_axes(axs=axs, dict_plots=dict_plots)
+        cls._apply_layout_adjustments(fig=combined_fig, config=config)
         return combined_fig
 
     @classmethod

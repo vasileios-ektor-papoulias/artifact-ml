@@ -8,17 +8,17 @@ from artifact_core.libs.implementation.tabular.projections.truncated_svd import 
 )
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.base import DatasetComparisonArtifactResources
-from artifact_core.table_comparison.artifacts.plots.truncated_svd_projection import (
-    TruncatedSVDProjectionComparisonPlot,
-    TruncatedSVDProjectionComparisonPlotConfig,
+from artifact_core.table_comparison.artifacts.plots.truncated_svd import (
+    TruncatedSVDJuxtapositionPlot,
+    TruncatedSVDJuxtapositionPlotHyperparams,
 )
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
 @pytest.fixture
-def hyperparams() -> TruncatedSVDProjectionComparisonPlotConfig:
-    hyperparams = TruncatedSVDProjectionComparisonPlotConfig(use_categorical=True)
+def hyperparams() -> TruncatedSVDJuxtapositionPlotHyperparams:
+    hyperparams = TruncatedSVDJuxtapositionPlotHyperparams(use_categorical=True)
     return hyperparams
 
 
@@ -27,7 +27,7 @@ def test_compute(
     resource_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
-    hyperparams: TruncatedSVDProjectionComparisonPlotConfig,
+    hyperparams: TruncatedSVDJuxtapositionPlotHyperparams,
 ):
     fake_fig = Figure()
     mock_proj = mocker.Mock()
@@ -37,7 +37,7 @@ def test_compute(
         attribute="build",
         return_value=mock_proj,
     )
-    artifact = TruncatedSVDProjectionComparisonPlot(
+    artifact = TruncatedSVDJuxtapositionPlot(
         resource_spec=resource_spec,
         hyperparams=hyperparams,
     )

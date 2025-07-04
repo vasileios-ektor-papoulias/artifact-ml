@@ -8,17 +8,17 @@ from artifact_core.libs.implementation.tabular.projections.tsne import (
 )
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.base import DatasetComparisonArtifactResources
-from artifact_core.table_comparison.artifacts.plots.tsne_projection import (
-    TSNEProjectionComparisonPlot,
-    TSNEProjectionComparisonPlotConfig,
+from artifact_core.table_comparison.artifacts.plots.tsne import (
+    TSNEJuxtapositionPlot,
+    TSNEJuxtapositionPlotHyperparams,
 )
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
 @pytest.fixture
-def hyperparams() -> TSNEProjectionComparisonPlotConfig:
-    hyperparams = TSNEProjectionComparisonPlotConfig(
+def hyperparams() -> TSNEJuxtapositionPlotHyperparams:
+    hyperparams = TSNEJuxtapositionPlotHyperparams(
         use_categorical=True, perplexity=30.0, learning_rate="auto", max_iter=1000
     )
     return hyperparams
@@ -29,7 +29,7 @@ def test_compute(
     resource_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
-    hyperparams: TSNEProjectionComparisonPlotConfig,
+    hyperparams: TSNEJuxtapositionPlotHyperparams,
 ):
     fake_fig = Figure()
     mock_proj = mocker.Mock()
@@ -39,7 +39,7 @@ def test_compute(
         attribute="build",
         return_value=mock_proj,
     )
-    artifact = TSNEProjectionComparisonPlot(
+    artifact = TSNEJuxtapositionPlot(
         resource_spec=resource_spec,
         hyperparams=hyperparams,
     )

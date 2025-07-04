@@ -2,11 +2,11 @@ import pandas as pd
 from matplotlib.figure import Figure
 
 from artifact_core.base.artifact_dependencies import NoArtifactHyperparams
-from artifact_core.libs.implementation.tabular.descriptive_statistics.calculator import (
-    DescriptiveStatistic,
+from artifact_core.libs.implementation.tabular.descriptive_stats.alignment_plotter import (
+    DescriptiveStatsAlignmentPlotter,
 )
-from artifact_core.libs.implementation.tabular.descriptive_statistics.comparison_plots import (
-    DescriptiveStatComparisonPlotter,
+from artifact_core.libs.implementation.tabular.descriptive_stats.calculator import (
+    DescriptiveStatistic,
 )
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonPlot,
@@ -17,14 +17,12 @@ from artifact_core.table_comparison.registries.plots.registry import (
 )
 
 
-@TableComparisonPlotRegistry.register_artifact(
-    TableComparisonPlotType.DESCRIPTIVE_STATS_COMPARISON_PLOT
-)
-class ContinuousFeatureDescriptiveStatsComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.DESCRIPTIVE_STATS_ALIGNMENT)
+class DescriptiveStatsAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = DescriptiveStatComparisonPlotter.get_combined_stat_comparison_plot(
+        plot = DescriptiveStatsAlignmentPlotter.get_combined_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=self._resource_spec.ls_cts_features,
@@ -32,12 +30,12 @@ class ContinuousFeatureDescriptiveStatsComparisonPlot(TableComparisonPlot[NoArti
         return plot
 
 
-@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MEAN_COMPARISON_PLOT)
-class ContinuousFeatureMeanComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MEAN_ALIGNMENT)
+class MeanAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = DescriptiveStatComparisonPlotter.get_stat_comparison_plot(
+        plot = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=self._resource_spec.ls_cts_features,
@@ -46,12 +44,12 @@ class ContinuousFeatureMeanComparisonPlot(TableComparisonPlot[NoArtifactHyperpar
         return plot
 
 
-@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.STD_COMPARISON_PLOT)
-class ContinuousFeatureSTDComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.STD_ALIGNMENT)
+class STDAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = DescriptiveStatComparisonPlotter.get_stat_comparison_plot(
+        plot = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=self._resource_spec.ls_cts_features,
@@ -60,12 +58,12 @@ class ContinuousFeatureSTDComparisonPlot(TableComparisonPlot[NoArtifactHyperpara
         return plot
 
 
-@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.VARIANCE_COMPARISON_PLOT)
-class ContinuousFeatureVarianceComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.VARIANCE_ALIGNMENT)
+class VarianceAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = DescriptiveStatComparisonPlotter.get_stat_comparison_plot(
+        plot = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=self._resource_spec.ls_cts_features,
@@ -74,12 +72,12 @@ class ContinuousFeatureVarianceComparisonPlot(TableComparisonPlot[NoArtifactHype
         return plot
 
 
-@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MEDIAN_COMPARISON_PLOT)
-class ContinuousFeatureMedianComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MEDIAN_ALIGNMENT)
+class MedianAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = DescriptiveStatComparisonPlotter.get_stat_comparison_plot(
+        plot = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=self._resource_spec.ls_cts_features,
@@ -88,14 +86,12 @@ class ContinuousFeatureMedianComparisonPlot(TableComparisonPlot[NoArtifactHyperp
         return plot
 
 
-@TableComparisonPlotRegistry.register_artifact(
-    TableComparisonPlotType.FIRST_QUARTILE_COMPARISON_PLOT
-)
-class ContinuousFeatureFirstQuartileComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.FIRST_QUARTILE_ALIGNMENT)
+class FirstQuartileAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = DescriptiveStatComparisonPlotter.get_stat_comparison_plot(
+        plot = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=self._resource_spec.ls_cts_features,
@@ -104,14 +100,12 @@ class ContinuousFeatureFirstQuartileComparisonPlot(TableComparisonPlot[NoArtifac
         return plot
 
 
-@TableComparisonPlotRegistry.register_artifact(
-    TableComparisonPlotType.THIRD_QUARTILE_COMPARISON_PLOT
-)
-class ContinuousFeatureThirdQuartileComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.THIRD_QUARTILE_ALIGNMENT)
+class ThirdQuartileAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = DescriptiveStatComparisonPlotter.get_stat_comparison_plot(
+        plot = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=self._resource_spec.ls_cts_features,
@@ -120,12 +114,12 @@ class ContinuousFeatureThirdQuartileComparisonPlot(TableComparisonPlot[NoArtifac
         return plot
 
 
-@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MAX_COMPARISON_PLOT)
-class ContinuousFeatureMaximaComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MAX_ALIGNMENT)
+class MaxAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = DescriptiveStatComparisonPlotter.get_stat_comparison_plot(
+        plot = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=self._resource_spec.ls_cts_features,
@@ -134,12 +128,12 @@ class ContinuousFeatureMaximaComparisonPlot(TableComparisonPlot[NoArtifactHyperp
         return plot
 
 
-@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MIN_COMPARISON_PLOT)
-class ContinuousFeatureMinimaComparisonPlot(TableComparisonPlot[NoArtifactHyperparams]):
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MIN_ALIGNMENT)
+class MinAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = DescriptiveStatComparisonPlotter.get_stat_comparison_plot(
+        plot = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=self._resource_spec.ls_cts_features,

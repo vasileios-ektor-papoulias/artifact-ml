@@ -2,19 +2,19 @@ from unittest.mock import ANY
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.js.js_calculator import JSDistanceCalculator
+from artifact_core.libs.implementation.tabular.js.calculator import JSDistanceCalculator
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.base import DatasetComparisonArtifactResources
 from artifact_core.table_comparison.artifacts.scores.mean_js import (
-    MeanJSDistance,
-    MeanJSDistanceHyperparams,
+    MeanJSDistanceScore,
+    MeanJSDistanceScoreHyperparams,
 )
 from pytest_mock import MockerFixture
 
 
 @pytest.fixture
-def hyperparams() -> MeanJSDistanceHyperparams:
-    return MeanJSDistanceHyperparams(n_bins_cts_histogram=8, categorical_only=True)
+def hyperparams() -> MeanJSDistanceScoreHyperparams:
+    return MeanJSDistanceScoreHyperparams(n_bins_cts_histogram=8, categorical_only=True)
 
 
 def test_compute(
@@ -22,7 +22,7 @@ def test_compute(
     resource_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
-    hyperparams: MeanJSDistanceHyperparams,
+    hyperparams: MeanJSDistanceScoreHyperparams,
 ):
     fake_score: float = 0.789
     patch_compute_mean_js = mocker.patch.object(
@@ -30,7 +30,7 @@ def test_compute(
         attribute="compute_mean_js",
         return_value=fake_score,
     )
-    artifact = MeanJSDistance(resource_spec=resource_spec, hyperparams=hyperparams)
+    artifact = MeanJSDistanceScore(resource_spec=resource_spec, hyperparams=hyperparams)
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )

@@ -3,10 +3,7 @@ from dataclasses import dataclass
 import pandas as pd
 
 from artifact_core.base.artifact_dependencies import ArtifactHyperparams
-from artifact_core.libs.implementation.tabular.js.js_calculator import JSDistanceCalculator
-from artifact_core.libs.resource_spec.tabular.protocol import (
-    TabularDataSpecProtocol,
-)
+from artifact_core.libs.implementation.tabular.js.calculator import JSDistanceCalculator
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonScore,
 )
@@ -18,21 +15,13 @@ from artifact_core.table_comparison.registries.scores.registry import (
 
 @TableComparisonScoreRegistry.register_artifact_config(TableComparisonScoreType.MEAN_JS_DISTANCE)
 @dataclass(frozen=True)
-class MeanJSDistanceHyperparams(ArtifactHyperparams):
+class MeanJSDistanceScoreHyperparams(ArtifactHyperparams):
     n_bins_cts_histogram: int
     categorical_only: bool
 
 
 @TableComparisonScoreRegistry.register_artifact(TableComparisonScoreType.MEAN_JS_DISTANCE)
-class MeanJSDistance(TableComparisonScore[MeanJSDistanceHyperparams]):
-    def __init__(
-        self,
-        resource_spec: TabularDataSpecProtocol,
-        hyperparams: MeanJSDistanceHyperparams,
-    ):
-        self._resource_spec = resource_spec
-        self._hyperparams = hyperparams
-
+class MeanJSDistanceScore(TableComparisonScore[MeanJSDistanceScoreHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> float:

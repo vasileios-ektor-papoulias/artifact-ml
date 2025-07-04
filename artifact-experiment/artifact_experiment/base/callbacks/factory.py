@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Dict, Generic, Type, TypeVar
+from typing import Dict, Generic, Type, TypeVar, Union
 
 from artifact_core.base.artifact_dependencies import (
     ArtifactResources,
@@ -86,66 +86,86 @@ class ArtifactCallbackFactory(
 
     @classmethod
     def build_score_callback(
-        cls, score_type: ScoreTypeT, resource_spec: ResourceSpecProtocolT
+        cls, score_type: Union[ScoreTypeT, str], resource_spec: ResourceSpecProtocolT
     ) -> ArtifactScoreCallback[ArtifactResourcesT, ResourceSpecProtocolT]:
         registry = cls._get_score_registry()
         artifact = registry.get(artifact_type=score_type, resource_spec=resource_spec)
+        key = cls._get_key(artifact_type=score_type)
         callback = ArtifactScoreCallback[ArtifactResourcesT, ResourceSpecProtocolT](
-            key=score_type.name, artifact=artifact
+            key=key, artifact=artifact
         )
         return callback
 
     @classmethod
     def build_array_callback(
-        cls, array_type: ArrayTypeT, resource_spec: ResourceSpecProtocolT
+        cls, array_type: Union[ArrayTypeT, str], resource_spec: ResourceSpecProtocolT
     ) -> ArtifactArrayCallback[ArtifactResourcesT, ResourceSpecProtocolT]:
         registry = cls._get_array_registry()
         artifact = registry.get(artifact_type=array_type, resource_spec=resource_spec)
+        key = cls._get_key(artifact_type=array_type)
         callback = ArtifactArrayCallback[ArtifactResourcesT, ResourceSpecProtocolT](
-            key=array_type.name, artifact=artifact
+            key=key, artifact=artifact
         )
         return callback
 
     @classmethod
     def build_plot_callback(
-        cls, plot_type: PlotTypeT, resource_spec: ResourceSpecProtocolT
+        cls, plot_type: Union[PlotTypeT, str], resource_spec: ResourceSpecProtocolT
     ) -> ArtifactPlotCallback[ArtifactResourcesT, ResourceSpecProtocolT]:
         registry = cls._get_plot_registry()
         artifact = registry.get(artifact_type=plot_type, resource_spec=resource_spec)
+        key = cls._get_key(artifact_type=plot_type)
         callback = ArtifactPlotCallback[ArtifactResourcesT, ResourceSpecProtocolT](
-            key=plot_type.name, artifact=artifact
+            key=key, artifact=artifact
         )
         return callback
 
     @classmethod
     def build_score_collection_callback(
-        cls, score_collection_type: ScoreCollectionTypeT, resource_spec: ResourceSpecProtocolT
+        cls,
+        score_collection_type: Union[ScoreCollectionTypeT, str],
+        resource_spec: ResourceSpecProtocolT,
     ) -> ArtifactScoreCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT]:
         registry = cls._get_score_collection_registry()
         artifact = registry.get(artifact_type=score_collection_type, resource_spec=resource_spec)
+        key = cls._get_key(artifact_type=score_collection_type)
         callback = ArtifactScoreCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT](
-            key=score_collection_type.name, artifact=artifact
+            key=key, artifact=artifact
         )
         return callback
 
     @classmethod
     def build_array_collection_callback(
-        cls, array_collection_type: ArrayCollectionTypeT, resource_spec: ResourceSpecProtocolT
+        cls,
+        array_collection_type: Union[ArrayCollectionTypeT, str],
+        resource_spec: ResourceSpecProtocolT,
     ) -> ArtifactArrayCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT]:
         registry = cls._get_array_collection_registry()
         artifact = registry.get(artifact_type=array_collection_type, resource_spec=resource_spec)
+        key = cls._get_key(artifact_type=array_collection_type)
         callback = ArtifactArrayCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT](
-            key=array_collection_type.name, artifact=artifact
+            key=key, artifact=artifact
         )
         return callback
 
     @classmethod
     def build_plot_collection_callback(
-        cls, plot_collection_type: PlotCollectionTypeT, resource_spec: ResourceSpecProtocolT
+        cls,
+        plot_collection_type: Union[PlotCollectionTypeT, str],
+        resource_spec: ResourceSpecProtocolT,
     ) -> ArtifactPlotCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT]:
         registry = cls._get_plot_collection_registry()
         artifact = registry.get(artifact_type=plot_collection_type, resource_spec=resource_spec)
+        key = cls._get_key(artifact_type=plot_collection_type)
         callback = ArtifactPlotCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT](
-            key=plot_collection_type.name, artifact=artifact
+            key=key, artifact=artifact
         )
         return callback
+
+    @staticmethod
+    def _get_key(artifact_type: Union[ArtifactTypeT, str]) -> str:
+        if isinstance(artifact_type, str):
+            key = artifact_type
+        else:
+            key = artifact_type.name
+        return key

@@ -3,21 +3,21 @@ from unittest.mock import ANY
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.js.js_calculator import JSDistanceCalculator
+from artifact_core.libs.implementation.tabular.js.calculator import JSDistanceCalculator
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.base import (
     DatasetComparisonArtifactResources,
 )
 from artifact_core.table_comparison.artifacts.score_collections.js import (
-    JSDistance,
-    JSDistanceHyperparams,
+    JSDistanceScores,
+    JSDistanceScoresHyperparams,
 )
 from pytest_mock import MockerFixture
 
 
 @pytest.fixture
-def hyperparams() -> JSDistanceHyperparams:
-    return JSDistanceHyperparams(n_bins_cts_histogram=5, categorical_only=False)
+def hyperparams() -> JSDistanceScoresHyperparams:
+    return JSDistanceScoresHyperparams(n_bins_cts_histogram=5, categorical_only=False)
 
 
 def test_compute(
@@ -25,7 +25,7 @@ def test_compute(
     resource_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
-    hyperparams: JSDistanceHyperparams,
+    hyperparams: JSDistanceScoresHyperparams,
 ):
     fake_scores: Dict[str, float] = {"c1": 0.123, "cat": 0.456}
     patch_compute_dict_js = mocker.patch.object(
@@ -33,7 +33,7 @@ def test_compute(
         attribute="compute_dict_js",
         return_value=fake_scores,
     )
-    artifact = JSDistance(resource_spec=resource_spec, hyperparams=hyperparams)
+    artifact = JSDistanceScores(resource_spec=resource_spec, hyperparams=hyperparams)
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )

@@ -31,7 +31,7 @@ class DythonAssociationConfig:
     mark_columns_with_feature_type = True
 
 
-class PairwiseCorrelationCalculator:
+class CorrelationCalculator:
     _dython_association_config = DythonAssociationConfig()
 
     @classmethod

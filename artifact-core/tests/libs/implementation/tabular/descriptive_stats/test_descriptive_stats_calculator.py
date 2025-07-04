@@ -4,9 +4,9 @@ from typing import Dict, List
 import numpy as np
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.descriptive_statistics.calculator import (
+from artifact_core.libs.implementation.tabular.descriptive_stats.calculator import (
     DescriptiveStatistic,
-    DescriptiveStatisticsCalculator,
+    DescriptiveStatsCalculator,
 )
 
 
@@ -97,20 +97,20 @@ def test_descriptive_statistics_compute(
 ):
     if expect_raise_missing:
         with pytest.raises(ValueError, match="Missing columns"):
-            DescriptiveStatisticsCalculator.compute(
+            DescriptiveStatsCalculator.compute(
                 df=df,
                 ls_cts_features=ls_cts_features,
                 stat=stat,
             )
     elif expect_raise_unsupported:
         with pytest.raises(ValueError, match="Unsupported"):
-            DescriptiveStatisticsCalculator.compute(
+            DescriptiveStatsCalculator.compute(
                 df=df,
                 ls_cts_features=ls_cts_features,
                 stat=stat,
             )
     else:
-        result = DescriptiveStatisticsCalculator.compute(
+        result = DescriptiveStatsCalculator.compute(
             df=df,
             ls_cts_features=ls_cts_features,
             stat=stat,
@@ -228,7 +228,7 @@ def test_compute_juxtaposition(
 ):
     if expect_raise_missing:
         with pytest.raises(ValueError, match="Missing columns"):
-            DescriptiveStatisticsCalculator.compute_juxtaposition(
+            DescriptiveStatsCalculator.compute_juxtaposition(
                 df_real=df_real,
                 df_synthetic=df_synthetic,
                 ls_cts_features=ls_cts_features,
@@ -236,14 +236,14 @@ def test_compute_juxtaposition(
             )
     elif expect_raise_unsupported:
         with pytest.raises(ValueError, match="Unsupported"):
-            DescriptiveStatisticsCalculator.compute_juxtaposition(
+            DescriptiveStatsCalculator.compute_juxtaposition(
                 df_real=df_real,
                 df_synthetic=df_synthetic,
                 ls_cts_features=ls_cts_features,
                 stat=stat,
             )
     else:
-        result = DescriptiveStatisticsCalculator.compute_juxtaposition(
+        result = DescriptiveStatsCalculator.compute_juxtaposition(
             df_real=df_real,
             df_synthetic=df_synthetic,
             ls_cts_features=ls_cts_features,
