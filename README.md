@@ -39,10 +39,6 @@ For a deep-dive into the core design philosophy underlying the project see our [
   <img src="assets/pdf_comparison.png" width="600" alt="PDF Comparison">
 </p>
 
-<p align="center">
-  <img src="assets/pca_comparison.png" width="600" alt="PCA Comparison">
-</p>
-
 ## 🚀 Getting Started
 
 ### Installation
