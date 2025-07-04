@@ -231,7 +231,7 @@ This is intended to serve research projects in synthetic tabular data generation
 - `THIRD_QUARTILE_ALIGNMENT_PLOT`: Alignment of third quartiles between real and synthetic data
 - `MIN_ALIGNMENT_PLOT`: Alignment of minimum values between real and synthetic data
 - `MAX_ALIGNMENT_PLOT`: Alignment of maximum values between real and synthetic data
-- `CORRELATION_HEATMAP_PLOT`: Juxtaposed correlation matrix heatmaps for real and synthetic data
+- `CORRELATION_HEATMAPS`: Juxtaposed correlation matrix heatmaps for real and synthetic data
 - `PCA_PROJECTION_PLOT`: Visual PCA projection comparison between real and synthetic data
 - `TRUNCATED_SVD_PROJECTION_PLOT`: Visual truncated SVD projection comparison between real and synthetic data
 - `TSNE_PROJECTION_PLOT`: Visual t-SNE projection comparison between real and synthetic data
