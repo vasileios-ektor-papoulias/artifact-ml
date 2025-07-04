@@ -8,6 +8,9 @@ from artifact_core.table_comparison.artifacts.base import (
 from artifact_core.table_comparison.artifacts.plot_collections.cdf import (
     CDFComparisonPlotCollection,
 )
+from artifact_core.table_comparison.artifacts.plot_collections.pairwise_correlations import (
+    CorrelationPlotCollection,
+)
 from artifact_core.table_comparison.artifacts.plot_collections.pdf import (
     PDFComparisonPlotCollection,
 )
@@ -22,6 +25,7 @@ from artifact_core.table_comparison.registries.plot_collections.registry import 
     [
         (TableComparisonPlotCollectionType.CDF_PLOTS, CDFComparisonPlotCollection),
         (TableComparisonPlotCollectionType.PDF_PLOTS, PDFComparisonPlotCollection),
+        (TableComparisonPlotCollectionType.PAIRWISE_CORRELATION_PLOTS, CorrelationPlotCollection),
     ],
 )
 def test_get(
