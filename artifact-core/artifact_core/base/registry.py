@@ -104,7 +104,7 @@ class ArtifactRegistry(
     def _register_artifact_config(
         cls, artifact_type: str
     ) -> Callable[[Type[ArtifactHyperparamsT]], Type[ArtifactHyperparamsT]]:
-        if artifact_type in cls._artifact_registry.keys():
+        if artifact_type in cls._artifact_config_registry.keys():
             raise ValueError(f"Artifact type {artifact_type} already registered")
 
         def artifact_config_registration_decorator(
