@@ -55,13 +55,13 @@ spec = TabularDataSpec.from_df(
 
 engine = TableComparisonEngine(resource_spec=spec)
 
-dict_js_distance = engine.produce_dataset_comparison_score_collection(
+dict_js_distance_per_feature = engine.produce_dataset_comparison_score_collection(
     score_collection_type=TableComparisonScoreCollectionType.JS_DISTANCE,
     dataset_real=df_real,
     dataset_synthetic=df_synthetic,
 )
 
-dict_js_distance
+dict_js_distance_per_feature
 ```
 
 <p align="center">
@@ -74,7 +74,7 @@ from artifact_core.table_comparison import (
 )
 
 pca_plot = engine.produce_dataset_comparison_plot(
-    plot_type=TableComparisonPlotType.PCA_PROJECTION_PLOT,
+    plot_type=TableComparisonPlotType.PCA_JUXTAPOSITION,
     dataset_real=df_real,
     dataset_synthetic=df_synthetic,
 )
@@ -87,13 +87,13 @@ pca_plot
 </p>
 
 ```python
-pdf_plots = engine.produce_dataset_comparison_plot(
-    plot_type=TableComparisonPlotType.PDF_PLOT,
+pdf_plot = engine.produce_dataset_comparison_plot(
+    plot_type=TableComparisonPlotType.PDF,
     dataset_real=df_real,
     dataset_synthetic=df_synthetic,
 )
 
-pdf_plots
+pdf_plot
 ```
 
 <p align="center">
@@ -250,55 +250,13 @@ This is intended to serve research projects in synthetic tabular data generation
 - `MEDIANS_JUXTAPOSITION`: Juxtaposition of real and synthetic median values for all continuous features
 - `FIRST_QUARTILES_JUXTAPOSITION`: Juxtaposition of real and synthetic first quartile values for all continuous features
 - `THIRD_QUARTILES_JUXTAPOSITION`: Juxtaposition of real and synthetic third quartile values for all continuous features
-- `MINIMA_JUXTAPOSITION`: Juxtaposition of real and synthetic minimum values for all continuous features
-- `MAXIMA_JUXTAPOSITION`: Juxtaposition of real and synthetic maximum values for all continuous features
+- `MIN_JUXTAPOSITION`: Juxtaposition of real and synthetic minimum values for all continuous features
+- `MAX_JUXTAPOSITION`: Juxtaposition of real and synthetic maximum values for all continuous features
 
 #### Plot Collections
 - `PDF`: Collection of overlaid (real & synthetic) PDF plots for all features
 - `CDF`: Collection of overlaid (real & synthetic) CDF plots for all features
 - `CORRELATION_HEATMAPS`: Correlation matrix heatmaps for real and synthetic data
-
-### 📊 Example: General Usage
-
-```python
-import pandas as pd
-from artifact_core.libs.resource_spec.tabular.spec import TabularDataSpec
-from artifact_core.table_comparison import (
-    TableComparisonEngine,
-    TableComparisonPlotType,
-    TableComparisonScoreType,
-)
-
-# Create or load your datasets
-df_real = pd.read_csv("real_data.csv")
-df_synthetic = pd.read_csv("synthetic_data.csv")
-
-# Define the resource specification
-categorical_features = ["cat_1", "cat_2", "cat_3"]
-continuous_features = ["num_1", "num_2", "num_3"]
-spec = TabularDataSpec.from_df(
-    df=df_real, 
-    cat_features=categorical_features, 
-    cont_features=continuous_features
-)
-
-# Create the engine
-engine = TableComparisonEngine(resource_spec=spec)
-
-# Compute a plot artifact
-pca_plot = engine.produce_dataset_comparison_plot(
-    plot_type=TableComparisonPlotType.PCA_JUXTAPOSITION,
-    dataset_real=df_real,
-    dataset_synthetic=df_synthetic,
-)
-
-# Compute a score artifact
-js_distance = engine.produce_dataset_comparison_score(
-    score_type=TableComparisonScoreType.MEAN_JS_DISTANCE,
-    dataset_real=df_real,
-    dataset_synthetic=df_synthetic,
-)
-```
 
 ## 🔧 Implementation Guide
 
@@ -456,9 +414,22 @@ class CustomArtifactEngine(ArtifactEngine[
         return self.produce_score(score_type=score_type, resources=resources)
 ```
 
-## 🚀 Configuring and Using Artifact-Core
+## 🚀 Using Artifact-Core
 
-### 1. Configuring Existing Artifacts in Your Project
+### 1. Computing Artifacts Using an Artifact Engine
+
+Artifact engines provide the primary interface for computing validation artifacts. Create an engine instance with your resource specification, then use the engine's methods to compute individual artifacts or collections of artifacts by specifying the artifact type and input data. The engine handles all complexity of artifact lookup, instantiation, and execution, providing a clean interface where you specify what you want to compute and the data to compute it on. This declarative approach eliminates repetitive imperative code for artifact configuration, parameter management, and result handling.
+
+```python
+# Create engine with resource specification
+engine = TableComparisonEngine(resource_spec=spec)
+
+# Compute individual artifacts
+score = engine.produce_dataset_comparison_score(score_type=ScoreType.MEAN_JS_DISTANCE, dataset_real=df_real, dataset_synthetic=df_synthetic)
+plot = engine.produce_dataset_comparison_plot(plot_type=PlotType.PCA_JUXTAPOSITION, dataset_real=df_real, dataset_synthetic=df_synthetic)
+```
+
+### 2. Configuring Existing Artifacts in Your Project
 
 When using `artifact-core` as a package in your own project, you can override the default configuration of existing artifacts:
 
@@ -516,6 +487,109 @@ The configuration file follows the same structure as the default configuration:
 Only include the sections and parameters you want to override.
 
 Your configuration will be merged with the default one automatically, with your settings taking precedence.
+
+### 2. Creating Custom Artifacts
+
+`artifact-core` supports project-specific custom artifacts, enabling users to extend domain toolkits with specialized validation logic tailored to their unique requirements.
+
+Custom artifacts integrate seamlessly with the existing framework infrastructure while providing complete flexibility for domain-specific validation needs.
+
+#### Creating Custom Artifacts
+
+**A. Configure Custom Artifact Path**
+
+Update the relevant domain toolkit configuration file (see the relevant section above) to point to your custom artifacts directory.
+
+```json
+{
+  "custom_artifact_path": "/path/to/your/custom_artifacts",
+  "score_collections": {
+    "CUSTOM_SCORE": {
+      "param1": value1,
+      "param2": value2
+    }
+  }
+}
+```
+
+**B. Implement Custom Artifact**
+
+Create your custom artifact by extending the appropriate base class.
+
+Select the relevant domain-specific registry corresponding to your artifact's modality (e.g. score, array, plot etc.) and register your implementation.
+
+```python
+import pandas as pd
+from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
+from artifact_core.table_comparison.artifacts.base import TableComparisonScore
+from artifact_core.table_comparison.registries.scores.registry import TableComparisonScoreRegistry
+
+@TableComparisonScoreRegistry.register_custom_artifact("CUSTOM_SCORE")
+class CustomScore(TableComparisonScore[NO_ARTIFACT_HYPERPARAMS]):
+    def _compare_datasets(
+        self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
+    ) -> float:
+        # Implement your custom validation logic
+        custom_metric = compute_your_metric(dataset_real, dataset_synthetic)
+        return custom_metric
+```
+
+
+If your custom artifact requires configuration parameters create a corresponding hyperparameters class and pass the desired values in the toolkit config file:
+
+```python
+from dataclasses import dataclass
+from artifact_core.base.artifact_dependencies import ArtifactHyperparams
+
+@dataclass
+class CustomScoreHyperparams(ArtifactHyperparams):
+    threshold: float
+    use_weights: bool
+
+@TableComparisonScoreRegistry.register_custom_artifact_config("CUSTOM_SCORE")
+@dataclass
+class CustomScoreHyperparams(ArtifactHyperparams):
+    threshold: float
+    use_weights: bool
+
+@TableComparisonScoreRegistry.register_custom_artifact("CUSTOM_SCORE")
+class CustomScore(TableComparisonScore[CustomScoreHyperparams]):
+    def _compare_datasets(self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame) -> float:
+        # Access hyperparameters via self._hyperparams.threshold, self._hyperparams.use_weights
+        return computed_score
+```
+
+```json
+{
+  "scores": {
+    "CUSTOM_SCORE": {
+      "threshold": 0.5,
+      "use_weights": true
+    }
+  }
+}
+```
+
+#### Using Custom Artifacts
+
+Once configured, custom artifacts can be used exactly like built-in artifacts:
+
+```python
+# Use custom artifact with string identifier
+custom_score = engine.produce_dataset_comparison_score(
+    score_type="CUSTOM_SCORE",
+    dataset_real=df_real,
+    dataset_synthetic=df_synthetic,
+)
+```
+
+#### Contributing Custom Artifacts
+
+If you develop a custom artifact that could benefit the broader community, consider contributing it to the framework as a built-in artifact. Well-designed validation metrics that address common use cases are valuable additions to the artifact ecosystem.
+
+To contribute a custom artifact, submit a pull request following the [contribution guidelines](https://github.com/vasileios-ektor-papoulias/artifact-ml/blob/main/README.md).
+
+Custom artifacts that demonstrate broad applicability, statistical rigor, and clean implementation are excellent candidates for inclusion in the core framework.
 
 ## 🔧 Framework Extension
 
@@ -599,7 +673,7 @@ However, note that we've provided more refined abstractions than the general art
 
 You should work with these instead: they implement core logic tailored to the specific artifact group in question.
 
-All table comparison scores should inherit the following base:
+To illustrate: all table comparison scores should inherit the following base:
 
 ```python
 import pandas as pd
