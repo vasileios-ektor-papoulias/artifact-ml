@@ -14,7 +14,7 @@
   },
   "arrays": {},
   "plots": {
-    "CORRELATION_HEATMAP_PLOT": {
+    "CORRELATION_HEATMAPS": {
       "categorical_association_type": "CRAMERS_V",
       "continuous_association_type": "PEARSON"
     },
