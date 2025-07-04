@@ -185,32 +185,26 @@ class ValidationPlan(
     ]: ...
 
     @staticmethod
-    @abstractmethod
     def _get_custom_score_types() -> List[str]:
         return []
 
     @staticmethod
-    @abstractmethod
     def _get_custom_array_types() -> List[str]:
         return []
 
     @staticmethod
-    @abstractmethod
     def _get_custom_plot_types() -> List[str]:
         return []
 
     @staticmethod
-    @abstractmethod
     def _get_custom_score_collection_types() -> List[str]:
         return []
 
     @staticmethod
-    @abstractmethod
     def _get_custom_array_collection_types() -> List[str]:
         return []
 
     @staticmethod
-    @abstractmethod
     def _get_custom_plot_collection_types() -> List[str]:
         return []
 
