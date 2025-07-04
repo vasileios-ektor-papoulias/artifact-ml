@@ -3,26 +3,26 @@ from unittest.mock import ANY
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.pairwise_correlation.plotter import (
+from artifact_core.libs.implementation.tabular.correlations.heatmap_plotter import (
     CategoricalAssociationType,
     ContinuousAssociationType,
-    PairwiseCorrelationHeatmapPlotter,
+    CorrelationHeatmapPlotter,
 )
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.base import (
     DatasetComparisonArtifactResources,
 )
 from artifact_core.table_comparison.artifacts.plot_collections.correlations import (
-    CorrelationPlotCollection,
-    CorrelationPlotCollectionHyperparams,
+    CorrelationHeatmapPlotCollection,
+    CorrelationHeatmapsHyperparams,
 )
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
 @pytest.fixture
-def hyperparams() -> CorrelationPlotCollectionHyperparams:
-    return CorrelationPlotCollectionHyperparams(
+def hyperparams() -> CorrelationHeatmapsHyperparams:
+    return CorrelationHeatmapsHyperparams(
         categorical_association_type=CategoricalAssociationType.CRAMERS_V,
         continuous_association_type=ContinuousAssociationType.PEARSON,
     )
@@ -33,7 +33,7 @@ def test_compute(
     resource_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
-    hyperparams: CorrelationPlotCollectionHyperparams,
+    hyperparams: CorrelationHeatmapsHyperparams,
 ):
     fake_plots: Dict[str, Figure] = {
         "cts_1": Figure(),
@@ -42,11 +42,13 @@ def test_compute(
         "cat_2": Figure(),
     }
     patch_get_correlation_plot_collection = mocker.patch.object(
-        target=PairwiseCorrelationHeatmapPlotter,
-        attribute="get_correlation_plot_collection",
+        target=CorrelationHeatmapPlotter,
+        attribute="get_correlation_heatmap_collection",
         return_value=fake_plots,
     )
-    artifact = CorrelationPlotCollection(resource_spec=resource_spec, hyperparams=hyperparams)
+    artifact = CorrelationHeatmapPlotCollection(
+        resource_spec=resource_spec, hyperparams=hyperparams
+    )
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )

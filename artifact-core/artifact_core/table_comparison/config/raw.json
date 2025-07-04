@@ -6,7 +6,7 @@
             "n_bins_cts_histogram": 100,
             "categorical_only": false
         },
-        "PAIRWISE_CORRELATION_DISTANCE": {
+        "CORRELATION_DISTANCE": {
             "categorical_association_type": "CRAMERS_V",
             "continuous_association_type": "PEARSON",
             "vector_distance_metric": "RMSE"
@@ -14,7 +14,7 @@
     },
     "arrays": {},
     "plots": {
-        "PAIRWISE_CORRELATION_COMPARISON_HEATMAP": {
+        "CORRELATION_HEATMAP_PLOT": {
             "categorical_association_type": "CRAMERS_V",
             "continuous_association_type": "PEARSON"
         },
@@ -42,7 +42,7 @@
     },
     "array_collections": {},
     "plot_collections": {
-        "PAIRWISE_CORRELATION_PLOTS": {
+        "CORRELATION_HEATMAPS": {
             "categorical_association_type": "CRAMERS_V",
             "continuous_association_type": "PEARSON"
         }

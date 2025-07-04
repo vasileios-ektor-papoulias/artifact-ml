@@ -2,10 +2,10 @@ from unittest.mock import ANY
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.pairwise_correlation.calculator import (
+from artifact_core.libs.implementation.tabular.correlations.calculator import (
     CategoricalAssociationType,
     ContinuousAssociationType,
-    PairwiseCorrelationCalculator,
+    CorrelationCalculator,
 )
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.libs.utils.vector_distance_calculator import VectorDistanceMetric
@@ -35,7 +35,7 @@ def test_compute(
 ):
     fake_score: float = 0.314
     patch_compute_correlation_distance = mocker.patch.object(
-        target=PairwiseCorrelationCalculator,
+        target=CorrelationCalculator,
         attribute="compute_correlation_distance",
         return_value=fake_score,
     )

@@ -20,7 +20,7 @@ class DescriptiveStatistic(Enum):
     MAX = "max"
 
 
-class DescriptiveStatisticsCalculator:
+class DescriptiveStatsCalculator:
     @classmethod
     def compute_juxtaposition(
         cls,
@@ -66,7 +66,7 @@ class DescriptiveStatisticsCalculator:
         )
         dict_stats = {}
         for feature in ls_cts_features:
-            dict_stats[feature] = DescriptiveStatisticsCalculator._compute_stat(df[feature], stat)
+            dict_stats[feature] = DescriptiveStatsCalculator._compute_stat(df[feature], stat)
         return dict_stats
 
     @staticmethod

@@ -9,7 +9,7 @@ from artifact_core.table_comparison.artifacts.plot_collections.cdf import (
     CDFPlotCollection,
 )
 from artifact_core.table_comparison.artifacts.plot_collections.correlations import (
-    CorrelationPlotCollection,
+    CorrelationHeatmapPlotCollection,
 )
 from artifact_core.table_comparison.artifacts.plot_collections.pdf import (
     PDFPlotCollection,
@@ -25,7 +25,10 @@ from artifact_core.table_comparison.registries.plot_collections.registry import 
     [
         (TableComparisonPlotCollectionType.CDF_PLOTS, CDFPlotCollection),
         (TableComparisonPlotCollectionType.PDF_PLOTS, PDFPlotCollection),
-        (TableComparisonPlotCollectionType.PAIRWISE_CORRELATION_PLOTS, CorrelationPlotCollection),
+        (
+            TableComparisonPlotCollectionType.CORRELATION_HEATMAPS,
+            CorrelationHeatmapPlotCollection,
+        ),
     ],
 )
 def test_get(

@@ -24,20 +24,20 @@ from artifact_core.table_comparison.registries.array_collections.registry import
 @pytest.mark.parametrize(
     "artifact_type, artifact_class",
     [
-        (TableComparisonArrayCollectionType.MEANS, MeanJuxtaposition),
-        (TableComparisonArrayCollectionType.STDS, STDJuxtaposition),
-        (TableComparisonArrayCollectionType.VARIANCES, VarianceJuxtaposition),
-        (TableComparisonArrayCollectionType.MEDIANS, MedianJuxtaposition),
+        (TableComparisonArrayCollectionType.MEAN_JUXTAPOSITION, MeanJuxtaposition),
+        (TableComparisonArrayCollectionType.STD_JUXTAPOSITION, STDJuxtaposition),
+        (TableComparisonArrayCollectionType.VARIANCE_JUXTAPOSITION, VarianceJuxtaposition),
+        (TableComparisonArrayCollectionType.MEDIAN_JUXTAPOSITION, MedianJuxtaposition),
         (
-            TableComparisonArrayCollectionType.FIRST_QUARTILES,
+            TableComparisonArrayCollectionType.FIRST_QUARTILE_JUXTAPOSITION,
             FirstQuartileJuxtaposition,
         ),
         (
-            TableComparisonArrayCollectionType.THIRD_QUARTILES,
+            TableComparisonArrayCollectionType.THIRD_QUARTILE_JUXTAPOSITION,
             ThirdQuartileJuxtaposition,
         ),
-        (TableComparisonArrayCollectionType.MINIMA, MinJuxtaposition),
-        (TableComparisonArrayCollectionType.MAXIMA, MaxJuxtaposition),
+        (TableComparisonArrayCollectionType.MIN_JUXTAPOSITION, MinJuxtaposition),
+        (TableComparisonArrayCollectionType.MAX_JUXTAPOSITION, MaxJuxtaposition),
     ],
 )
 def test_get(

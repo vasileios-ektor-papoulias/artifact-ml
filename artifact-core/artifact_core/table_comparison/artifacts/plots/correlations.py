@@ -5,12 +5,12 @@ import pandas as pd
 from matplotlib.figure import Figure
 
 from artifact_core.base.artifact_dependencies import ArtifactHyperparams
-from artifact_core.libs.implementation.tabular.pairwise_correlation.calculator import (
+from artifact_core.libs.implementation.tabular.correlations.calculator import (
     CategoricalAssociationType,
     ContinuousAssociationType,
 )
-from artifact_core.libs.implementation.tabular.pairwise_correlation.plotter import (
-    PairwiseCorrelationHeatmapPlotter,
+from artifact_core.libs.implementation.tabular.correlations.heatmap_plotter import (
+    CorrelationHeatmapPlotter,
 )
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonPlot,
@@ -20,29 +20,29 @@ from artifact_core.table_comparison.registries.plots.registry import (
     TableComparisonPlotType,
 )
 
-CorrelationComparisonPlotHyperparamsT = TypeVar(
-    "CorrelationComparisonPlotHyperparamsT", bound="CorrelationPlotHyperparams"
+CorrelationHeatmapPlotHyperparamsT = TypeVar(
+    "CorrelationHeatmapPlotHyperparamsT", bound="CorrelationHeatmapPlotHyperparams"
 )
 
 
 @TableComparisonPlotRegistry.register_artifact_config(
-    TableComparisonPlotType.PAIRWISE_CORRELATION_COMPARISON_HEATMAP
+    TableComparisonPlotType.CORRELATION_HEATMAP_PLOT
 )
 @dataclass(frozen=True)
-class CorrelationPlotHyperparams(ArtifactHyperparams):
+class CorrelationHeatmapPlotHyperparams(ArtifactHyperparams):
     categorical_association_type: CategoricalAssociationType
     continuous_association_type: ContinuousAssociationType
 
     @classmethod
     def build(
-        cls: Type[CorrelationComparisonPlotHyperparamsT],
+        cls: Type[CorrelationHeatmapPlotHyperparamsT],
         categorical_association_type: Union[
             CategoricalAssociationType, Literal["THEILS_U"], Literal["CRAMERS_V"]
         ],
         continuous_association_type: Union[
             ContinuousAssociationType, Literal["PEARSON"], Literal["SPEARMAN"], Literal["KENDALL"]
         ],
-    ) -> CorrelationComparisonPlotHyperparamsT:
+    ) -> CorrelationHeatmapPlotHyperparamsT:
         if isinstance(categorical_association_type, str):
             categorical_association_type = CategoricalAssociationType[categorical_association_type]
         if isinstance(continuous_association_type, str):
@@ -54,14 +54,12 @@ class CorrelationPlotHyperparams(ArtifactHyperparams):
         return correlation_comparison_heatmap_hyperparams
 
 
-@TableComparisonPlotRegistry.register_artifact(
-    TableComparisonPlotType.PAIRWISE_CORRELATION_COMPARISON_HEATMAP
-)
-class CorrelationPlot(TableComparisonPlot[CorrelationPlotHyperparams]):
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.CORRELATION_HEATMAP_PLOT)
+class CorrelationHeatmapPlot(TableComparisonPlot[CorrelationHeatmapPlotHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = PairwiseCorrelationHeatmapPlotter.get_combined_correlation_plot(
+        plot = CorrelationHeatmapPlotter.get_combined_correlation_heatmaps(
             categorical_correlation_type=self._hyperparams.categorical_association_type,
             continuous_correlation_type=self._hyperparams.continuous_association_type,
             dataset_real=dataset_real,

@@ -2,12 +2,12 @@ from typing import List, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.pairwise_correlation.calculator import (
+from artifact_core.libs.implementation.tabular.correlations.calculator import (
     CategoricalAssociationType,
     ContinuousAssociationType,
 )
-from artifact_core.libs.implementation.tabular.pairwise_correlation.plotter import (
-    PairwiseCorrelationHeatmapPlotter,
+from artifact_core.libs.implementation.tabular.correlations.heatmap_plotter import (
+    CorrelationHeatmapPlotter,
 )
 from artifact_core.libs.utils.plot_combiner import PlotCombinationConfig
 from matplotlib.figure import Figure
@@ -40,7 +40,7 @@ def test_get_correlation_heatmap(
     cont_corr_type: ContinuousAssociationType,
 ):
     df = df_dispatcher
-    result = PairwiseCorrelationHeatmapPlotter.get_correlation_heatmap(
+    result = CorrelationHeatmapPlotter.get_correlation_heatmap(
         categorical_correlation_type=cat_corr_type,
         continuous_correlation_type=cont_corr_type,
         dataset=df,
@@ -92,7 +92,7 @@ def test_get_correlation_difference_heatmap(
     cont_corr_type: ContinuousAssociationType,
 ):
     df_real, df_synthetic = df_pair_dispatcher
-    result = PairwiseCorrelationHeatmapPlotter.get_correlation_difference_heatmap(
+    result = CorrelationHeatmapPlotter.get_correlation_difference_heatmap(
         categorical_correlation_type=cat_corr_type,
         continuous_correlation_type=cont_corr_type,
         dataset_real=df_real,
@@ -148,7 +148,7 @@ def test_get_combined_correlation_plot(
     expected_subplot_titles: List[str],
 ):
     df_real, df_synthetic = df_pair_dispatcher
-    result = PairwiseCorrelationHeatmapPlotter.get_combined_correlation_plot(
+    result = CorrelationHeatmapPlotter.get_combined_correlation_heatmaps(
         categorical_correlation_type=cat_corr_type,
         continuous_correlation_type=cont_corr_type,
         dataset_real=df_real,
@@ -200,7 +200,7 @@ def test_get_combined_correlation_plot_with_custom_config(
     custom_config: PlotCombinationConfig,
 ):
     df_real, df_synthetic = df_pair_dispatcher
-    result = PairwiseCorrelationHeatmapPlotter.get_combined_correlation_plot(
+    result = CorrelationHeatmapPlotter.get_combined_correlation_heatmaps(
         categorical_correlation_type=CategoricalAssociationType.CRAMERS_V,
         continuous_correlation_type=ContinuousAssociationType.PEARSON,
         dataset_real=df_real,

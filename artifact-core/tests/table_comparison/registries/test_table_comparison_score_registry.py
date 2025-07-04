@@ -19,7 +19,7 @@ from artifact_core.table_comparison.registries.scores.registry import (
     "artifact_type, artifact_class",
     [
         (TableComparisonScoreType.MEAN_JS_DISTANCE, MeanJSDistance),
-        (TableComparisonScoreType.PAIRWISE_CORRELATION_DISTANCE, PairwiseCorrelationDistance),
+        (TableComparisonScoreType.CORRELATION_DISTANCE, PairwiseCorrelationDistance),
     ],
 )
 def test_get(

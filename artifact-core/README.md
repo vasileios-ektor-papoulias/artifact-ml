@@ -220,42 +220,43 @@ This is intended to serve research projects in synthetic tabular data generation
 ### TableComparisonEngine: Available Artifacts
 
 #### Plots
-- `PDF_PLOT`: Probability density function plots
-- `CDF_PLOT`: Cumulative distribution function plots
-- `DESCRIPTIVE_STATS_COMPARISON_PLOT`: Comparison of descriptive statistics
-- `MEAN_COMPARISON_PLOT`: Comparison of means between real and synthetic data
-- `STD_COMPARISON_PLOT`: Comparison of standard deviations
-- `VARIANCE_COMPARISON_PLOT`: Comparison of variances
-- `MEDIAN_COMPARISON_PLOT`: Comparison of medians
-- `FIRST_QUARTILE_COMPARISON_PLOT`: Comparison of first quartiles
-- `THIRD_QUARTILE_COMPARISON_PLOT`: Comparison of third quartiles
-- `MIN_COMPARISON_PLOT`: Comparison of minimum values
-- `MAX_COMPARISON_PLOT`: Comparison of maximum values
-- `PAIRWISE_CORRELATION_COMPARISON_HEATMAP`: Correlation comparison heatmap
-- `PCA_PROJECTION_PLOT`: PCA projection visualization
-- `TRUNCATED_SVD_PROJECTION_PLOT`: Truncated SVD projection visualization
-- `TSNE_PROJECTION_PLOT`: t-SNE projection visualization
+- `PDF_PLOT`: Overlaid probability density (or mass) plots for real and synthetic data
+- `CDF_PLOT`: Overlaid cumulative distribution plots for real and synthetic data
+- `DESCRIPTIVE_STATS_ALIGNMENT_PLOT`: Alignment of descriptive statistics between real and synthetic data
+- `MEAN_ALIGNMENT_PLOT`: Alignment of means between real and synthetic data
+- `STD_ALIGNMENT_PLOT`: Alignment of standard deviations between real and synthetic data
+- `VARIANCE_ALIGNMENT_PLOT`: Alignment of variances between real and synthetic data
+- `MEDIAN_ALIGNMENT_PLOT`: Alignment of medians between real and synthetic data
+- `FIRST_QUARTILE_ALIGNMENT_PLOT`: Alignment of first quartiles between real and synthetic data
+- `THIRD_QUARTILE_ALIGNMENT_PLOT`: Alignment of third quartiles between real and synthetic data
+- `MIN_ALIGNMENT_PLOT`: Alignment of minimum values between real and synthetic data
+- `MAX_ALIGNMENT_PLOT`: Alignment of maximum values between real and synthetic data
+- `CORRELATION_HEATMAP_PLOT`: Juxtaposed correlation matrix heatmaps for real and synthetic data
+- `PCA_PROJECTION_PLOT`: Visual PCA projection comparison between real and synthetic data
+- `TRUNCATED_SVD_PROJECTION_PLOT`: Visual truncated SVD projection comparison between real and synthetic data
+- `TSNE_PROJECTION_PLOT`: Visual t-SNE projection comparison between real and synthetic data
 
 #### Scores
-- `MEAN_JS_DISTANCE`: Jensen-Shannon divergence between distributions
-- `PAIRWISE_CORRELATION_DISTANCE`: Distance between correlation matrices
+- `MEAN_JS_DISTANCE`: Average Jensen-Shannon divergence over all features
+- `CORRELATION_DISTANCE`: Distance between correlation matrices
 
 #### Score Collections
 - `JS_DISTANCE`: Collection of Jensen-Shannon distances for all features
 
 #### Array Collections
-- `MEANS`: Collection of mean values for all features
-- `STDS`: Collection of standard deviations for all features
-- `VARIANCES`: Collection of variances for all features
-- `MEDIANS`: Collection of median values for all features
-- `FIRST_QUARTILES`: Collection of first quartile values for all features
-- `THIRD_QUARTILES`: Collection of third quartile values for all features
-- `MINIMA`: Collection of minimum values for all features
-- `MAXIMA`: Collection of maximum values for all features
+- `MEAN_JUXTAPOSITION`: Juxtaposition of real and synthetic mean values for all continuous features
+- `STDS_JUXTAPOSITION`: Juxtaposition of real and synthetic standard deviations for all continuous features
+- `VARIANCES_JUXTAPOSITION`: Juxtaposition of real and synthetic variances for all continuous features
+- `MEDIANS_JUXTAPOSITION`: Juxtaposition of real and synthetic median values for all continuous features
+- `FIRST_QUARTILES_JUXTAPOSITION`: Juxtaposition of real and synthetic first quartile values for all continuous features
+- `THIRD_QUARTILES_JUXTAPOSITION`: Juxtaposition of real and synthetic third quartile values for all continuous features
+- `MINIMA_JUXTAPOSITION`: Juxtaposition of real and synthetic minimum values for all continuous features
+- `MAXIMA_JUXTAPOSITION`: Juxtaposition of real and synthetic maximum values for all continuous features
 
 #### Plot Collections
-- `PDF_PLOTS`: Collection of PDF plots for all features
-- `CDF_PLOTS`: Collection of CDF plots for all features
+- `PDF_PLOTS`: Collection of overlaid (real & synthetic) PDF plots for all features
+- `CDF_PLOTS`: Collection of overlaid (real & synthetic) CDF plots for all features
+- `CORRELATION_HEATMAPS`: Correlation matrix heatmaps for real and synthetic data
 
 ### 📊 Example: General Usage
 
@@ -537,7 +538,7 @@ First, add your new score type to the existing enum in: artifact_core/table_comp
 ```python
 class TableComparisonScoreType(ArtifactType):
     MEAN_JS_DISTANCE = "mean_js_distance"
-    PAIRWISE_CORRELATION_DISTANCE = "pairwise_correlation_distance"
+    CORRELATION_DISTANCE = "correlation_distance"
     # Add your new score type
     NEW_TABLE_COMPARISON_SCORE = "new_table_comparison_score"
 ```

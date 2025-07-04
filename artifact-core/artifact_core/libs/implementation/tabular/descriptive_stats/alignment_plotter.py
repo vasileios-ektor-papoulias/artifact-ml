@@ -6,9 +6,9 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 
-from artifact_core.libs.implementation.tabular.descriptive_statistics.calculator import (
+from artifact_core.libs.implementation.tabular.descriptive_stats.calculator import (
     DescriptiveStatistic,
-    DescriptiveStatisticsCalculator,
+    DescriptiveStatsCalculator,
 )
 from artifact_core.libs.utils.plot_combiner import (
     PlotCombinationConfig,
@@ -16,7 +16,7 @@ from artifact_core.libs.utils.plot_combiner import (
 )
 
 
-class DescriptiveStatComparisonPlotter:
+class DescriptiveStatsAlignmentPlotter:
     _plot_combiner_config = PlotCombinationConfig(
         n_cols=2,
         dpi=150,
@@ -30,23 +30,23 @@ class DescriptiveStatComparisonPlotter:
         include_fig_titles=False,
         combined_title="Descriptive Statistics Comparison",
     )
-    _line_color = "olive"
-    _line_width = 3
-    _line_alpha = 0.5
-    _scatter_marker_color = "chocolate"
-    _scatter_marker_size = 40
-    _scatter_marker_shape = "o"
-    _scatter_marker_alpha = 1
-    _ls_stats = [stat for stat in DescriptiveStatistic]
+    _line_color: str = "olive"
+    _line_width: float = 3.0
+    _line_alpha: float = 0.5
+    _scatter_marker_color: str = "chocolate"
+    _scatter_marker_size: float = 40.0
+    _scatter_marker_shape: str = "o"
+    _scatter_marker_alpha: float = 1.0
+    _ls_stats: List[DescriptiveStatistic] = [stat for stat in DescriptiveStatistic]
 
     @classmethod
-    def get_combined_stat_comparison_plot(
+    def get_combined_stat_alignment_plot(
         cls,
         dataset_real: pd.DataFrame,
         dataset_synthetic: pd.DataFrame,
         ls_cts_features: List[str],
     ) -> Figure:
-        dict_plots = cls._get_stat_comparison_plot_collection(
+        dict_plots = cls._get_stat_alignment_plot_collection(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=ls_cts_features,
@@ -58,14 +58,14 @@ class DescriptiveStatComparisonPlotter:
         return combined_plot
 
     @classmethod
-    def get_stat_comparison_plot(
+    def get_single_stat_alignment_plot(
         cls,
         dataset_real: pd.DataFrame,
         dataset_synthetic: pd.DataFrame,
         ls_cts_features: List[str],
         stat: DescriptiveStatistic,
     ) -> Figure:
-        dict_stats = DescriptiveStatisticsCalculator.compute_juxtaposition(
+        dict_stats = DescriptiveStatsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
             ls_cts_features=ls_cts_features,
@@ -77,7 +77,7 @@ class DescriptiveStatComparisonPlotter:
             arr_descriptive_stats = np.stack(list(dict_stats.values()))
             stats_real = arr_descriptive_stats[:, 0]
             stats_synthetic = arr_descriptive_stats[:, 1]
-            plot = cls._plot_stat_comparison(
+            plot = cls._get_stat_alignment_plot(
                 stats_real=stats_real,
                 stats_synthetic=stats_synthetic,
                 stat_name=stat.value,
@@ -85,7 +85,7 @@ class DescriptiveStatComparisonPlotter:
         return plot
 
     @classmethod
-    def _get_stat_comparison_plot_collection(
+    def _get_stat_alignment_plot_collection(
         cls,
         dataset_real: pd.DataFrame,
         dataset_synthetic: pd.DataFrame,
@@ -94,7 +94,7 @@ class DescriptiveStatComparisonPlotter:
     ) -> Dict[str, Figure]:
         dict_plots = {}
         for stat in ls_stats:
-            plot = cls.get_stat_comparison_plot(
+            plot = cls.get_single_stat_alignment_plot(
                 dataset_real=dataset_real,
                 dataset_synthetic=dataset_synthetic,
                 ls_cts_features=ls_cts_features,
@@ -104,7 +104,7 @@ class DescriptiveStatComparisonPlotter:
         return dict_plots
 
     @classmethod
-    def _plot_stat_comparison(
+    def _get_stat_alignment_plot(
         cls,
         stats_real: np.ndarray,
         stats_synthetic: np.ndarray,

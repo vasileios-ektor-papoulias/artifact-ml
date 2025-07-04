@@ -4,11 +4,11 @@ from unittest.mock import ANY
 import pandas as pd
 import pytest
 from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
-from artifact_core.libs.implementation.tabular.descriptive_statistics.calculator import (
-    DescriptiveStatistic,
+from artifact_core.libs.implementation.tabular.descriptive_stats.alignment_plotter import (
+    DescriptiveStatsAlignmentPlotter,
 )
-from artifact_core.libs.implementation.tabular.descriptive_statistics.comparison_plots import (
-    DescriptiveStatComparisonPlotter,
+from artifact_core.libs.implementation.tabular.descriptive_stats.calculator import (
+    DescriptiveStatistic,
 )
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.base import (
@@ -16,15 +16,15 @@ from artifact_core.table_comparison.artifacts.base import (
     TableComparisonPlot,
 )
 from artifact_core.table_comparison.artifacts.plots.descriptive_stats import (
-    DescriptiveStatsComparisonPlot,
-    FirstQuartileComparisonPlot,
-    MaxComparisonPlot,
-    MeanComparisonPlot,
-    MedianComparisonPlot,
-    MinComparisonPlot,
-    STDComparisonPlot,
-    ThirdQuartileComparisonPlot,
-    VarianceComparisonPlot,
+    DescriptiveStatsAlignmentPlot,
+    FirstQuartileAlignmentPlot,
+    MaxAlignmentPlot,
+    MeanAlignmentPlot,
+    MedianAlignmentPlot,
+    MinAlignmentPlot,
+    STDAlignmentPlot,
+    ThirdQuartileAlignmentPlot,
+    VarianceAlignmentPlot,
 )
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
@@ -38,11 +38,11 @@ def test_descriptive_stats_comparison_plot(
 ):
     fake_plot = Figure()
     patch_get_combined_stat_comparison_plot = mocker.patch.object(
-        target=DescriptiveStatComparisonPlotter,
-        attribute="get_combined_stat_comparison_plot",
+        target=DescriptiveStatsAlignmentPlotter,
+        attribute="get_combined_stat_alignment_plot",
         return_value=fake_plot,
     )
-    artifact = DescriptiveStatsComparisonPlot(
+    artifact = DescriptiveStatsAlignmentPlot(
         resource_spec=resource_spec, hyperparams=NO_ARTIFACT_HYPERPARAMS
     )
     resources = DatasetComparisonArtifactResources(
@@ -63,14 +63,14 @@ def test_descriptive_stats_comparison_plot(
 @pytest.mark.parametrize(
     "artifact_class, statistic",
     [
-        (MeanComparisonPlot, DescriptiveStatistic.MEAN),
-        (STDComparisonPlot, DescriptiveStatistic.STD),
-        (VarianceComparisonPlot, DescriptiveStatistic.VARIANCE),
-        (MedianComparisonPlot, DescriptiveStatistic.MEDIAN),
-        (FirstQuartileComparisonPlot, DescriptiveStatistic.Q1),
-        (ThirdQuartileComparisonPlot, DescriptiveStatistic.Q3),
-        (MinComparisonPlot, DescriptiveStatistic.MIN),
-        (MaxComparisonPlot, DescriptiveStatistic.MAX),
+        (MeanAlignmentPlot, DescriptiveStatistic.MEAN),
+        (STDAlignmentPlot, DescriptiveStatistic.STD),
+        (VarianceAlignmentPlot, DescriptiveStatistic.VARIANCE),
+        (MedianAlignmentPlot, DescriptiveStatistic.MEDIAN),
+        (FirstQuartileAlignmentPlot, DescriptiveStatistic.Q1),
+        (ThirdQuartileAlignmentPlot, DescriptiveStatistic.Q3),
+        (MinAlignmentPlot, DescriptiveStatistic.MIN),
+        (MaxAlignmentPlot, DescriptiveStatistic.MAX),
     ],
 )
 def test_stat_comparison_plots(
@@ -83,8 +83,8 @@ def test_stat_comparison_plots(
 ):
     fake_plot = Figure()
     mock_get_stat_comparison_plot = mocker.patch.object(
-        DescriptiveStatComparisonPlotter,
-        "get_stat_comparison_plot",
+        DescriptiveStatsAlignmentPlotter,
+        "get_single_stat_alignment_plot",
         return_value=fake_plot,
     )
     artifact = artifact_class(resource_spec=resource_spec, hyperparams=NO_ARTIFACT_HYPERPARAMS)

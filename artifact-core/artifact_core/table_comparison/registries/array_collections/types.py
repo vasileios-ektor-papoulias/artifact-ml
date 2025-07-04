@@ -2,11 +2,11 @@ from artifact_core.base.registry import ArtifactType
 
 
 class TableComparisonArrayCollectionType(ArtifactType):
-    MEANS = "means"
-    STDS = "stds"
-    VARIANCES = "variances"
-    MEDIANS = "medians"
-    FIRST_QUARTILES = "first_quartiles"
-    THIRD_QUARTILES = "third_quartiles"
-    MINIMA = "minima"
-    MAXIMA = "maxima"
+    MEAN_JUXTAPOSITION = "mean_juxtaposition"
+    STD_JUXTAPOSITION = "std_juxtaposition"
+    VARIANCE_JUXTAPOSITION = "variance_juxtaposition"
+    MEDIAN_JUXTAPOSITION = "median_juxtaposition"
+    FIRST_QUARTILE_JUXTAPOSITION = "first_quartile_juxtaposition"
+    THIRD_QUARTILE_JUXTAPOSITION = "third_quartile_juxtaposition"
+    MIN_JUXTAPOSITION = "min_juxtaposition"
+    MAX_JUXTAPOSITION = "max_juxtaposition"

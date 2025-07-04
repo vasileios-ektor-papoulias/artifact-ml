@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Dict, List, Literal
 
 import pandas as pd
 import seaborn as sns
@@ -7,10 +7,10 @@ from matplotlib import pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.figure import Figure
 
-from artifact_core.libs.implementation.tabular.pairwise_correlation.calculator import (
+from artifact_core.libs.implementation.tabular.correlations.calculator import (
     CategoricalAssociationType,
     ContinuousAssociationType,
-    PairwiseCorrelationCalculator,
+    CorrelationCalculator,
 )
 from artifact_core.libs.utils.plot_combiner import (
     PlotCombinationConfig,
@@ -22,16 +22,16 @@ from artifact_core.libs.utils.plot_combiner import (
 class CorrelationHeatmapConfig:
     title: str
     colormap: LinearSegmentedColormap
-    annotate = True
-    show_cbar = True
-    annotation_precision = ".2f"
-    width = 7
-    height = 7
-    subtitle_centering = "center"
-    layout_proportion_top = 0.9
+    annotate: bool = True
+    show_cbar: bool = True
+    annotation_precision: str = ".2f"
+    width: float = 7.0
+    height: float = 7.0
+    subtitle_centering: Literal["center", "left", "right"] = "center"
+    layout_proportion_top: float = 0.9
 
 
-class PairwiseCorrelationHeatmapPlotter:
+class CorrelationHeatmapPlotter:
     _correlation_heatmap_config = CorrelationHeatmapConfig(
         title="Pairwise Correlations",
         colormap=sns.diverging_palette(10, 133, as_cmap=True),
@@ -59,7 +59,7 @@ class PairwiseCorrelationHeatmapPlotter:
     _combined_plor_difference_key = "Absolute Difference"
 
     @classmethod
-    def get_correlation_plot_collection(
+    def get_correlation_heatmap_collection(
         cls,
         categorical_correlation_type: CategoricalAssociationType,
         continuous_correlation_type: ContinuousAssociationType,
@@ -90,7 +90,7 @@ class PairwiseCorrelationHeatmapPlotter:
         return dict_plots
 
     @classmethod
-    def get_combined_correlation_plot(
+    def get_combined_correlation_heatmaps(
         cls,
         categorical_correlation_type: CategoricalAssociationType,
         continuous_correlation_type: ContinuousAssociationType,
@@ -130,7 +130,7 @@ class PairwiseCorrelationHeatmapPlotter:
         dataset: pd.DataFrame,
         ls_cat_features: List[str],
     ) -> Figure:
-        df_correlations = PairwiseCorrelationCalculator.compute_df_correlations(
+        df_correlations = CorrelationCalculator.compute_df_correlations(
             categorical_correlation_type=categorical_correlation_type,
             continuous_correlation_type=continuous_correlation_type,
             dataset=dataset,
@@ -145,6 +145,7 @@ class PairwiseCorrelationHeatmapPlotter:
             subtitle=subtitle,
             config=cls._correlation_heatmap_config,
         )
+        assert isinstance(fig_correlation_heatmap, Figure)
         return fig_correlation_heatmap
 
     @classmethod
@@ -156,7 +157,7 @@ class PairwiseCorrelationHeatmapPlotter:
         dataset_synthetic: pd.DataFrame,
         ls_cat_features: List[str],
     ) -> Figure:
-        df_correlation_difference = PairwiseCorrelationCalculator.compute_df_correlation_difference(
+        df_correlation_difference = CorrelationCalculator.compute_df_correlation_difference(
             categorical_correlation_type=categorical_correlation_type,
             continuous_correlation_type=continuous_correlation_type,
             dataset_real=dataset_real,
@@ -172,6 +173,7 @@ class PairwiseCorrelationHeatmapPlotter:
             subtitle=subtitle,
             config=cls._correlation_difference_heatmap_config,
         )
+        assert isinstance(fig_correlation_difference_heatmap, Figure)
         return fig_correlation_difference_heatmap
 
     @classmethod
@@ -191,6 +193,7 @@ class PairwiseCorrelationHeatmapPlotter:
             center=0,
         )
         fig_heatmap = ax.get_figure()
+        assert isinstance(fig_heatmap, Figure)
         plt.close(fig_heatmap)
         fig_heatmap.set_size_inches(w=config.width, h=config.height)
         fig_heatmap.subplots_adjust(top=config.layout_proportion_top)

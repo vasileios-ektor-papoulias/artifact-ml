@@ -2,9 +2,9 @@ from typing import List, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.descriptive_statistics.comparison_plots import (
-    DescriptiveStatComparisonPlotter,
+from artifact_core.libs.implementation.tabular.descriptive_stats.alignment_plotter import (
     DescriptiveStatistic,
+    DescriptiveStatsAlignmentPlotter,
 )
 from matplotlib.figure import Figure
 
@@ -154,7 +154,7 @@ def test_get_stat_comparison_plot(
     expected_ylabel: str,
 ):
     df_real, df_synthetic = df_pair_dispatcher
-    result = DescriptiveStatComparisonPlotter.get_stat_comparison_plot(
+    result = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
         ls_cts_features=ls_cts_features,
@@ -206,7 +206,7 @@ def test_get_combined_stat_comparison_plot(
     expected_title: str,
 ):
     df_real, df_synthetic = df_pair_dispatcher
-    result = DescriptiveStatComparisonPlotter.get_combined_stat_comparison_plot(
+    result = DescriptiveStatsAlignmentPlotter.get_combined_stat_alignment_plot(
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
         ls_cts_features=ls_cts_features,

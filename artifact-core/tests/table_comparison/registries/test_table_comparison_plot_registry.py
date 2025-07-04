@@ -7,18 +7,18 @@ from artifact_core.table_comparison.artifacts.base import (
 )
 from artifact_core.table_comparison.artifacts.plots.cdf import CDFPlot
 from artifact_core.table_comparison.artifacts.plots.correlations import (
-    CorrelationPlot,
+    CorrelationHeatmapPlot,
 )
 from artifact_core.table_comparison.artifacts.plots.descriptive_stats import (
-    DescriptiveStatsComparisonPlot,
-    FirstQuartileComparisonPlot,
-    MaxComparisonPlot,
-    MeanComparisonPlot,
-    MedianComparisonPlot,
-    MinComparisonPlot,
-    STDComparisonPlot,
-    ThirdQuartileComparisonPlot,
-    VarianceComparisonPlot,
+    DescriptiveStatsAlignmentPlot,
+    FirstQuartileAlignmentPlot,
+    MaxAlignmentPlot,
+    MeanAlignmentPlot,
+    MedianAlignmentPlot,
+    MinAlignmentPlot,
+    STDAlignmentPlot,
+    ThirdQuartileAlignmentPlot,
+    VarianceAlignmentPlot,
 )
 from artifact_core.table_comparison.artifacts.plots.pca import (
     PCAPlot,
@@ -42,26 +42,26 @@ from artifact_core.table_comparison.registries.plots.registry import (
         (TableComparisonPlotType.PDF_PLOT, PDFPlot),
         (TableComparisonPlotType.CDF_PLOT, CDFPlot),
         (
-            TableComparisonPlotType.DESCRIPTIVE_STATS_COMPARISON_PLOT,
-            DescriptiveStatsComparisonPlot,
+            TableComparisonPlotType.DESCRIPTIVE_STATS_ALIGNMENT_PLOT,
+            DescriptiveStatsAlignmentPlot,
         ),
-        (TableComparisonPlotType.MEAN_COMPARISON_PLOT, MeanComparisonPlot),
-        (TableComparisonPlotType.STD_COMPARISON_PLOT, STDComparisonPlot),
-        (TableComparisonPlotType.VARIANCE_COMPARISON_PLOT, VarianceComparisonPlot),
-        (TableComparisonPlotType.MEDIAN_COMPARISON_PLOT, MedianComparisonPlot),
+        (TableComparisonPlotType.MEAN_ALIGNMENT_PLOT, MeanAlignmentPlot),
+        (TableComparisonPlotType.STD_ALIGNMENT_PLOT, STDAlignmentPlot),
+        (TableComparisonPlotType.VARIANCE_ALIGNMENT_PLOT, VarianceAlignmentPlot),
+        (TableComparisonPlotType.MEDIAN_ALIGNMENT_PLOT, MedianAlignmentPlot),
         (
-            TableComparisonPlotType.FIRST_QUARTILE_COMPARISON_PLOT,
-            FirstQuartileComparisonPlot,
+            TableComparisonPlotType.FIRST_QUARTILE_ALIGNMENT_PLOT,
+            FirstQuartileAlignmentPlot,
         ),
         (
-            TableComparisonPlotType.THIRD_QUARTILE_COMPARISON_PLOT,
-            ThirdQuartileComparisonPlot,
+            TableComparisonPlotType.THIRD_QUARTILE_ALIGNMENT_PLOT,
+            ThirdQuartileAlignmentPlot,
         ),
-        (TableComparisonPlotType.MIN_COMPARISON_PLOT, MinComparisonPlot),
-        (TableComparisonPlotType.MAX_COMPARISON_PLOT, MaxComparisonPlot),
+        (TableComparisonPlotType.MIN_ALIGNMENT_PLOT, MinAlignmentPlot),
+        (TableComparisonPlotType.MAX_ALIGNMENT_PLOT, MaxAlignmentPlot),
         (
-            TableComparisonPlotType.PAIRWISE_CORRELATION_COMPARISON_HEATMAP,
-            CorrelationPlot,
+            TableComparisonPlotType.CORRELATION_HEATMAP_PLOT,
+            CorrelationHeatmapPlot,
         ),
         (TableComparisonPlotType.PCA_PROJECTION_PLOT, PCAPlot),
         (

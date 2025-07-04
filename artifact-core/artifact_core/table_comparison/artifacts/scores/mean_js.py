@@ -3,7 +3,7 @@ from dataclasses import dataclass
 import pandas as pd
 
 from artifact_core.base.artifact_dependencies import ArtifactHyperparams
-from artifact_core.libs.implementation.tabular.js.js_calculator import JSDistanceCalculator
+from artifact_core.libs.implementation.tabular.js.calculator import JSDistanceCalculator
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonScore,
 )

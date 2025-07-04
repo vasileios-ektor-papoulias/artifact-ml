@@ -4,10 +4,10 @@ from typing import Literal, Type, TypeVar, Union
 import pandas as pd
 
 from artifact_core.base.artifact_dependencies import ArtifactHyperparams
-from artifact_core.libs.implementation.tabular.pairwise_correlation.calculator import (
+from artifact_core.libs.implementation.tabular.correlations.calculator import (
     CategoricalAssociationType,
     ContinuousAssociationType,
-    PairwiseCorrelationCalculator,
+    CorrelationCalculator,
 )
 from artifact_core.libs.utils.vector_distance_calculator import (
     VectorDistanceMetric,
@@ -26,7 +26,7 @@ PairwiseCorrelationDistanceHyperparamsT = TypeVar(
 
 
 @TableComparisonScoreRegistry.register_artifact_config(
-    TableComparisonScoreType.PAIRWISE_CORRELATION_DISTANCE
+    TableComparisonScoreType.CORRELATION_DISTANCE
 )
 @dataclass(frozen=True)
 class PairwiseCorrelationDistanceHyperparams(ArtifactHyperparams):
@@ -65,14 +65,12 @@ class PairwiseCorrelationDistanceHyperparams(ArtifactHyperparams):
         return correlation_comparison_heatmap_hyperparams
 
 
-@TableComparisonScoreRegistry.register_artifact(
-    TableComparisonScoreType.PAIRWISE_CORRELATION_DISTANCE
-)
+@TableComparisonScoreRegistry.register_artifact(TableComparisonScoreType.CORRELATION_DISTANCE)
 class PairwiseCorrelationDistance(TableComparisonScore[PairwiseCorrelationDistanceHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> float:
-        pairwise_correlation_distance = PairwiseCorrelationCalculator.compute_correlation_distance(
+        pairwise_correlation_distance = CorrelationCalculator.compute_correlation_distance(
             categorical_correlation_type=self._hyperparams.categorical_association_type,
             continuous_correlation_type=self._hyperparams.continuous_association_type,
             distance_metric=self._hyperparams.vector_distance_metric,
