@@ -20,7 +20,7 @@ from artifact_core.table_comparison.registries.array_collections.registry import
 @TableComparisonArrayCollectionRegistry.register_artifact(
     TableComparisonArrayCollectionType.MEAN_JUXTAPOSITION
 )
-class MeanJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams]):
+class MeanJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Dict[str, np.ndarray]:
@@ -36,7 +36,7 @@ class MeanJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams]):
 @TableComparisonArrayCollectionRegistry.register_artifact(
     TableComparisonArrayCollectionType.STD_JUXTAPOSITION
 )
-class STDJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams]):
+class STDJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Dict[str, np.ndarray]:
@@ -52,7 +52,7 @@ class STDJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams]):
 @TableComparisonArrayCollectionRegistry.register_artifact(
     TableComparisonArrayCollectionType.VARIANCE_JUXTAPOSITION
 )
-class VarianceJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams]):
+class VarianceJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Dict[str, np.ndarray]:
@@ -68,7 +68,7 @@ class VarianceJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams
 @TableComparisonArrayCollectionRegistry.register_artifact(
     TableComparisonArrayCollectionType.MEDIAN_JUXTAPOSITION
 )
-class MedianJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams]):
+class MedianJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Dict[str, np.ndarray]:
@@ -84,7 +84,7 @@ class MedianJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams])
 @TableComparisonArrayCollectionRegistry.register_artifact(
     TableComparisonArrayCollectionType.FIRST_QUARTILE_JUXTAPOSITION
 )
-class FirstQuartileJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams]):
+class FirstQuartileJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Dict[str, np.ndarray]:
@@ -100,7 +100,7 @@ class FirstQuartileJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperp
 @TableComparisonArrayCollectionRegistry.register_artifact(
     TableComparisonArrayCollectionType.THIRD_QUARTILE_JUXTAPOSITION
 )
-class ThirdQuartileJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams]):
+class ThirdQuartileJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Dict[str, np.ndarray]:
@@ -116,7 +116,7 @@ class ThirdQuartileJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperp
 @TableComparisonArrayCollectionRegistry.register_artifact(
     TableComparisonArrayCollectionType.MIN_JUXTAPOSITION
 )
-class MinJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams]):
+class MinJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Dict[str, np.ndarray]:
@@ -132,7 +132,7 @@ class MinJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams]):
 @TableComparisonArrayCollectionRegistry.register_artifact(
     TableComparisonArrayCollectionType.MAX_JUXTAPOSITION
 )
-class MaxJuxtaposition(TableComparisonArrayCollection[NoArtifactHyperparams]):
+class MaxJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Dict[str, np.ndarray]:

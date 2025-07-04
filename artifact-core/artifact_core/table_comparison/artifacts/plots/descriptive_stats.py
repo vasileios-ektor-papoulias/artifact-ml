@@ -17,9 +17,7 @@ from artifact_core.table_comparison.registries.plots.registry import (
 )
 
 
-@TableComparisonPlotRegistry.register_artifact(
-    TableComparisonPlotType.DESCRIPTIVE_STATS_ALIGNMENT_PLOT
-)
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.DESCRIPTIVE_STATS_ALIGNMENT)
 class DescriptiveStatsAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
@@ -32,7 +30,7 @@ class DescriptiveStatsAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
         return plot
 
 
-@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MEAN_ALIGNMENT_PLOT)
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MEAN_ALIGNMENT)
 class MeanAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
@@ -46,7 +44,7 @@ class MeanAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
         return plot
 
 
-@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.STD_ALIGNMENT_PLOT)
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.STD_ALIGNMENT)
 class STDAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
@@ -60,7 +58,7 @@ class STDAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
         return plot
 
 
-@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.VARIANCE_ALIGNMENT_PLOT)
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.VARIANCE_ALIGNMENT)
 class VarianceAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
@@ -74,7 +72,7 @@ class VarianceAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
         return plot
 
 
-@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MEDIAN_ALIGNMENT_PLOT)
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MEDIAN_ALIGNMENT)
 class MedianAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
@@ -88,9 +86,7 @@ class MedianAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
         return plot
 
 
-@TableComparisonPlotRegistry.register_artifact(
-    TableComparisonPlotType.FIRST_QUARTILE_ALIGNMENT_PLOT
-)
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.FIRST_QUARTILE_ALIGNMENT)
 class FirstQuartileAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
@@ -104,9 +100,7 @@ class FirstQuartileAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
         return plot
 
 
-@TableComparisonPlotRegistry.register_artifact(
-    TableComparisonPlotType.THIRD_QUARTILE_ALIGNMENT_PLOT
-)
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.THIRD_QUARTILE_ALIGNMENT)
 class ThirdQuartileAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
@@ -120,7 +114,7 @@ class ThirdQuartileAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
         return plot
 
 
-@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MAX_ALIGNMENT_PLOT)
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MAX_ALIGNMENT)
 class MaxAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
@@ -134,7 +128,7 @@ class MaxAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
         return plot
 
 
-@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MIN_ALIGNMENT_PLOT)
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.MIN_ALIGNMENT)
 class MinAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame

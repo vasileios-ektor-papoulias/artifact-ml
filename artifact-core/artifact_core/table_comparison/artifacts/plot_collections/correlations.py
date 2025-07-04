@@ -56,9 +56,7 @@ class CorrelationHeatmapsHyperparams(ArtifactHyperparams):
 @TableComparisonPlotCollectionRegistry.register_artifact(
     TableComparisonPlotCollectionType.CORRELATION_HEATMAPS
 )
-class CorrelationHeatmapPlotCollection(
-    TableComparisonPlotCollection[CorrelationHeatmapsHyperparams]
-):
+class CorrelationHeatmaps(TableComparisonPlotCollection[CorrelationHeatmapsHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Dict[str, Figure]:

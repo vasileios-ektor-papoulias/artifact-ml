@@ -17,14 +17,14 @@ from artifact_core.table_comparison.registries.plots.registry import (
 )
 
 
-@TableComparisonPlotRegistry.register_artifact_config(TableComparisonPlotType.PCA_PROJECTION_PLOT)
+@TableComparisonPlotRegistry.register_artifact_config(TableComparisonPlotType.PCA_JUXTAPOSITION)
 @dataclass(frozen=True)
-class PCAPlotHyperparams(ArtifactHyperparams):
+class PCAJuxtapositionPlotHyperparams(ArtifactHyperparams):
     use_categorical: bool
 
 
-@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.PCA_PROJECTION_PLOT)
-class PCAPlot(TableComparisonPlot[PCAPlotHyperparams]):
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.PCA_JUXTAPOSITION)
+class PCAJuxtapositionPlot(TableComparisonPlot[PCAJuxtapositionPlotHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:

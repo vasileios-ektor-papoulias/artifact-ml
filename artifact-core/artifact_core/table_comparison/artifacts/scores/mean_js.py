@@ -15,13 +15,13 @@ from artifact_core.table_comparison.registries.scores.registry import (
 
 @TableComparisonScoreRegistry.register_artifact_config(TableComparisonScoreType.MEAN_JS_DISTANCE)
 @dataclass(frozen=True)
-class MeanJSDistanceHyperparams(ArtifactHyperparams):
+class MeanJSDistanceScoreHyperparams(ArtifactHyperparams):
     n_bins_cts_histogram: int
     categorical_only: bool
 
 
 @TableComparisonScoreRegistry.register_artifact(TableComparisonScoreType.MEAN_JS_DISTANCE)
-class MeanJSDistance(TableComparisonScore[MeanJSDistanceHyperparams]):
+class MeanJSDistanceScore(TableComparisonScore[MeanJSDistanceScoreHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> float:

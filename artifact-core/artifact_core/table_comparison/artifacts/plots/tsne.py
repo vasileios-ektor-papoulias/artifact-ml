@@ -17,17 +17,17 @@ from artifact_core.table_comparison.registries.plots.registry import (
 )
 
 
-@TableComparisonPlotRegistry.register_artifact_config(TableComparisonPlotType.TSNE_PROJECTION_PLOT)
+@TableComparisonPlotRegistry.register_artifact_config(TableComparisonPlotType.TSNE_JUXTAPOSITION)
 @dataclass(frozen=True)
-class TSNEPlotHyperparams(ArtifactHyperparams):
+class TSNEJuxtapositionPlotHyperparams(ArtifactHyperparams):
     use_categorical: bool
     perplexity: float
     learning_rate: float | str
     max_iter: int
 
 
-@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.TSNE_PROJECTION_PLOT)
-class TSNEPlot(TableComparisonPlot[TSNEPlotHyperparams]):
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.TSNE_JUXTAPOSITION)
+class TSNEJuxtapositionPlot(TableComparisonPlot[TSNEJuxtapositionPlotHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:

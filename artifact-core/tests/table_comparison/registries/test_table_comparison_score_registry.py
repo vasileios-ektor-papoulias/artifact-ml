@@ -6,9 +6,9 @@ from artifact_core.table_comparison.artifacts.base import (
     TableComparisonScore,
 )
 from artifact_core.table_comparison.artifacts.scores.correlation import (
-    PairwiseCorrelationDistance,
+    CorrelationDistanceScore,
 )
-from artifact_core.table_comparison.artifacts.scores.mean_js import MeanJSDistance
+from artifact_core.table_comparison.artifacts.scores.mean_js import MeanJSDistanceScore
 from artifact_core.table_comparison.registries.scores.registry import (
     TableComparisonScoreRegistry,
     TableComparisonScoreType,
@@ -18,8 +18,8 @@ from artifact_core.table_comparison.registries.scores.registry import (
 @pytest.mark.parametrize(
     "artifact_type, artifact_class",
     [
-        (TableComparisonScoreType.MEAN_JS_DISTANCE, MeanJSDistance),
-        (TableComparisonScoreType.CORRELATION_DISTANCE, PairwiseCorrelationDistance),
+        (TableComparisonScoreType.MEAN_JS_DISTANCE, MeanJSDistanceScore),
+        (TableComparisonScoreType.CORRELATION_DISTANCE, CorrelationDistanceScore),
     ],
 )
 def test_get(

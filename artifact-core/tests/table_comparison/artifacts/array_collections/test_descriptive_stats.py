@@ -11,14 +11,14 @@ from artifact_core.libs.implementation.tabular.descriptive_stats.calculator impo
 )
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.array_collections.descriptive_stats import (
-    FirstQuartileJuxtaposition,
-    MaxJuxtaposition,
-    MeanJuxtaposition,
-    MedianJuxtaposition,
-    MinJuxtaposition,
-    STDJuxtaposition,
-    ThirdQuartileJuxtaposition,
-    VarianceJuxtaposition,
+    FirstQuartileJuxtapositionArrays,
+    MaxJuxtapositionArrays,
+    MeanJuxtapositionArrays,
+    MedianJuxtapositionArrays,
+    MinJuxtapositionArrays,
+    STDJuxtapositionArrays,
+    ThirdQuartileJuxtapositionArrays,
+    VarianceJuxtapositionArrays,
 )
 from artifact_core.table_comparison.artifacts.base import (
     DatasetComparisonArtifactResources,
@@ -30,14 +30,14 @@ from pytest_mock import MockerFixture
 @pytest.mark.parametrize(
     "artifact_class, statistic",
     [
-        (MeanJuxtaposition, DescriptiveStatistic.MEAN),
-        (STDJuxtaposition, DescriptiveStatistic.STD),
-        (VarianceJuxtaposition, DescriptiveStatistic.VARIANCE),
-        (MedianJuxtaposition, DescriptiveStatistic.MEDIAN),
-        (FirstQuartileJuxtaposition, DescriptiveStatistic.Q1),
-        (ThirdQuartileJuxtaposition, DescriptiveStatistic.Q3),
-        (MinJuxtaposition, DescriptiveStatistic.MIN),
-        (MaxJuxtaposition, DescriptiveStatistic.MAX),
+        (MeanJuxtapositionArrays, DescriptiveStatistic.MEAN),
+        (STDJuxtapositionArrays, DescriptiveStatistic.STD),
+        (VarianceJuxtapositionArrays, DescriptiveStatistic.VARIANCE),
+        (MedianJuxtapositionArrays, DescriptiveStatistic.MEDIAN),
+        (FirstQuartileJuxtapositionArrays, DescriptiveStatistic.Q1),
+        (ThirdQuartileJuxtapositionArrays, DescriptiveStatistic.Q3),
+        (MinJuxtapositionArrays, DescriptiveStatistic.MIN),
+        (MaxJuxtapositionArrays, DescriptiveStatistic.MAX),
     ],
 )
 def test_compute(

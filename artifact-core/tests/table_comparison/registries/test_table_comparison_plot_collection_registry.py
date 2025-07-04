@@ -6,13 +6,13 @@ from artifact_core.table_comparison.artifacts.base import (
     TableComparisonPlotCollection,
 )
 from artifact_core.table_comparison.artifacts.plot_collections.cdf import (
-    CDFPlotCollection,
+    CDFPlots,
 )
 from artifact_core.table_comparison.artifacts.plot_collections.correlations import (
-    CorrelationHeatmapPlotCollection,
+    CorrelationHeatmaps,
 )
 from artifact_core.table_comparison.artifacts.plot_collections.pdf import (
-    PDFPlotCollection,
+    PDFPlots,
 )
 from artifact_core.table_comparison.registries.plot_collections.registry import (
     TableComparisonPlotCollectionRegistry,
@@ -23,11 +23,11 @@ from artifact_core.table_comparison.registries.plot_collections.registry import 
 @pytest.mark.parametrize(
     "artifact_type, artifact_class",
     [
-        (TableComparisonPlotCollectionType.CDF_PLOTS, CDFPlotCollection),
-        (TableComparisonPlotCollectionType.PDF_PLOTS, PDFPlotCollection),
+        (TableComparisonPlotCollectionType.CDF, CDFPlots),
+        (TableComparisonPlotCollectionType.PDF, PDFPlots),
         (
             TableComparisonPlotCollectionType.CORRELATION_HEATMAPS,
-            CorrelationHeatmapPlotCollection,
+            CorrelationHeatmaps,
         ),
     ],
 )

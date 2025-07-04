@@ -20,27 +20,29 @@ from artifact_core.table_comparison.registries.plots.registry import (
     TableComparisonPlotType,
 )
 
-CorrelationHeatmapsHyperparamsT = TypeVar(
-    "CorrelationHeatmapsHyperparamsT", bound="CorrelationHeatmapsHyperparams"
+CorrelationHeatmapJuxtapositionT = TypeVar(
+    "CorrelationHeatmapJuxtapositionT", bound="CorrelationHeatmapJuxtapositionPlotHyperparams"
 )
 
 
-@TableComparisonPlotRegistry.register_artifact_config(TableComparisonPlotType.CORRELATION_HEATMAPS)
+@TableComparisonPlotRegistry.register_artifact_config(
+    TableComparisonPlotType.CORRELATION_HEATMAP_JUXTAPOSITION
+)
 @dataclass(frozen=True)
-class CorrelationHeatmapsHyperparams(ArtifactHyperparams):
+class CorrelationHeatmapJuxtapositionPlotHyperparams(ArtifactHyperparams):
     categorical_association_type: CategoricalAssociationType
     continuous_association_type: ContinuousAssociationType
 
     @classmethod
     def build(
-        cls: Type[CorrelationHeatmapsHyperparamsT],
+        cls: Type[CorrelationHeatmapJuxtapositionT],
         categorical_association_type: Union[
             CategoricalAssociationType, Literal["THEILS_U"], Literal["CRAMERS_V"]
         ],
         continuous_association_type: Union[
             ContinuousAssociationType, Literal["PEARSON"], Literal["SPEARMAN"], Literal["KENDALL"]
         ],
-    ) -> CorrelationHeatmapsHyperparamsT:
+    ) -> CorrelationHeatmapJuxtapositionT:
         if isinstance(categorical_association_type, str):
             categorical_association_type = CategoricalAssociationType[categorical_association_type]
         if isinstance(continuous_association_type, str):
@@ -52,8 +54,12 @@ class CorrelationHeatmapsHyperparams(ArtifactHyperparams):
         return correlation_comparison_heatmap_hyperparams
 
 
-@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.CORRELATION_HEATMAPS)
-class CorrelationHeatmaps(TableComparisonPlot[CorrelationHeatmapsHyperparams]):
+@TableComparisonPlotRegistry.register_artifact(
+    TableComparisonPlotType.CORRELATION_HEATMAP_JUXTAPOSITION
+)
+class CorrelationHeatmapJuxtapositionPlot(
+    TableComparisonPlot[CorrelationHeatmapJuxtapositionPlotHyperparams]
+):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:

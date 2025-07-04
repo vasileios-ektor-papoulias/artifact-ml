@@ -8,16 +8,16 @@ from artifact_core.table_comparison.artifacts.base import (
     DatasetComparisonArtifactResources,
 )
 from artifact_core.table_comparison.artifacts.plots.pca import (
-    PCAPlot,
-    PCAPlotHyperparams,
+    PCAJuxtapositionPlot,
+    PCAJuxtapositionPlotHyperparams,
 )
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
 @pytest.fixture
-def hyperparams() -> PCAPlotHyperparams:
-    hyperparams = PCAPlotHyperparams(use_categorical=True)
+def hyperparams() -> PCAJuxtapositionPlotHyperparams:
+    hyperparams = PCAJuxtapositionPlotHyperparams(use_categorical=True)
     return hyperparams
 
 
@@ -26,7 +26,7 @@ def test_compute(
     resource_spec: TabularDataSpecProtocol,
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
-    hyperparams: PCAPlotHyperparams,
+    hyperparams: PCAJuxtapositionPlotHyperparams,
 ):
     fake_plot = Figure()
     mock_projector = mocker.Mock()
@@ -34,7 +34,7 @@ def test_compute(
     patch_build = mocker.patch.object(
         target=PCAProjector, attribute="build", return_value=mock_projector
     )
-    artifact = PCAPlot(
+    artifact = PCAJuxtapositionPlot(
         resource_spec=resource_spec,
         hyperparams=hyperparams,
     )

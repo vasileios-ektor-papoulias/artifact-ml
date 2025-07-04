@@ -7,7 +7,7 @@ from artifact_core.table_comparison.artifacts.base import (
 )
 from artifact_core.table_comparison.artifacts.plots.cdf import CDFPlot
 from artifact_core.table_comparison.artifacts.plots.correlations import (
-    CorrelationHeatmaps,
+    CorrelationHeatmapJuxtapositionPlot,
 )
 from artifact_core.table_comparison.artifacts.plots.descriptive_stats import (
     DescriptiveStatsAlignmentPlot,
@@ -21,14 +21,14 @@ from artifact_core.table_comparison.artifacts.plots.descriptive_stats import (
     VarianceAlignmentPlot,
 )
 from artifact_core.table_comparison.artifacts.plots.pca import (
-    PCAPlot,
+    PCAJuxtapositionPlot,
 )
 from artifact_core.table_comparison.artifacts.plots.pdf import PDFPlot
 from artifact_core.table_comparison.artifacts.plots.truncated_svd import (
-    TruncatedSVDPlot,
+    TruncatedSVDJuxtapositionPlot,
 )
 from artifact_core.table_comparison.artifacts.plots.tsne import (
-    TSNEPlot,
+    TSNEJuxtapositionPlot,
 )
 from artifact_core.table_comparison.registries.plots.registry import (
     TableComparisonPlotRegistry,
@@ -39,36 +39,36 @@ from artifact_core.table_comparison.registries.plots.registry import (
 @pytest.mark.parametrize(
     "artifact_type, artifact_class",
     [
-        (TableComparisonPlotType.PDF_PLOT, PDFPlot),
-        (TableComparisonPlotType.CDF_PLOT, CDFPlot),
+        (TableComparisonPlotType.PDF, PDFPlot),
+        (TableComparisonPlotType.CDF, CDFPlot),
         (
-            TableComparisonPlotType.DESCRIPTIVE_STATS_ALIGNMENT_PLOT,
+            TableComparisonPlotType.DESCRIPTIVE_STATS_ALIGNMENT,
             DescriptiveStatsAlignmentPlot,
         ),
-        (TableComparisonPlotType.MEAN_ALIGNMENT_PLOT, MeanAlignmentPlot),
-        (TableComparisonPlotType.STD_ALIGNMENT_PLOT, STDAlignmentPlot),
-        (TableComparisonPlotType.VARIANCE_ALIGNMENT_PLOT, VarianceAlignmentPlot),
-        (TableComparisonPlotType.MEDIAN_ALIGNMENT_PLOT, MedianAlignmentPlot),
+        (TableComparisonPlotType.MEAN_ALIGNMENT, MeanAlignmentPlot),
+        (TableComparisonPlotType.STD_ALIGNMENT, STDAlignmentPlot),
+        (TableComparisonPlotType.VARIANCE_ALIGNMENT, VarianceAlignmentPlot),
+        (TableComparisonPlotType.MEDIAN_ALIGNMENT, MedianAlignmentPlot),
         (
-            TableComparisonPlotType.FIRST_QUARTILE_ALIGNMENT_PLOT,
+            TableComparisonPlotType.FIRST_QUARTILE_ALIGNMENT,
             FirstQuartileAlignmentPlot,
         ),
         (
-            TableComparisonPlotType.THIRD_QUARTILE_ALIGNMENT_PLOT,
+            TableComparisonPlotType.THIRD_QUARTILE_ALIGNMENT,
             ThirdQuartileAlignmentPlot,
         ),
-        (TableComparisonPlotType.MIN_ALIGNMENT_PLOT, MinAlignmentPlot),
-        (TableComparisonPlotType.MAX_ALIGNMENT_PLOT, MaxAlignmentPlot),
+        (TableComparisonPlotType.MIN_ALIGNMENT, MinAlignmentPlot),
+        (TableComparisonPlotType.MAX_ALIGNMENT, MaxAlignmentPlot),
         (
-            TableComparisonPlotType.CORRELATION_HEATMAPS,
-            CorrelationHeatmaps,
+            TableComparisonPlotType.CORRELATION_HEATMAP_JUXTAPOSITION,
+            CorrelationHeatmapJuxtapositionPlot,
         ),
-        (TableComparisonPlotType.PCA_PROJECTION_PLOT, PCAPlot),
+        (TableComparisonPlotType.PCA_JUXTAPOSITION, PCAJuxtapositionPlot),
         (
-            TableComparisonPlotType.TRUNCATED_SVD_PROJECTION_PLOT,
-            TruncatedSVDPlot,
+            TableComparisonPlotType.TRUNCATED_SVD_JUXTAPOSITION,
+            TruncatedSVDJuxtapositionPlot,
         ),
-        (TableComparisonPlotType.TSNE_PROJECTION_PLOT, TSNEPlot),
+        (TableComparisonPlotType.TSNE_JUXTAPOSITION, TSNEJuxtapositionPlot),
     ],
 )
 def test_get(

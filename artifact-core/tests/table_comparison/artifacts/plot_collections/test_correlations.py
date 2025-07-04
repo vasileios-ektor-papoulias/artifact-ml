@@ -13,7 +13,7 @@ from artifact_core.table_comparison.artifacts.base import (
     DatasetComparisonArtifactResources,
 )
 from artifact_core.table_comparison.artifacts.plot_collections.correlations import (
-    CorrelationHeatmapPlotCollection,
+    CorrelationHeatmaps,
     CorrelationHeatmapsHyperparams,
 )
 from matplotlib.figure import Figure
@@ -46,9 +46,7 @@ def test_compute(
         attribute="get_correlation_heatmap_collection",
         return_value=fake_plots,
     )
-    artifact = CorrelationHeatmapPlotCollection(
-        resource_spec=resource_spec, hyperparams=hyperparams
-    )
+    artifact = CorrelationHeatmaps(resource_spec=resource_spec, hyperparams=hyperparams)
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )

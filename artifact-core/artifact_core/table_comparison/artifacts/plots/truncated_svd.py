@@ -18,17 +18,15 @@ from artifact_core.table_comparison.registries.plots.registry import (
 
 
 @TableComparisonPlotRegistry.register_artifact_config(
-    TableComparisonPlotType.TRUNCATED_SVD_PROJECTION_PLOT
+    TableComparisonPlotType.TRUNCATED_SVD_JUXTAPOSITION
 )
 @dataclass(frozen=True)
-class TruncatedSVDPlotHyperparams(ArtifactHyperparams):
+class TruncatedSVDJuxtapositionPlotHyperparams(ArtifactHyperparams):
     use_categorical: bool
 
 
-@TableComparisonPlotRegistry.register_artifact(
-    TableComparisonPlotType.TRUNCATED_SVD_PROJECTION_PLOT
-)
-class TruncatedSVDPlot(TableComparisonPlot[TruncatedSVDPlotHyperparams]):
+@TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.TRUNCATED_SVD_JUXTAPOSITION)
+class TruncatedSVDJuxtapositionPlot(TableComparisonPlot[TruncatedSVDJuxtapositionPlotHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:

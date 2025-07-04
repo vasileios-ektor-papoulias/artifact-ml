@@ -21,7 +21,7 @@ from artifact_core.table_comparison.registries.scores.registry import (
 )
 
 PairwiseCorrelationDistanceHyperparamsT = TypeVar(
-    "PairwiseCorrelationDistanceHyperparamsT", bound="PairwiseCorrelationDistanceHyperparams"
+    "PairwiseCorrelationDistanceHyperparamsT", bound="CorrelationDistanceScoreHyperparams"
 )
 
 
@@ -29,7 +29,7 @@ PairwiseCorrelationDistanceHyperparamsT = TypeVar(
     TableComparisonScoreType.CORRELATION_DISTANCE
 )
 @dataclass(frozen=True)
-class PairwiseCorrelationDistanceHyperparams(ArtifactHyperparams):
+class CorrelationDistanceScoreHyperparams(ArtifactHyperparams):
     categorical_association_type: CategoricalAssociationType
     continuous_association_type: ContinuousAssociationType
     vector_distance_metric: VectorDistanceMetric
@@ -66,7 +66,7 @@ class PairwiseCorrelationDistanceHyperparams(ArtifactHyperparams):
 
 
 @TableComparisonScoreRegistry.register_artifact(TableComparisonScoreType.CORRELATION_DISTANCE)
-class PairwiseCorrelationDistance(TableComparisonScore[PairwiseCorrelationDistanceHyperparams]):
+class CorrelationDistanceScore(TableComparisonScore[CorrelationDistanceScoreHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> float:

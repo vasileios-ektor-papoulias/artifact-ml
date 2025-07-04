@@ -18,7 +18,7 @@ from artifact_core.table_comparison.registries.score_collections.registry import
     TableComparisonScoreCollectionType.JS_DISTANCE
 )
 @dataclass(frozen=True)
-class JSDistanceHyperparams(ArtifactHyperparams):
+class JSDistanceScoresHyperparams(ArtifactHyperparams):
     n_bins_cts_histogram: int
     categorical_only: bool
 
@@ -26,7 +26,7 @@ class JSDistanceHyperparams(ArtifactHyperparams):
 @TableComparisonScoreCollectionRegistry.register_artifact(
     TableComparisonScoreCollectionType.JS_DISTANCE
 )
-class JSDistance(TableComparisonScoreCollection[JSDistanceHyperparams]):
+class JSDistanceScores(TableComparisonScoreCollection[JSDistanceScoresHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Dict[str, float]:

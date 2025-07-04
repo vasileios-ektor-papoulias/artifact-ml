@@ -54,9 +54,9 @@ class MyValidationPlan(TableComparisonPlan):
     @staticmethod
     def _get_plot_types() -> List[TableComparisonPlotType]:
         return [
-            TableComparisonPlotType.PDF_PLOT,
-            TableComparisonPlotType.CDF_PLOT,
-            TableComparisonPlotType.PCA_PROJECTION_PLOT,
+            TableComparisonPlotType.PDF,
+            TableComparisonPlotType.CDF,
+            TableComparisonPlotType.PCA_JUXTAPOSITION,
         ]
 
     @staticmethod
@@ -75,7 +75,7 @@ class MyValidationPlan(TableComparisonPlan):
     @staticmethod  
     def _get_plot_collection_types() -> List[TableComparisonPlotCollectionType]:
         return [
-            TableComparisonPlotCollectionType.PDF_PLOTS
+            TableComparisonPlotCollectionType.PDF
             ]
 ```
 
@@ -103,7 +103,7 @@ plan.execute_table_comparison(dataset_real=df_real, dataset_synthetic=df_synthet
 
 # Access computed artifacts
 js_distance = plan.scores.get("MEAN_JS_DISTANCE")
-pca_plot = plan.plots.get("PCA_PROJECTION_PLOT")
+pca_plot = plan.plots.get("PCA_JUXTAPOSITION")
 feature_means = plan.array_collections.get("MEAN_JUXTAPOSITION")
 ```
 
@@ -240,7 +240,7 @@ class MyValidationPlan(TableComparisonPlan):
     
     @staticmethod 
     def _get_plot_types() -> List[TableComparisonPlotType]:
-        return [TableComparisonPlotType.PDF_PLOT]
+        return [TableComparisonPlotType.PDF]
 ```
 
 **Architecture Role**: ValidationPlan orchestrates the entire validation workflow by using ArtifactFactories to create computation callbacks and CallbackHandlers to execute them, transforming specifications into executable validation workflows.

@@ -220,21 +220,21 @@ This is intended to serve research projects in synthetic tabular data generation
 ### TableComparisonEngine: Available Artifacts
 
 #### Plots
-- `PDF_PLOT`: Overlaid probability density (or mass) plots for real and synthetic data
-- `CDF_PLOT`: Overlaid cumulative distribution plots for real and synthetic data
-- `DESCRIPTIVE_STATS_ALIGNMENT_PLOT`: Alignment of descriptive statistics between real and synthetic data
-- `MEAN_ALIGNMENT_PLOT`: Alignment of means between real and synthetic data
-- `STD_ALIGNMENT_PLOT`: Alignment of standard deviations between real and synthetic data
-- `VARIANCE_ALIGNMENT_PLOT`: Alignment of variances between real and synthetic data
-- `MEDIAN_ALIGNMENT_PLOT`: Alignment of medians between real and synthetic data
-- `FIRST_QUARTILE_ALIGNMENT_PLOT`: Alignment of first quartiles between real and synthetic data
-- `THIRD_QUARTILE_ALIGNMENT_PLOT`: Alignment of third quartiles between real and synthetic data
-- `MIN_ALIGNMENT_PLOT`: Alignment of minimum values between real and synthetic data
-- `MAX_ALIGNMENT_PLOT`: Alignment of maximum values between real and synthetic data
-- `CORRELATION_HEATMAPS`: Juxtaposed correlation matrix heatmaps for real and synthetic data
-- `PCA_PROJECTION_PLOT`: Visual PCA projection comparison between real and synthetic data
-- `TRUNCATED_SVD_PROJECTION_PLOT`: Visual truncated SVD projection comparison between real and synthetic data
-- `TSNE_PROJECTION_PLOT`: Visual t-SNE projection comparison between real and synthetic data
+- `PDF`: Overlaid probability density (or mass) plots for real and synthetic data
+- `CDF`: Overlaid cumulative distribution plots for real and synthetic data
+- `DESCRIPTIVE_STATS_ALIGNMENT`: Alignment of descriptive statistics between real and synthetic data
+- `MEAN_ALIGNMENT`: Alignment of means between real and synthetic data
+- `STD_ALIGNMENT`: Alignment of standard deviations between real and synthetic data
+- `VARIANCE_ALIGNMENT`: Alignment of variances between real and synthetic data
+- `MEDIAN_ALIGNMENT`: Alignment of medians between real and synthetic data
+- `FIRST_QUARTILE_ALIGNMENT`: Alignment of first quartiles between real and synthetic data
+- `THIRD_QUARTILE_ALIGNMENT`: Alignment of third quartiles between real and synthetic data
+- `MIN_ALIGNMENT`: Alignment of minimum values between real and synthetic data
+- `MAX_ALIGNMENT`: Alignment of maximum values between real and synthetic data
+- `CORRELATION_HEATMAPS_JUXTAPOSITION`: Juxtaposed correlation matrix heatmaps for real and synthetic data
+- `PCA_JUXTAPOSITION`: Visual PCA projection comparison between real and synthetic data
+- `TRUNCATED_SVD_JUXTAPOSITION`: Visual truncated SVD projection comparison between real and synthetic data
+- `TSNE_JUXTAPOSITION`: Visual t-SNE projection comparison between real and synthetic data
 
 #### Scores
 - `MEAN_JS_DISTANCE`: Average Jensen-Shannon divergence over all features
@@ -254,8 +254,8 @@ This is intended to serve research projects in synthetic tabular data generation
 - `MAXIMA_JUXTAPOSITION`: Juxtaposition of real and synthetic maximum values for all continuous features
 
 #### Plot Collections
-- `PDF_PLOTS`: Collection of overlaid (real & synthetic) PDF plots for all features
-- `CDF_PLOTS`: Collection of overlaid (real & synthetic) CDF plots for all features
+- `PDF`: Collection of overlaid (real & synthetic) PDF plots for all features
+- `CDF`: Collection of overlaid (real & synthetic) CDF plots for all features
 - `CORRELATION_HEATMAPS`: Correlation matrix heatmaps for real and synthetic data
 
 ### 📊 Example: General Usage
@@ -287,7 +287,7 @@ engine = TableComparisonEngine(resource_spec=spec)
 
 # Compute a plot artifact
 pca_plot = engine.produce_dataset_comparison_plot(
-    plot_type=TableComparisonPlotType.PCA_PROJECTION_PLOT,
+    plot_type=TableComparisonPlotType.PCA_JUXTAPOSITION,
     dataset_real=df_real,
     dataset_synthetic=df_synthetic,
 )

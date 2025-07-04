@@ -14,17 +14,17 @@
   },
   "arrays": {},
   "plots": {
-    "CORRELATION_HEATMAPS": {
+    "CORRELATION_HEATMAP_JUXTAPOSITION": {
       "categorical_association_type": "CRAMERS_V",
       "continuous_association_type": "PEARSON"
     },
-    "PCA_PROJECTION_PLOT": {
+    "PCA_JUXTAPOSITION": {
       "use_categorical": true
     },
-    "TRUNCATED_SVD_PROJECTION_PLOT": {
+    "TRUNCATED_SVD_JUXTAPOSITION": {
       "use_categorical": true
     },
-    "TSNE_PROJECTION_PLOT": {
+    "TSNE_JUXTAPOSITION": {
       "use_categorical": true,
       "perplexity": 30,
       "learning_rate": "auto",

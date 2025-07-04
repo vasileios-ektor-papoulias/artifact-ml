@@ -37,11 +37,11 @@ class DemoTableComparisonPlan(TableComparisonPlan):
     @staticmethod
     def _get_plot_types() -> List[TableComparisonPlotType]:
         return [
-            TableComparisonPlotType.PDF_PLOT,
-            TableComparisonPlotType.CDF_PLOT,
-            TableComparisonPlotType.DESCRIPTIVE_STATS_ALIGNMENT_PLOT,
-            TableComparisonPlotType.PCA_PROJECTION_PLOT,
-            TableComparisonPlotType.CORRELATION_HEATMAPS,
+            TableComparisonPlotType.PDF,
+            TableComparisonPlotType.CDF,
+            TableComparisonPlotType.DESCRIPTIVE_STATS_ALIGNMENT,
+            TableComparisonPlotType.PCA_JUXTAPOSITION,
+            TableComparisonPlotType.CORRELATION_HEATMAP_JUXTAPOSITION,
         ]
 
     @staticmethod
@@ -62,8 +62,8 @@ class DemoTableComparisonPlan(TableComparisonPlan):
     @staticmethod
     def _get_plot_collection_types() -> List[TableComparisonPlotCollectionType]:
         return [
-            TableComparisonPlotCollectionType.PDF_PLOTS,
-            TableComparisonPlotCollectionType.CDF_PLOTS,
+            TableComparisonPlotCollectionType.PDF,
+            TableComparisonPlotCollectionType.CDF,
         ]
 
 
