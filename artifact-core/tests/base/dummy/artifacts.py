@@ -61,7 +61,6 @@ class DummyScoreArtifact(DummyArtifact[float, DummyScoreHyperparams]):
         return resources
 
     def _compute(self, resources: DummyArtifactResources) -> float:
-        _ = resources
         result = resources.x
         if self._hyperparams.adjust_scale:
             result = result * self._resource_spec.scale
@@ -76,7 +75,6 @@ class NoHyperparamsArtifact(DummyArtifact[float, NoArtifactHyperparams]):
         return resources
 
     def _compute(self, resources: DummyArtifactResources) -> float:
-        _ = resources
         result = resources.x * self._resource_spec.scale
         return result
 
@@ -91,6 +89,45 @@ class AlternativeRegistryArtifact(DummyArtifact[float, NoArtifactHyperparams]):
         return resources
 
     def _compute(self, resources: DummyArtifactResources) -> float:
-        _ = resources
         result = resources.x * self._resource_spec.scale
         return result
+
+
+@DummyScoreRegistry.register_custom_artifact_config(artifact_type="CUSTOM_SCORE_ARTIFACT")
+@dataclass(frozen=True)
+class CustomScoreHyperparams(ArtifactHyperparams):
+    result: float
+
+
+@DummyScoreRegistry.register_custom_artifact(artifact_type="CUSTOM_SCORE_ARTIFACT")
+class CustomScoreArtifact(DummyArtifact[float, CustomScoreHyperparams]):
+    def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
+        if not resources.valid:
+            raise ValueError("Invalid Resources")
+        return resources
+
+    def _compute(self, resources: DummyArtifactResources) -> float:
+        _ = resources
+        assert self._hyperparams is not None
+        return self._hyperparams.result
+
+
+@DummyScoreRegistry.register_custom_artifact(artifact_type="NO_HYPERPARAMS_CUSTOM_SCORE_ARTIFACT")
+class NoHyperparamsCustomScoreArtifact(DummyArtifact[float, NoArtifactHyperparams]):
+    def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
+        if not resources.valid:
+            raise ValueError("Invalid Resources")
+        return resources
+
+    def _compute(self, resources: DummyArtifactResources) -> float:
+        _ = resources
+        return 0
+
+
+class UnregisteredArtifactHyperparams(ArtifactHyperparams):
+    test_param: int = 1
+
+
+class UnregisteredArtifact(DummyArtifact[float, UnregisteredArtifactHyperparams]):
+    def _compute(self, resources: DummyArtifactResources) -> float:
+        return 0.0

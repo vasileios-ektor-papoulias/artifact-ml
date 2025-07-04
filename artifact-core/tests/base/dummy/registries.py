@@ -24,6 +24,7 @@ class DummyScoreRegistry(
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
         return {
             "DUMMY_SCORE_ARTIFACT": {"adjust_scale": True},
+            "CUSTOM_SCORE_ARTIFACT": {"result": 0},
         }
 
 
