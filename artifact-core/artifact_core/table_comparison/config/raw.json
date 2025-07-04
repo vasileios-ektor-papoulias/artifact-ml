@@ -1,50 +1,50 @@
 {
-    "native_artifact_path": "artifact_core/table_comparison/artifacts",
-    "custom_artifact_path": "C:/Users/hecto/Codebase/artifact-ml/artifact-core/demo/custom_artifacts",
-    "scores": {
-        "MEAN_JS_DISTANCE": {
-            "n_bins_cts_histogram": 100,
-            "categorical_only": false
-        },
-        "CORRELATION_DISTANCE": {
-            "categorical_association_type": "CRAMERS_V",
-            "continuous_association_type": "PEARSON",
-            "vector_distance_metric": "RMSE"
-        }
+  "native_artifact_path": "table_comparison/artifacts",
+  "custom_artifact_path": "C:/Users/hecto/Codebase/artifact-ml/artifact-core/demo/custom_artifacts",
+  "scores": {
+    "MEAN_JS_DISTANCE": {
+      "n_bins_cts_histogram": 100,
+      "categorical_only": false
     },
-    "arrays": {},
-    "plots": {
-        "CORRELATION_HEATMAP_PLOT": {
-            "categorical_association_type": "CRAMERS_V",
-            "continuous_association_type": "PEARSON"
-        },
-        "PCA_PROJECTION_PLOT": {
-            "use_categorical": true
-        },
-        "TRUNCATED_SVD_PROJECTION_PLOT": {
-            "use_categorical": true
-        },
-        "TSNE_PROJECTION_PLOT": {
-            "use_categorical": true,
-            "perplexity": 30,
-            "learning_rate": "auto",
-            "max_iter": 1000
-        }
-    },
-    "score_collections": {
-        "JS_DISTANCE": {
-            "n_bins_cts_histogram": 100,
-            "categorical_only": false
-        },
-        "BANI": {
-            "bani_result": 0
-        }
-    },
-    "array_collections": {},
-    "plot_collections": {
-        "CORRELATION_HEATMAPS": {
-            "categorical_association_type": "CRAMERS_V",
-            "continuous_association_type": "PEARSON"
-        }
+    "CORRELATION_DISTANCE": {
+      "categorical_association_type": "CRAMERS_V",
+      "continuous_association_type": "PEARSON",
+      "vector_distance_metric": "RMSE"
     }
+  },
+  "arrays": {},
+  "plots": {
+    "CORRELATION_HEATMAP_PLOT": {
+      "categorical_association_type": "CRAMERS_V",
+      "continuous_association_type": "PEARSON"
+    },
+    "PCA_PROJECTION_PLOT": {
+      "use_categorical": true
+    },
+    "TRUNCATED_SVD_PROJECTION_PLOT": {
+      "use_categorical": true
+    },
+    "TSNE_PROJECTION_PLOT": {
+      "use_categorical": true,
+      "perplexity": 30,
+      "learning_rate": "auto",
+      "max_iter": 1000
+    }
+  },
+  "score_collections": {
+    "JS_DISTANCE": {
+      "n_bins_cts_histogram": 100,
+      "categorical_only": false
+    },
+    "BANI": {
+      "bani_result": 0
+    }
+  },
+  "array_collections": {},
+  "plot_collections": {
+    "CORRELATION_HEATMAPS": {
+      "categorical_association_type": "CRAMERS_V",
+      "continuous_association_type": "PEARSON"
+    }
+  }
 }
