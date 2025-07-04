@@ -1,6 +1,6 @@
 # ⚙️ Artifact-ML
 
-> Artifact-ML provides shareable machine learning experiment infrastructure with a primary focus on declarative validation.
+> Artifact-ML provides shareable machine learning experiment infrastructure with a primary focus on declarative validation. It minimizes imperative code to eliminate duplication and promote concise, reusable experiment workflows.
 
 
 <p align="center">
