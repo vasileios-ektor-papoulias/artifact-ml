@@ -36,11 +36,8 @@ For a concrete demonstration of the problem (and solution) addressed by Artifact
 For a deep-dive into the core design philosophy underlying the project see our [**design philosophy doc**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/docs/design_philosophy.md).
 
 <p align="center">
-  <img src="assets/pdf_comparison.png" width="700" alt="PDF Comparison">
-</p>
-
-<p align="center">
-  <img src="assets/pca_comparison.png" width="900" alt="PCA Comparison">
+  <img src="assets/pdf_comparison.png" alt="PDF Comparison" width="400" style="margin-right: 10px;" />
+  <img src="assets/pca_comparison.png" alt="PCA Comparison" width="400" />
 </p>
 
 ## 🚀 Getting Started
