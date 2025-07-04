@@ -27,7 +27,7 @@ class DemoTableComparisonPlan(TableComparisonPlan):
     def _get_score_types() -> List[TableComparisonScoreType]:
         return [
             TableComparisonScoreType.MEAN_JS_DISTANCE,
-            TableComparisonScoreType.PAIRWISE_CORRELATION_DISTANCE,
+            TableComparisonScoreType.CORRELATION_DISTANCE,
         ]
 
     @staticmethod
@@ -39,9 +39,9 @@ class DemoTableComparisonPlan(TableComparisonPlan):
         return [
             TableComparisonPlotType.PDF_PLOT,
             TableComparisonPlotType.CDF_PLOT,
-            TableComparisonPlotType.DESCRIPTIVE_STATS_COMPARISON_PLOT,
+            TableComparisonPlotType.DESCRIPTIVE_STATS_ALIGNMENT_PLOT,
             TableComparisonPlotType.PCA_PROJECTION_PLOT,
-            TableComparisonPlotType.PAIRWISE_CORRELATION_COMPARISON_HEATMAP,
+            TableComparisonPlotType.CORRELATION_HEATMAP_PLOT,
         ]
 
     @staticmethod
@@ -53,10 +53,10 @@ class DemoTableComparisonPlan(TableComparisonPlan):
     @staticmethod
     def _get_array_collection_types() -> List[TableComparisonArrayCollectionType]:
         return [
-            TableComparisonArrayCollectionType.MEANS,
-            TableComparisonArrayCollectionType.STDS,
-            TableComparisonArrayCollectionType.MINIMA,
-            TableComparisonArrayCollectionType.MAXIMA,
+            TableComparisonArrayCollectionType.MEAN_JUXTAPOSITION,
+            TableComparisonArrayCollectionType.STD_JUXTAPOSITION,
+            TableComparisonArrayCollectionType.MIN_JUXTAPOSITION,
+            TableComparisonArrayCollectionType.MAX_JUXTAPOSITION,
         ]
 
     @staticmethod
