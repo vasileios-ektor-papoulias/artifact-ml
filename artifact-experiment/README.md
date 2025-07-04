@@ -1,6 +1,6 @@
 # ⚙️ artifact-experiment
 
-> Experiment orchestration and tracking for the Artifact framework. `artifact-experiment` provides an executable validation plan abstraction that manages the execution of artifact collections and the storage of associated results in popular experiment tracking backends.
+> Experiment orchestration and tracking for the Artifact framework.
 
 <p align="center">
   <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
@@ -13,9 +13,9 @@
 
 ## 📋 Overview
 
-`artifact-experiment` constitutes the experiment orchestration and tracking extension to the Artifact framework.
+`artifact-experiment` constitutes the experiment management extension to the Artifact framework.
 
-It bridges the gap between validation computation and experiment tracking by providing an **executable validation plan abstraction** that manages the execution of artifact collections and the storage of associated results in popular experiment tracking backends.
+It bridges the gap between validation computation and experiment tracking through a core **validation plan** abstraction responsible for the execution of artifact collections and the storage of associated results in popular experiment tracking backends.
 
 It stands alongside:
 - [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core): Framework foundation providing a flexible minimal interface for the computation of validation artifacts.

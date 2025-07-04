@@ -245,11 +245,11 @@ This is intended to serve research projects in synthetic tabular data generation
 
 #### Array Collections
 - `MEAN_JUXTAPOSITION`: Juxtaposition of real and synthetic mean values for all continuous features
-- `STDS_JUXTAPOSITION`: Juxtaposition of real and synthetic standard deviations for all continuous features
-- `VARIANCES_JUXTAPOSITION`: Juxtaposition of real and synthetic variances for all continuous features
-- `MEDIANS_JUXTAPOSITION`: Juxtaposition of real and synthetic median values for all continuous features
-- `FIRST_QUARTILES_JUXTAPOSITION`: Juxtaposition of real and synthetic first quartile values for all continuous features
-- `THIRD_QUARTILES_JUXTAPOSITION`: Juxtaposition of real and synthetic third quartile values for all continuous features
+- `STD_JUXTAPOSITION`: Juxtaposition of real and synthetic standard deviations for all continuous features
+- `VARIANCE_JUXTAPOSITION`: Juxtaposition of real and synthetic variances for all continuous features
+- `MEDIAN_JUXTAPOSITION`: Juxtaposition of real and synthetic median values for all continuous features
+- `FIRST_QUARTILE_JUXTAPOSITION`: Juxtaposition of real and synthetic first quartile values for all continuous features
+- `THIRD_QUARTILE_JUXTAPOSITION`: Juxtaposition of real and synthetic third quartile values for all continuous features
 - `MIN_JUXTAPOSITION`: Juxtaposition of real and synthetic minimum values for all continuous features
 - `MAX_JUXTAPOSITION`: Juxtaposition of real and synthetic maximum values for all continuous features
 
