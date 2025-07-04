@@ -3,7 +3,7 @@ import os
 import pkgutil
 import sys
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, Union, overload
 
 
 class PackageImporter:
@@ -11,7 +11,8 @@ class PackageImporter:
     def import_all_from_package_path(
         cls, path: Union[Path, str], root: Optional[Union[Path, str]] = None
     ):
-        path = os.path.abspath(path)
+        path = cls._normalize_path(path=path)
+        root = cls._normalize_path(path=root)
         package_name = cls._get_package_name(path, root)
         parent_dir = cls._get_parent_directory(path, root)
         if parent_dir not in sys.path:
@@ -35,3 +36,17 @@ class PackageImporter:
             return os.path.dirname(os.path.abspath(root))
         else:
             return os.path.dirname(path)
+
+    @overload
+    @staticmethod
+    def _normalize_path(path: Union[Path, str]) -> str: ...
+
+    @overload
+    @staticmethod
+    def _normalize_path(path: None) -> None: ...
+
+    @staticmethod
+    def _normalize_path(path: Optional[Union[Path, str]]) -> Optional[str]:
+        if path is not None:
+            return os.path.abspath(path)
+        return None
