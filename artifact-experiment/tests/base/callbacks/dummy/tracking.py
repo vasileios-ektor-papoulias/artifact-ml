@@ -15,26 +15,9 @@ from artifact_experiment.base.callbacks.tracking import (
     ScoreCallbackHandler,
     ScoreCollectionCallback,
     ScoreCollectionCallbackHandler,
-    TrackingCallback,
 )
 from artifact_experiment.base.tracking.client import TrackingClient
 from matplotlib.figure import Figure
-
-
-class DummyTrackingCallback(TrackingCallback[CallbackResources, float]):
-    def __init__(
-        self, key: str, compute_value: float = 1.0, tracking_client: Optional[TrackingClient] = None
-    ):
-        super().__init__(key=key, tracking_client=tracking_client)
-        self._compute_value = compute_value
-
-    def _compute(self, resources: CallbackResources) -> float:
-        _ = resources
-        return self._compute_value
-
-    @staticmethod
-    def _export(key: str, value: float, tracking_client: TrackingClient):
-        tracking_client.log_score(score=value, name=key)
 
 
 class DummyScoreCallback(ScoreCallback[CallbackResources]):
@@ -131,15 +114,19 @@ class DummyPlotCollectionCallback(PlotCollectionCallback[CallbackResources]):
         return self._compute_value
 
 
-DummyScoreCallbackHandler = ScoreCallbackHandler[DummyScoreCallback, CallbackResources]
-DummyArrayCallbackHandler = ArrayCallbackHandler[DummyArrayCallback, CallbackResources]
-DummyPlotCallbackHandler = PlotCallbackHandler[DummyPlotCallback, CallbackResources]
+DummyScoreCallbackHandler = ScoreCallbackHandler[
+    ScoreCallback[CallbackResources], CallbackResources
+]
+DummyArrayCallbackHandler = ArrayCallbackHandler[
+    ArrayCallback[CallbackResources], CallbackResources
+]
+DummyPlotCallbackHandler = PlotCallbackHandler[PlotCallback[CallbackResources], CallbackResources]
 DummyScoreCollectionCallbackHandler = ScoreCollectionCallbackHandler[
-    DummyScoreCollectionCallback, CallbackResources
+    ScoreCollectionCallback[CallbackResources], CallbackResources
 ]
 DummyArrayCollectionCallbackHandler = ArrayCollectionCallbackHandler[
-    DummyArrayCollectionCallback, CallbackResources
+    ArrayCollectionCallback[CallbackResources], CallbackResources
 ]
 DummyPlotCollectionCallbackHandler = PlotCollectionCallbackHandler[
-    DummyPlotCollectionCallback, CallbackResources
+    PlotCollectionCallback[CallbackResources], CallbackResources
 ]

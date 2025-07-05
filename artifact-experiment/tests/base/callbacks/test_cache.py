@@ -20,8 +20,8 @@ def resources_factory() -> Callable[[float, float], DummyCallbackResources]:
 
 
 @pytest.fixture
-def callback_factory() -> Callable[[str, str, float, float], CacheCallback]:
-    def _factory(callback_type: str, key: str, x: float = 1.0, y: float = 2.0) -> CacheCallback:
+def callback_factory() -> Callable[[str, str], CacheCallback]:
+    def _factory(callback_type: str, key: str) -> CacheCallback:
         if callback_type == "add":
             return AddCacheCallback(key=key)
         elif callback_type == "multiply":
@@ -70,10 +70,10 @@ def test_callback_execute(
     x: float,
     y: float,
     expected_result: float,
-    callback_factory: Callable[[str, str, float, float], CacheCallback],
+    callback_factory: Callable[[str, str], CacheCallback],
     resources_factory: Callable[[float, float], DummyCallbackResources],
 ):
-    callback = callback_factory(callback_type, "test_key", x, y)
+    callback = callback_factory(callback_type, "test_key")
     resources = resources_factory(x, y)
     assert callback.value is None
     callback.execute(resources=resources)
@@ -112,7 +112,7 @@ def test_execute_concrete(
     ],
 )
 def test_handler_execute(
-    callback_factory: Callable[[str, str, float, float], CacheCallback],
+    callback_factory: Callable[[str, str], CacheCallback],
     resources_factory: Callable[[float, float], DummyCallbackResources],
     keys: List[str],
     callback_types: List[str],
@@ -120,10 +120,7 @@ def test_handler_execute(
     y_values: List[float],
     expected_results: List[float],
 ):
-    callbacks = [
-        callback_factory(cb_type, key, x, y)
-        for cb_type, key, x, y in zip(callback_types, keys, x_values, y_values)
-    ]
+    callbacks = [callback_factory(cb_type, key) for cb_type, key in zip(callback_types, keys)]
     handler = DummyCacheCallbackHandler(ls_callbacks=callbacks)
     assert len(handler.active_cache) == 0
     test_resources = resources_factory(x_values[0], y_values[0])
@@ -146,10 +143,10 @@ def test_handler_execute(
 def test_handler_clear(
     num_callbacks: int,
     clear_after_execution: bool,
-    callback_factory: Callable[[str, str, float, float], CacheCallback],
+    callback_factory: Callable[[str, str], CacheCallback],
     resources_factory: Callable[[float, float], DummyCallbackResources],
 ):
-    callbacks = [callback_factory("add", f"key_{i}", 1.0, i) for i in range(num_callbacks)]
+    callbacks = [callback_factory("add", f"key_{i}") for i in range(num_callbacks)]
     handler = DummyCacheCallbackHandler(ls_callbacks=callbacks)
     resources = resources_factory(1.0, 1.0)
     handler.execute(resources=resources)

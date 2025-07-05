@@ -8,19 +8,7 @@ from pytest_mock import MockerFixture
 
 
 @pytest.fixture
-def mock_tracking_client(mocker: MockerFixture) -> MagicMock:
-    client = mocker.Mock(spec=TrackingClient)
-    client.log_score = mocker.Mock()
-    client.log_array = mocker.Mock()
-    client.log_plot = mocker.Mock()
-    client.log_score_collection = mocker.Mock()
-    client.log_array_collection = mocker.Mock()
-    client.log_plot_collection = mocker.Mock()
-    return client
-
-
-@pytest.fixture
-def test_resources() -> CallbackResources:
+def callback_resources() -> CallbackResources:
     return CallbackResources()
 
 
@@ -32,3 +20,15 @@ def callback_key() -> str:
 @pytest.fixture
 def multiple_callback_keys() -> List[str]:
     return ["callback1", "callback2", "callback3"]
+
+
+@pytest.fixture
+def mock_tracking_client(mocker: MockerFixture) -> MagicMock:
+    client = mocker.Mock(spec=TrackingClient)
+    client.log_score = mocker.Mock()
+    client.log_array = mocker.Mock()
+    client.log_plot = mocker.Mock()
+    client.log_score_collection = mocker.Mock()
+    client.log_array_collection = mocker.Mock()
+    client.log_plot_collection = mocker.Mock()
+    return client

@@ -22,6 +22,25 @@ def mock_tracking_client(mocker: MockerFixture) -> MagicMock:
 
 
 @pytest.fixture
+def mock_handlers(mocker: MockerFixture) -> Dict[str, MagicMock]:
+    dict_handlers = {}
+    for handler_type in [
+        "scores",
+        "arrays",
+        "plots",
+        "score_collections",
+        "array_collections",
+        "plot_collections",
+    ]:
+        handler = mocker.Mock()
+        handler.active_cache = {}
+        handler.execute = mocker.Mock()
+        handler.clear = mocker.Mock()
+        dict_handlers[handler_type] = handler
+    return dict_handlers
+
+
+@pytest.fixture
 def resource_spec() -> DummyResourceSpec:
     return DummyResourceSpec()
 
@@ -34,22 +53,3 @@ def artifact_resources() -> DummyArtifactResources:
 @pytest.fixture
 def callback_resources(artifact_resources: DummyArtifactResources) -> ArtifactCallbackResources:
     return ArtifactCallbackResources(artifact_resources=artifact_resources)
-
-
-@pytest.fixture
-def mock_handlers(mocker: MockerFixture) -> Dict[str, MagicMock]:
-    handlers = {}
-    for handler_type in [
-        "score",
-        "array",
-        "plot",
-        "score_collection",
-        "array_collection",
-        "plot_collection",
-    ]:
-        handler = mocker.Mock()
-        handler.active_cache = {}
-        handler.execute = mocker.Mock()
-        handler.clear = mocker.Mock()
-        handlers[handler_type] = handler
-    return handlers

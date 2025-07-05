@@ -13,39 +13,6 @@ from artifact_experiment.base.validation_plan import ValidationPlan
 
 class DummyArtifactType(ArtifactType):
     SCORE1 = "score1"
-    SCORE2 = "score2"
-    ARRAY1 = "array1"
-    PLOT1 = "plot1"
-    SCORE_COLLECTION1 = "score_collection1"
-    ARRAY_COLLECTION1 = "array_collection1"
-    PLOT_COLLECTION1 = "plot_collection1"
-
-
-class DummyResourceSpec(ResourceSpecProtocol):
-    pass
-
-
-class DummyArtifactResources(ArtifactResources):
-    pass
-
-
-class DummyArtifactHyperparams(ArtifactHyperparams):
-    pass
-
-
-class DummyArtifact(
-    Artifact[
-        DummyArtifactResources,
-        float,
-        DummyArtifactHyperparams,
-        DummyResourceSpec,
-    ]
-):
-    def _compute(self, resources: DummyArtifactResources) -> float:
-        return 42.0
-
-    def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
-        return resources
 
 
 class DummyArtifactRegistry(ArtifactRegistry):
@@ -61,13 +28,35 @@ class DummyArtifactRegistry(ArtifactRegistry):
             "PLOT_COLLECTION1": {},
         }
 
-    @classmethod
-    def _get_artifact_class(cls, artifact_type: str) -> Type[Artifact]:
-        return DummyArtifact
 
-    @classmethod
-    def _get_artifact_hyperparams_class(cls, artifact_type: str):
-        return DummyArtifactHyperparams
+class DummyResourceSpec(ResourceSpecProtocol):
+    pass
+
+
+class DummyArtifactResources(ArtifactResources):
+    pass
+
+
+@DummyArtifactRegistry.register_artifact_config(artifact_type=DummyArtifactType.SCORE1)
+class DummyArtifactHyperparams(ArtifactHyperparams):
+    pass
+
+
+@DummyArtifactRegistry.register_artifact(artifact_type=DummyArtifactType.SCORE1)
+class DummyArtifact(
+    Artifact[
+        DummyArtifactResources,
+        float,
+        DummyArtifactHyperparams,
+        DummyResourceSpec,
+    ]
+):
+    def _compute(self, resources: DummyArtifactResources) -> float:
+        _ = resources
+        return 0.0
+
+    def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
+        return resources
 
 
 class DummyCallbackFactory(
@@ -121,27 +110,27 @@ class DummyValidationPlan(
 ):
     @staticmethod
     def _get_score_types() -> List[DummyArtifactType]:
-        return [DummyArtifactType.SCORE1, DummyArtifactType.SCORE2]
+        return [DummyArtifactType.SCORE1]
 
     @staticmethod
     def _get_array_types() -> List[DummyArtifactType]:
-        return [DummyArtifactType.ARRAY1]
+        return []
 
     @staticmethod
     def _get_plot_types() -> List[DummyArtifactType]:
-        return [DummyArtifactType.PLOT1]
+        return []
 
     @staticmethod
     def _get_score_collection_types() -> List[DummyArtifactType]:
-        return [DummyArtifactType.SCORE_COLLECTION1]
+        return []
 
     @staticmethod
     def _get_array_collection_types() -> List[DummyArtifactType]:
-        return [DummyArtifactType.ARRAY_COLLECTION1]
+        return []
 
     @staticmethod
     def _get_plot_collection_types() -> List[DummyArtifactType]:
-        return [DummyArtifactType.PLOT_COLLECTION1]
+        return []
 
     @staticmethod
     def _get_callback_factory() -> Type[DummyCallbackFactory]:

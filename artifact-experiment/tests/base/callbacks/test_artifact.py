@@ -1,8 +1,9 @@
-from typing import Any, Callable, Dict, List, Tuple, Type, Union
+from typing import Callable, List, Tuple, Type
 from unittest.mock import MagicMock
 
 import numpy as np
 import pytest
+from artifact_core.base.artifact_dependencies import ArtifactResult
 from artifact_experiment.base.callbacks.artifact import (
     ArtifactArrayCallback,
     ArtifactCallback,
@@ -15,8 +16,8 @@ from pytest_mock import MockerFixture
 
 
 @pytest.fixture
-def artifact_factory(mocker: MockerFixture) -> Callable[[Any], MagicMock]:
-    def _factory(compute_return_value: Any) -> MagicMock:
+def artifact_factory(mocker: MockerFixture) -> Callable[[ArtifactResult], MagicMock]:
+    def _factory(compute_return_value: ArtifactResult) -> MagicMock:
         artifact = mocker.Mock()
         artifact.compute.return_value = compute_return_value
         return artifact
@@ -36,9 +37,8 @@ def resources_factory(
     return _factory
 
 
-def test_resources_structure(
+def test_resources(
     mocker: MockerFixture,
-    artifact_factory: Callable[[Any], MagicMock],
 ):
     artifact_resources = mocker.Mock()
     artifact_resources.some_property = "test_value"
@@ -59,10 +59,10 @@ def test_resources_structure(
 def test_execute(
     mock_tracking_client: MagicMock,
     callback_key: str,
-    artifact_factory: Callable[[Any], MagicMock],
+    artifact_factory: Callable[[ArtifactResult], MagicMock],
     resources_factory: Callable[[], Tuple[ArtifactCallbackResources, MagicMock]],
     callback_class: Type[ArtifactCallback],
-    expected_compute_value: Union[float, np.ndarray, Dict[str, float], Dict[str, np.ndarray]],
+    expected_compute_value: ArtifactResult,
     expected_log_method: str,
 ):
     artifact = artifact_factory(expected_compute_value)
@@ -97,10 +97,10 @@ def test_execute(
 )
 def test_no_tracking_client(
     callback_key: str,
-    artifact_factory: Callable[[Any], MagicMock],
+    artifact_factory: Callable[[ArtifactResult], MagicMock],
     resources_factory: Callable[[], Tuple[ArtifactCallbackResources, MagicMock]],
     callback_class: Type[ArtifactCallback],
-    compute_value: Union[float, np.ndarray, Dict[str, float], Dict[str, np.ndarray]],
+    compute_value: ArtifactResult,
 ):
     artifact = artifact_factory(compute_value)
     callback_resources, artifact_resources = resources_factory()
@@ -124,9 +124,9 @@ def test_no_tracking_client(
 )
 def test_multiple_executions(
     callback_key: str,
-    artifact_factory: Callable[[float], MagicMock],
+    artifact_factory: Callable[[ArtifactResult], MagicMock],
     resources_factory: Callable[[], Tuple[ArtifactCallbackResources, MagicMock]],
-    compute_values: List[float],
+    compute_values: List[ArtifactResult],
 ):
     callback_resources, artifact_resources = resources_factory()
     for compute_value in compute_values:
