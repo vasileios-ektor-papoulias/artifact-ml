@@ -3,6 +3,7 @@ from typing import Dict, Generic, List, Optional, Type, TypeVar, Union
 
 from artifact_core.base.artifact_dependencies import (
     ArtifactResources,
+    ArtifactResult,
     ResourceSpecProtocol,
 )
 from artifact_core.base.registry import ArtifactType
@@ -12,6 +13,7 @@ from numpy import ndarray
 from artifact_experiment.base.callbacks.artifact import (
     ArtifactArrayCallback,
     ArtifactArrayCollectionCallback,
+    ArtifactCallback,
     ArtifactCallbackResources,
     ArtifactPlotCallback,
     ArtifactPlotCollectionCallback,
@@ -26,6 +28,7 @@ from artifact_experiment.base.callbacks.tracking import (
     PlotCollectionCallbackHandler,
     ScoreCallbackHandler,
     ScoreCollectionCallbackHandler,
+    TrackingCallbackHandler,
 )
 from artifact_experiment.base.tracking.client import TrackingClient
 
@@ -145,6 +148,39 @@ class ValidationPlan(
     def plot_collections(self) -> Dict[str, Dict[str, Figure]]:
         return self._plot_collection_handler.active_cache
 
+    @property
+    def tracking_client(self) -> Optional[TrackingClient]:
+        return self._score_handler.tracking_client
+
+    @property
+    def _ls_handlers(
+        self,
+    ) -> List[
+        TrackingCallbackHandler[
+            ArtifactCallback[ArtifactResourcesT, ArtifactResult, ResourceSpecProtocolT],
+            ArtifactCallbackResources[ArtifactResourcesT],
+            ArtifactResult,
+        ]
+    ]:
+        ls_handlers = [
+            self._score_handler,
+            self._array_handler,
+            self._plot_handler,
+            self._score_collection_handler,
+            self._array_collection_handler,
+            self._plot_collection_handler,
+        ]
+        return ls_handlers
+
+    @tracking_client.setter
+    def tracking_client(self, tracking_client: Optional[TrackingClient]):
+        for handler in self._ls_handlers:
+            handler.tracking_client = tracking_client
+
+    @property
+    def tracking_enabled(self) -> bool:
+        return self.tracking_client is not None
+
     @staticmethod
     @abstractmethod
     def _get_score_types() -> List[ScoreTypeT]: ...
@@ -209,20 +245,12 @@ class ValidationPlan(
         return []
 
     def execute(self, resources: ArtifactCallbackResources[ArtifactResourcesT]):
-        self._score_handler.execute(resources=resources)
-        self._array_handler.execute(resources=resources)
-        self._plot_handler.execute(resources=resources)
-        self._score_collection_handler.execute(resources=resources)
-        self._array_collection_handler.execute(resources=resources)
-        self._plot_collection_handler.execute(resources=resources)
+        for handler in self._ls_handlers:
+            handler.execute(resources=resources)
 
     def clear_cache(self):
-        self._score_handler.clear()
-        self._array_handler.clear()
-        self._plot_handler.clear()
-        self._score_collection_handler.clear()
-        self._array_collection_handler.clear()
-        self._plot_collection_handler.clear()
+        for handler in self._ls_handlers:
+            handler.clear()
 
     @classmethod
     def _build_score_handler(
