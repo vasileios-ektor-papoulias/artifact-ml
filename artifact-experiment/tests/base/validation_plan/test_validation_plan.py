@@ -41,6 +41,7 @@ def test_build(
 def test_tracking_client_setter(
     mock_tracking_client: MagicMock,
     resource_spec: DummyResourceSpec,
+    callback_resources: ArtifactCallbackResources,
     initial_client: Optional[bool],
     new_client: Optional[bool],
 ):
@@ -53,6 +54,18 @@ def test_tracking_client_setter(
     plan.tracking_client = new_tracking_client
     assert plan.tracking_client == new_tracking_client
     assert plan.tracking_enabled == (new_client is not None)
+    
+    plan.execute(resources=callback_resources)
+    
+    if new_client is not None:
+        mock_tracking_client.log_score.assert_called()
+    else:
+        mock_tracking_client.log_score.assert_not_called()
+        mock_tracking_client.log_array.assert_not_called()
+        mock_tracking_client.log_plot.assert_not_called()
+        mock_tracking_client.log_score_collection.assert_not_called()
+        mock_tracking_client.log_array_collection.assert_not_called()
+        mock_tracking_client.log_plot_collection.assert_not_called()
 
 
 @pytest.mark.parametrize(
