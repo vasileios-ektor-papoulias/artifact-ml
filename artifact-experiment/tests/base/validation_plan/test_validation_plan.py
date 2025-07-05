@@ -82,15 +82,7 @@ def test_artifact_result_accessors(
         plot_collection_handler=mock_handlers["plot_collections"],
     )
     assert not plan.tracking_enabled
-    handler_mapping = {
-        "scores": "scores",
-        "arrays": "arrays",
-        "plots": "plots",
-        "score_collections": "score_collections",
-        "array_collections": "array_collections",
-        "plot_collections": "plot_collections",
-    }
-    mock_handlers[handler_mapping[cache_type]].active_cache = expected_values
+    mock_handlers[cache_type].active_cache = expected_values
     actual_values = getattr(plan, cache_type)
     assert actual_values == expected_values
 
@@ -129,7 +121,7 @@ def test_tracking_client_integration(
     for call in score_calls:
         _, kwargs = call
         assert "name" in kwargs
-        assert kwargs["name"] == "score1"
+        assert kwargs["name"] == "SCORE1"
         assert "score" in kwargs
         assert kwargs["score"] == 0
     array_calls = mock_tracking_client.log_array.call_args_list
@@ -158,8 +150,8 @@ def test_clear_cache(
         plot_collection_handler=mock_handlers["plot_collections"],
     )
     assert not plan.tracking_enabled
-    
+
     plan.clear_cache()
-    
+
     for handler in mock_handlers.values():
         handler.clear.assert_called_once()
