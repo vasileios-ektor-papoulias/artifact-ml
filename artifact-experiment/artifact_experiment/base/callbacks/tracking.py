@@ -202,7 +202,7 @@ class TrackingCallbackHandler(
     @staticmethod
     def _invalidate_callback_tracking_clients(ls_callbacks: List[TrackingCallbackT]):
         for callback in ls_callbacks:
-            callback.set_tracking_client(tracking_client=None)
+            callback.tracking_client = None
 
 
 class ScoreHandlerExportMixin:
