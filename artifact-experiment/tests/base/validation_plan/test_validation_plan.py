@@ -59,6 +59,11 @@ def test_tracking_client_setter(
     
     if new_client is not None:
         mock_tracking_client.log_score.assert_called()
+        mock_tracking_client.log_array.assert_called()
+        mock_tracking_client.log_plot.assert_called()
+        mock_tracking_client.log_score_collection.assert_called()
+        mock_tracking_client.log_array_collection.assert_called()
+        mock_tracking_client.log_plot_collection.assert_called()
     else:
         mock_tracking_client.log_score.assert_not_called()
         mock_tracking_client.log_array.assert_not_called()
@@ -129,24 +134,32 @@ def test_tracking_client_integration(
     )
     assert plan.tracking_enabled
     plan.execute(resources=callback_resources)
+    
     score_calls = mock_tracking_client.log_score.call_args_list
-    assert len(score_calls) == 1
-    for call in score_calls:
-        _, kwargs = call
-        assert "name" in kwargs
-        assert kwargs["name"] == "SCORE1"
-        assert "score" in kwargs
-        assert kwargs["score"] == 0
+    assert len(score_calls) == 2
+    score_names = [call[1]["name"] for call in score_calls]
+    assert "SCORE1" in score_names
+    assert "SCORE2" in score_names
+    
     array_calls = mock_tracking_client.log_array.call_args_list
-    assert len(array_calls) == 0
+    assert len(array_calls) == 1
+    assert array_calls[0][1]["name"] == "ARRAY1"
+    
     plot_calls = mock_tracking_client.log_plot.call_args_list
-    assert len(plot_calls) == 0
+    assert len(plot_calls) == 1
+    assert plot_calls[0][1]["name"] == "PLOT1"
+    
     score_collection_calls = mock_tracking_client.log_score_collection.call_args_list
-    assert len(score_collection_calls) == 0
+    assert len(score_collection_calls) == 1
+    assert score_collection_calls[0][1]["name"] == "SCORE_COLLECTION1"
+    
     array_collection_calls = mock_tracking_client.log_array_collection.call_args_list
-    assert len(array_collection_calls) == 0
+    assert len(array_collection_calls) == 1
+    assert array_collection_calls[0][1]["name"] == "ARRAY_COLLECTION1"
+    
     plot_collection_calls = mock_tracking_client.log_plot_collection.call_args_list
-    assert len(plot_collection_calls) == 0
+    assert len(plot_collection_calls) == 1
+    assert plot_collection_calls[0][1]["name"] == "PLOT_COLLECTION1"
 
 
 def test_clear_cache(
