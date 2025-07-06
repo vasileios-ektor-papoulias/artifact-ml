@@ -60,27 +60,3 @@ class InMemoryNativeRun:
     @property
     def uploaded_files(self) -> List[Dict[str, str]]:
         return self._uploaded_files
-
-    @property
-    def ls_scores(self) -> List[float]:
-        return list(self._dict_scores.values())
-
-    @property
-    def ls_arrays(self) -> List[ndarray]:
-        return list(self._dict_arrays.values())
-
-    @property
-    def ls_plots(self) -> List[Figure]:
-        return list(self._dict_plots.values())
-
-    @property
-    def ls_score_collections(self) -> List[Dict[str, float]]:
-        return list(self._dict_score_collections.values())
-
-    @property
-    def ls_array_collections(self) -> List[Dict[str, ndarray]]:
-        return list(self._dict_array_collections.values())
-
-    @property
-    def ls_plot_collections(self) -> List[Dict[str, Figure]]:
-        return list(self._dict_plot_collections.values())
