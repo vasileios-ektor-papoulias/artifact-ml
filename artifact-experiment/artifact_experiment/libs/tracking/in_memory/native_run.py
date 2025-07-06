@@ -1,17 +1,20 @@
 from typing import Dict, List
 
+from matplotlib.figure import Figure
+from numpy import ndarray
+
 
 class InMemoryNativeRun:
     def __init__(self, experiment_id: str, run_id: str):
         self._is_active = True
         self._experiment_id = experiment_id
         self._run_id = run_id
-        self._ls_scores = []
-        self._ls_arrays = []
-        self._ls_plots = []
-        self._ls_score_collections = []
-        self._ls_array_collections = []
-        self._ls_plot_collections = []
+        self._dict_scores: Dict[str, float] = {}
+        self._dict_arrays: Dict[str, ndarray] = {}
+        self._dict_plots: Dict[str, Figure] = {}
+        self._dict_score_collections: Dict[str, Dict[str, float]] = {}
+        self._dict_array_collections: Dict[str, Dict[str, ndarray]] = {}
+        self._dict_plot_collections: Dict[str, Dict[str, Figure]] = {}
         self._uploaded_files: List[Dict[str, str]] = []
 
     @property
@@ -31,29 +34,53 @@ class InMemoryNativeRun:
         self._is_active = is_active
 
     @property
-    def ls_scores(self) -> List[float]:
-        return self._ls_scores
+    def dict_scores(self) -> Dict[str, float]:
+        return self._dict_scores
 
     @property
-    def ls_arrays(self) -> List:
-        return self._ls_arrays
+    def dict_arrays(self) -> Dict[str, ndarray]:
+        return self._dict_arrays
 
     @property
-    def ls_plots(self) -> List:
-        return self._ls_plots
+    def dict_plots(self) -> Dict[str, Figure]:
+        return self._dict_plots
 
     @property
-    def ls_score_collections(self) -> List:
-        return self._ls_score_collections
+    def dict_score_collections(self) -> Dict[str, Dict[str, float]]:
+        return self._dict_score_collections
 
     @property
-    def ls_array_collections(self) -> List:
-        return self._ls_array_collections
+    def dict_array_collections(self) -> Dict[str, Dict[str, ndarray]]:
+        return self._dict_array_collections
 
     @property
-    def ls_plot_collections(self) -> List:
-        return self._ls_plot_collections
+    def dict_plot_collections(self) -> Dict[str, Dict[str, Figure]]:
+        return self._dict_plot_collections
 
     @property
     def uploaded_files(self) -> List[Dict[str, str]]:
         return self._uploaded_files
+
+    @property
+    def ls_scores(self) -> List[float]:
+        return list(self._dict_scores.values())
+
+    @property
+    def ls_arrays(self) -> List[ndarray]:
+        return list(self._dict_arrays.values())
+
+    @property
+    def ls_plots(self) -> List[Figure]:
+        return list(self._dict_plots.values())
+
+    @property
+    def ls_score_collections(self) -> List[Dict[str, float]]:
+        return list(self._dict_score_collections.values())
+
+    @property
+    def ls_array_collections(self) -> List[Dict[str, ndarray]]:
+        return list(self._dict_array_collections.values())
+
+    @property
+    def ls_plot_collections(self) -> List[Dict[str, Figure]]:
+        return list(self._dict_plot_collections.values())
