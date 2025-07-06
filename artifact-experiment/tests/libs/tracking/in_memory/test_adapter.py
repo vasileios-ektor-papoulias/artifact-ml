@@ -13,7 +13,7 @@ STANDARD_UUID_LENGTH = 36
 
 
 @pytest.mark.parametrize(
-    "experiment_id,run_id",
+    "experiment_id, run_id",
     [
         ("exp1", "run1"),
         ("my_experiment", "my_run"),
@@ -109,7 +109,7 @@ def test_property_delegation(
 
 
 @pytest.mark.parametrize(
-    "populated_adapter,expected_counts",
+    "populated_adapter, expected_counts",
     [
         ("scores_only", (1, 0, 0, 0, 0, 0)),
         ("arrays_only", (0, 1, 0, 0, 0, 0)),
@@ -182,7 +182,7 @@ def test_cache(
 
 
 @pytest.mark.parametrize(
-    "path_source,dir_target",
+    "path_source, dir_target",
     [
         ("/test/path", "uploads"),
         ("/data/models/model.pkl", "models"),
