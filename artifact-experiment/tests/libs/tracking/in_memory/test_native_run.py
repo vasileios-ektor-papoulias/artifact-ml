@@ -8,61 +8,6 @@ from artifact_experiment.libs.tracking.in_memory.native_run import (
 from matplotlib.figure import Figure
 
 
-@pytest.fixture
-def native_run_factory() -> Callable[[Optional[str], Optional[str]], InMemoryNativeRun]:
-    def _factory(
-        experiment_id: Optional[str] = None, run_id: Optional[str] = None
-    ) -> InMemoryNativeRun:
-        if experiment_id is None:
-            experiment_id = "test_experiment"
-        if run_id is None:
-            run_id = "test_run"
-        return InMemoryNativeRun(experiment_id=experiment_id, run_id=run_id)
-
-    return _factory
-
-
-@pytest.fixture
-def sample_score() -> float:
-    return 0.85
-
-
-@pytest.fixture
-def sample_array() -> np.ndarray:
-    return np.array([1, 2, 3, 4, 5])
-
-
-@pytest.fixture
-def sample_plot() -> Figure:
-    fig = Figure()
-    ax = fig.add_subplot(111)
-    ax.plot([1, 2, 3], [1, 4, 2])
-    return fig
-
-
-@pytest.fixture
-def sample_score_collection() -> Dict[str, float]:
-    return {"accuracy": 0.95, "precision": 0.87, "recall": 0.92}
-
-
-@pytest.fixture
-def sample_array_collection() -> Dict[str, np.ndarray]:
-    return {"predictions": np.array([1, 0, 1, 1, 0]), "targets": np.array([1, 0, 1, 0, 1])}
-
-
-@pytest.fixture
-def sample_plot_collection() -> Dict[str, Figure]:
-    fig1 = Figure()
-    ax1 = fig1.add_subplot(111)
-    ax1.plot([1, 2], [1, 2])
-
-    fig2 = Figure()
-    ax2 = fig2.add_subplot(111)
-    ax2.scatter([1, 2], [1, 2])
-
-    return {"line_plot": fig1, "scatter_plot": fig2}
-
-
 @pytest.mark.parametrize(
     "experiment_id,run_id",
     [
