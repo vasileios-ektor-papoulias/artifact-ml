@@ -79,18 +79,14 @@ def test_import_all_from_package_path(
 ):
     os_adjusted_path = _adjust_path_to_os(path)
     os_adjusted_parent = _adjust_path_to_os(expected_parent_in_syspath)
-
     prefixed_mock_structure = _add_prefix_to_package_structure(
         prefix=expected_package_prefix,
         package_structure=mock_package_structure,
     )
     mock_walk_packages.return_value = prefixed_mock_structure
-
     PackageImporter.import_all_from_package_path(path=path, root=root)
-
     assert os_adjusted_parent in map(os.path.normcase, sys.path)
     mock_walk_packages.assert_called_once_with([os_adjusted_path], prefix=expected_package_prefix)
-
     expected_imports = [
         expected_package_prefix + "module1",
         expected_package_prefix + "module2",
