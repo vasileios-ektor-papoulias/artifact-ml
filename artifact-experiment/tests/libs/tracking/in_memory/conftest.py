@@ -1,4 +1,4 @@
-from typing import Callable, Optional
+from typing import Callable, Optional, Tuple
 
 import matplotlib
 import numpy as np
@@ -88,12 +88,15 @@ def populated_adapter(
 @pytest.fixture
 def client_factory(
     adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
-) -> Callable[[Optional[str], Optional[str]], InMemoryTrackingClient]:
+) -> Callable[
+    [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
+]:
     def _factory(
         experiment_id: Optional[str] = None,
         run_id: Optional[str] = None,
-    ) -> InMemoryTrackingClient:
+    ) -> Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]:
         adapter = adapter_factory(experiment_id, run_id)
-        return InMemoryTrackingClient(run=adapter)
+        client = InMemoryTrackingClient(run=adapter)
+        return adapter, client
 
     return _factory

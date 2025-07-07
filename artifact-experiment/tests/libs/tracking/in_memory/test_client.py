@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List, Optional
+from typing import Callable, Dict, List, Optional, Tuple
 
 import pytest
 from artifact_experiment.libs.tracking.in_memory.adapter import (
@@ -21,15 +21,18 @@ from numpy import ndarray
     ],
 )
 def test_init(
-    client_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingClient],
+    client_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
+    ],
     experiment_id: str,
     run_id: str,
 ):
-    client: InMemoryTrackingClient = client_factory(experiment_id, run_id)
-    assert isinstance(client._run, InMemoryTrackingAdapter)
-    assert client._run.experiment_id == experiment_id
-    assert client._run.run_id == run_id
-    assert client._run.is_active is True
+    adapter, client = client_factory(experiment_id, run_id)
+    assert isinstance(client, InMemoryTrackingClient)
+    assert client.run == adapter
+    assert client.run.experiment_id == experiment_id
+    assert client.run.run_id == run_id
+    assert client.run.is_active is True
 
 
 @pytest.mark.parametrize(
@@ -46,13 +49,15 @@ def test_init(
 )
 def test_log_score(
     ls_scores: List[float],
-    client_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingClient],
+    client_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
+    ],
 ):
-    client = client_factory(None, None)
+    adapter, client = client_factory(None, None)
     for idx, score in enumerate(ls_scores, start=1):
         client.log_score(score=score, name=f"score_{idx}")
-    assert client._run.n_scores == len(ls_scores)
-    assert client._run.ls_scores == ls_scores
+    assert adapter.n_scores == len(ls_scores)
+    assert adapter.ls_scores == ls_scores
 
 
 @pytest.mark.parametrize(
@@ -69,13 +74,15 @@ def test_log_score(
 )
 def test_log_array(
     ls_arrays: List[ndarray],
-    client_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingClient],
+    client_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
+    ],
 ):
-    client = client_factory(None, None)
+    adapter, client = client_factory(None, None)
     for idx, array in enumerate(ls_arrays, start=1):
         client.log_array(array=array, name=f"array_{idx}")
-    assert client._run.n_arrays == len(ls_arrays)
-    assert client._run.ls_arrays == ls_arrays
+    assert adapter.n_arrays == len(ls_arrays)
+    assert adapter.ls_arrays == ls_arrays
 
 
 @pytest.mark.parametrize(
@@ -92,13 +99,15 @@ def test_log_array(
 )
 def test_log_plot(
     ls_plots: List[Figure],
-    client_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingClient],
+    client_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
+    ],
 ):
-    client = client_factory(None, None)
+    adapter, client = client_factory(None, None)
     for idx, plot in enumerate(ls_plots, start=1):
         client.log_plot(plot=plot, name=f"plot_{idx}")
-    assert client._run.n_plots == len(ls_plots)
-    assert client._run.ls_plots == ls_plots
+    assert adapter.n_plots == len(ls_plots)
+    assert adapter.ls_plots == ls_plots
 
 
 @pytest.mark.parametrize(
@@ -123,15 +132,17 @@ def test_log_plot(
 )
 def test_log_score_collection(
     ls_score_collections: List[Dict[str, float]],
-    client_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingClient],
+    client_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
+    ],
 ):
-    client = client_factory(None, None)
+    adapter, client = client_factory(None, None)
     for idx, score_collection in enumerate(ls_score_collections, start=1):
         client.log_score_collection(
             score_collection=score_collection, name=f"score_collection_{idx}"
         )
-    assert client._run.n_score_collections == len(ls_score_collections)
-    assert client._run.ls_score_collections == ls_score_collections
+    assert adapter.n_score_collections == len(ls_score_collections)
+    assert adapter.ls_score_collections == ls_score_collections
 
 
 @pytest.mark.parametrize(
@@ -156,15 +167,17 @@ def test_log_score_collection(
 )
 def test_log_array_collection(
     ls_array_collections: List[Dict[str, ndarray]],
-    client_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingClient],
+    client_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
+    ],
 ):
-    client = client_factory(None, None)
+    adapter, client = client_factory(None, None)
     for idx, array_collection in enumerate(ls_array_collections, start=1):
         client.log_array_collection(
             array_collection=array_collection, name=f"array_collection_{idx}"
         )
-    assert client._run.n_array_collections == len(ls_array_collections)
-    assert client._run.ls_array_collections == ls_array_collections
+    assert adapter.n_array_collections == len(ls_array_collections)
+    assert adapter.ls_array_collections == ls_array_collections
 
 
 @pytest.mark.parametrize(
@@ -189,13 +202,15 @@ def test_log_array_collection(
 )
 def test_log_plot_collection(
     ls_plot_collections: List[Dict[str, Figure]],
-    client_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingClient],
+    client_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
+    ],
 ):
-    client = client_factory(None, None)
+    adapter, client = client_factory(None, None)
     for idx, plot_collection in enumerate(ls_plot_collections, start=1):
         client.log_plot_collection(plot_collection=plot_collection, name=f"plot_collection_{idx}")
-    assert client._run.n_plot_collections == len(ls_plot_collections)
-    assert client._run.ls_plot_collections == ls_plot_collections
+    assert adapter.n_plot_collections == len(ls_plot_collections)
+    assert adapter.ls_plot_collections == ls_plot_collections
 
 
 @pytest.mark.parametrize(
@@ -207,13 +222,15 @@ def test_log_plot_collection(
     ],
 )
 def test_upload_delegation(
-    client_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingClient],
+    client_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
+    ],
     path_source: str,
     dir_target: str,
 ):
-    client: InMemoryTrackingClient = client_factory(None, None)
-    assert len(client.uploaded_files) == 0
+    adapter, client = client_factory(None, None)
+    assert len(adapter.uploaded_files) == 0
     client.upload(path_source=path_source, dir_target=dir_target)
-    assert len(client.uploaded_files) == 1
+    assert len(adapter.uploaded_files) == 1
     expected_entry = {"path_source": path_source, "dir_target": dir_target}
-    assert client.uploaded_files[0] == expected_entry
+    assert adapter.uploaded_files[0] == expected_entry
