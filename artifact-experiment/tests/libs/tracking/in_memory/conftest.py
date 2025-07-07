@@ -6,8 +6,12 @@ import pytest
 from artifact_experiment.libs.tracking.in_memory.adapter import (
     InMemoryTrackingAdapter,
 )
-from artifact_experiment.libs.tracking.in_memory.client import InMemoryTrackingClient
-from artifact_experiment.libs.tracking.in_memory.native_run import InMemoryNativeRun
+from artifact_experiment.libs.tracking.in_memory.client import (
+    InMemoryTrackingClient,
+)
+from artifact_experiment.libs.tracking.in_memory.native_run import (
+    InMemoryNativeRun,
+)
 
 matplotlib.use("Agg")
 
@@ -42,7 +46,8 @@ def adapter_factory() -> Callable[[Optional[str], Optional[str]], InMemoryTracki
 
 @pytest.fixture
 def populated_adapter(
-    request, adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter]
+    request,
+    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
 ) -> InMemoryTrackingAdapter:
     adapter = adapter_factory(None, None)
     fixture_names = request.param
