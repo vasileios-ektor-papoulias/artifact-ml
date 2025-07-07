@@ -1,5 +1,4 @@
-from typing import Callable, Optional
-from unittest.mock import Mock
+from typing import Callable, Optional, Tuple
 
 import pytest
 from artifact_experiment.libs.tracking.in_memory.adapter import (
@@ -26,106 +25,105 @@ from artifact_experiment.libs.tracking.in_memory.loggers.scores import (
 
 
 @pytest.fixture
-def mock_adapter() -> InMemoryTrackingAdapter:
-    adapter = Mock(spec=InMemoryTrackingAdapter)
-    adapter.experiment_id = "test_experiment"
-    adapter.run_id = "test_run"
-    adapter.n_scores = 0
-    adapter.n_arrays = 0
-    adapter.n_plots = 0
-    adapter.n_score_collections = 0
-    adapter.n_array_collections = 0
-    adapter.n_plot_collections = 0
-    mock_native_run = Mock()
-    mock_native_run.dict_scores = {}
-    mock_native_run.dict_arrays = {}
-    mock_native_run.dict_plots = {}
-    mock_native_run.dict_score_collections = {}
-    mock_native_run.dict_array_collections = {}
-    mock_native_run.dict_plot_collections = {}
-    adapter._native_run = mock_native_run
-    return adapter
-
-
-@pytest.fixture
 def score_logger_factory(
-    mock_adapter: InMemoryTrackingAdapter,
-) -> Callable[[Optional[InMemoryTrackingAdapter]], InMemoryScoreLogger]:
+    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
+) -> Callable[
+    [Optional[InMemoryTrackingAdapter]], Tuple[InMemoryTrackingAdapter, InMemoryScoreLogger]
+]:
     def _factory(
         adapter: Optional[InMemoryTrackingAdapter] = None,
-    ) -> InMemoryScoreLogger:
+    ) -> Tuple[InMemoryTrackingAdapter, InMemoryScoreLogger]:
         if adapter is None:
-            adapter = mock_adapter
-        return InMemoryScoreLogger(run=adapter)
+            adapter = adapter_factory(None, None)
+        logger = InMemoryScoreLogger(run=adapter)
+        return adapter, logger
 
     return _factory
 
 
 @pytest.fixture
 def array_logger_factory(
-    mock_adapter: InMemoryTrackingAdapter,
-) -> Callable[[Optional[InMemoryTrackingAdapter]], InMemoryArrayLogger]:
+    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
+) -> Callable[
+    [Optional[InMemoryTrackingAdapter]], Tuple[InMemoryTrackingAdapter, InMemoryArrayLogger]
+]:
     def _factory(
         adapter: Optional[InMemoryTrackingAdapter] = None,
-    ) -> InMemoryArrayLogger:
+    ) -> Tuple[InMemoryTrackingAdapter, InMemoryArrayLogger]:
         if adapter is None:
-            adapter = mock_adapter
-        return InMemoryArrayLogger(run=adapter)
+            adapter = adapter_factory(None, None)
+        logger = InMemoryArrayLogger(run=adapter)
+        return adapter, logger
 
     return _factory
 
 
 @pytest.fixture
 def plot_logger_factory(
-    mock_adapter: InMemoryTrackingAdapter,
-) -> Callable[[Optional[InMemoryTrackingAdapter]], InMemoryPlotLogger]:
+    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
+) -> Callable[
+    [Optional[InMemoryTrackingAdapter]], Tuple[InMemoryTrackingAdapter, InMemoryPlotLogger]
+]:
     def _factory(
         adapter: Optional[InMemoryTrackingAdapter] = None,
-    ) -> InMemoryPlotLogger:
+    ) -> Tuple[InMemoryTrackingAdapter, InMemoryPlotLogger]:
         if adapter is None:
-            adapter = mock_adapter
-        return InMemoryPlotLogger(run=adapter)
+            adapter = adapter_factory(None, None)
+        logger = InMemoryPlotLogger(run=adapter)
+        return adapter, logger
 
     return _factory
 
 
 @pytest.fixture
 def score_collection_logger_factory(
-    mock_adapter: InMemoryTrackingAdapter,
-) -> Callable[[Optional[InMemoryTrackingAdapter]], InMemoryScoreCollectionLogger]:
+    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
+) -> Callable[
+    [Optional[InMemoryTrackingAdapter]],
+    Tuple[InMemoryTrackingAdapter, InMemoryScoreCollectionLogger],
+]:
     def _factory(
         adapter: Optional[InMemoryTrackingAdapter] = None,
-    ) -> InMemoryScoreCollectionLogger:
+    ) -> Tuple[InMemoryTrackingAdapter, InMemoryScoreCollectionLogger]:
         if adapter is None:
-            adapter = mock_adapter
-        return InMemoryScoreCollectionLogger(run=adapter)
+            adapter = adapter_factory(None, None)
+        logger = InMemoryScoreCollectionLogger(run=adapter)
+        return adapter, logger
 
     return _factory
 
 
 @pytest.fixture
 def array_collection_logger_factory(
-    mock_adapter: InMemoryTrackingAdapter,
-) -> Callable[[Optional[InMemoryTrackingAdapter]], InMemoryArrayCollectionLogger]:
+    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
+) -> Callable[
+    [Optional[InMemoryTrackingAdapter]],
+    Tuple[InMemoryTrackingAdapter, InMemoryArrayCollectionLogger],
+]:
     def _factory(
         adapter: Optional[InMemoryTrackingAdapter] = None,
-    ) -> InMemoryArrayCollectionLogger:
+    ) -> Tuple[InMemoryTrackingAdapter, InMemoryArrayCollectionLogger]:
         if adapter is None:
-            adapter = mock_adapter
-        return InMemoryArrayCollectionLogger(run=adapter)
+            adapter = adapter_factory(None, None)
+        logger = InMemoryArrayCollectionLogger(run=adapter)
+        return adapter, logger
 
     return _factory
 
 
 @pytest.fixture
 def plot_collection_logger_factory(
-    mock_adapter: InMemoryTrackingAdapter,
-) -> Callable[[Optional[InMemoryTrackingAdapter]], InMemoryPlotCollectionLogger]:
+    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
+) -> Callable[
+    [Optional[InMemoryTrackingAdapter]],
+    Tuple[InMemoryTrackingAdapter, InMemoryPlotCollectionLogger],
+]:
     def _factory(
         adapter: Optional[InMemoryTrackingAdapter] = None,
-    ) -> InMemoryPlotCollectionLogger:
+    ) -> Tuple[InMemoryTrackingAdapter, InMemoryPlotCollectionLogger]:
         if adapter is None:
-            adapter = mock_adapter
-        return InMemoryPlotCollectionLogger(run=adapter)
+            adapter = adapter_factory(None, None)
+        logger = InMemoryPlotCollectionLogger(run=adapter)
+        return adapter, logger
 
     return _factory
