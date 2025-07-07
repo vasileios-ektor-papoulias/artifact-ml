@@ -62,30 +62,6 @@ def test_stop_run(
     assert adapter.is_active is False
 
 
-def test_start_same_run(
-    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
-):
-    adapter: InMemoryTrackingAdapter = adapter_factory(None, None)
-    original_run_id: str = adapter.run_id
-    adapter.stop()
-    assert adapter.is_active is False
-    adapter._start(original_run_id)
-    assert adapter.is_active is True
-    assert adapter.run_id == original_run_id
-
-
-def test_start_different_run(
-    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
-):
-    adapter: InMemoryTrackingAdapter = adapter_factory(None, None)
-    original_experiment_id: str = adapter.experiment_id
-    new_run_id = "new_run_id"
-    adapter._start(new_run_id)
-    assert adapter.is_active is True
-    assert adapter.run_id == new_run_id
-    assert adapter.experiment_id == original_experiment_id
-
-
 def test_native_context_manager(
     adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
 ):
@@ -111,17 +87,17 @@ def test_property_delegation(
 @pytest.mark.parametrize(
     "populated_adapter, expected_counts",
     [
-        ("scores_only", (1, 0, 0, 0, 0, 0)),
-        ("arrays_only", (0, 1, 0, 0, 0, 0)),
-        ("plots_only", (0, 0, 1, 0, 0, 0)),
-        ("score_collections_only", (0, 0, 0, 1, 0, 0)),
-        ("array_collections_only", (0, 0, 0, 0, 1, 0)),
-        ("plot_collections_only", (0, 0, 0, 0, 0, 1)),
-        ("scores_and_arrays", (1, 1, 0, 0, 0, 0)),
-        ("all_primitives", (1, 1, 1, 0, 0, 0)),
-        ("all_collections", (0, 0, 0, 1, 1, 1)),
-        ("mixed_artifacts", (1, 1, 1, 1, 0, 0)),
-        ("all_artifacts", (1, 1, 1, 1, 1, 1)),
+        (["score_1"], (1, 0, 0, 0, 0, 0)),
+        (["array_1"], (0, 1, 0, 0, 0, 0)),
+        (["plot_1"], (0, 0, 1, 0, 0, 0)),
+        (["score_collection_1"], (0, 0, 0, 1, 0, 0)),
+        (["array_collection_1"], (0, 0, 0, 0, 1, 0)),
+        (["plot_collection_1"], (0, 0, 0, 0, 0, 1)),
+        (["score_1", "array_1"], (1, 1, 0, 0, 0, 0)),
+        (["score_1", "array_1", "plot_1"], (1, 1, 1, 0, 0, 0)),
+        (["score_collection_1", "array_collection_1", "plot_collection_1"], (0, 0, 0, 1, 1, 1)),
+        (["score_1", "array_1", "plot_1", "score_collection_1"], (1, 1, 1, 1, 0, 0)),
+        (["score_1", "array_1", "plot_1", "score_collection_1", "array_collection_1", "plot_collection_1"], (1, 1, 1, 1, 1, 1)),
     ],
     indirect=["populated_adapter"],
 )

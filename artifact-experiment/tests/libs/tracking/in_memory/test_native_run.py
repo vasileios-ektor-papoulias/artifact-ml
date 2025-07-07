@@ -81,65 +81,65 @@ def test_dict_scores(
 
 def test_dict_arrays(
     native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryNativeRun],
-    sample_array: np.ndarray,
+    array_1: np.ndarray,
 ):
     native_run: InMemoryNativeRun = native_run_factory(None, None)
     arrays_dict: Dict[str, np.ndarray] = native_run.dict_arrays
     assert len(arrays_dict) == 0
-    arrays_dict["test_array/1"] = sample_array
+    arrays_dict["test_array/1"] = array_1
     assert len(native_run.dict_arrays) == 1
-    np.testing.assert_array_equal(native_run.dict_arrays["test_array/1"], sample_array)
+    np.testing.assert_array_equal(native_run.dict_arrays["test_array/1"], array_1)
 
 
 def test_dict_plots(
     native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryNativeRun],
-    sample_plot: Figure,
+    plot_1: Figure,
 ):
     native_run: InMemoryNativeRun = native_run_factory(None, None)
     plots_dict: Dict[str, Figure] = native_run.dict_plots
     assert len(plots_dict) == 0
-    plots_dict["test_plot/1"] = sample_plot
+    plots_dict["test_plot/1"] = plot_1
     assert len(native_run.dict_plots) == 1
-    assert native_run.dict_plots["test_plot/1"] is sample_plot
+    assert native_run.dict_plots["test_plot/1"] is plot_1
 
 
 def test_dict_score_collections(
     native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryNativeRun],
-    sample_score_collection: Dict[str, float],
+    score_collection_1: Dict[str, float],
 ):
     native_run: InMemoryNativeRun = native_run_factory(None, None)
     collections_dict: Dict[str, Dict[str, float]] = native_run.dict_score_collections
     assert len(collections_dict) == 0
-    collections_dict["test_collection/1"] = sample_score_collection
+    collections_dict["test_collection/1"] = score_collection_1
     assert len(native_run.dict_score_collections) == 1
-    assert native_run.dict_score_collections["test_collection/1"] == sample_score_collection
+    assert native_run.dict_score_collections["test_collection/1"] == score_collection_1
 
 
 def test_dict_array_collections(
     native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryNativeRun],
-    sample_array_collection: Dict[str, np.ndarray],
+    array_collection_1: Dict[str, np.ndarray],
 ):
     native_run: InMemoryNativeRun = native_run_factory(None, None)
     collections_dict: Dict[str, Dict[str, np.ndarray]] = native_run.dict_array_collections
     assert len(collections_dict) == 0
-    collections_dict["test_collection/1"] = sample_array_collection
+    collections_dict["test_collection/1"] = array_collection_1
     assert len(native_run.dict_array_collections) == 1
     stored_collection = native_run.dict_array_collections["test_collection/1"]
-    for key, array in sample_array_collection.items():
+    for key, array in array_collection_1.items():
         np.testing.assert_array_equal(stored_collection[key], array)
 
 
 def test_dict_plot_collections(
     native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryNativeRun],
-    sample_plot_collection: Dict[str, Figure],
+    plot_collection_1: Dict[str, Figure],
 ):
     native_run: InMemoryNativeRun = native_run_factory(None, None)
     collections_dict: Dict[str, Dict[str, Figure]] = native_run.dict_plot_collections
     assert len(collections_dict) == 0
-    collections_dict["test_collection/1"] = sample_plot_collection
+    collections_dict["test_collection/1"] = plot_collection_1
     assert len(native_run.dict_plot_collections) == 1
     stored_collection = native_run.dict_plot_collections["test_collection/1"]
-    for key, plot in sample_plot_collection.items():
+    for key, plot in plot_collection_1.items():
         assert stored_collection[key] is plot
 
 
