@@ -22,8 +22,8 @@ class InMemoryArtifactLogger(
     def _get_relative_path(cls, artifact_name: str) -> str: ...
 
     def _get_root_dir(self) -> str:
-        return f"/tmp/{self._run.experiment_id}/{self._run.run_id}"
+        return f"{self._run.experiment_id}/{self._run.run_id}"
 
     @staticmethod
     def _get_store_key(artifact_path: str, step: int) -> str:
-        return f"{artifact_path}/{step}"
+        return f"{artifact_path}/{step}".replace("\\", "/")
