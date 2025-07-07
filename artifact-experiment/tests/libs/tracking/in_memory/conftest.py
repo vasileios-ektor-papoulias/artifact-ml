@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Optional
+from typing import Callable, Optional
 
 import matplotlib
 import numpy as np
@@ -6,8 +6,8 @@ import pytest
 from artifact_experiment.libs.tracking.in_memory.adapter import (
     InMemoryTrackingAdapter,
 )
+from artifact_experiment.libs.tracking.in_memory.client import InMemoryTrackingClient
 from artifact_experiment.libs.tracking.in_memory.native_run import InMemoryNativeRun
-from matplotlib.figure import Figure
 
 matplotlib.use("Agg")
 
@@ -45,7 +45,7 @@ def populated_adapter(
     request, adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter]
 ) -> InMemoryTrackingAdapter:
     adapter = adapter_factory(None, None)
-    fixture_names = request.getfixturevalue(request.param)
+    fixture_names = request.param
 
     with adapter.native() as native_run:
         score_idx = array_idx = plot_idx = collection_idx = 1
@@ -81,113 +81,14 @@ def populated_adapter(
 
 
 @pytest.fixture
-def sample_score() -> float:
-    return 0.85
+def client_factory(
+    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
+) -> Callable[[Optional[str], Optional[str]], InMemoryTrackingClient]:
+    def _factory(
+        experiment_id: Optional[str] = None,
+        run_id: Optional[str] = None,
+    ) -> InMemoryTrackingClient:
+        adapter = adapter_factory(experiment_id, run_id)
+        return InMemoryTrackingClient(run=adapter)
 
-
-@pytest.fixture
-def sample_array() -> np.ndarray:
-    return np.array([1, 2, 3, 4, 5])
-
-
-@pytest.fixture
-def sample_plot() -> Figure:
-    fig = Figure()
-    ax = fig.add_subplot(111)
-    ax.plot([1, 2, 3], [4, 5, 6])
-    return fig
-
-
-@pytest.fixture
-def sample_score_collection() -> Dict[str, float]:
-    return {"accuracy": 0.95, "precision": 0.87, "recall": 0.92}
-
-
-@pytest.fixture
-def sample_array_collection() -> Dict[str, np.ndarray]:
-    return {"predictions": np.array([1, 0, 1, 1, 0]), "targets": np.array([1, 0, 1, 0, 1])}
-
-
-@pytest.fixture
-def sample_plot_collection() -> Dict[str, Figure]:
-    fig1 = Figure()
-    ax1 = fig1.add_subplot(111)
-    ax1.plot([1, 2], [1, 2])
-
-    fig2 = Figure()
-    ax2 = fig2.add_subplot(111)
-    ax2.scatter([1, 2], [1, 2])
-
-    return {"line_plot": fig1, "scatter_plot": fig2}
-
-
-@pytest.fixture
-def scores_only():
-    return ["sample_score"]
-
-
-@pytest.fixture
-def arrays_only():
-    return ["sample_array"]
-
-
-@pytest.fixture
-def plots_only():
-    return ["sample_plot"]
-
-
-@pytest.fixture
-def score_collections_only():
-    return ["sample_score_collection"]
-
-
-@pytest.fixture
-def array_collections_only():
-    return ["sample_array_collection"]
-
-
-@pytest.fixture
-def plot_collections_only():
-    return ["sample_plot_collection"]
-
-
-@pytest.fixture
-def scores_and_arrays():
-    return ["sample_score", "sample_array"]
-
-
-@pytest.fixture
-def scores_and_plots():
-    return ["sample_score", "sample_plot"]
-
-
-@pytest.fixture
-def arrays_and_plots():
-    return ["sample_array", "sample_plot"]
-
-
-@pytest.fixture
-def all_primitives():
-    return ["sample_score", "sample_array", "sample_plot"]
-
-
-@pytest.fixture
-def all_collections():
-    return ["sample_score_collection", "sample_array_collection", "sample_plot_collection"]
-
-
-@pytest.fixture
-def mixed_artifacts():
-    return ["sample_score", "sample_array", "sample_plot", "sample_score_collection"]
-
-
-@pytest.fixture
-def all_artifacts():
-    return [
-        "sample_score",
-        "sample_array",
-        "sample_plot",
-        "sample_score_collection",
-        "sample_array_collection",
-        "sample_plot_collection",
-    ]
+    return _factory
