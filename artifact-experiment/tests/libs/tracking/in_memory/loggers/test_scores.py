@@ -31,7 +31,6 @@ def test_log(
     for idx, score in enumerate(ls_scores, start=1):
         logger.log(artifact_name=f"score_{idx}", artifact=score)
     assert adapter.n_scores == len(ls_scores)
-    print(adapter.dict_scores)
     for idx, expected_score in enumerate(ls_scores, start=1):
         key = f"test_experiment/test_run/scores/score_{idx}/{idx}"
         assert adapter._native_run.dict_scores[key] == expected_score
