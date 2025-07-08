@@ -11,7 +11,7 @@ matplotlib.use("Agg")
 
 
 @pytest.fixture
-def artifacts(request) -> List[ArtifactResult]:
+def ls_artifacts(request) -> List[ArtifactResult]:
     return [request.getfixturevalue(name) for name in request.param]
 
 
