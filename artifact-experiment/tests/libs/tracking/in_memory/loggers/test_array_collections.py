@@ -2,7 +2,7 @@ from typing import Callable, Dict, List, Optional, Tuple
 
 import pytest
 from artifact_experiment.libs.tracking.in_memory.adapter import (
-    InMemoryTrackingAdapter,
+    InMemoryRunAdapter,
 )
 from artifact_experiment.libs.tracking.in_memory.loggers.array_collections import (
     InMemoryArrayCollectionLogger,
@@ -33,8 +33,8 @@ from numpy import ndarray
 def test_log(
     ls_array_collections: List[Dict[str, ndarray]],
     array_collection_logger_factory: Callable[
-        [Optional[InMemoryTrackingAdapter]],
-        Tuple[InMemoryTrackingAdapter, InMemoryArrayCollectionLogger],
+        [Optional[InMemoryRunAdapter]],
+        Tuple[InMemoryRunAdapter, InMemoryArrayCollectionLogger],
     ],
 ):
     adapter, logger = array_collection_logger_factory(None)

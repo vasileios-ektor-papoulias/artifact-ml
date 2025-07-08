@@ -2,7 +2,7 @@ from typing import Callable, List, Optional, Tuple
 
 import pytest
 from artifact_experiment.libs.tracking.in_memory.adapter import (
-    InMemoryTrackingAdapter,
+    InMemoryRunAdapter,
 )
 from artifact_experiment.libs.tracking.in_memory.loggers.plots import (
     InMemoryPlotLogger,
@@ -25,7 +25,7 @@ from matplotlib.figure import Figure
 def test_log(
     ls_plots: List[Figure],
     plot_logger_factory: Callable[
-        [Optional[InMemoryTrackingAdapter]], Tuple[InMemoryTrackingAdapter, InMemoryPlotLogger]
+        [Optional[InMemoryRunAdapter]], Tuple[InMemoryRunAdapter, InMemoryPlotLogger]
     ],
 ):
     adapter, logger = plot_logger_factory(None)

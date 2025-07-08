@@ -5,14 +5,14 @@ from artifact_core.base.artifact_dependencies import ArtifactResult
 
 from artifact_experiment.base.tracking.logger import ArtifactLogger
 from artifact_experiment.libs.tracking.in_memory.adapter import (
-    InMemoryTrackingAdapter,
+    InMemoryRunAdapter,
 )
 
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 
 class InMemoryArtifactLogger(
-    ArtifactLogger[ArtifactResultT, InMemoryTrackingAdapter], Generic[ArtifactResultT]
+    ArtifactLogger[ArtifactResultT, InMemoryRunAdapter], Generic[ArtifactResultT]
 ):
     @abstractmethod
     def _append(self, artifact_path: str, artifact: ArtifactResultT): ...

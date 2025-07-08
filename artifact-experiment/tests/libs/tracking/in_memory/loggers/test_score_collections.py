@@ -2,7 +2,7 @@ from typing import Callable, Dict, List, Optional, Tuple
 
 import pytest
 from artifact_experiment.libs.tracking.in_memory.adapter import (
-    InMemoryTrackingAdapter,
+    InMemoryRunAdapter,
 )
 from artifact_experiment.libs.tracking.in_memory.loggers.score_collections import (  # noqa: E501
     InMemoryScoreCollectionLogger,
@@ -32,8 +32,8 @@ from artifact_experiment.libs.tracking.in_memory.loggers.score_collections impor
 def test_log(
     ls_score_collections: List[Dict[str, float]],
     score_collection_logger_factory: Callable[
-        [Optional[InMemoryTrackingAdapter]],
-        Tuple[InMemoryTrackingAdapter, InMemoryScoreCollectionLogger],
+        [Optional[InMemoryRunAdapter]],
+        Tuple[InMemoryRunAdapter, InMemoryScoreCollectionLogger],
     ],
 ):
     adapter, logger = score_collection_logger_factory(None)

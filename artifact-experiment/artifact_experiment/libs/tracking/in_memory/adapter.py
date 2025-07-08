@@ -5,11 +5,11 @@ from numpy import ndarray
 
 from artifact_experiment.base.tracking.adapter import RunAdapter
 from artifact_experiment.libs.tracking.in_memory.native_run import (
-    InMemoryNativeRun,
+    InMemoryRun,
 )
 
 
-class InMemoryTrackingAdapter(RunAdapter[InMemoryNativeRun]):
+class InMemoryRunAdapter(RunAdapter[InMemoryRun]):
     @property
     def experiment_id(self) -> str:
         return self._native_run.experiment_id
@@ -111,8 +111,8 @@ class InMemoryTrackingAdapter(RunAdapter[InMemoryNativeRun]):
         return dict_upload_entry
 
     @classmethod
-    def _build_native_run(cls, experiment_id: str, run_id: str) -> InMemoryNativeRun:
-        return InMemoryNativeRun(experiment_id=experiment_id, run_id=run_id)
+    def _build_native_run(cls, experiment_id: str, run_id: str) -> InMemoryRun:
+        return InMemoryRun(experiment_id=experiment_id, run_id=run_id)
 
     def _start(self, run_id: str):
         if self.run_id != run_id:

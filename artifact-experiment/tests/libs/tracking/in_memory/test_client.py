@@ -2,7 +2,7 @@ from typing import Callable, Dict, List, Optional, Tuple
 
 import pytest
 from artifact_experiment.libs.tracking.in_memory.adapter import (
-    InMemoryTrackingAdapter,
+    InMemoryRunAdapter,
 )
 from artifact_experiment.libs.tracking.in_memory.client import (
     InMemoryTrackingClient,
@@ -22,7 +22,7 @@ from numpy import ndarray
 )
 def test_init(
     client_factory: Callable[
-        [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
+        [Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryTrackingClient]
     ],
     experiment_id: str,
     run_id: str,
@@ -50,7 +50,7 @@ def test_init(
 def test_log_score(
     ls_scores: List[float],
     client_factory: Callable[
-        [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
+        [Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryTrackingClient]
     ],
 ):
     adapter, client = client_factory(None, None)
@@ -75,7 +75,7 @@ def test_log_score(
 def test_log_array(
     ls_arrays: List[ndarray],
     client_factory: Callable[
-        [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
+        [Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryTrackingClient]
     ],
 ):
     adapter, client = client_factory(None, None)
@@ -100,7 +100,7 @@ def test_log_array(
 def test_log_plot(
     ls_plots: List[Figure],
     client_factory: Callable[
-        [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
+        [Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryTrackingClient]
     ],
 ):
     adapter, client = client_factory(None, None)
@@ -133,7 +133,7 @@ def test_log_plot(
 def test_log_score_collection(
     ls_score_collections: List[Dict[str, float]],
     client_factory: Callable[
-        [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
+        [Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryTrackingClient]
     ],
 ):
     adapter, client = client_factory(None, None)
@@ -168,7 +168,7 @@ def test_log_score_collection(
 def test_log_array_collection(
     ls_array_collections: List[Dict[str, ndarray]],
     client_factory: Callable[
-        [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
+        [Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryTrackingClient]
     ],
 ):
     adapter, client = client_factory(None, None)
@@ -203,7 +203,7 @@ def test_log_array_collection(
 def test_log_plot_collection(
     ls_plot_collections: List[Dict[str, Figure]],
     client_factory: Callable[
-        [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
+        [Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryTrackingClient]
     ],
 ):
     adapter, client = client_factory(None, None)
@@ -223,7 +223,7 @@ def test_log_plot_collection(
 )
 def test_upload_delegation(
     client_factory: Callable[
-        [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
+        [Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryTrackingClient]
     ],
     path_source: str,
     dir_target: str,

@@ -6,8 +6,8 @@ from matplotlib.figure import Figure
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_experiment.base.tracking.logger import ArtifactLogger
 from artifact_experiment.libs.tracking.in_memory.adapter import (
-    InMemoryNativeRun,
-    InMemoryTrackingAdapter,
+    InMemoryRun,
+    InMemoryRunAdapter,
 )
 from artifact_experiment.libs.tracking.in_memory.loggers.array_collections import (
     InMemoryArrayCollectionLogger,
@@ -31,20 +31,20 @@ from artifact_experiment.libs.tracking.in_memory.loggers.scores import (
 InMemoryTrackingClientT = TypeVar("InMemoryTrackingClientT", bound="InMemoryTrackingClient")
 
 
-class InMemoryTrackingClient(TrackingClient[InMemoryTrackingAdapter]):
+class InMemoryTrackingClient(TrackingClient[InMemoryRunAdapter]):
     @classmethod
     def build(
         cls: Type[InMemoryTrackingClientT], experiment_id: str, run_id: Optional[str] = None
     ) -> InMemoryTrackingClientT:
-        run = InMemoryTrackingAdapter.build(experiment_id=experiment_id, run_id=run_id)
+        run = InMemoryRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
         client = cls._build(run=run)
         return client
 
     @classmethod
     def from_native_run(
-        cls: Type[InMemoryTrackingClientT], native_run: InMemoryNativeRun
+        cls: Type[InMemoryTrackingClientT], native_run: InMemoryRun
     ) -> InMemoryTrackingClientT:
-        run = InMemoryTrackingAdapter.from_native_run(native_run=native_run)
+        run = InMemoryRunAdapter.from_native_run(native_run=native_run)
         client = cls._build(run=run)
         return client
 
@@ -54,36 +54,36 @@ class InMemoryTrackingClient(TrackingClient[InMemoryTrackingAdapter]):
 
     @staticmethod
     def _get_score_logger(
-        run: InMemoryTrackingAdapter,
-    ) -> ArtifactLogger[float, InMemoryTrackingAdapter]:
+        run: InMemoryRunAdapter,
+    ) -> ArtifactLogger[float, InMemoryRunAdapter]:
         return InMemoryScoreLogger(run=run)
 
     @staticmethod
     def _get_array_logger(
-        run: InMemoryTrackingAdapter,
-    ) -> ArtifactLogger[np.ndarray, InMemoryTrackingAdapter]:
+        run: InMemoryRunAdapter,
+    ) -> ArtifactLogger[np.ndarray, InMemoryRunAdapter]:
         return InMemoryArrayLogger(run=run)
 
     @staticmethod
     def _get_plot_logger(
-        run: InMemoryTrackingAdapter,
-    ) -> ArtifactLogger[Figure, InMemoryTrackingAdapter]:
+        run: InMemoryRunAdapter,
+    ) -> ArtifactLogger[Figure, InMemoryRunAdapter]:
         return InMemoryPlotLogger(run=run)
 
     @staticmethod
     def _get_score_collection_logger(
-        run: InMemoryTrackingAdapter,
-    ) -> ArtifactLogger[Dict[str, float], InMemoryTrackingAdapter]:
+        run: InMemoryRunAdapter,
+    ) -> ArtifactLogger[Dict[str, float], InMemoryRunAdapter]:
         return InMemoryScoreCollectionLogger(run=run)
 
     @staticmethod
     def _get_array_collection_logger(
-        run: InMemoryTrackingAdapter,
-    ) -> ArtifactLogger[Dict[str, np.ndarray], InMemoryTrackingAdapter]:
+        run: InMemoryRunAdapter,
+    ) -> ArtifactLogger[Dict[str, np.ndarray], InMemoryRunAdapter]:
         return InMemoryArrayCollectionLogger(run=run)
 
     @staticmethod
     def _get_plot_collection_logger(
-        run: InMemoryTrackingAdapter,
-    ) -> ArtifactLogger[Dict[str, Figure], InMemoryTrackingAdapter]:
+        run: InMemoryRunAdapter,
+    ) -> ArtifactLogger[Dict[str, Figure], InMemoryRunAdapter]:
         return InMemoryPlotCollectionLogger(run=run)

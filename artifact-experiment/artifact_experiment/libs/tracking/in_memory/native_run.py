@@ -4,7 +4,7 @@ from matplotlib.figure import Figure
 from numpy import ndarray
 
 
-class InMemoryNativeRun:
+class InMemoryRun:
     def __init__(self, experiment_id: str, run_id: str):
         self._is_active = True
         self._experiment_id = experiment_id

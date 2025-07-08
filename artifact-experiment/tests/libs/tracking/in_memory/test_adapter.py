@@ -3,10 +3,10 @@ from uuid import UUID
 
 import pytest
 from artifact_experiment.libs.tracking.in_memory.adapter import (
-    InMemoryTrackingAdapter,
+    InMemoryRunAdapter,
 )
 from artifact_experiment.libs.tracking.in_memory.native_run import (
-    InMemoryNativeRun,
+    InMemoryRun,
 )
 
 STANDARD_UUID_LENGTH = 36
@@ -29,7 +29,7 @@ def test_build(
     experiment_id: str,
     run_id: Optional[str],
 ):
-    adapter: InMemoryTrackingAdapter = InMemoryTrackingAdapter.build(
+    adapter: InMemoryRunAdapter = InMemoryRunAdapter.build(
         experiment_id=experiment_id, run_id=run_id
     )
     assert adapter.experiment_id == experiment_id
@@ -44,39 +44,39 @@ def test_build(
 
 
 def test_from_native_run(
-    native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryNativeRun],
+    native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
 ):
-    native_run: InMemoryNativeRun = native_run_factory("test_exp", "test_run")
-    adapter: InMemoryTrackingAdapter = InMemoryTrackingAdapter.from_native_run(native_run)
+    native_run: InMemoryRun = native_run_factory("test_exp", "test_run")
+    adapter: InMemoryRunAdapter = InMemoryRunAdapter.from_native_run(native_run)
     assert adapter.experiment_id == "test_exp"
     assert adapter.run_id == "test_run"
     assert adapter.is_active is True
 
 
 def test_stop_run(
-    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
+    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryRunAdapter],
 ):
-    adapter: InMemoryTrackingAdapter = adapter_factory(None, None)
+    adapter: InMemoryRunAdapter = adapter_factory(None, None)
     assert adapter.is_active is True
     adapter.stop()
     assert adapter.is_active is False
 
 
 def test_native_context_manager(
-    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
+    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryRunAdapter],
 ):
-    adapter: InMemoryTrackingAdapter = adapter_factory(None, None)
+    adapter: InMemoryRunAdapter = adapter_factory(None, None)
     with adapter.native() as native_run:
-        assert isinstance(native_run, InMemoryNativeRun)
+        assert isinstance(native_run, InMemoryRun)
         assert native_run.experiment_id == adapter.experiment_id
         assert native_run.run_id == adapter.run_id
 
 
 def test_property_delegation(
-    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
+    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryRunAdapter],
 ):
-    adapter: InMemoryTrackingAdapter = adapter_factory(None, None)
-    native_run: InMemoryNativeRun = adapter._native_run
+    adapter: InMemoryRunAdapter = adapter_factory(None, None)
+    native_run: InMemoryRun = adapter._native_run
     assert adapter.experiment_id == native_run.experiment_id
     assert adapter.run_id == native_run.run_id
     assert adapter.is_active == native_run.is_active
@@ -97,12 +97,22 @@ def test_property_delegation(
         (["score_1", "array_1", "plot_1"], (1, 1, 1, 0, 0, 0)),
         (["score_collection_1", "array_collection_1", "plot_collection_1"], (0, 0, 0, 1, 1, 1)),
         (["score_1", "array_1", "plot_1", "score_collection_1"], (1, 1, 1, 1, 0, 0)),
-        (["score_1", "array_1", "plot_1", "score_collection_1", "array_collection_1", "plot_collection_1"], (1, 1, 1, 1, 1, 1)),
+        (
+            [
+                "score_1",
+                "array_1",
+                "plot_1",
+                "score_collection_1",
+                "array_collection_1",
+                "plot_collection_1",
+            ],
+            (1, 1, 1, 1, 1, 1),
+        ),
     ],
     indirect=["populated_adapter"],
 )
 def test_cache(
-    populated_adapter: InMemoryTrackingAdapter,
+    populated_adapter: InMemoryRunAdapter,
     expected_counts: tuple,
 ):
     exp_scores, exp_arrays, exp_plots, exp_score_coll, exp_array_coll, exp_plot_coll = (
@@ -168,11 +178,11 @@ def test_cache(
     ],
 )
 def test_upload(
-    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
+    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryRunAdapter],
     path_source: str,
     dir_target: str,
 ):
-    adapter: InMemoryTrackingAdapter = adapter_factory(None, None)
+    adapter: InMemoryRunAdapter = adapter_factory(None, None)
     assert len(adapter.uploaded_files) == 0
     result = adapter.upload(path_source=path_source, dir_target=dir_target)
     assert result is None

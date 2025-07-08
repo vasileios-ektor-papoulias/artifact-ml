@@ -4,42 +4,40 @@ import matplotlib
 import numpy as np
 import pytest
 from artifact_experiment.libs.tracking.in_memory.adapter import (
-    InMemoryTrackingAdapter,
+    InMemoryRunAdapter,
 )
 from artifact_experiment.libs.tracking.in_memory.client import (
     InMemoryTrackingClient,
 )
 from artifact_experiment.libs.tracking.in_memory.native_run import (
-    InMemoryNativeRun,
+    InMemoryRun,
 )
 
 matplotlib.use("Agg")
 
 
 @pytest.fixture
-def native_run_factory() -> Callable[[Optional[str], Optional[str]], InMemoryNativeRun]:
-    def _factory(
-        experiment_id: Optional[str] = None, run_id: Optional[str] = None
-    ) -> InMemoryNativeRun:
+def native_run_factory() -> Callable[[Optional[str], Optional[str]], InMemoryRun]:
+    def _factory(experiment_id: Optional[str] = None, run_id: Optional[str] = None) -> InMemoryRun:
         if experiment_id is None:
             experiment_id = "test_experiment"
         if run_id is None:
             run_id = "test_run"
-        return InMemoryNativeRun(experiment_id=experiment_id, run_id=run_id)
+        return InMemoryRun(experiment_id=experiment_id, run_id=run_id)
 
     return _factory
 
 
 @pytest.fixture
-def adapter_factory() -> Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter]:
+def adapter_factory() -> Callable[[Optional[str], Optional[str]], InMemoryRunAdapter]:
     def _factory(
         experiment_id: Optional[str] = None, run_id: Optional[str] = None
-    ) -> InMemoryTrackingAdapter:
+    ) -> InMemoryRunAdapter:
         if experiment_id is None:
             experiment_id = "test_experiment"
         if run_id is None:
             run_id = "test_run"
-        return InMemoryTrackingAdapter.build(experiment_id=experiment_id, run_id=run_id)
+        return InMemoryRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
 
     return _factory
 
@@ -47,8 +45,8 @@ def adapter_factory() -> Callable[[Optional[str], Optional[str]], InMemoryTracki
 @pytest.fixture
 def populated_adapter(
     request,
-    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
-) -> InMemoryTrackingAdapter:
+    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryRunAdapter],
+) -> InMemoryRunAdapter:
     adapter = adapter_factory(None, None)
     fixture_names = request.param
 
@@ -87,14 +85,12 @@ def populated_adapter(
 
 @pytest.fixture
 def client_factory(
-    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryTrackingAdapter],
-) -> Callable[
-    [Optional[str], Optional[str]], Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]
-]:
+    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryRunAdapter],
+) -> Callable[[Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryTrackingClient]]:
     def _factory(
         experiment_id: Optional[str] = None,
         run_id: Optional[str] = None,
-    ) -> Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]:
+    ) -> Tuple[InMemoryRunAdapter, InMemoryTrackingClient]:
         adapter = adapter_factory(experiment_id, run_id)
         client = InMemoryTrackingClient.from_run(run=adapter)
         return adapter, client
