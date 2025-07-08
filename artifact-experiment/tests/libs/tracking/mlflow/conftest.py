@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import matplotlib
 import numpy as np
 import pytest
-from artifact_experiment.libs.tracking.mlflow.adapter import MlflowNativeClient, MlflowRunAdapter
+from artifact_experiment.libs.tracking.mlflow.adapter import MlflowNativeRun, MlflowRunAdapter
 from artifact_experiment.libs.tracking.mlflow.client import MlflowTrackingClient
 from pytest_mock import MockerFixture
 
@@ -39,25 +39,25 @@ def mock_mlflow_native_run(mocker: MockerFixture) -> MagicMock:
 @pytest.fixture
 def native_run_factory(
     mock_mlflow_native_client: MagicMock, mock_mlflow_native_run: MagicMock
-) -> Callable[[Optional[str], Optional[str]], MlflowNativeClient]:
+) -> Callable[[Optional[str], Optional[str]], MlflowNativeRun]:
     def _factory(
         experiment_id: Optional[str] = None,
         run_id: Optional[str] = None,
-    ) -> MlflowNativeClient:
+    ) -> MlflowNativeRun:
         experiment_id = experiment_id or "test_experiment"
         run_id = run_id or "test_run"
         mock_mlflow_native_client.get_experiment.return_value.name = experiment_id
         mock_mlflow_native_run.info.experiment_id = experiment_id
         mock_mlflow_native_run.info.run_id = f"{run_id}_uuid"
         mock_mlflow_native_run.info.run_name = run_id
-        return MlflowNativeClient(client=mock_mlflow_native_client, run=mock_mlflow_native_run)
+        return MlflowNativeRun(client=mock_mlflow_native_client, run=mock_mlflow_native_run)
 
     return _factory
 
 
 @pytest.fixture
 def adapter_factory(
-    native_run_factory: Callable[[Optional[str], Optional[str]], MlflowNativeClient],
+    native_run_factory: Callable[[Optional[str], Optional[str]], MlflowNativeRun],
 ) -> Callable[[Optional[str], Optional[str]], MlflowRunAdapter]:
     def _factory(
         experiment_id: Optional[str] = None,
