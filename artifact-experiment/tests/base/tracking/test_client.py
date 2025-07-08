@@ -52,6 +52,73 @@ def test_init(
 
 
 @pytest.mark.parametrize(
+    "experiment_id, run_id",
+    [
+        ("exp1", "run1"),
+        ("my_experiment", "my_run"),
+        ("test-experiment", "test-run"),
+        ("experiment_with_underscores", "run_with_underscores"),
+    ],
+)
+def test_from_run(
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[DummyNativeRun, DummyRunAdapter]
+    ],
+    experiment_id: str,
+    run_id: str,
+):
+    _, adapter = adapter_factory(experiment_id, run_id)
+    client = DummyTrackingClient.from_run(run=adapter)
+    assert isinstance(client, DummyTrackingClient)
+    assert client.run == adapter
+    assert client.run.experiment_id == experiment_id
+    assert client.run.run_id == run_id
+    assert client.run.is_active is True
+
+
+@pytest.mark.parametrize(
+    "experiment_id, run_id",
+    [
+        ("exp1", "run1"),
+        ("my_experiment", "my_run"),
+        ("test-experiment", "test-run"),
+        ("experiment_with_underscores", "run_with_underscores"),
+    ],
+)
+def test_from_native_run(
+    native_run_factory: Callable[[Optional[str], Optional[str]], DummyNativeRun],
+    experiment_id: str,
+    run_id: str,
+):
+    native_run = native_run_factory(experiment_id, run_id)
+    client = DummyTrackingClient.from_native_run(native_run=native_run)
+    assert isinstance(client, DummyTrackingClient)
+    assert client.run.experiment_id == experiment_id
+    assert client.run.run_id == run_id
+    assert client.run.is_active is True
+
+
+@pytest.mark.parametrize(
+    "experiment_id, run_id",
+    [
+        ("exp1", "run1"),
+        ("my_experiment", "my_run"),
+        ("test-experiment", "test-run"),
+        ("experiment_with_underscores", "run_with_underscores"),
+    ],
+)
+def test_build(
+    experiment_id: str,
+    run_id: str,
+):
+    client = DummyTrackingClient.build(experiment_id=experiment_id, run_id=run_id)
+    assert isinstance(client, DummyTrackingClient)
+    assert client.run.experiment_id == experiment_id
+    assert client.run.run_id == run_id
+    assert client.run.is_active is True
+
+
+@pytest.mark.parametrize(
     "ls_scores",
     [
         ([]),
@@ -73,13 +140,13 @@ def test_log_score(
 ):
     _, logger, client = client_factory(None, None)
     logger.log = mocker.MagicMock()
-    for idx, score in enumerate(ls_scores, start=1):
+    for idx, score in enumerate(ls_scores):
         name = _get_name(key="score", idx=idx)
         client.log_score(score=score, name=name)
     assert logger.log.call_count == len(ls_scores)
     for idx, call_args in enumerate(logger.log.call_args_list):
         score = ls_scores[idx]
-        name = _get_name(key="score", idx=idx + 1)
+        name = _get_name(key="score", idx=idx)
         assert call_args.kwargs == {"artifact_name": name, "artifact": score}
 
 
@@ -105,16 +172,13 @@ def test_log_array(
 ):
     _, logger, client = client_factory(None, None)
     logger.log = mocker.MagicMock()
-
-    for idx, array in enumerate(ls_arrays, start=1):
+    for idx, array in enumerate(ls_arrays):
         name = _get_name("array", idx)
         client.log_array(array=array, name=name)
-
     assert logger.log.call_count == len(ls_arrays)
-
     for idx, call_args in enumerate(logger.log.call_args_list):
         array = ls_arrays[idx]
-        name = _get_name("array", idx + 1)
+        name = _get_name("array", idx)
         assert call_args.kwargs == {"artifact_name": name, "artifact": array}
 
 
@@ -141,15 +205,13 @@ def test_log_plot(
     _, logger, client = client_factory(None, None)
     logger.log = mocker.MagicMock()
 
-    for idx, plot in enumerate(ls_plots, start=1):
+    for idx, plot in enumerate(ls_plots):
         name = _get_name("plot", idx)
         client.log_plot(plot=plot, name=name)
-
     assert logger.log.call_count == len(ls_plots)
-
     for idx, call_args in enumerate(logger.log.call_args_list):
         plot = ls_plots[idx]
-        name = _get_name("plot", idx + 1)
+        name = _get_name("plot", idx)
         assert call_args.kwargs == {"artifact_name": name, "artifact": plot}
 
 
@@ -183,16 +245,13 @@ def test_log_score_collection(
 ):
     _, logger, client = client_factory(None, None)
     logger.log = mocker.MagicMock()
-
-    for idx, score_collection in enumerate(ls_score_collections, start=1):
+    for idx, score_collection in enumerate(ls_score_collections):
         name = _get_name("score_collection", idx)
         client.log_score_collection(score_collection=score_collection, name=name)
-
     assert logger.log.call_count == len(ls_score_collections)
-
     for idx, call_args in enumerate(logger.log.call_args_list):
         collection = ls_score_collections[idx]
-        name = _get_name("score_collection", idx + 1)
+        name = _get_name("score_collection", idx)
         assert call_args.kwargs == {"artifact_name": name, "artifact": collection}
 
 
@@ -226,16 +285,13 @@ def test_log_array_collection(
 ):
     _, logger, client = client_factory(None, None)
     logger.log = mocker.MagicMock()
-
-    for idx, array_collection in enumerate(ls_array_collections, start=1):
+    for idx, array_collection in enumerate(ls_array_collections):
         name = _get_name("array_collection", idx)
         client.log_array_collection(array_collection=array_collection, name=name)
-
     assert logger.log.call_count == len(ls_array_collections)
-
     for idx, call_args in enumerate(logger.log.call_args_list):
         collection = ls_array_collections[idx]
-        name = _get_name("array_collection", idx + 1)
+        name = _get_name("array_collection", idx)
         assert call_args.kwargs == {"artifact_name": name, "artifact": collection}
 
 
@@ -269,16 +325,13 @@ def test_log_plot_collection(
 ):
     _, logger, client = client_factory(None, None)
     logger.log = mocker.MagicMock()
-
-    for idx, plot_collection in enumerate(ls_plot_collections, start=1):
+    for idx, plot_collection in enumerate(ls_plot_collections):
         name = _get_name("plot_collection", idx)
         client.log_plot_collection(plot_collection=plot_collection, name=name)
-
     assert logger.log.call_count == len(ls_plot_collections)
-
     for idx, call_args in enumerate(logger.log.call_args_list):
         collection = ls_plot_collections[idx]
-        name = _get_name("plot_collection", idx + 1)
+        name = _get_name("plot_collection", idx)
         assert call_args.kwargs == {"artifact_name": name, "artifact": collection}
 
 
