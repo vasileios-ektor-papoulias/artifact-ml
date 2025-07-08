@@ -46,13 +46,15 @@ def adapter_factory() -> Callable[
 
 @pytest.fixture
 def logger_factory(
-    adapter_factory: Callable[[Optional[str], Optional[str]], DummyRunAdapter],
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[DummyNativeRun, DummyRunAdapter]
+    ],
 ) -> Callable[[Optional[DummyRunAdapter]], Tuple[DummyRunAdapter, DummyArtifactLogger]]:
     def _factory(
         adapter: Optional[DummyRunAdapter] = None,
     ) -> Tuple[DummyRunAdapter, DummyArtifactLogger]:
         if adapter is None:
-            adapter = adapter_factory(None, None)
+            _, adapter = adapter_factory(None, None)
         logger = DummyArtifactLogger(run=adapter)
         return adapter, logger
 
