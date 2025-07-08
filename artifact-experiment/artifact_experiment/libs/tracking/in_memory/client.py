@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional, Type, TypeVar
 
 import numpy as np
 from matplotlib.figure import Figure
@@ -6,6 +6,7 @@ from matplotlib.figure import Figure
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_experiment.base.tracking.logger import ArtifactLogger
 from artifact_experiment.libs.tracking.in_memory.adapter import (
+    InMemoryNativeRun,
     InMemoryTrackingAdapter,
 )
 from artifact_experiment.libs.tracking.in_memory.loggers.array_collections import (
@@ -27,10 +28,25 @@ from artifact_experiment.libs.tracking.in_memory.loggers.scores import (
     InMemoryScoreLogger,
 )
 
+InMemoryTrackingClientT = TypeVar("InMemoryTrackingClientT", bound="InMemoryTrackingClient")
+
 
 class InMemoryTrackingClient(TrackingClient[InMemoryTrackingAdapter]):
-    def __init__(self, run: InMemoryTrackingAdapter):
-        super().__init__(run)
+    @classmethod
+    def build(
+        cls: Type[InMemoryTrackingClientT], experiment_id: str, run_id: Optional[str] = None
+    ) -> InMemoryTrackingClientT:
+        run = InMemoryTrackingAdapter.build(experiment_id=experiment_id, run_id=run_id)
+        client = cls._build(run=run)
+        return client
+
+    @classmethod
+    def from_native_run(
+        cls: Type[InMemoryTrackingClientT], native_run: InMemoryNativeRun
+    ) -> InMemoryTrackingClientT:
+        run = InMemoryTrackingAdapter.from_native_run(native_run=native_run)
+        client = cls._build(run=run)
+        return client
 
     @property
     def uploaded_files(self):

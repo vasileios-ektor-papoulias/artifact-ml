@@ -6,7 +6,7 @@ from numpy import ndarray
 
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_experiment.base.tracking.logger import ArtifactLogger
-from artifact_experiment.libs.tracking.mlflow.adapter import MlflowNativeClient, MlflowRunAdapter
+from artifact_experiment.libs.tracking.mlflow.adapter import MlflowNativeRun, MlflowRunAdapter
 from artifact_experiment.libs.tracking.mlflow.loggers.array_collections import (
     MlflowArrayCollectionLogger,
 )
@@ -29,15 +29,15 @@ class MlflowTrackingClient(TrackingClient[MlflowRunAdapter]):
         cls: Type[MlflowTrackingClientT], experiment_id: str, run_id: Optional[str] = None
     ) -> MlflowTrackingClientT:
         run = MlflowRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
-        client = cls(run=run)
+        client = cls._build(run=run)
         return client
 
     @classmethod
     def from_native_run(
-        cls: Type[MlflowTrackingClientT], native_run: MlflowNativeClient
+        cls: Type[MlflowTrackingClientT], native_run: MlflowNativeRun
     ) -> MlflowTrackingClientT:
         run = MlflowRunAdapter.from_native_run(native_run=native_run)
-        client = cls(run=run)
+        client = cls._build(run=run)
         return client
 
     @classmethod

@@ -13,12 +13,12 @@ class InactiveMlflowRunError(InactiveRunError):
 
 
 @dataclass
-class MlflowNativeClient:
+class MlflowNativeRun:
     client: MlflowClient
     run: Run
 
 
-class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
+class MlflowRunAdapter(RunAdapter[MlflowNativeRun]):
     _root_dir = "artifact_ml"
     _default_tracking_uri = "http://localhost:5000"
     TRACKING_URI = os.environ.get("MLFLOW_TRACKING_URI", _default_tracking_uri)
@@ -84,12 +84,12 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
         return ls_metric_history
 
     @classmethod
-    def _build_native_run(cls, experiment_id: str, run_id: str) -> MlflowNativeClient:
+    def _build_native_run(cls, experiment_id: str, run_id: str) -> MlflowNativeRun:
         mlflow_client = MlflowClient(tracking_uri=cls.TRACKING_URI)
         run = cls._create_mlflow_run(
             mlflow_client=mlflow_client, experiment_id=experiment_id, run_id=run_id
         )
-        native_run = MlflowNativeClient(client=mlflow_client, run=run)
+        native_run = MlflowNativeRun(client=mlflow_client, run=run)
         return native_run
 
     @classmethod
