@@ -96,7 +96,7 @@ def client_factory(
         run_id: Optional[str] = None,
     ) -> Tuple[InMemoryTrackingAdapter, InMemoryTrackingClient]:
         adapter = adapter_factory(experiment_id, run_id)
-        client = InMemoryTrackingClient(run=adapter)
+        client = InMemoryTrackingClient.from_run(run=adapter)
         return adapter, client
 
     return _factory
