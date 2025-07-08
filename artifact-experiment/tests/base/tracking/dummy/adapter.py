@@ -29,8 +29,13 @@ class DummyNativeRun:
         _ = artifact
         pass
 
+    def upload(self, path_source: str, dir_target: str):
+        _ = path_source
+        _ = dir_target
+        pass
 
-class DummyTrackingBackend(RunAdapter[DummyNativeRun]):
+
+class DummyRunAdapter(RunAdapter[DummyNativeRun]):
     @property
     def experiment_id(self) -> str:
         return self._native_run.experiment_id
@@ -46,13 +51,11 @@ class DummyTrackingBackend(RunAdapter[DummyNativeRun]):
     def stop(self):
         self._native_run.is_active = False
 
-    def upload(self, path_source: str, dir_target: str):
-        _ = path_source
-        _ = dir_target
-        pass
-
     def log(self, artifact_path: str, artifact: ArtifactResult):
         self._native_run.log(artifact_path=artifact_path, artifact=artifact)
+
+    def upload(self, path_source: str, dir_target: str):
+        self._native_run.upload(path_source=path_source, dir_target=dir_target)
 
     @classmethod
     def _build_native_run(cls, experiment_id: str, run_id: str) -> DummyNativeRun:
