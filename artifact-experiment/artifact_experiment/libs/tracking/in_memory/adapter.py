@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from matplotlib.figure import Figure
 from numpy import ndarray
@@ -101,14 +101,44 @@ class InMemoryRunAdapter(RunAdapter[InMemoryRun]):
     def stop(self):
         self._native_run.is_active = False
 
-    def upload(self, path_source: str, dir_target: str):
-        upload_entry = self._format_upload_entry(path_source=path_source, dir_target=dir_target)
-        self._native_run.uploaded_files.append(upload_entry)
+    def log_score(self, path: str, score: float):
+        self._native_run.log_score(path=path, score=score)
 
-    @staticmethod
-    def _format_upload_entry(path_source: str, dir_target: str) -> Dict[str, str]:
-        dict_upload_entry = {"path_source": path_source, "dir_target": dir_target}
-        return dict_upload_entry
+    def log_array(self, path: str, array: ndarray):
+        self._native_run.log_array(path=path, array=array)
+
+    def log_plot(self, path: str, plot: Figure):
+        self._native_run.log_plot(path=path, plot=plot)
+
+    def log_score_collection(self, path: str, score_collection: Dict[str, float]):
+        self._native_run.log_score_collection(path=path, score_collection=score_collection)
+
+    def log_array_collection(self, path: str, array_collection: Dict[str, ndarray]):
+        self._native_run.log_array_collection(path=path, array_collection=array_collection)
+
+    def log_plot_collection(self, path: str, plot_collection: Dict[str, Figure]):
+        self._native_run.log_plot_collection(path=path, plot_collection=plot_collection)
+
+    def upload(self, path_source: str, dir_target: str):
+        self._native_run.upload(path_source=path_source, dir_target=dir_target)
+
+    def search_score_store(self, artifact_path: str) -> List[str]:
+        return self._search_store(artifact_path=artifact_path, store=self.dict_scores)
+
+    def search_array_store(self, artifact_path: str) -> List[str]:
+        return self._search_store(artifact_path=artifact_path, store=self.dict_arrays)
+
+    def search_plot_store(self, artifact_path: str) -> List[str]:
+        return self._search_store(artifact_path=artifact_path, store=self.dict_plots)
+
+    def search_score_collection_store(self, artifact_path: str) -> List[str]:
+        return self._search_store(artifact_path=artifact_path, store=self.dict_score_collections)
+
+    def search_array_collection_store(self, artifact_path: str) -> List[str]:
+        return self._search_store(artifact_path=artifact_path, store=self.dict_array_collections)
+
+    def search_plot_collection_store(self, artifact_path: str) -> List[str]:
+        return self._search_store(artifact_path=artifact_path, store=self.dict_plot_collections)
 
     @classmethod
     def _build_native_run(cls, experiment_id: str, run_id: str) -> InMemoryRun:
@@ -121,3 +151,7 @@ class InMemoryRunAdapter(RunAdapter[InMemoryRun]):
             )
         else:
             self._native_run.is_active = True
+
+    @staticmethod
+    def _search_store(artifact_path: str, store: Dict[str, Any]) -> List[str]:
+        return [key for key in store.keys() if key.startswith(artifact_path)]
