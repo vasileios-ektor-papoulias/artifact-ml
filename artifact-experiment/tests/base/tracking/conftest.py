@@ -49,12 +49,11 @@ def logger_factory(
     adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[DummyNativeRun, DummyRunAdapter]
     ],
-) -> Callable[[Optional[DummyRunAdapter]], Tuple[DummyRunAdapter, DummyArtifactLogger]]:
+) -> Callable[[Optional[str], Optional[str]], Tuple[DummyRunAdapter, DummyArtifactLogger]]:
     def _factory(
-        adapter: Optional[DummyRunAdapter] = None,
+        experiment_id: Optional[str] = None, run_id: Optional[str] = None
     ) -> Tuple[DummyRunAdapter, DummyArtifactLogger]:
-        if adapter is None:
-            _, adapter = adapter_factory(None, None)
+        _, adapter = adapter_factory(experiment_id, run_id)
         logger = DummyArtifactLogger(run=adapter)
         return adapter, logger
 

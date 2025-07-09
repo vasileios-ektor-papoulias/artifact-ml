@@ -23,75 +23,95 @@ def native_run_factory() -> Callable[[Optional[str], Optional[str]], InMemoryRun
             experiment_id = "test_experiment"
         if run_id is None:
             run_id = "test_run"
-        return InMemoryRun(experiment_id=experiment_id, run_id=run_id)
+        native_run = InMemoryRun(experiment_id=experiment_id, run_id=run_id)
+        return native_run
 
     return _factory
 
 
 @pytest.fixture
-def adapter_factory() -> Callable[[Optional[str], Optional[str]], InMemoryRunAdapter]:
+def adapter_factory(
+    native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
+) -> Callable[[Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]]:
     def _factory(
         experiment_id: Optional[str] = None, run_id: Optional[str] = None
-    ) -> InMemoryRunAdapter:
+    ) -> Tuple[InMemoryRun, InMemoryRunAdapter]:
         if experiment_id is None:
             experiment_id = "test_experiment"
         if run_id is None:
             run_id = "test_run"
-        return InMemoryRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
+        native_run = native_run_factory(experiment_id, run_id)
+        adapter = InMemoryRunAdapter(native_run=native_run)
+        return native_run, adapter
 
     return _factory
 
 
 @pytest.fixture
-def populated_adapter(
+def populated_adapter_factory(
     request,
-    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryRunAdapter],
-) -> InMemoryRunAdapter:
-    adapter = adapter_factory(None, None)
-    fixture_names = request.param
-
-    with adapter.native() as native_run:
-        score_idx = array_idx = plot_idx = collection_idx = 1
-
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
+    ],
+) -> Callable[[Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]]:
+    def _factory(
+        experiment_id: Optional[str] = None, run_id: Optional[str] = None
+    ) -> Tuple[InMemoryRun, InMemoryRunAdapter]:
+        native_run, adapter = adapter_factory(experiment_id, run_id)
+        fixture_names = request.param
+        score_idx = 1
+        array_idx = 1
+        plot_idx = 1
+        score_collection_idx = 1
+        array_collection_idx = 1
+        plot_collection_idx = 1
         for fixture_name in fixture_names:
             artifact = request.getfixturevalue(fixture_name)
-
             if isinstance(artifact, float):
-                native_run.dict_scores[f"test_score/{score_idx}"] = artifact
+                native_run.log_score(path=f"test_score/{score_idx}", score=artifact)
                 score_idx += 1
             elif isinstance(artifact, np.ndarray):
-                native_run.dict_arrays[f"test_array/{array_idx}"] = artifact
+                native_run.log_array(path=f"test_array/{array_idx}", array=artifact)
                 array_idx += 1
             elif hasattr(artifact, "add_subplot"):
-                native_run.dict_plots[f"test_plot/{plot_idx}"] = artifact
+                native_run.log_plot(path=f"test_plot/{plot_idx}", plot=artifact)
                 plot_idx += 1
             elif isinstance(artifact, dict):
                 values = artifact.values()
                 if all(isinstance(v, float) for v in values):
-                    collections = native_run.dict_score_collections
-                    collections[f"test_collection/{collection_idx}"] = artifact
-                    collection_idx += 1
+                    native_run.log_score_collection(
+                        path=f"test_score_collection/{score_collection_idx}",
+                        score_collection=artifact,
+                    )
+                    score_collection_idx += 1
                 elif all(isinstance(v, np.ndarray) for v in values):
-                    collections = native_run.dict_array_collections
-                    collections[f"test_collection/{collection_idx}"] = artifact
-                    collection_idx += 1
+                    native_run.log_array_collection(
+                        path=f"test_array_collection/{array_collection_idx}",
+                        array_collection=artifact,
+                    )
+                    array_collection_idx += 1
                 elif all(hasattr(v, "add_subplot") for v in values):
-                    collections = native_run.dict_plot_collections
-                    collections[f"test_collection/{collection_idx}"] = artifact
-                    collection_idx += 1
+                    native_run.log_plot_collection(
+                        path=f"test_plot_collection/{plot_collection_idx}",
+                        plot_collection=artifact,
+                    )
+                    plot_collection_idx += 1
+        return native_run, adapter
 
-    return adapter
+    return _factory
 
 
 @pytest.fixture
 def client_factory(
-    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryRunAdapter],
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
+    ],
 ) -> Callable[[Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryTrackingClient]]:
     def _factory(
         experiment_id: Optional[str] = None,
         run_id: Optional[str] = None,
     ) -> Tuple[InMemoryRunAdapter, InMemoryTrackingClient]:
-        adapter = adapter_factory(experiment_id, run_id)
+        _, adapter = adapter_factory(experiment_id, run_id)
         client = InMemoryTrackingClient.from_run(run=adapter)
         return adapter, client
 
