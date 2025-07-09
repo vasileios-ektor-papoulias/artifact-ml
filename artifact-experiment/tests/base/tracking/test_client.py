@@ -24,17 +24,13 @@ def _get_name(key: str, idx: int) -> str:
     ],
 )
 def test_init(
-    adapter_factory: Callable[
-        [Optional[str], Optional[str]], Tuple[DummyNativeRun, DummyRunAdapter]
-    ],
     logger_factory: Callable[
-        [Optional[DummyRunAdapter]], Tuple[DummyRunAdapter, DummyArtifactLogger]
+        [Optional[str], Optional[str]], Tuple[DummyRunAdapter, DummyArtifactLogger]
     ],
     experiment_id: str,
     run_id: str,
 ):
-    _, adapter = adapter_factory(experiment_id, run_id)
-    adapter, logger = logger_factory(adapter)
+    adapter, logger = logger_factory(experiment_id, run_id)
     client = DummyTrackingClient(
         run=adapter,
         score_logger=logger,
