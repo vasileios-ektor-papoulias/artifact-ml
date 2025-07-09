@@ -62,3 +62,36 @@ class InMemoryRun:
     @property
     def uploaded_files(self) -> List[Dict[str, str]]:
         return deepcopy(self._uploaded_files)
+
+    def log_score(self, path: str, score: float):
+        self._log(path=path, value=score, store=self._dict_scores)
+
+    def log_array(self, path: str, array: ndarray):
+        self._log(path=path, value=array, store=self._dict_arrays)
+
+    def log_plot(self, path: str, plot: Figure):
+        self._log(path=path, value=plot, store=self._dict_plots)
+
+    def log_score_collection(self, path: str, score_collection: Dict[str, float]):
+        self._log(path=path, value=score_collection, store=self._dict_score_collections)
+
+    def log_array_collection(self, path: str, array_collection: Dict[str, ndarray]):
+        self._log(path=path, value=array_collection, store=self._dict_array_collections)
+
+    def log_plot_collection(self, path: str, plot_collection: Dict[str, Figure]):
+        self._log(path=path, value=plot_collection, store=self._dict_plot_collections)
+
+    def upload(self, path_source: str, dir_target: str):
+        upload_entry = self._format_upload_entry(path_source=path_source, dir_target=dir_target)
+        self._uploaded_files.append(upload_entry)
+
+    @staticmethod
+    def _log(path: str, value: ArtifactResult, store: Dict[str, Any]):
+        if path in store.keys():
+            raise ValueError(f"Artifact already registered at path {path}")
+        store[path] = value
+
+    @staticmethod
+    def _format_upload_entry(path_source: str, dir_target: str) -> Dict[str, str]:
+        dict_upload_entry = {"path_source": path_source, "dir_target": dir_target}
+        return dict_upload_entry
