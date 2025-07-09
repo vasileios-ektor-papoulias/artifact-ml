@@ -5,13 +5,77 @@ import numpy as np
 import pytest
 from artifact_core.base.artifact_dependencies import ArtifactResult
 from matplotlib.figure import Figure
-from numpy import ndarray
 
 matplotlib.use("Agg")
 
 
 @pytest.fixture
+def artifact(request) -> ArtifactResult:
+    return request.getfixturevalue(request.param)
+
+
+@pytest.fixture
+def score(request) -> float:
+    return request.getfixturevalue(request.param)
+
+
+@pytest.fixture
+def array(request) -> np.ndarray:
+    return request.getfixturevalue(request.param)
+
+
+@pytest.fixture
+def plot(request) -> Figure:
+    return request.getfixturevalue(request.param)
+
+
+@pytest.fixture
+def score_collection(request) -> Dict[str, float]:
+    return request.getfixturevalue(request.param)
+
+
+@pytest.fixture
+def array_collection(request) -> Dict[str, np.ndarray]:
+    return request.getfixturevalue(request.param)
+
+
+@pytest.fixture
+def plot_collection(request) -> Dict[str, Figure]:
+    return request.getfixturevalue(request.param)
+
+
+@pytest.fixture
 def ls_artifacts(request) -> List[ArtifactResult]:
+    return [request.getfixturevalue(name) for name in request.param]
+
+
+@pytest.fixture
+def ls_scores(request) -> List[float]:
+    return [request.getfixturevalue(name) for name in request.param]
+
+
+@pytest.fixture
+def ls_arrays(request) -> List[np.ndarray]:
+    return [request.getfixturevalue(name) for name in request.param]
+
+
+@pytest.fixture
+def ls_plots(request) -> List[Figure]:
+    return [request.getfixturevalue(name) for name in request.param]
+
+
+@pytest.fixture
+def ls_score_collections(request) -> List[Dict[str, float]]:
+    return [request.getfixturevalue(name) for name in request.param]
+
+
+@pytest.fixture
+def ls_array_collections(request) -> List[Dict[str, np.ndarray]]:
+    return [request.getfixturevalue(name) for name in request.param]
+
+
+@pytest.fixture
+def ls_plot_collections(request) -> List[Dict[str, Figure]]:
     return [request.getfixturevalue(name) for name in request.param]
 
 
@@ -41,11 +105,6 @@ def score_5() -> float:
 
 
 @pytest.fixture
-def ls_scores(request) -> List[float]:
-    return [request.getfixturevalue(name) for name in request.param]
-
-
-@pytest.fixture
 def array_1() -> np.ndarray:
     return np.array([1, 2, 3, 4, 5])
 
@@ -68,11 +127,6 @@ def array_4() -> np.ndarray:
 @pytest.fixture
 def array_5() -> np.ndarray:
     return np.array([1.1, 2.2, 3.3])
-
-
-@pytest.fixture
-def ls_arrays(request) -> List[ndarray]:
-    return [request.getfixturevalue(name) for name in request.param]
 
 
 @pytest.fixture
@@ -116,11 +170,6 @@ def plot_5() -> Figure:
 
 
 @pytest.fixture
-def ls_plots(request) -> List[Figure]:
-    return [request.getfixturevalue(name) for name in request.param]
-
-
-@pytest.fixture
 def score_collection_1() -> Dict[str, float]:
     return {"accuracy": 0.95, "precision": 0.87, "recall": 0.92}
 
@@ -143,11 +192,6 @@ def score_collection_4() -> Dict[str, float]:
 @pytest.fixture
 def score_collection_5() -> Dict[str, float]:
     return {"sensitivity": 0.91, "specificity": 0.89, "npv": 0.93}
-
-
-@pytest.fixture
-def ls_score_collections(request) -> List[Dict[str, float]]:
-    return [request.getfixturevalue(name) for name in request.param]
 
 
 @pytest.fixture
@@ -188,11 +232,6 @@ def array_collection_5() -> Dict[str, np.ndarray]:
         "probabilities": np.array([0.9, 0.1, 0.8, 0.2]),
         "confidence": np.array([0.95, 0.85, 0.9, 0.8]),
     }
-
-
-@pytest.fixture
-def ls_array_collections(request) -> List[Dict[str, ndarray]]:
-    return [request.getfixturevalue(name) for name in request.param]
 
 
 @pytest.fixture
@@ -258,8 +297,3 @@ def plot_collection_5() -> Dict[str, Figure]:
     ax3.errorbar([1, 2, 3], [1, 2, 3], yerr=[0.1, 0.2, 0.1])
 
     return {"pie_chart": fig1, "step_plot": fig2, "error_plot": fig3}
-
-
-@pytest.fixture
-def ls_plot_collections(request) -> List[Dict[str, Figure]]:
-    return [request.getfixturevalue(name) for name in request.param]
