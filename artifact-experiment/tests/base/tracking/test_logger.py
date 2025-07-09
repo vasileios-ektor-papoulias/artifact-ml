@@ -24,11 +24,11 @@ from tests.base.tracking.dummy.logger import DummyArtifactLogger
 def test_log(
     mocker: MockerFixture,
     logger_factory: Callable[
-        [Optional[DummyRunAdapter]], Tuple[DummyRunAdapter, DummyArtifactLogger]
+        [Optional[str], Optional[str]], Tuple[DummyRunAdapter, DummyArtifactLogger]
     ],
     ls_artifacts: List[ArtifactResult],
 ):
-    adapter, logger = logger_factory(None)
+    adapter, logger = logger_factory("", "")
     print(type(adapter))
     adapter.log = mocker.MagicMock()
     for idx, artifact in enumerate(ls_artifacts):
