@@ -1,5 +1,7 @@
-from typing import Dict, List
+from copy import deepcopy
+from typing import Any, Dict, List
 
+from artifact_core.base.artifact_dependencies import ArtifactResult
 from matplotlib.figure import Figure
 from numpy import ndarray
 
@@ -19,11 +21,11 @@ class InMemoryRun:
 
     @property
     def experiment_id(self) -> str:
-        return str(self._experiment_id)
+        return deepcopy(self._experiment_id)
 
     @property
     def run_id(self) -> str:
-        return str(self._run_id)
+        return deepcopy(self._run_id)
 
     @property
     def is_active(self) -> bool:
@@ -35,28 +37,28 @@ class InMemoryRun:
 
     @property
     def dict_scores(self) -> Dict[str, float]:
-        return self._dict_scores
+        return deepcopy(self._dict_scores)
 
     @property
     def dict_arrays(self) -> Dict[str, ndarray]:
-        return self._dict_arrays
+        return deepcopy(self._dict_arrays)
 
     @property
     def dict_plots(self) -> Dict[str, Figure]:
-        return self._dict_plots
+        return deepcopy(self._dict_plots)
 
     @property
     def dict_score_collections(self) -> Dict[str, Dict[str, float]]:
-        return self._dict_score_collections
+        return deepcopy(self._dict_score_collections)
 
     @property
     def dict_array_collections(self) -> Dict[str, Dict[str, ndarray]]:
-        return self._dict_array_collections
+        return deepcopy(self._dict_array_collections)
 
     @property
     def dict_plot_collections(self) -> Dict[str, Dict[str, Figure]]:
-        return self._dict_plot_collections
+        return deepcopy(self._dict_plot_collections)
 
     @property
     def uploaded_files(self) -> List[Dict[str, str]]:
-        return self._uploaded_files
+        return deepcopy(self._uploaded_files)
