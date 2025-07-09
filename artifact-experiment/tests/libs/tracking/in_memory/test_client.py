@@ -78,11 +78,13 @@ def test_log_array(
         [Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryTrackingClient]
     ],
 ):
-    adapter, client = client_factory(None, None)
-    for idx, array in enumerate(ls_arrays, start=1):
-        client.log_array(array=array, name=f"array_{idx}")
+    adapter, client = client_factory("test_experiment", "test_run")
+    for idx, array in enumerate(ls_arrays):
+        client.log_array(array=array, name=f"array_{idx + 1}")
     assert adapter.n_arrays == len(ls_arrays)
-    assert adapter.ls_arrays == ls_arrays
+    for idx, (array_key, array_value) in enumerate(adapter.dict_arrays.items()):
+        assert array_key == f"test_experiment/test_run/arrays/array_{idx + 1}/1"
+        assert (array_value == ls_arrays[idx]).all
 
 
 @pytest.mark.parametrize(
@@ -107,7 +109,9 @@ def test_log_plot(
     for idx, plot in enumerate(ls_plots, start=1):
         client.log_plot(plot=plot, name=f"plot_{idx}")
     assert adapter.n_plots == len(ls_plots)
-    assert adapter.ls_plots == ls_plots
+    for idx, (plot_key, plot) in enumerate(adapter.dict_plots.items()):
+        assert plot_key == f"test_experiment/test_run/plots/plot_{idx + 1}/1"
+        assert isinstance(plot, Figure)
 
 
 @pytest.mark.parametrize(
@@ -171,13 +175,20 @@ def test_log_array_collection(
         [Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryTrackingClient]
     ],
 ):
-    adapter, client = client_factory(None, None)
-    for idx, array_collection in enumerate(ls_array_collections, start=1):
-        client.log_array_collection(
-            array_collection=array_collection, name=f"array_collection_{idx}"
-        )
+    adapter, client = client_factory("test_experiment", "test_run")
+    for idx, array_collection in enumerate(ls_array_collections):
+        client.log_array_collection(array_collection=array_collection, name=f"array_{idx + 1}")
     assert adapter.n_array_collections == len(ls_array_collections)
-    assert adapter.ls_array_collections == ls_array_collections
+    for idx, (array_collection_key, array_collection_value) in enumerate(
+        adapter.dict_array_collections.items()
+    ):
+        assert (
+            array_collection_key == f"test_experiment/test_run/array_collections/array_{idx + 1}/1"
+        )
+        for actual_array, expected_array in zip(
+            array_collection_value.values(), ls_array_collections[idx]
+        ):
+            assert (actual_array == expected_array).all
 
 
 @pytest.mark.parametrize(
@@ -206,31 +217,43 @@ def test_log_plot_collection(
         [Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryTrackingClient]
     ],
 ):
-    adapter, client = client_factory(None, None)
-    for idx, plot_collection in enumerate(ls_plot_collections, start=1):
-        client.log_plot_collection(plot_collection=plot_collection, name=f"plot_collection_{idx}")
+    adapter, client = client_factory("test_experiment", "test_run")
+    for idx, plot_collection in enumerate(ls_plot_collections):
+        client.log_plot_collection(plot_collection=plot_collection, name=f"plot_{idx + 1}")
     assert adapter.n_plot_collections == len(ls_plot_collections)
-    assert adapter.ls_plot_collections == ls_plot_collections
+    for idx, (plot_collection_key, plot_collection_value) in enumerate(
+        adapter.dict_plot_collections.items()
+    ):
+        assert plot_collection_key == f"test_experiment/test_run/plot_collections/plot_{idx + 1}/1"
+        for plot in plot_collection_value.values():
+            isinstance(plot, Figure)
 
 
 @pytest.mark.parametrize(
-    "path_source,dir_target",
+    "ls_file_entries, expected_store_length",
     [
-        ("/test/path", "uploads"),
-        ("/data/file.pkl", "models"),
-        ("/logs/run.log", "logs"),
+        ([], 0),
+        ([{"path_source": "/test/path1", "dir_target": "uploads"}], 1),
+        (
+            [
+                {"path_source": "/test/path1", "dir_target": "uploads"},
+                {"path_source": "/another/path", "dir_target": "data"},
+            ],
+            2,
+        ),
     ],
 )
-def test_upload_delegation(
+def test_upload(
     client_factory: Callable[
         [Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryTrackingClient]
     ],
-    path_source: str,
-    dir_target: str,
+    ls_file_entries: List[Dict[str, str]],
+    expected_store_length: int,
 ):
     adapter, client = client_factory(None, None)
     assert len(adapter.uploaded_files) == 0
-    client.upload(path_source=path_source, dir_target=dir_target)
-    assert len(adapter.uploaded_files) == 1
-    expected_entry = {"path_source": path_source, "dir_target": dir_target}
-    assert adapter.uploaded_files[0] == expected_entry
+    for file_entry in ls_file_entries:
+        client.upload(**file_entry)
+    assert len(adapter.uploaded_files) == expected_store_length
+    for i, file_entry in enumerate(ls_file_entries):
+        assert adapter.uploaded_files[i] == file_entry

@@ -1,11 +1,11 @@
 from typing import Callable, Dict, List, Optional
 
-import numpy as np
 import pytest
 from artifact_experiment.libs.tracking.in_memory.native_run import (
     InMemoryRun,
 )
 from matplotlib.figure import Figure
+from numpy import ndarray
 
 
 @pytest.mark.parametrize(
@@ -58,123 +58,178 @@ def test_is_active_property(
 
 
 @pytest.mark.parametrize(
-    "score_key,score_value",
+    "score_key, score",
     [
-        ("accuracy/1", 0.95),
-        ("loss/1", 0.05),
-        ("f1_score/2", 0.87),
-        ("precision/10", 0.92),
+        ("accuracy/1", "score_1"),
+        ("loss/1", "score_2"),
+        ("f1_score/2", "score_3"),
+        ("precision/10", "score_4"),
     ],
+    indirect=["score"],
 )
-def test_dict_scores(
+def test_log_score(
     native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
     score_key: str,
-    score_value: float,
+    score: float,
 ):
     native_run: InMemoryRun = native_run_factory(None, None)
-    scores_dict: Dict[str, float] = native_run.dict_scores
+    scores_dict = native_run.dict_scores
     assert len(scores_dict) == 0
-    scores_dict[score_key] = score_value
+    native_run.log_score(path=score_key, score=score)
     assert len(native_run.dict_scores) == 1
-    assert native_run.dict_scores[score_key] == score_value
-
-
-def test_dict_arrays(
-    native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
-    array_1: np.ndarray,
-):
-    native_run: InMemoryRun = native_run_factory(None, None)
-    arrays_dict: Dict[str, np.ndarray] = native_run.dict_arrays
-    assert len(arrays_dict) == 0
-    arrays_dict["test_array/1"] = array_1
-    assert len(native_run.dict_arrays) == 1
-    np.testing.assert_array_equal(native_run.dict_arrays["test_array/1"], array_1)
-
-
-def test_dict_plots(
-    native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
-    plot_1: Figure,
-):
-    native_run: InMemoryRun = native_run_factory(None, None)
-    plots_dict: Dict[str, Figure] = native_run.dict_plots
-    assert len(plots_dict) == 0
-    plots_dict["test_plot/1"] = plot_1
-    assert len(native_run.dict_plots) == 1
-    assert native_run.dict_plots["test_plot/1"] is plot_1
-
-
-def test_dict_score_collections(
-    native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
-    score_collection_1: Dict[str, float],
-):
-    native_run: InMemoryRun = native_run_factory(None, None)
-    collections_dict: Dict[str, Dict[str, float]] = native_run.dict_score_collections
-    assert len(collections_dict) == 0
-    collections_dict["test_collection/1"] = score_collection_1
-    assert len(native_run.dict_score_collections) == 1
-    assert native_run.dict_score_collections["test_collection/1"] == score_collection_1
-
-
-def test_dict_array_collections(
-    native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
-    array_collection_1: Dict[str, np.ndarray],
-):
-    native_run: InMemoryRun = native_run_factory(None, None)
-    collections_dict: Dict[str, Dict[str, np.ndarray]] = native_run.dict_array_collections
-    assert len(collections_dict) == 0
-    collections_dict["test_collection/1"] = array_collection_1
-    assert len(native_run.dict_array_collections) == 1
-    stored_collection = native_run.dict_array_collections["test_collection/1"]
-    for key, array in array_collection_1.items():
-        np.testing.assert_array_equal(stored_collection[key], array)
-
-
-def test_dict_plot_collections(
-    native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
-    plot_collection_1: Dict[str, Figure],
-):
-    native_run: InMemoryRun = native_run_factory(None, None)
-    collections_dict: Dict[str, Dict[str, Figure]] = native_run.dict_plot_collections
-    assert len(collections_dict) == 0
-    collections_dict["test_collection/1"] = plot_collection_1
-    assert len(native_run.dict_plot_collections) == 1
-    stored_collection = native_run.dict_plot_collections["test_collection/1"]
-    for key, plot in plot_collection_1.items():
-        assert stored_collection[key] is plot
-
-
-def test_uploaded_files(
-    native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
-):
-    native_run: InMemoryRun = native_run_factory(None, None)
-    files_list: List[Dict[str, str]] = native_run.uploaded_files
-    assert len(files_list) == 0
-    file_entry = {"path_source": "/test/path", "dir_target": "uploads"}
-    files_list.append(file_entry)
-    assert len(native_run.uploaded_files) == 1
-    assert native_run.uploaded_files[0] == file_entry
+    assert native_run.dict_scores[score_key] == score
 
 
 @pytest.mark.parametrize(
-    "property_name,expected_type",
+    "array_key, array",
     [
-        ("experiment_id", str),
-        ("run_id", str),
-        ("is_active", bool),
-        ("dict_scores", dict),
-        ("dict_arrays", dict),
-        ("dict_plots", dict),
-        ("dict_score_collections", dict),
-        ("dict_array_collections", dict),
-        ("dict_plot_collections", dict),
-        ("uploaded_files", list),
+        ("array/1", "array_1"),
+        ("array/1", "array_2"),
+        ("array/2", "array_3"),
+        ("array/10", "array_4"),
     ],
+    indirect=["array"],
 )
-def test_property_types(
-    native_run_factory,
-    property_name: str,
-    expected_type: type,
+def test_log_array(
+    native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
+    array_key: str,
+    array: ndarray,
 ):
     native_run: InMemoryRun = native_run_factory(None, None)
-    property_value = getattr(native_run, property_name)
-    assert isinstance(property_value, expected_type)
+    arrays_dict = native_run.dict_arrays
+    assert len(arrays_dict) == 0
+    native_run.log_array(path=array_key, array=array)
+    assert len(native_run.dict_arrays) == 1
+    assert (native_run.dict_arrays[array_key] == array).all()
+
+
+@pytest.mark.parametrize(
+    "plot_key, plot",
+    [
+        ("plot/1", "plot_1"),
+        ("plot/1", "plot_2"),
+        ("plot/2", "plot_3"),
+        ("plot/10", "plot_4"),
+    ],
+    indirect=["plot"],
+)
+def test_log_plot(
+    native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
+    plot_key: str,
+    plot: Figure,
+):
+    native_run: InMemoryRun = native_run_factory(None, None)
+    plots_dict = native_run.dict_plots
+    assert len(plots_dict) == 0
+    native_run.log_plot(path=plot_key, plot=plot)
+    assert len(native_run.dict_plots) == 1
+
+
+@pytest.mark.parametrize(
+    "score_collection_key, score_collection",
+    [
+        ("score_collection/1", "score_collection_1"),
+        ("score_collection/1", "score_collection_2"),
+        ("score_collection/2", "score_collection_3"),
+        ("score_collection/10", "score_collection_4"),
+    ],
+    indirect=["score_collection"],
+)
+def test_log_score_collection(
+    native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
+    score_collection_key: str,
+    score_collection: Dict[str, float],
+):
+    native_run: InMemoryRun = native_run_factory(None, None)
+    scores_dict = native_run.dict_scores
+    assert len(scores_dict) == 0
+    native_run.log_score_collection(path=score_collection_key, score_collection=score_collection)
+    assert len(native_run.dict_score_collections) == 1
+    assert (
+        native_run.dict_score_collections[score_collection_key].keys()
+    ) == score_collection.keys()
+    for key in score_collection.keys():
+        assert native_run.dict_score_collections[score_collection_key][key] == score_collection[key]
+
+
+@pytest.mark.parametrize(
+    "array_collection_key, array_collection",
+    [
+        ("array_collection/1", "array_collection_1"),
+        ("array_collection/1", "array_collection_2"),
+        ("array_collection/2", "array_collection_3"),
+        ("array_collection/10", "array_collection_4"),
+    ],
+    indirect=["array_collection"],
+)
+def test_log_array_collection(
+    native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
+    array_collection_key: str,
+    array_collection: Dict[str, ndarray],
+):
+    native_run: InMemoryRun = native_run_factory(None, None)
+    arrays_dict = native_run.dict_arrays
+    assert len(arrays_dict) == 0
+    native_run.log_array_collection(path=array_collection_key, array_collection=array_collection)
+    assert len(native_run.dict_array_collections) == 1
+    assert (
+        native_run.dict_array_collections[array_collection_key].keys()
+    ) == array_collection.keys()
+    for key in array_collection.keys():
+        assert (
+            native_run.dict_array_collections[array_collection_key][key] == array_collection[key]
+        ).all()
+
+
+@pytest.mark.parametrize(
+    "plot_collection_key, plot_collection",
+    [
+        ("plot_collection/1", "plot_collection_1"),
+        ("plot_collection/1", "plot_collection_2"),
+        ("plot_collection/2", "plot_collection_3"),
+        ("plot_collection/10", "plot_collection_4"),
+    ],
+    indirect=["plot_collection"],
+)
+def test_log_plot_collection(
+    native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
+    plot_collection_key: str,
+    plot_collection: Dict[str, Figure],
+):
+    native_run: InMemoryRun = native_run_factory(None, None)
+    plots_dict = native_run.dict_plots
+    assert len(plots_dict) == 0
+    native_run.log_plot_collection(path=plot_collection_key, plot_collection=plot_collection)
+    assert len(native_run.dict_plot_collections) == 1
+    assert (native_run.dict_plot_collections[plot_collection_key].keys()) == plot_collection.keys()
+    for key in plot_collection.keys():
+        assert isinstance(native_run.dict_plot_collections[plot_collection_key][key], Figure)
+        assert isinstance(plot_collection[key], Figure)
+
+
+@pytest.mark.parametrize(
+    "ls_file_entries, expected_store_length",
+    [
+        ([], 0),
+        ([{"path_source": "/test/path1", "dir_target": "uploads"}], 1),
+        (
+            [
+                {"path_source": "/test/path1", "dir_target": "uploads"},
+                {"path_source": "/another/path", "dir_target": "data"},
+            ],
+            2,
+        ),
+    ],
+)
+def test_upload(
+    native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
+    ls_file_entries: List[Dict[str, str]],
+    expected_store_length: int,
+):
+    native_run = native_run_factory(None, None)
+    assert len(native_run.uploaded_files) == 0
+    for file_entry in ls_file_entries:
+        native_run.upload(**file_entry)
+    assert len(native_run.uploaded_files) == expected_store_length
+    for i, file_entry in enumerate(ls_file_entries):
+        assert native_run.uploaded_files[i] == file_entry

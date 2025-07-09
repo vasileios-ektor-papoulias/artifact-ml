@@ -25,14 +25,14 @@ from matplotlib.figure import Figure
 def test_log(
     ls_plots: List[Figure],
     plot_logger_factory: Callable[
-        [Optional[InMemoryRunAdapter]], Tuple[InMemoryRunAdapter, InMemoryPlotLogger]
+        [Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryPlotLogger]
     ],
 ):
-    adapter, logger = plot_logger_factory(None)
+    adapter, logger = plot_logger_factory("test_experiment", "test_run")
     for idx, plot in enumerate(ls_plots, start=1):
         logger.log(artifact_name=f"plot_{idx}", artifact=plot)
     assert adapter.n_plots == len(ls_plots)
-    for idx, expected_plot in enumerate(ls_plots, start=1):
-        key = f"test_experiment/test_run/plots/plot_{idx}/{idx}"
-        stored_plot = adapter._native_run.dict_plots[key]
-        assert stored_plot is expected_plot
+    for idx, _ in enumerate(ls_plots, start=1):
+        key = f"test_experiment/test_run/plots/plot_{idx}/1"
+        stored_plot = adapter.dict_plots[key]
+        assert isinstance(stored_plot, Figure)

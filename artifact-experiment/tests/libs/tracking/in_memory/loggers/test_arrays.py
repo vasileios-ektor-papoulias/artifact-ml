@@ -25,14 +25,14 @@ from numpy import ndarray
 def test_log(
     ls_arrays: List[ndarray],
     array_logger_factory: Callable[
-        [Optional[InMemoryRunAdapter]], Tuple[InMemoryRunAdapter, InMemoryArrayLogger]
+        [Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryArrayLogger]
     ],
 ):
-    adapter, logger = array_logger_factory(None)
+    adapter, logger = array_logger_factory("test_experiment", "test_run")
     for idx, array in enumerate(ls_arrays, start=1):
         logger.log(artifact_name=f"array_{idx}", artifact=array)
     assert adapter.n_arrays == len(ls_arrays)
     for idx, expected_array in enumerate(ls_arrays, start=1):
-        key = f"test_experiment/test_run/arrays/array_{idx}/{idx}"
-        stored_array = adapter._native_run.dict_arrays[key]
+        key = f"test_experiment/test_run/arrays/array_{idx}/1"
+        stored_array = adapter.dict_arrays[key]
         assert (stored_array == expected_array).all()

@@ -24,13 +24,14 @@ from artifact_experiment.libs.tracking.in_memory.loggers.scores import (
 def test_log(
     ls_scores: List[float],
     score_logger_factory: Callable[
-        [Optional[InMemoryRunAdapter]], Tuple[InMemoryRunAdapter, InMemoryScoreLogger]
+        [Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryScoreLogger]
     ],
 ):
-    adapter, logger = score_logger_factory(None)
+    adapter, logger = score_logger_factory("test_experiment", "test_run")
     for idx, score in enumerate(ls_scores, start=1):
         logger.log(artifact_name=f"score_{idx}", artifact=score)
     assert adapter.n_scores == len(ls_scores)
     for idx, expected_score in enumerate(ls_scores, start=1):
-        key = f"test_experiment/test_run/scores/score_{idx}/{idx}"
-        assert adapter._native_run.dict_scores[key] == expected_score
+        key = f"test_experiment/test_run/scores/score_{idx}/1"
+        stored_score = adapter.dict_scores[key]
+        assert stored_score == expected_score
