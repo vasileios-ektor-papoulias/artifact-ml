@@ -22,17 +22,21 @@ from artifact_experiment.libs.tracking.in_memory.loggers.score_collections impor
 from artifact_experiment.libs.tracking.in_memory.loggers.scores import (
     InMemoryScoreLogger,
 )
+from artifact_experiment.libs.tracking.in_memory.native_run import (
+    InMemoryRun,
+)
 
 
 @pytest.fixture
 def score_logger_factory(
-    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryRunAdapter],
-) -> Callable[[Optional[InMemoryRunAdapter]], Tuple[InMemoryRunAdapter, InMemoryScoreLogger]]:
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
+    ],
+) -> Callable[[Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryScoreLogger]]:
     def _factory(
-        adapter: Optional[InMemoryRunAdapter] = None,
+        experiment_id: Optional[str] = None, run_id: Optional[str] = None
     ) -> Tuple[InMemoryRunAdapter, InMemoryScoreLogger]:
-        if adapter is None:
-            adapter = adapter_factory(None, None)
+        _, adapter = adapter_factory(experiment_id, run_id)
         logger = InMemoryScoreLogger(run=adapter)
         return adapter, logger
 
@@ -41,13 +45,14 @@ def score_logger_factory(
 
 @pytest.fixture
 def array_logger_factory(
-    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryRunAdapter],
-) -> Callable[[Optional[InMemoryRunAdapter]], Tuple[InMemoryRunAdapter, InMemoryArrayLogger]]:
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
+    ],
+) -> Callable[[Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryArrayLogger]]:
     def _factory(
-        adapter: Optional[InMemoryRunAdapter] = None,
+        experiment_id: Optional[str] = None, run_id: Optional[str] = None
     ) -> Tuple[InMemoryRunAdapter, InMemoryArrayLogger]:
-        if adapter is None:
-            adapter = adapter_factory(None, None)
+        _, adapter = adapter_factory(experiment_id, run_id)
         logger = InMemoryArrayLogger(run=adapter)
         return adapter, logger
 
@@ -56,13 +61,14 @@ def array_logger_factory(
 
 @pytest.fixture
 def plot_logger_factory(
-    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryRunAdapter],
-) -> Callable[[Optional[InMemoryRunAdapter]], Tuple[InMemoryRunAdapter, InMemoryPlotLogger]]:
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
+    ],
+) -> Callable[[Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryPlotLogger]]:
     def _factory(
-        adapter: Optional[InMemoryRunAdapter] = None,
+        experiment_id: Optional[str] = None, run_id: Optional[str] = None
     ) -> Tuple[InMemoryRunAdapter, InMemoryPlotLogger]:
-        if adapter is None:
-            adapter = adapter_factory(None, None)
+        _, adapter = adapter_factory(experiment_id, run_id)
         logger = InMemoryPlotLogger(run=adapter)
         return adapter, logger
 
@@ -71,16 +77,17 @@ def plot_logger_factory(
 
 @pytest.fixture
 def score_collection_logger_factory(
-    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryRunAdapter],
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
+    ],
 ) -> Callable[
-    [Optional[InMemoryRunAdapter]],
+    [Optional[str], Optional[str]],
     Tuple[InMemoryRunAdapter, InMemoryScoreCollectionLogger],
 ]:
     def _factory(
-        adapter: Optional[InMemoryRunAdapter] = None,
+        experiment_id: Optional[str] = None, run_id: Optional[str] = None
     ) -> Tuple[InMemoryRunAdapter, InMemoryScoreCollectionLogger]:
-        if adapter is None:
-            adapter = adapter_factory(None, None)
+        _, adapter = adapter_factory(experiment_id, run_id)
         logger = InMemoryScoreCollectionLogger(run=adapter)
         return adapter, logger
 
@@ -89,16 +96,17 @@ def score_collection_logger_factory(
 
 @pytest.fixture
 def array_collection_logger_factory(
-    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryRunAdapter],
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
+    ],
 ) -> Callable[
-    [Optional[InMemoryRunAdapter]],
+    [Optional[str], Optional[str]],
     Tuple[InMemoryRunAdapter, InMemoryArrayCollectionLogger],
 ]:
     def _factory(
-        adapter: Optional[InMemoryRunAdapter] = None,
+        experiment_id: Optional[str] = None, run_id: Optional[str] = None
     ) -> Tuple[InMemoryRunAdapter, InMemoryArrayCollectionLogger]:
-        if adapter is None:
-            adapter = adapter_factory(None, None)
+        _, adapter = adapter_factory(experiment_id, run_id)
         logger = InMemoryArrayCollectionLogger(run=adapter)
         return adapter, logger
 
@@ -107,16 +115,17 @@ def array_collection_logger_factory(
 
 @pytest.fixture
 def plot_collection_logger_factory(
-    adapter_factory: Callable[[Optional[str], Optional[str]], InMemoryRunAdapter],
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
+    ],
 ) -> Callable[
-    [Optional[InMemoryRunAdapter]],
+    [Optional[str], Optional[str]],
     Tuple[InMemoryRunAdapter, InMemoryPlotCollectionLogger],
 ]:
     def _factory(
-        adapter: Optional[InMemoryRunAdapter] = None,
+        experiment_id: Optional[str] = None, run_id: Optional[str] = None
     ) -> Tuple[InMemoryRunAdapter, InMemoryPlotCollectionLogger]:
-        if adapter is None:
-            adapter = adapter_factory(None, None)
+        _, adapter = adapter_factory(experiment_id, run_id)
         logger = InMemoryPlotCollectionLogger(run=adapter)
         return adapter, logger
 
