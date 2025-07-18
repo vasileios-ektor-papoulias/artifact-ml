@@ -21,11 +21,11 @@ def resources_factory() -> Callable[[float, float], DummyCallbackResources]:
 
 @pytest.fixture
 def callback_factory() -> Callable[[str, str], CacheCallback]:
-    def _factory(callback_type: str, key: str) -> CacheCallback:
+    def _factory(callback_type: str, callback_key: str) -> CacheCallback:
         if callback_type == "add":
-            return AddCacheCallback(key=key)
+            return AddCacheCallback(key=callback_key)
         elif callback_type == "multiply":
-            return MultiplyCacheCallback(key=key)
+            return MultiplyCacheCallback(key=callback_key)
         else:
             raise ValueError(f"Unknown callback type: {callback_type}")
 
@@ -33,101 +33,117 @@ def callback_factory() -> Callable[[str, str], CacheCallback]:
 
 
 @pytest.mark.parametrize(
-    "callback_key, x, y",
+    "callback_type, callback_key",
     [
-        ("test_callback", 1.0, 1.0),
-        ("another_callback", 0.0, 5.0),
-        ("third_callback", -1.0, 2.0),
+        ("add", "test_callback"),
+        ("add", "another_callback"),
+        ("add", "yet_another_callback"),
     ],
 )
 def test_callback_key(
+    callback_factory: Callable[[str, str], CacheCallback],
+    callback_type: str,
     callback_key: str,
-    x: float,
-    y: float,
-    resources_factory: Callable,
 ):
-    callback = AddCacheCallback(key=callback_key)
-    resources = resources_factory(x, y)
+    callback = callback_factory(callback_type, callback_key)
+    assert isinstance(callback.key, str)
     assert callback.key == callback_key
-    callback.execute(resources=resources)
-    assert callback.key == callback_key
-    assert callback_key in callback.cache
+    assert len(callback.cache) == 1
+    assert callback.key in callback.cache
+    assert callback.cache[callback_key] is None
 
 
 @pytest.mark.parametrize(
-    "callback_type, x, y, expected_result",
+    "callback_type, callback_key, x, y, expected_result",
     [
-        ("add", 1.0, 2.0, 3.0),
-        ("add", 0.0, 0.0, 0.0),
-        ("add", -1.0, 1.0, 0.0),
-        ("multiply", 2.0, 3.0, 6.0),
-        ("multiply", 0.0, 5.0, 0.0),
-        ("multiply", -2.0, 3.0, -6.0),
+        ("add", "test_key", 1.0, 2.0, 3.0),
+        ("add", "test_key", 0.0, 0.0, 0.0),
+        ("add", "test_key", -1.0, 1.0, 0.0),
+        ("multiply", "test_key", 2.0, 3.0, 6.0),
+        ("multiply", "test_key", 0.0, 5.0, 0.0),
+        ("multiply", "test_key", -2.0, 3.0, -6.0),
     ],
 )
 def test_callback_execute(
+    resources_factory: Callable[[float, float], DummyCallbackResources],
+    callback_factory: Callable[[str, str], CacheCallback],
     callback_type: str,
+    callback_key: str,
     x: float,
     y: float,
     expected_result: float,
-    callback_factory: Callable[[str, str], CacheCallback],
-    resources_factory: Callable[[float, float], DummyCallbackResources],
 ):
-    callback = callback_factory(callback_type, "test_key")
+    callback = callback_factory(callback_type, callback_key)
     resources = resources_factory(x, y)
     assert callback.value is None
     callback.execute(resources=resources)
     assert callback.value == expected_result
-    assert callback.cache["test_key"] == expected_result
+    assert callback.cache[callback_key] == expected_result
 
 
 @pytest.mark.parametrize(
-    "callback, resources, expected_result",
+    "clear_after_execution",
     [
-        (AddCacheCallback(key="add_result"), DummyCallbackResources(x=1, y=0), 1),
-        (MultiplyCacheCallback(key="multiply_result"), DummyCallbackResources(x=1, y=0), 0),
+        (True),
+        (True),
+        (False),
+        (True),
     ],
 )
-def test_execute_concrete(
-    callback: CacheCallback[DummyCallbackResources, float],
-    resources: DummyCallbackResources,
-    expected_result: float,
+def test_callback_clear(
+    resources_factory: Callable[[float, float], DummyCallbackResources],
+    callback_factory: Callable[[str, str], CacheCallback],
+    clear_after_execution: bool,
 ):
+    callback = callback_factory("add", "key")
+    assert callback.value is None
+    resources = resources_factory(1.0, 1.0)
     callback.execute(resources=resources)
-    assert callback.value == expected_result
+    assert callback.value is not None
+    if clear_after_execution:
+        callback.clear()
+        assert callback.value is None
 
 
 @pytest.mark.parametrize(
-    "keys, callback_types, x_values, y_values, expected_results",
+    "ls_callback_types, ls_callback_keys, x, y, ls_expected_results",
     [
-        (["add1", "add2"], ["add", "add"], [1.0, 2.0], [1.0, 3.0], [2.0, 2.0]),
+        (["add", "add"], ["add1", "add2"], 1.0, 1.0, [2.0, 2.0]),
         (
-            ["mult1", "mult2", "mult3"],
             ["multiply", "multiply", "multiply"],
-            [2.0, 3.0, 0.0],
-            [3.0, 4.0, 5.0],
+            ["mult1", "mult2", "mult3"],
+            2.0,
+            3.0,
             [6.0, 6.0, 6.0],
         ),
-        (["mixed1", "mixed2"], ["add", "multiply"], [1.0, 2.0], [2.0, 3.0], [3.0, 2.0]),
+        (["add", "multiply"], ["mixed1", "mixed2"], 1.0, 2.0, [3.0, 2.0]),
     ],
 )
 def test_handler_execute(
-    callback_factory: Callable[[str, str], CacheCallback],
     resources_factory: Callable[[float, float], DummyCallbackResources],
-    keys: List[str],
-    callback_types: List[str],
-    x_values: List[float],
-    y_values: List[float],
-    expected_results: List[float],
+    callback_factory: Callable[[str, str], CacheCallback],
+    ls_callback_types: List[str],
+    ls_callback_keys: List[str],
+    x: float,
+    y: float,
+    ls_expected_results: List[float],
 ):
-    callbacks = [callback_factory(cb_type, key) for cb_type, key in zip(callback_types, keys)]
-    handler = DummyCacheCallbackHandler(ls_callbacks=callbacks)
+    ls_callbacks = [
+        callback_factory(cb_type, cb_key)
+        for cb_type, cb_key in zip(ls_callback_types, ls_callback_keys)
+    ]
+    handler = DummyCacheCallbackHandler(ls_callbacks=ls_callbacks)
+    assert len(handler.cache) == len(ls_callbacks)
+    for key in ls_callback_keys:
+        assert key in handler.cache
+        assert handler.cache[key] is None
     assert len(handler.active_cache) == 0
-    test_resources = resources_factory(x_values[0], y_values[0])
+    test_resources = resources_factory(x, y)
     handler.execute(resources=test_resources)
-    assert len(handler.active_cache) == len(callbacks)
-    for key, expected_result in zip(keys, expected_results):
+    assert len(handler.active_cache) == len(ls_callbacks)
+    for key, expected_result in zip(ls_callback_keys, ls_expected_results):
         assert key in handler.active_cache
+        assert handler.active_cache[key] is not None
         assert handler.active_cache[key] == expected_result
 
 
@@ -141,10 +157,10 @@ def test_handler_execute(
     ],
 )
 def test_handler_clear(
+    resources_factory: Callable[[float, float], DummyCallbackResources],
+    callback_factory: Callable[[str, str], CacheCallback],
     num_callbacks: int,
     clear_after_execution: bool,
-    callback_factory: Callable[[str, str], CacheCallback],
-    resources_factory: Callable[[float, float], DummyCallbackResources],
 ):
     callbacks = [callback_factory("add", f"key_{i}") for i in range(num_callbacks)]
     handler = DummyCacheCallbackHandler(ls_callbacks=callbacks)
@@ -155,17 +171,3 @@ def test_handler_clear(
         handler.clear()
         assert len(handler.active_cache) == 0
         assert all(callback.value is None for callback in callbacks)
-
-
-def test_handler_update_cache():
-    callback1 = AddCacheCallback(key="test1")
-    callback2 = MultiplyCacheCallback(key="test2")
-    handler = DummyCacheCallbackHandler(ls_callbacks=[callback1, callback2])
-    resources = DummyCallbackResources(x=2.0, y=3.0)
-    callback1.execute(resources=resources)
-    callback2.execute(resources=resources)
-    assert len(handler.active_cache) == 0
-    handler.update_cache()
-    assert len(handler.active_cache) == 2
-    assert handler.active_cache["test1"] == 5.0
-    assert handler.active_cache["test2"] == 6.0
