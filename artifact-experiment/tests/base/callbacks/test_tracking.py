@@ -1,339 +1,301 @@
-from typing import List, Optional
+from typing import Callable, List, Optional, Tuple
 from unittest.mock import MagicMock
 
-import numpy as np
 import pytest
-from artifact_core.base.artifact_dependencies import ArtifactResult
 from artifact_experiment.base.callbacks.base import CallbackResources
-from artifact_experiment.base.callbacks.tracking import TrackingCallback, TrackingCallbackHandler
+from artifact_experiment.base.callbacks.tracking import (
+    ArrayCallbackHandler,
+    ArrayCollectionCallbackHandler,
+    PlotCallbackHandler,
+    PlotCollectionCallbackHandler,
+    ScoreCallbackHandler,
+    ScoreCollectionCallbackHandler,
+    TrackingCallback,
+    TrackingCallbackHandler,
+)
+from artifact_experiment.base.tracking.client import TrackingClient
 
 from tests.base.callbacks.dummy.tracking import (
     DummyArrayCallback,
-    DummyArrayCallbackHandler,
+    DummyArrayCollectionCallback,
+    DummyPlotCallback,
+    DummyPlotCollectionCallback,
     DummyScoreCallback,
-    DummyScoreCallbackHandler,
     DummyScoreCollectionCallback,
-    DummyScoreCollectionCallbackHandler,
 )
 
 
+@pytest.fixture
+def resources_factory() -> Callable[[], CallbackResources]:
+    def _factory() -> CallbackResources:
+        return CallbackResources()
+
+    return _factory
+
+
+@pytest.fixture
+def callback_factory() -> Callable[[str, str, Optional[TrackingClient]], TrackingCallback]:
+    def _factory(
+        callback_type: str, callback_key: str, tracking_client: Optional[TrackingClient]
+    ) -> TrackingCallback:
+        if callback_type == "score":
+            return DummyScoreCallback(key=callback_key, tracking_client=tracking_client)
+        elif callback_type == "array":
+            return DummyArrayCallback(key=callback_key, tracking_client=tracking_client)
+        elif callback_type == "plot":
+            return DummyPlotCallback(key=callback_key, tracking_client=tracking_client)
+        elif callback_type == "score_collection":
+            return DummyScoreCollectionCallback(key=callback_key, tracking_client=tracking_client)
+        elif callback_type == "array_collection":
+            return DummyArrayCollectionCallback(key=callback_key, tracking_client=tracking_client)
+        elif callback_type == "plot_collection":
+            return DummyPlotCollectionCallback(key=callback_key, tracking_client=tracking_client)
+        else:
+            raise ValueError(f"Unknown callback type: {callback_type}")
+
+    return _factory
+
+
+@pytest.fixture
+def handler_factory(
+    callback_factory: Callable[[str, str, Optional[TrackingClient]], TrackingCallback],
+) -> Callable[
+    [str, List[str], Optional[TrackingClient]],
+    Tuple[TrackingCallbackHandler, List[TrackingCallback]],
+]:
+    def _factory(
+        callback_type: str, ls_callback_keys: List[str], tracking_client: Optional[TrackingClient]
+    ) -> Tuple[TrackingCallbackHandler, List[TrackingCallback]]:
+        ls_callbacks = [
+            callback_factory(callback_type, callback_key, tracking_client)
+            for callback_key in ls_callback_keys
+        ]
+        if callback_type == "score":
+            handler = ScoreCallbackHandler(
+                ls_callbacks=ls_callbacks, tracking_client=tracking_client
+            )
+        elif callback_type == "array":
+            handler = ArrayCallbackHandler(
+                ls_callbacks=ls_callbacks, tracking_client=tracking_client
+            )
+        elif callback_type == "plot":
+            handler = PlotCallbackHandler(
+                ls_callbacks=ls_callbacks, tracking_client=tracking_client
+            )
+        elif callback_type == "score_collection":
+            handler = ScoreCollectionCallbackHandler(
+                ls_callbacks=ls_callbacks, tracking_client=tracking_client
+            )
+        elif callback_type == "array_collection":
+            handler = ArrayCollectionCallbackHandler(
+                ls_callbacks=ls_callbacks, tracking_client=tracking_client
+            )
+        elif callback_type == "plot_collection":
+            handler = PlotCollectionCallbackHandler(
+                ls_callbacks=ls_callbacks, tracking_client=tracking_client
+            )
+        else:
+            raise ValueError(f"Unknown callback type: {callback_type}")
+        return handler, ls_callbacks
+
+    return _factory
+
+
 @pytest.mark.parametrize(
-    "initial_client, new_client",
+    "callback_type, has_tracking_client",
     [
-        (None, True),
-        (True, None),
-        (True, True),
-        (None, None),
+        ("score", True),
+        ("score", False),
+        ("array", True),
+        ("array", False),
+        ("plot", True),
+        ("plot", False),
+        ("score_collection", True),
+        ("score_collection", False),
+        ("array_collection", True),
+        ("array_collection", False),
+        ("plot_collection", True),
+        ("plot_collection", False),
+    ],
+)
+def test_callback_execute(
+    resources_factory: Callable[[], CallbackResources],
+    callback_factory: Callable[[str, str, Optional[TrackingClient]], TrackingCallback],
+    mock_tracking_client_factory: Callable[[], MagicMock],
+    callback_type: str,
+    has_tracking_client: bool,
+):
+    callback_key = "test_key"
+    resources = resources_factory()
+    tracking_client = mock_tracking_client_factory() if has_tracking_client else None
+    callback = callback_factory(callback_type, callback_key, tracking_client)
+    assert callback.tracking_enabled == has_tracking_client
+    callback.execute(resources=resources)
+    assert callback.key == callback_key
+    if tracking_client is not None:
+        log_method = getattr(tracking_client, "log_" + callback_type)
+        log_method.assert_called_once()
+        log_method_args, log_method_kwargs = log_method.call_args
+        assert log_method_args == ()
+        assert list(log_method_kwargs.values()) == [callback.value, callback.key]
+
+
+@pytest.mark.parametrize(
+    "callback_type, tracking_is_enabled_start, tracking_is_enabled_end",
+    [
+        ("score", False, True),
+        ("score", True, False),
+        ("score", True, True),
+        ("score", False, False),
+        ("array", False, True),
+        ("array", True, False),
+        ("array", True, True),
+        ("array", False, False),
+        ("plot", False, True),
+        ("plot", True, False),
+        ("plot", True, True),
+        ("plot", False, False),
+        ("score_collection", False, True),
+        ("score_collection", True, False),
+        ("score_collection", True, True),
+        ("score_collection", False, False),
+        ("array_collection", False, True),
+        ("array_collection", True, False),
+        ("array_collection", True, True),
+        ("array_collection", False, False),
+        ("plot_collection", False, True),
+        ("plot_collection", True, False),
+        ("plot_collection", True, True),
+        ("plot_collection", False, False),
     ],
 )
 def test_callback_tracking_client_setter(
-    callback_key: str,
-    mock_tracking_client: MagicMock,
-    initial_client: Optional[bool],
-    new_client: Optional[bool],
+    callback_factory: Callable[[str, str, Optional[TrackingClient]], TrackingCallback],
+    mock_tracking_client_factory: Callable[[], MagicMock],
+    callback_type: str,
+    tracking_is_enabled_start: bool,
+    tracking_is_enabled_end: bool,
 ):
-    initial_tracking_client = mock_tracking_client if initial_client else None
-    new_tracking_client = mock_tracking_client if new_client else None
-    callback = DummyScoreCallback(key=callback_key, tracking_client=initial_tracking_client)
-    assert callback.tracking_enabled == (initial_client is not None)
+    callback_key = "test_key"
+    initial_tracking_client = mock_tracking_client_factory() if tracking_is_enabled_start else None
+    new_tracking_client = mock_tracking_client_factory() if tracking_is_enabled_end else None
+    callback = callback_factory(callback_type, callback_key, initial_tracking_client)
+    assert callback.tracking_enabled == tracking_is_enabled_start
     callback.tracking_client = new_tracking_client
     assert callback._tracking_client == new_tracking_client
-    assert callback.tracking_enabled == (new_client is not None)
+    assert callback.tracking_enabled == tracking_is_enabled_end
 
 
 @pytest.mark.parametrize(
-    "key, compute_value, has_tracking_client",
+    "callback_type, ls_callback_keys, has_tracking_client",
     [
-        ("test_key", 42.0, True),
-        ("another_key", 1.5, False),
-        ("third_key", 0.0, True),
-        ("negative_key", -1.0, False),
-    ],
-)
-def test_execute(
-    key: str,
-    compute_value: float,
-    has_tracking_client: bool,
-    callback_resources: CallbackResources,
-    mock_tracking_client: MagicMock,
-):
-    tracking_client = mock_tracking_client if has_tracking_client else None
-    callback = DummyScoreCallback(
-        key=key, compute_value=compute_value, tracking_client=tracking_client
-    )
-    assert callback.tracking_enabled == has_tracking_client
-
-    callback.execute(resources=callback_resources)
-    assert callback.key == key
-    assert callback.value == compute_value
-    if tracking_client is not None:
-        tracking_client.log_score.assert_called_once_with(score=compute_value, name=key)
-
-
-@pytest.mark.parametrize(
-    "callback, expected_value, expected_log_method, expected_key",
-    [
-        (
-            DummyScoreCallback(key="dummy_score", compute_value=42.0),
-            42.0,
-            "log_score",
-            "dummy_score",
-        ),
-        (
-            DummyArrayCallback(key="dummy_array", compute_value=np.array([1, 2, 3])),
-            np.array([1, 2, 3]),
-            "log_array",
-            "dummy_array",
-        ),
-        (
-            DummyScoreCollectionCallback(
-                key="dummy_score_collection", compute_value={"score1": 1.0, "score2": 2.0}
-            ),
-            {"score1": 1.0, "score2": 2.0},
-            "log_score_collection",
-            "dummy_score_collection",
-        ),
-    ],
-)
-def test_execute_concrete(
-    callback_resources: CallbackResources,
-    mock_tracking_client: MagicMock,
-    callback: TrackingCallback[CallbackResources, ArtifactResult],
-    expected_value: ArtifactResult,
-    expected_log_method: str,
-    expected_key: str,
-):
-    tracking_client = mock_tracking_client
-    callback.tracking_client = tracking_client
-    assert callback.tracking_enabled
-    callback.execute(resources=callback_resources)
-    log_method = getattr(tracking_client, expected_log_method)
-    if expected_log_method == "log_score":
-        log_method.assert_called_once_with(score=expected_value, name=expected_key)
-    elif expected_log_method == "log_array":
-        assert isinstance(expected_value, np.ndarray)
-        log_method.assert_called_once()
-        args, kwargs = log_method.call_args
-        assert "array" in kwargs
-        assert "name" in kwargs
-        assert np.array_equal(kwargs["array"], expected_value)
-        assert kwargs["name"] == expected_key
-    elif expected_log_method == "log_score_collection":
-        log_method.assert_called_once_with(score_collection=expected_value, name=expected_key)
-
-
-@pytest.mark.parametrize(
-    "handler, has_tracking_client, expected_compute_values, expected_log_method",
-    [
-        (
-            DummyScoreCallbackHandler(
-                ls_callbacks=[
-                    DummyScoreCallback(key="key1", compute_value=1.0),
-                    DummyScoreCallback(key="key2", compute_value=2.0),
-                    DummyScoreCallback(key="key3", compute_value=3.0),
-                ]
-            ),
-            True,
-            [1.0, 2.0, 3.0],
-            "log_score",
-        ),
-        (
-            DummyScoreCallbackHandler(
-                ls_callbacks=[
-                    DummyScoreCallback(key="key1", compute_value=1.0),
-                    DummyScoreCallback(key="key2", compute_value=2.0),
-                ]
-            ),
-            False,
-            [1.0, 2.0],
-            "log_score",
-        ),
-        (
-            DummyArrayCallbackHandler(
-                ls_callbacks=[
-                    DummyArrayCallback(key="key1", compute_value=np.array([1])),
-                    DummyArrayCallback(key="key2", compute_value=np.array([2, 3])),
-                ]
-            ),
-            True,
-            [np.array([1]), np.array([2, 3])],
-            "log_array",
-        ),
-        (
-            DummyScoreCollectionCallbackHandler(
-                ls_callbacks=[
-                    DummyScoreCollectionCallback(key="key1", compute_value={"score1": 1.0}),
-                    DummyScoreCollectionCallback(key="key2", compute_value={"score2": 2.0}),
-                    DummyScoreCollectionCallback(key="key3", compute_value={"score3": 3.0}),
-                ]
-            ),
-            False,
-            [{"score1": 1.0}, {"score2": 2.0}, {"score3": 3.0}],
-            "log_score_collection",
-        ),
+        ("score", ["key_1", "key_2"], True),
+        ("score", ["key_1", "key_2"], False),
+        ("array", ["key_1", "key_2"], True),
+        ("array", ["key_1", "key_2"], False),
+        ("plot", ["key_1", "key_2"], True),
+        ("plot", ["key_1", "key_2"], False),
+        ("score_collection", ["key_1", "key_2"], True),
+        ("score_collection", ["key_1", "key_2"], False),
+        ("array_collection", ["key_1", "key_2"], True),
+        ("array_collection", ["key_1", "key_2"], False),
+        ("plot_collection", ["key_1", "key_2"], True),
+        ("plot_collection", ["key_1", "key_2"], False),
     ],
 )
 def test_handler_execute(
-    mock_tracking_client: MagicMock,
-    callback_resources: CallbackResources,
-    handler: TrackingCallbackHandler[
-        TrackingCallback[CallbackResources, ArtifactResult], CallbackResources, ArtifactResult
+    resources_factory: Callable[[], CallbackResources],
+    handler_factory: Callable[
+        [str, List[str], Optional[TrackingClient]],
+        Tuple[TrackingCallbackHandler, List[TrackingCallback]],
     ],
+    mock_tracking_client_factory: Callable[[], MagicMock],
+    callback_type: str,
+    ls_callback_keys: List[str],
     has_tracking_client: bool,
-    expected_compute_values: List[ArtifactResult],
-    expected_log_method: str,
 ):
-    tracking_client = mock_tracking_client if has_tracking_client else None
+    callback_resources = resources_factory()
+    tracking_client = mock_tracking_client_factory() if has_tracking_client else None
+    handler, ls_callbacks = handler_factory(callback_type, ls_callback_keys, tracking_client)
     handler.tracking_client = tracking_client
     assert handler.tracking_enabled == has_tracking_client
     handler.execute(resources=callback_resources)
-    assert len(handler.active_cache) == len(expected_compute_values)
-    for i, expected_value in enumerate(expected_compute_values):
-        key = f"key{i + 1}"
-        if isinstance(expected_value, np.ndarray):
-            actual_value = handler.active_cache[key]
-            assert isinstance(actual_value, np.ndarray)
-            assert np.array_equal(actual_value, expected_value)
-        else:
-            assert handler.active_cache[key] == expected_value
+    assert len(handler.active_cache) == len(ls_callback_keys)
+    for callback_key in ls_callback_keys:
+        assert callback_key in handler.active_cache
+        assert handler.active_cache[callback_key] is not None
     if tracking_client is not None:
-        log_method = getattr(tracking_client, expected_log_method)
-        assert log_method.call_count == len(expected_compute_values)
-        if expected_log_method == "log_score":
-            for i, value in enumerate(expected_compute_values):
-                key = f"key{i + 1}"
-                log_method.assert_any_call(score=value, name=key)
+        log_method = getattr(tracking_client, "log_" + callback_type)
+        assert log_method.call_count == len(ls_callback_keys)
+        for call_args, callback in zip(log_method.call_args_list, ls_callbacks):
+            args, kwargs = call_args
+            assert args == ()
+            assert list(kwargs.values()) == [callback.value, callback.key]
 
 
 @pytest.mark.parametrize(
-    "handler, expected_compute_values",
+    "callback_type, ls_callback_keys",
     [
-        (
-            DummyScoreCallbackHandler(
-                ls_callbacks=[
-                    DummyScoreCallback(key="key1", compute_value=1.0),
-                    DummyScoreCallback(key="key2", compute_value=2.0),
-                ]
-            ),
-            [1.0, 2.0],
-        ),
-        (
-            DummyArrayCallbackHandler(
-                ls_callbacks=[
-                    DummyArrayCallback(key="key1", compute_value=np.array([1])),
-                    DummyArrayCallback(key="key2", compute_value=np.array([2, 3])),
-                ]
-            ),
-            [np.array([1]), np.array([2, 3])],
-        ),
-        (
-            DummyScoreCollectionCallbackHandler(
-                ls_callbacks=[
-                    DummyScoreCollectionCallback(key="key1", compute_value={"score1": 1.0}),
-                ]
-            ),
-            [{"score1": 1.0}],
-        ),
+        ("score", ["key_1", "key_2"]),
+        ("array", ["key_1", "key_2"]),
+        ("plot", ["key_1", "key_2"]),
+        ("score_collection", ["key_1", "key_2"]),
+        ("array_collection", ["key_1", "key_2"]),
+        ("plot_collection", ["key_1", "key_2"]),
     ],
 )
 def test_handler_clear(
-    callback_resources: CallbackResources,
-    handler: TrackingCallbackHandler[
-        TrackingCallback[CallbackResources, ArtifactResult], CallbackResources, ArtifactResult
+    resources_factory: Callable[[], CallbackResources],
+    handler_factory: Callable[
+        [str, List[str], Optional[TrackingClient]],
+        Tuple[TrackingCallbackHandler, List[TrackingCallback]],
     ],
-    expected_compute_values: List[ArtifactResult],
+    callback_type: str,
+    ls_callback_keys: List[str],
 ):
+    callback_resources = resources_factory()
+    tracking_client = None
+    handler, ls_callbacks = handler_factory(callback_type, ls_callback_keys, tracking_client)
+    handler.tracking_client = tracking_client
     handler.execute(resources=callback_resources)
-    assert len(handler.active_cache) == len(expected_compute_values)
-    for i, expected_value in enumerate(expected_compute_values):
-        key = f"key{i + 1}"
-        if isinstance(expected_value, np.ndarray):
-            actual_value = handler.active_cache[key]
-            assert isinstance(actual_value, np.ndarray)
-            assert np.array_equal(actual_value, expected_value)
-        else:
-            assert handler.active_cache[key] == expected_value
-
+    assert len(handler.active_cache) == len(ls_callback_keys)
+    for callback_key in ls_callback_keys:
+        assert callback_key in handler.active_cache
+        assert handler.active_cache[callback_key] is not None
     handler.clear()
     assert len(handler.active_cache) == 0
-    assert all(callback.value is None for callback in handler._ls_callbacks)
+    assert all(callback.value is None for callback in ls_callbacks)
 
 
 @pytest.mark.parametrize(
-    "ls_callbacks, handler, tracking_client",
+    "callback_type, ls_callback_keys, remove_tracking_client",
     [
-        (
-            [
-                DummyScoreCallback(key="score1", compute_value=1.0, tracking_client=MagicMock()),
-                DummyScoreCallback(key="score2", compute_value=2.0, tracking_client=MagicMock()),
-            ],
-            DummyScoreCallbackHandler(tracking_client=MagicMock()),
-            MagicMock(),
-        ),
-        (
-            [
-                DummyScoreCallback(key="score1", compute_value=1.0, tracking_client=None),
-                DummyScoreCallback(key="score2", compute_value=2.0, tracking_client=None),
-            ],
-            DummyScoreCallbackHandler(tracking_client=MagicMock()),
-            MagicMock(),
-        ),
-        (
-            [
-                DummyScoreCallback(key="score1", compute_value=1.0, tracking_client=None),
-                DummyScoreCallback(key="score2", compute_value=2.0, tracking_client=None),
-            ],
-            DummyScoreCallbackHandler(tracking_client=None),
-            MagicMock(),
-        ),
-        (
-            [
-                DummyScoreCallback(key="score1", compute_value=1.0, tracking_client=None),
-                DummyScoreCallback(key="score2", compute_value=2.0, tracking_client=None),
-            ],
-            DummyScoreCallbackHandler(tracking_client=None),
-            None,
-        ),
-        (
-            [
-                DummyScoreCallback(key="score1", compute_value=1.0, tracking_client=MagicMock()),
-                DummyScoreCallback(key="score2", compute_value=2.0, tracking_client=MagicMock()),
-            ],
-            DummyScoreCallbackHandler(tracking_client=MagicMock()),
-            None,
-        ),
-        (
-            [
-                DummyArrayCallback(
-                    key="array1", compute_value=np.array([1, 2]), tracking_client=MagicMock()
-                ),
-                DummyArrayCallback(
-                    key="array2", compute_value=np.array([3, 4]), tracking_client=MagicMock()
-                ),
-            ],
-            DummyArrayCallbackHandler(tracking_client=None),
-            MagicMock(),
-        ),
-        (
-            [
-                DummyScoreCollectionCallback(
-                    key="collection1", compute_value={"s1": 1.0}, tracking_client=MagicMock()
-                ),
-            ],
-            DummyScoreCollectionCallbackHandler(tracking_client=None),
-            MagicMock(),
-        ),
+        ("score", ["key_1", "key_2"], True),
+        ("score", ["key_1", "key_2"], False),
+        ("array", ["key_1", "key_2"], True),
+        ("array", ["key_1", "key_2"], False),
+        ("plot", ["key_1", "key_2"], True),
+        ("plot", ["key_1", "key_2"], False),
+        ("score_collection", ["key_1", "key_2"], True),
+        ("score_collection", ["key_1", "key_2"], False),
+        ("array_collection", ["key_1", "key_2"], True),
+        ("array_collection", ["key_1", "key_2"], False),
+        ("plot_collection", ["key_1", "key_2"], True),
+        ("plot_collection", ["key_1", "key_2"], False),
     ],
 )
 def test_handler_tracking_client_setter(
-    ls_callbacks: List[TrackingCallback[CallbackResources, ArtifactResult]],
-    handler: TrackingCallbackHandler[
-        TrackingCallback[CallbackResources, ArtifactResult], CallbackResources, ArtifactResult
+    handler_factory: Callable[
+        [str, List[str], Optional[TrackingClient]],
+        Tuple[TrackingCallbackHandler, List[TrackingCallback]],
     ],
-    tracking_client: Optional[MagicMock],
+    mock_tracking_client_factory: Callable[[], MagicMock],
+    callback_type: str,
+    ls_callback_keys: List[str],
+    remove_tracking_client: bool,
 ):
-    for callback in ls_callbacks:
-        handler.add(callback=callback)
+    tracking_client = mock_tracking_client_factory() if remove_tracking_client is not None else None
+    handler, ls_callbacks = handler_factory(callback_type, ls_callback_keys, tracking_client)
     handler.tracking_client = tracking_client
     assert handler.tracking_client == tracking_client
     assert handler.tracking_enabled == (tracking_client is not None)

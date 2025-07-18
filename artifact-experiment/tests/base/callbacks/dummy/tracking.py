@@ -4,25 +4,24 @@ import numpy as np
 from artifact_experiment.base.callbacks.base import CallbackResources
 from artifact_experiment.base.callbacks.tracking import (
     ArrayCallback,
-    ArrayCallbackHandler,
     ArrayCollectionCallback,
-    ArrayCollectionCallbackHandler,
     PlotCallback,
-    PlotCallbackHandler,
     PlotCollectionCallback,
-    PlotCollectionCallbackHandler,
     ScoreCallback,
-    ScoreCallbackHandler,
     ScoreCollectionCallback,
-    ScoreCollectionCallbackHandler,
 )
 from artifact_experiment.base.tracking.client import TrackingClient
 from matplotlib.figure import Figure
 
 
 class DummyScoreCallback(ScoreCallback[CallbackResources]):
+    DEFAULT_VALUE = 1.0
+
     def __init__(
-        self, key: str, compute_value: float = 1.0, tracking_client: Optional[TrackingClient] = None
+        self,
+        key: str,
+        compute_value: float = DEFAULT_VALUE,
+        tracking_client: Optional[TrackingClient] = None,
     ):
         super().__init__(key=key, tracking_client=tracking_client)
         self._compute_value = compute_value
@@ -33,6 +32,8 @@ class DummyScoreCallback(ScoreCallback[CallbackResources]):
 
 
 class DummyArrayCallback(ArrayCallback[CallbackResources]):
+    DEFAULT_VALUE = np.array([1, 2, 3])
+
     def __init__(
         self,
         key: str,
@@ -40,7 +41,7 @@ class DummyArrayCallback(ArrayCallback[CallbackResources]):
         tracking_client: Optional[TrackingClient] = None,
     ):
         super().__init__(key=key, tracking_client=tracking_client)
-        self._compute_value = compute_value if compute_value is not None else np.array([1, 2, 3])
+        self._compute_value = compute_value if compute_value is not None else self.DEFAULT_VALUE
 
     def _compute(self, resources: CallbackResources) -> np.ndarray:
         _ = resources
@@ -48,6 +49,8 @@ class DummyArrayCallback(ArrayCallback[CallbackResources]):
 
 
 class DummyPlotCallback(PlotCallback[CallbackResources]):
+    DEFAULT_VALUE = Figure()
+
     def __init__(
         self,
         key: str,
@@ -55,13 +58,16 @@ class DummyPlotCallback(PlotCallback[CallbackResources]):
         tracking_client: Optional[TrackingClient] = None,
     ):
         super().__init__(key=key, tracking_client=tracking_client)
-        self._compute_value = compute_value if compute_value is not None else Figure()
+        self._compute_value = compute_value if compute_value is not None else self.DEFAULT_VALUE
 
     def _compute(self, resources: CallbackResources) -> Figure:
+        _ = resources
         return self._compute_value
 
 
 class DummyScoreCollectionCallback(ScoreCollectionCallback[CallbackResources]):
+    DEFAULT_VALUE = {"score1": 1.0, "score2": 2.0}
+
     def __init__(
         self,
         key: str,
@@ -69,9 +75,7 @@ class DummyScoreCollectionCallback(ScoreCollectionCallback[CallbackResources]):
         tracking_client: Optional[TrackingClient] = None,
     ):
         super().__init__(key=key, tracking_client=tracking_client)
-        self._compute_value = (
-            compute_value if compute_value is not None else {"score1": 1.0, "score2": 2.0}
-        )
+        self._compute_value = compute_value if compute_value is not None else self.DEFAULT_VALUE
 
     def _compute(self, resources: CallbackResources) -> Dict[str, float]:
         _ = resources
@@ -79,6 +83,8 @@ class DummyScoreCollectionCallback(ScoreCollectionCallback[CallbackResources]):
 
 
 class DummyArrayCollectionCallback(ArrayCollectionCallback[CallbackResources]):
+    DEFAULT_VALUE = {"array1": np.array([1, 2]), "array2": np.array([3, 4])}
+
     def __init__(
         self,
         key: str,
@@ -86,11 +92,7 @@ class DummyArrayCollectionCallback(ArrayCollectionCallback[CallbackResources]):
         tracking_client: Optional[TrackingClient] = None,
     ):
         super().__init__(key=key, tracking_client=tracking_client)
-        self._compute_value = (
-            compute_value
-            if compute_value is not None
-            else {"array1": np.array([1, 2]), "array2": np.array([3, 4])}
-        )
+        self._compute_value = compute_value if compute_value is not None else self.DEFAULT_VALUE
 
     def _compute(self, resources: CallbackResources) -> Dict[str, np.ndarray]:
         _ = resources
@@ -98,6 +100,8 @@ class DummyArrayCollectionCallback(ArrayCollectionCallback[CallbackResources]):
 
 
 class DummyPlotCollectionCallback(PlotCollectionCallback[CallbackResources]):
+    DEFAULT_VALUE = {"plot1": Figure(), "plot2": Figure()}
+
     def __init__(
         self,
         key: str,
@@ -105,28 +109,8 @@ class DummyPlotCollectionCallback(PlotCollectionCallback[CallbackResources]):
         tracking_client: Optional[TrackingClient] = None,
     ):
         super().__init__(key=key, tracking_client=tracking_client)
-        self._compute_value = (
-            compute_value if compute_value is not None else {"plot1": Figure(), "plot2": Figure()}
-        )
+        self._compute_value = compute_value if compute_value is not None else self.DEFAULT_VALUE
 
     def _compute(self, resources: CallbackResources) -> Dict[str, Figure]:
         _ = resources
         return self._compute_value
-
-
-DummyScoreCallbackHandler = ScoreCallbackHandler[
-    ScoreCallback[CallbackResources], CallbackResources
-]
-DummyArrayCallbackHandler = ArrayCallbackHandler[
-    ArrayCallback[CallbackResources], CallbackResources
-]
-DummyPlotCallbackHandler = PlotCallbackHandler[PlotCallback[CallbackResources], CallbackResources]
-DummyScoreCollectionCallbackHandler = ScoreCollectionCallbackHandler[
-    ScoreCollectionCallback[CallbackResources], CallbackResources
-]
-DummyArrayCollectionCallbackHandler = ArrayCollectionCallbackHandler[
-    ArrayCollectionCallback[CallbackResources], CallbackResources
-]
-DummyPlotCollectionCallbackHandler = PlotCollectionCallbackHandler[
-    PlotCollectionCallback[CallbackResources], CallbackResources
-]
