@@ -31,9 +31,9 @@ def resources_factory(
 
 @pytest.fixture
 def artifact_factory(mocker: MockerFixture) -> Callable[[ArtifactResult], MagicMock]:
-    def _factory(compute_return_value: ArtifactResult) -> MagicMock:
+    def _factory(compute_value: ArtifactResult) -> MagicMock:
         artifact = mocker.Mock()
-        artifact.compute.return_value = compute_return_value
+        artifact.compute.return_value = compute_value
         return artifact
 
     return _factory
@@ -48,10 +48,10 @@ def callback_factory(
     def _factory(
         callback_type: str,
         callback_key: str,
-        return_value: ArtifactResult,
+        compute_value: ArtifactResult,
         tracking_client: Optional[TrackingClient],
     ) -> Tuple[ArtifactCallback, MagicMock]:
-        artifact = artifact_factory(return_value)
+        artifact = artifact_factory(compute_value)
         if callback_type == "score":
             callback = ArtifactScoreCallback(
                 key=callback_key, artifact=artifact, tracking_client=tracking_client
@@ -83,13 +83,8 @@ def callback_factory(
     return _factory
 
 
-@pytest.fixture
-def return_value(request) -> ArtifactResult:
-    return request.getfixturevalue(request.param)
-
-
 @pytest.mark.parametrize(
-    "callback_type, return_value, has_tracking_client",
+    "callback_type, artifact_result, has_tracking_client",
     [
         ("score", "score_1", True),
         ("score", "score_1", False),
@@ -116,7 +111,7 @@ def return_value(request) -> ArtifactResult:
         ("plot_collection", "plot_collection_2", True),
         ("plot_collection", "plot_collection_2", False),
     ],
-    indirect=["return_value"],
+    indirect=["artifact_result"],
 )
 def test_execute(
     resources_factory: Callable[[], Tuple[ArtifactCallbackResources, MagicMock]],
@@ -125,7 +120,7 @@ def test_execute(
     ],
     mock_tracking_client_factory: Callable[[], MagicMock],
     callback_type: str,
-    return_value: ArtifactResult,
+    artifact_result: ArtifactResult,
     has_tracking_client: bool,
 ):
     callback_key = "test_key"
@@ -133,11 +128,11 @@ def test_execute(
     assert callback_resources.artifact_resources == artifact_resources
     tracking_client = mock_tracking_client_factory() if has_tracking_client else None
     callback, artifact = callback_factory(
-        callback_type, callback_key, return_value, tracking_client
+        callback_type, callback_key, artifact_result, tracking_client
     )
     callback.execute(resources=callback_resources)
     artifact.compute.assert_called_once_with(resources=artifact_resources)
-    assert callback.value is return_value
+    assert callback.value is artifact_result
     if tracking_client is not None:
         log_method = getattr(tracking_client, "log_" + callback_type)
         log_method.assert_called_once()

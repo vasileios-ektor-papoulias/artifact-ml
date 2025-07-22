@@ -9,7 +9,7 @@ from tests.base.tracking.dummy.logger import DummyArtifactLogger
 
 
 @pytest.mark.parametrize(
-    "ls_artifacts",
+    "ls_artifact_results",
     [
         ([]),
         (["score_1"]),
@@ -26,14 +26,14 @@ def test_log(
     logger_factory: Callable[
         [Optional[str], Optional[str]], Tuple[DummyRunAdapter, DummyArtifactLogger]
     ],
-    ls_artifacts: List[ArtifactResult],
+    ls_artifact_results: List[ArtifactResult],
 ):
     adapter, logger = logger_factory("", "")
     print(type(adapter))
     adapter.log = mocker.MagicMock()
-    for idx, artifact in enumerate(ls_artifacts):
+    for idx, artifact in enumerate(ls_artifact_results):
         logger.log(artifact_name="artifact", artifact=artifact)
-    assert adapter.log.call_count == len(ls_artifacts)
+    assert adapter.log.call_count == len(ls_artifact_results)
     for idx, call_args in enumerate(adapter.log.call_args_list):
-        artifact = ls_artifacts[idx]
+        artifact = ls_artifact_results[idx]
         assert call_args.kwargs == {"artifact_path": "", "artifact": artifact}

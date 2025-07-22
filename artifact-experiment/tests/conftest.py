@@ -10,7 +10,7 @@ matplotlib.use("Agg")
 
 
 @pytest.fixture
-def artifact(request) -> ArtifactResult:
+def artifact_result(request) -> ArtifactResult:
     return request.getfixturevalue(request.param)
 
 
@@ -45,7 +45,7 @@ def plot_collection(request) -> Dict[str, Figure]:
 
 
 @pytest.fixture
-def ls_artifacts(request) -> List[ArtifactResult]:
+def ls_artifact_results(request) -> List[ArtifactResult]:
     return [request.getfixturevalue(name) for name in request.param]
 
 
