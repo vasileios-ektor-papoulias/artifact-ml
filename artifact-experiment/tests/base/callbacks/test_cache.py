@@ -13,7 +13,7 @@ from tests.base.callbacks.dummy.cache import (
 
 @pytest.fixture
 def resources_factory() -> Callable[[float, float], DummyCallbackResources]:
-    def _factory(x: float = 1.0, y: float = 2.0) -> DummyCallbackResources:
+    def _factory(x: float, y: float) -> DummyCallbackResources:
         return DummyCallbackResources(x=x, y=y)
 
     return _factory
