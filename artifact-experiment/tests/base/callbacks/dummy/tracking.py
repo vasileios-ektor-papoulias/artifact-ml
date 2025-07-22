@@ -20,11 +20,11 @@ class DummyScoreCallback(ScoreCallback[CallbackResources]):
     def __init__(
         self,
         key: str,
-        compute_value: float = DEFAULT_VALUE,
+        compute_value: Optional[float] = None,
         tracking_client: Optional[TrackingClient] = None,
     ):
         super().__init__(key=key, tracking_client=tracking_client)
-        self._compute_value = compute_value
+        self._compute_value = compute_value if compute_value is not None else self.DEFAULT_VALUE
 
     def _compute(self, resources: CallbackResources) -> float:
         _ = resources
