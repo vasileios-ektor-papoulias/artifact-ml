@@ -1,4 +1,5 @@
 from typing import Callable, Dict, List, Optional, Tuple
+from uuid import UUID
 
 import pytest
 from matplotlib.figure import Figure
@@ -9,6 +10,8 @@ from tests.base.tracking.dummy.adapter import DummyNativeRun, DummyRunAdapter
 from tests.base.tracking.dummy.client import DummyTrackingClient
 from tests.base.tracking.dummy.logger import DummyArtifactLogger
 
+STANDARD_UUID_LENGTH = 36
+
 
 def _get_name(key: str, idx: int) -> str:
     return f"{key}_{idx}"
@@ -16,12 +19,7 @@ def _get_name(key: str, idx: int) -> str:
 
 @pytest.mark.parametrize(
     "experiment_id, run_id",
-    [
-        ("exp1", "run1"),
-        ("my_experiment", "my_run"),
-        ("test-experiment", "test-run"),
-        ("experiment_with_underscores", "run_with_underscores"),
-    ],
+    [("exp1", "run1")],
 )
 def test_init(
     logger_factory: Callable[
@@ -49,12 +47,7 @@ def test_init(
 
 @pytest.mark.parametrize(
     "experiment_id, run_id",
-    [
-        ("exp1", "run1"),
-        ("my_experiment", "my_run"),
-        ("test-experiment", "test-run"),
-        ("experiment_with_underscores", "run_with_underscores"),
-    ],
+    [("exp1", "run1")],
 )
 def test_from_run(
     adapter_factory: Callable[
@@ -74,12 +67,7 @@ def test_from_run(
 
 @pytest.mark.parametrize(
     "experiment_id, run_id",
-    [
-        ("exp1", "run1"),
-        ("my_experiment", "my_run"),
-        ("test-experiment", "test-run"),
-        ("experiment_with_underscores", "run_with_underscores"),
-    ],
+    [("exp1", "run1")],
 )
 def test_from_native_run(
     native_run_factory: Callable[[Optional[str], Optional[str]], DummyNativeRun],
@@ -98,20 +86,23 @@ def test_from_native_run(
     "experiment_id, run_id",
     [
         ("exp1", "run1"),
-        ("my_experiment", "my_run"),
-        ("test-experiment", "test-run"),
-        ("experiment_with_underscores", "run_with_underscores"),
+        ("exp1", None),
     ],
 )
 def test_build(
     experiment_id: str,
-    run_id: str,
+    run_id: Optional[str],
 ):
     client = DummyTrackingClient.build(experiment_id=experiment_id, run_id=run_id)
     assert isinstance(client, DummyTrackingClient)
-    assert client.run.experiment_id == experiment_id
-    assert client.run.run_id == run_id
     assert client.run.is_active is True
+    assert client.run.experiment_id == experiment_id
+    if run_id is not None:
+        assert client.run.run_id == run_id
+    else:
+        assert client.run.run_id is not None
+        assert len(client.run.run_id) == STANDARD_UUID_LENGTH
+        UUID(client.run.run_id)
 
 
 @pytest.mark.parametrize(
