@@ -47,12 +47,12 @@ def native_run_factory(
         if run_id is None:
             run_id = "default_run_id"
         mocker.patch.object(FilesystemRun, "_root_dir", new=Path("test_root"))
-        mocker.patch("artifact_experiment.libs.tracking.filesystem.adapter.os.makedirs")
+        mocker.patch("artifact_experiment.libs.tracking.filesystem.native_run.os.makedirs")
         mocker.patch(
-            "artifact_experiment.libs.tracking.filesystem.adapter.DirectoryOpenButton",
+            "artifact_experiment.libs.tracking.filesystem.native_run.DirectoryOpenButton",
             autospec=True,
         )
-        mocker.patch("artifact_experiment.libs.tracking.filesystem.adapter.print")
+        mocker.patch("artifact_experiment.libs.tracking.filesystem.native_run.print")
         native_run = FilesystemRun(experiment_id=experiment_id, run_id=run_id)
         return native_run
 
@@ -62,11 +62,11 @@ def native_run_factory(
 @pytest.fixture
 def patch_filesystem_run_creation(mocker: MockerFixture):
     mocker.patch.object(FilesystemRun, "_root_dir", new=Path("test_root"))
-    mocker.patch("artifact_experiment.libs.tracking.filesystem.adapter.os.makedirs")
+    mocker.patch("artifact_experiment.libs.tracking.filesystem.native_run.os.makedirs")
     mocker.patch(
-        "artifact_experiment.libs.tracking.filesystem.adapter.DirectoryOpenButton", autospec=True
+        "artifact_experiment.libs.tracking.filesystem.native_run.DirectoryOpenButton", autospec=True
     )
-    mocker.patch("artifact_experiment.libs.tracking.filesystem.adapter.print")
+    mocker.patch("artifact_experiment.libs.tracking.filesystem.native_run.print")
 
 
 @pytest.fixture
