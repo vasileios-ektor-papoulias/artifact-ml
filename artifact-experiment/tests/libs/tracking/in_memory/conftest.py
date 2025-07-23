@@ -1,6 +1,5 @@
 from typing import Callable, Optional, Tuple
 
-import matplotlib
 import numpy as np
 import pytest
 from artifact_experiment.libs.tracking.in_memory.adapter import (
@@ -13,16 +12,14 @@ from artifact_experiment.libs.tracking.in_memory.native_run import (
     InMemoryRun,
 )
 
-matplotlib.use("Agg")
-
 
 @pytest.fixture
 def native_run_factory() -> Callable[[Optional[str], Optional[str]], InMemoryRun]:
     def _factory(experiment_id: Optional[str] = None, run_id: Optional[str] = None) -> InMemoryRun:
         if experiment_id is None:
-            experiment_id = "test_experiment"
+            experiment_id = "default_experiment_id"
         if run_id is None:
-            run_id = "test_run"
+            run_id = "default_run_id"
         native_run = InMemoryRun(experiment_id=experiment_id, run_id=run_id)
         return native_run
 
@@ -37,9 +34,9 @@ def adapter_factory(
         experiment_id: Optional[str] = None, run_id: Optional[str] = None
     ) -> Tuple[InMemoryRun, InMemoryRunAdapter]:
         if experiment_id is None:
-            experiment_id = "test_experiment"
+            experiment_id = "default_experiment_id"
         if run_id is None:
-            run_id = "test_run"
+            run_id = "default_run_id"
         native_run = native_run_factory(experiment_id, run_id)
         adapter = InMemoryRunAdapter(native_run=native_run)
         return native_run, adapter

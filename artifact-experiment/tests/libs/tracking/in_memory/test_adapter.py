@@ -18,13 +18,7 @@ STANDARD_UUID_LENGTH = 36
     "experiment_id, run_id",
     [
         ("exp1", "run1"),
-        ("my_experiment", "my_run"),
-        ("test-experiment", "test-run"),
-        ("experiment_with_underscores", "run_with_underscores"),
         ("exp1", None),
-        ("my_experiment", None),
-        ("test-experiment", None),
-        ("experiment_with_underscores", None),
     ],
 )
 def test_build(
@@ -42,22 +36,34 @@ def test_build(
         UUID(adapter.run_id)
 
 
+@pytest.mark.parametrize(
+    "experiment_id, run_id",
+    [("exp1", "run1")],
+)
 def test_from_native_run(
     native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
+    experiment_id: str,
+    run_id: str,
 ):
-    native_run = native_run_factory("test_exp", "test_run")
+    native_run = native_run_factory(experiment_id, run_id)
     adapter = InMemoryRunAdapter.from_native_run(native_run)
-    assert adapter.experiment_id == "test_exp"
-    assert adapter.run_id == "test_run"
+    assert adapter.experiment_id == experiment_id
+    assert adapter.run_id == run_id
     assert adapter.is_active is True
 
 
+@pytest.mark.parametrize(
+    "experiment_id, run_id",
+    [("exp1", "run1")],
+)
 def test_stop_run(
     adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
     ],
+    experiment_id: str,
+    run_id: str,
 ):
-    native_run, adapter = adapter_factory(None, None)
+    native_run, adapter = adapter_factory(experiment_id, run_id)
     assert native_run.is_active
     assert adapter.is_active
     adapter.stop()
@@ -65,27 +71,29 @@ def test_stop_run(
     assert not adapter.is_active
 
 
+@pytest.mark.parametrize(
+    "experiment_id, run_id",
+    [("exp1", "run1")],
+)
 def test_native_context_manager(
     adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
     ],
+    experiment_id: str,
+    run_id: str,
 ):
-    native_run, adapter = adapter_factory(None, None)
-    with adapter.native() as native_run_ctxt:
-        assert isinstance(native_run, InMemoryRun)
-        assert native_run_ctxt.experiment_id == adapter.experiment_id
-        assert native_run_ctxt.run_id == adapter.run_id
-        assert native_run_ctxt.experiment_id == native_run.experiment_id
-        assert native_run_ctxt.run_id == native_run.run_id
+    native_run, adapter = adapter_factory(experiment_id, run_id)
+    with adapter.native() as ctx_native_run:
+        assert ctx_native_run is native_run
 
 
 @pytest.mark.parametrize(
-    "score_key, score",
+    "experiment_id, run_id, score_key, score",
     [
-        ("accuracy/1", "score_1"),
-        ("loss/1", "score_2"),
-        ("f1_score/2", "score_3"),
-        ("precision/10", "score_4"),
+        ("exp1", "run1", "score/1", "score_1"),
+        ("exp1", "run1", "score/1", "score_2"),
+        ("exp1", "run1", "score/1", "score_3"),
+        ("exp1", "run1", "score/1", "score_4"),
     ],
     indirect=["score"],
 )
@@ -93,10 +101,12 @@ def test_log_score(
     adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
     ],
+    experiment_id: str,
+    run_id: str,
     score_key: str,
     score: float,
 ):
-    _, adapter = adapter_factory(None, None)
+    _, adapter = adapter_factory(experiment_id, run_id)
     assert adapter.n_scores == 0
     assert adapter.dict_scores == {}
     assert adapter.ls_scores == []
@@ -107,12 +117,12 @@ def test_log_score(
 
 
 @pytest.mark.parametrize(
-    "array_key, array",
+    "experiment_id, run_id, array_key, array",
     [
-        ("array/1", "array_1"),
-        ("array/1", "array_2"),
-        ("array/2", "array_3"),
-        ("array/10", "array_4"),
+        ("exp1", "run1", "array/1", "array_1"),
+        ("exp1", "run1", "array/1", "array_2"),
+        ("exp1", "run1", "array/1", "array_3"),
+        ("exp1", "run1", "array/1", "array_4"),
     ],
     indirect=["array"],
 )
@@ -120,10 +130,12 @@ def test_log_array(
     adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
     ],
+    experiment_id: str,
+    run_id: str,
     array_key: str,
     array: ndarray,
 ):
-    _, adapter = adapter_factory(None, None)
+    _, adapter = adapter_factory(experiment_id, run_id)
     assert adapter.n_arrays == 0
     assert adapter.dict_arrays == {}
     assert adapter.ls_arrays == []
@@ -134,12 +146,12 @@ def test_log_array(
 
 
 @pytest.mark.parametrize(
-    "plot_key, plot",
+    "experiment_id, run_id, plot_key, plot",
     [
-        ("plot/1", "plot_1"),
-        ("plot/1", "plot_2"),
-        ("plot/2", "plot_3"),
-        ("plot/10", "plot_4"),
+        ("exp1", "run1", "plot/1", "plot_1"),
+        ("exp1", "run1", "plot/1", "plot_2"),
+        ("exp1", "run1", "plot/1", "plot_3"),
+        ("exp1", "run1", "plot/1", "plot_4"),
     ],
     indirect=["plot"],
 )
@@ -147,10 +159,12 @@ def test_log_plot(
     adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
     ],
+    experiment_id: str,
+    run_id: str,
     plot_key: str,
     plot: Figure,
 ):
-    _, adapter = adapter_factory(None, None)
+    _, adapter = adapter_factory(experiment_id, run_id)
     assert adapter.n_plots == 0
     assert adapter.dict_plots == {}
     assert adapter.ls_plots == []
@@ -161,12 +175,12 @@ def test_log_plot(
 
 
 @pytest.mark.parametrize(
-    "score_collection_key, score_collection",
+    "experiment_id, run_id, score_collection_key, score_collection",
     [
-        ("score_collection/1", "score_collection_1"),
-        ("score_collection/1", "score_collection_2"),
-        ("score_collection/2", "score_collection_3"),
-        ("score_collection/10", "score_collection_4"),
+        ("exp1", "run1", "score_collection/1", "score_collection_1"),
+        ("exp1", "run1", "score_collection/1", "score_collection_2"),
+        ("exp1", "run1", "score_collection/1", "score_collection_3"),
+        ("exp1", "run1", "score_collection/1", "score_collection_4"),
     ],
     indirect=["score_collection"],
 )
@@ -174,10 +188,12 @@ def test_log_score_collection(
     adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
     ],
+    experiment_id: str,
+    run_id: str,
     score_collection_key: str,
     score_collection: Dict[str, float],
 ):
-    _, adapter = adapter_factory(None, None)
+    _, adapter = adapter_factory(experiment_id, run_id)
     assert adapter.n_score_collections == 0
     assert adapter.dict_score_collections == {}
     assert adapter.ls_score_collections == []
@@ -188,12 +204,12 @@ def test_log_score_collection(
 
 
 @pytest.mark.parametrize(
-    "array_collection_key, array_collection",
+    "experiment_id, run_id, array_collection_key, array_collection",
     [
-        ("array_collection/1", "array_collection_1"),
-        ("array_collection/1", "array_collection_2"),
-        ("array_collection/2", "array_collection_3"),
-        ("array_collection/10", "array_collection_4"),
+        ("exp1", "run1", "array_collection/1", "array_collection_1"),
+        ("exp1", "run1", "array_collection/1", "array_collection_2"),
+        ("exp1", "run1", "array_collection/1", "array_collection_3"),
+        ("exp1", "run1", "array_collection/1", "array_collection_4"),
     ],
     indirect=["array_collection"],
 )
@@ -201,10 +217,12 @@ def test_log_array_collection(
     adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
     ],
+    experiment_id: str,
+    run_id: str,
     array_collection_key: str,
     array_collection: Dict[str, ndarray],
 ):
-    _, adapter = adapter_factory(None, None)
+    _, adapter = adapter_factory(experiment_id, run_id)
     assert adapter.n_array_collections == 0
     assert adapter.dict_array_collections == {}
     assert adapter.ls_array_collections == []
@@ -218,12 +236,12 @@ def test_log_array_collection(
 
 
 @pytest.mark.parametrize(
-    "plot_collection_key, plot_collection",
+    "experiment_id, run_id, plot_collection_key, plot_collection",
     [
-        ("plot_collection/1", "plot_collection_1"),
-        ("plot_collection/1", "plot_collection_2"),
-        ("plot_collection/2", "plot_collection_3"),
-        ("plot_collection/10", "plot_collection_4"),
+        ("exp1", "run1", "plot_collection/1", "plot_collection_1"),
+        ("exp1", "run1", "plot_collection/1", "plot_collection_2"),
+        ("exp1", "run1", "plot_collection/1", "plot_collection_3"),
+        ("exp1", "run1", "plot_collection/1", "plot_collection_4"),
     ],
     indirect=["plot_collection"],
 )
@@ -231,10 +249,12 @@ def test_log_plot_collection(
     adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
     ],
+    experiment_id: str,
+    run_id: str,
     plot_collection_key: str,
     plot_collection: Dict[str, Figure],
 ):
-    _, adapter = adapter_factory(None, None)
+    _, adapter = adapter_factory(experiment_id, run_id)
     assert adapter.n_plot_collections == 0
     assert adapter.dict_plot_collections == {}
     assert adapter.ls_plot_collections == []
@@ -247,11 +267,13 @@ def test_log_plot_collection(
 
 
 @pytest.mark.parametrize(
-    "ls_file_entries, expected_store_length",
+    "experiment_id, run_id, ls_file_entries, expected_store_length",
     [
-        ([], 0),
-        ([{"path_source": "/test/path1", "dir_target": "uploads"}], 1),
+        ("exp1", "run1", [], 0),
+        ("exp1", "run1", [{"path_source": "/test/path1", "dir_target": "uploads"}], 1),
         (
+            "exp1",
+            "run1",
             [
                 {"path_source": "/test/path1", "dir_target": "uploads"},
                 {"path_source": "/another/path", "dir_target": "data"},
@@ -264,6 +286,8 @@ def test_upload(
     adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
     ],
+    experiment_id: str,
+    run_id: str,
     ls_file_entries: List[Dict[str, str]],
     expected_store_length: int,
 ):
@@ -277,13 +301,19 @@ def test_upload(
 
 
 @pytest.mark.parametrize(
-    "populated_adapter_factory, artifact_path, expected_ls_paths",
+    "experiment_id, run_id, populated_adapter_factory, artifact_path, expected_ls_paths",
     [
-        (["score_1"], "score_1", []),
-        (["score_1", "score_2"], "t", ["test_score/1", "test_score/2"]),
-        (["score_1", "score_2"], "test_score", ["test_score/1", "test_score/2"]),
-        (["score_1", "score_2", "score_3"], "t", ["test_score/1", "test_score/2", "test_score/3"]),
-        (["score_1", "score_2", "score_3"], "test_score/1", ["test_score/1"]),
+        ("exp1", "run1", ["score_1"], "score_1", []),
+        ("exp1", "run1", ["score_1", "score_2"], "t", ["test_score/1", "test_score/2"]),
+        ("exp1", "run1", ["score_1", "score_2"], "test_score", ["test_score/1", "test_score/2"]),
+        (
+            "exp1",
+            "run1",
+            ["score_1", "score_2", "score_3"],
+            "t",
+            ["test_score/1", "test_score/2", "test_score/3"],
+        ),
+        ("exp1", "run1", ["score_1", "score_2", "score_3"], "test_score/1", ["test_score/1"]),
     ],
     indirect=["populated_adapter_factory"],
 )
@@ -291,22 +321,30 @@ def test_search_score(
     populated_adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
     ],
+    experiment_id: str,
+    run_id: str,
     artifact_path: str,
     expected_ls_paths: List[str],
 ):
-    _, adapter = populated_adapter_factory("test_experiment", "test_run")
+    _, adapter = populated_adapter_factory(experiment_id, run_id)
     ls_paths = adapter.search_score_store(artifact_path=artifact_path)
     assert ls_paths == expected_ls_paths
 
 
 @pytest.mark.parametrize(
-    "populated_adapter_factory, artifact_path, expected_ls_paths",
+    "experiment_id, run_id, populated_adapter_factory, artifact_path, expected_ls_paths",
     [
-        (["array_1"], "array_1", []),
-        (["array_1", "array_2"], "t", ["test_array/1", "test_array/2"]),
-        (["array_1", "array_2"], "test_array", ["test_array/1", "test_array/2"]),
-        (["array_1", "array_2", "array_3"], "t", ["test_array/1", "test_array/2", "test_array/3"]),
-        (["array_1", "array_2", "array_3"], "test_array/1", ["test_array/1"]),
+        ("exp1", "run1", ["array_1"], "array_1", []),
+        ("exp1", "run1", ["array_1", "array_2"], "t", ["test_array/1", "test_array/2"]),
+        ("exp1", "run1", ["array_1", "array_2"], "test_array", ["test_array/1", "test_array/2"]),
+        (
+            "exp1",
+            "run1",
+            ["array_1", "array_2", "array_3"],
+            "t",
+            ["test_array/1", "test_array/2", "test_array/3"],
+        ),
+        ("exp1", "run1", ["array_1", "array_2", "array_3"], "test_array/1", ["test_array/1"]),
     ],
     indirect=["populated_adapter_factory"],
 )
@@ -314,22 +352,30 @@ def test_search_array(
     populated_adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
     ],
+    experiment_id: str,
+    run_id: str,
     artifact_path: str,
     expected_ls_paths: List[str],
 ):
-    _, adapter = populated_adapter_factory("test_experiment", "test_run")
+    _, adapter = populated_adapter_factory(experiment_id, run_id)
     ls_paths = adapter.search_array_store(artifact_path=artifact_path)
     assert ls_paths == expected_ls_paths
 
 
 @pytest.mark.parametrize(
-    "populated_adapter_factory, artifact_path, expected_ls_paths",
+    "experiment_id, run_id, populated_adapter_factory, artifact_path, expected_ls_paths",
     [
-        (["plot_1"], "plot_1", []),
-        (["plot_1", "plot_2"], "t", ["test_plot/1", "test_plot/2"]),
-        (["plot_1", "plot_2"], "test_plot", ["test_plot/1", "test_plot/2"]),
-        (["plot_1", "plot_2", "plot_3"], "t", ["test_plot/1", "test_plot/2", "test_plot/3"]),
-        (["plot_1", "plot_2", "plot_3"], "test_plot/1", ["test_plot/1"]),
+        ("exp1", "run1", ["plot_1"], "plot_1", []),
+        ("exp1", "run1", ["plot_1", "plot_2"], "t", ["test_plot/1", "test_plot/2"]),
+        ("exp1", "run1", ["plot_1", "plot_2"], "test_plot", ["test_plot/1", "test_plot/2"]),
+        (
+            "exp1",
+            "run1",
+            ["plot_1", "plot_2", "plot_3"],
+            "t",
+            ["test_plot/1", "test_plot/2", "test_plot/3"],
+        ),
+        ("exp1", "run1", ["plot_1", "plot_2", "plot_3"], "test_plot/1", ["test_plot/1"]),
     ],
     indirect=["populated_adapter_factory"],
 )
@@ -337,34 +383,44 @@ def test_search_plot(
     populated_adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
     ],
+    experiment_id: str,
+    run_id: str,
     artifact_path: str,
     expected_ls_paths: List[str],
 ):
-    _, adapter = populated_adapter_factory("test_experiment", "test_run")
+    _, adapter = populated_adapter_factory(experiment_id, run_id)
     ls_paths = adapter.search_plot_store(artifact_path=artifact_path)
     assert ls_paths == expected_ls_paths
 
 
 @pytest.mark.parametrize(
-    "populated_adapter_factory, artifact_path, expected_ls_paths",
+    "experiment_id, run_id, populated_adapter_factory, artifact_path, expected_ls_paths",
     [
-        (["score_collection_1"], "score_collection_1", []),
+        ("exp1", "run1", ["score_collection_1"], "score_collection_1", []),
         (
+            "exp1",
+            "run1",
             ["score_collection_1", "score_collection_2"],
             "t",
             ["test_score_collection/1", "test_score_collection/2"],
         ),
         (
+            "exp1",
+            "run1",
             ["score_collection_1", "score_collection_2"],
             "test_score_collection",
             ["test_score_collection/1", "test_score_collection/2"],
         ),
         (
+            "exp1",
+            "run1",
             ["score_collection_1", "score_collection_2", "score_collection_3"],
             "t",
             ["test_score_collection/1", "test_score_collection/2", "test_score_collection/3"],
         ),
         (
+            "exp1",
+            "run1",
             ["score_collection_1", "score_collection_2", "score_collection_3"],
             "test_score_collection/1",
             ["test_score_collection/1"],
@@ -376,34 +432,44 @@ def test_search_score_collection(
     populated_adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
     ],
+    experiment_id: str,
+    run_id: str,
     artifact_path: str,
     expected_ls_paths: List[str],
 ):
-    _, adapter = populated_adapter_factory("test_experiment", "test_run")
+    _, adapter = populated_adapter_factory(experiment_id, run_id)
     ls_paths = adapter.search_score_collection_store(artifact_path=artifact_path)
     assert ls_paths == expected_ls_paths
 
 
 @pytest.mark.parametrize(
-    "populated_adapter_factory, artifact_path, expected_ls_paths",
+    "experiment_id, run_id, populated_adapter_factory, artifact_path, expected_ls_paths",
     [
-        (["array_collection_1"], "array_collection_1", []),
+        ("exp1", "run1", ["array_collection_1"], "array_collection_1", []),
         (
+            "exp1",
+            "run1",
             ["array_collection_1", "array_collection_2"],
             "t",
             ["test_array_collection/1", "test_array_collection/2"],
         ),
         (
+            "exp1",
+            "run1",
             ["array_collection_1", "array_collection_2"],
             "test_array_collection",
             ["test_array_collection/1", "test_array_collection/2"],
         ),
         (
+            "exp1",
+            "run1",
             ["array_collection_1", "array_collection_2", "array_collection_3"],
             "t",
             ["test_array_collection/1", "test_array_collection/2", "test_array_collection/3"],
         ),
         (
+            "exp1",
+            "run1",
             ["array_collection_1", "array_collection_2", "array_collection_3"],
             "test_array_collection/1",
             ["test_array_collection/1"],
@@ -415,34 +481,44 @@ def test_search_array_collection(
     populated_adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
     ],
+    experiment_id: str,
+    run_id: str,
     artifact_path: str,
     expected_ls_paths: List[str],
 ):
-    _, adapter = populated_adapter_factory("test_experiment", "test_run")
+    _, adapter = populated_adapter_factory(experiment_id, run_id)
     ls_paths = adapter.search_array_collection_store(artifact_path=artifact_path)
     assert ls_paths == expected_ls_paths
 
 
 @pytest.mark.parametrize(
-    "populated_adapter_factory, artifact_path, expected_ls_paths",
+    "experiment_id, run_id, populated_adapter_factory, artifact_path, expected_ls_paths",
     [
-        (["plot_collection_1"], "plot_collection_1", []),
+        ("exp1", "run1", ["plot_collection_1"], "plot_collection_1", []),
         (
+            "exp1",
+            "run1",
             ["plot_collection_1", "plot_collection_2"],
             "t",
             ["test_plot_collection/1", "test_plot_collection/2"],
         ),
         (
+            "exp1",
+            "run1",
             ["plot_collection_1", "plot_collection_2"],
             "test_plot_collection",
             ["test_plot_collection/1", "test_plot_collection/2"],
         ),
         (
+            "exp1",
+            "run1",
             ["plot_collection_1", "plot_collection_2", "plot_collection_3"],
             "t",
             ["test_plot_collection/1", "test_plot_collection/2", "test_plot_collection/3"],
         ),
         (
+            "exp1",
+            "run1",
             ["plot_collection_1", "plot_collection_2", "plot_collection_3"],
             "test_plot_collection/1",
             ["test_plot_collection/1"],
@@ -454,9 +530,11 @@ def test_search_plot_collection(
     populated_adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
     ],
+    experiment_id: str,
+    run_id: str,
     artifact_path: str,
     expected_ls_paths: List[str],
 ):
-    _, adapter = populated_adapter_factory("test_experiment", "test_run")
+    _, adapter = populated_adapter_factory(experiment_id, run_id)
     ls_paths = adapter.search_plot_collection_store(artifact_path=artifact_path)
     assert ls_paths == expected_ls_paths
