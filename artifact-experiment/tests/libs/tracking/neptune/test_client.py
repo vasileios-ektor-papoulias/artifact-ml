@@ -66,7 +66,7 @@ def test_init(
         plot_collection_logger=plot_collection_logger,
     )
     assert isinstance(client, NeptuneTrackingClient)
-    assert client.run == adapter
+    assert client.run is adapter
     assert client.run.experiment_id == experiment_id
     assert client.run.run_id == run_id
     assert client.run.is_active is True
@@ -84,7 +84,7 @@ def test_from_run(
     _, adapter = adapter_factory(experiment_id, run_id)
     client = NeptuneTrackingClient.from_run(run=adapter)
     assert isinstance(client, NeptuneTrackingClient)
-    assert client.run == adapter
+    assert client.run is adapter
     assert client.run.experiment_id == experiment_id
     assert client.run.run_id == run_id
     assert client.run.is_active is True
