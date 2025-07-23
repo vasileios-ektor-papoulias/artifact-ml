@@ -45,13 +45,15 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
         return self._run_id
 
     @property
-    def run_status(self) -> str:
-        run_metadata = self.run_metadata
-        return run_metadata["sys"]["state"]
+    def run_status(self) -> NeptuneRunStatus:
+        try:
+            return NeptuneRunStatus(self.run_metadata["sys"]["state"])
+        except ValueError:
+            raise RuntimeError(f"Unknown Neptune run state: {self.run_metadata['sys']['state']}")
 
     @property
     def is_active(self) -> bool:
-        return self.run_status == self._active_run_status.value
+        return self.run_status == self._active_run_status
 
     @property
     def run_metadata(self) -> Dict[str, Any]:
