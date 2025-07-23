@@ -10,8 +10,7 @@ class DummyArtifactLogger(ArtifactLogger[ArtifactResult, DummyRunAdapter]):
 
     @classmethod
     def _get_relative_path(cls, artifact_name: str) -> str:
-        _ = artifact_name
-        return ""
+        return artifact_name
 
     def _get_root_dir(self) -> str:
         return ""
