@@ -1,7 +1,6 @@
 from typing import Callable, Optional, Tuple
 from uuid import UUID
 
-import numpy as np
 import pytest
 from artifact_core.base.artifact_dependencies import ArtifactResult
 from pytest_mock import MockerFixture
@@ -23,8 +22,8 @@ def test_build(
     run_id: Optional[str],
 ):
     adapter = DummyRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
-    assert adapter.experiment_id == experiment_id
     assert adapter.is_active is True
+    assert adapter.experiment_id == experiment_id
     if run_id is not None:
         assert adapter.run_id == run_id
     else:
@@ -33,47 +32,58 @@ def test_build(
         UUID(adapter.run_id)
 
 
+@pytest.mark.parametrize(
+    "experiment_id, run_id",
+    [("exp1", "run1")],
+)
 def test_from_native_run(
     native_run_factory: Callable[[Optional[str], Optional[str]], DummyNativeRun],
+    experiment_id: str,
+    run_id: Optional[str],
 ):
-    native_run = native_run_factory("test_exp", "test_run")
-    adapter: DummyRunAdapter = DummyRunAdapter.from_native_run(native_run)
-    assert adapter.experiment_id == "test_exp"
-    assert adapter.run_id == "test_run"
+    native_run = native_run_factory(experiment_id, run_id)
+    adapter = DummyRunAdapter.from_native_run(native_run)
     assert adapter.is_active is True
-
-
-def test_property_delegation(
-    adapter_factory: Callable[
-        [Optional[str], Optional[str]], Tuple[DummyNativeRun, DummyRunAdapter]
-    ],
-):
-    native_run, adapter = adapter_factory("test_exp", "test_run")
+    assert adapter.is_active == native_run.is_active
     assert adapter.experiment_id == native_run.experiment_id
     assert adapter.run_id == native_run.run_id
-    assert adapter.is_active == native_run.is_active
-    native_run.is_active = False
-    assert adapter.is_active is False
+    assert adapter.run_id == run_id
 
 
+@pytest.mark.parametrize(
+    "experiment_id, run_id",
+    [
+        ("exp1", "run1"),
+        ("exp1", None),
+    ],
+)
 def test_native_context_manager(
     adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[DummyNativeRun, DummyRunAdapter]
     ],
+    experiment_id: str,
+    run_id: Optional[str],
 ):
-    _, adapter = adapter_factory(None, None)
-    with adapter.native() as native_run:
-        assert isinstance(native_run, DummyNativeRun)
-        assert native_run.experiment_id == adapter.experiment_id
-        assert native_run.run_id == adapter.run_id
+    native_run, adapter = adapter_factory(experiment_id, run_id)
+    with adapter.native() as ctx_native_run:
+        assert ctx_native_run is native_run
 
 
+@pytest.mark.parametrize(
+    "experiment_id, run_id",
+    [
+        ("exp1", "run1"),
+        ("exp1", None),
+    ],
+)
 def test_stop_run(
     adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[DummyNativeRun, DummyRunAdapter]
     ],
+    experiment_id: str,
+    run_id: Optional[str],
 ):
-    native_run, adapter = adapter_factory(None, None)
+    native_run, adapter = adapter_factory(experiment_id, run_id)
     assert native_run.is_active
     assert adapter.is_active
     adapter.stop()
@@ -82,34 +92,47 @@ def test_stop_run(
 
 
 @pytest.mark.parametrize(
-    "artifact_path, artifact",
+    "experiment_id, run_id, artifact_path, artifact_result",
     [
-        ("/test/path/1", 2),
-        ("/test/path/2", np.array([1, 2, 3])),
+        ("exp1", "run1", "/test/path/1", "score_1"),
+        ("exp1", None, "/test/path/1", "score_2"),
+        ("exp1", "run1", "/test/path/1", "array_1"),
+        ("exp1", None, "/test/path/1", "array_2"),
+        ("exp1", "run1", "/test/path/1", "plot_1"),
+        ("exp1", None, "/test/path/1", "plot_2"),
+        ("exp1", "run1", "/test/path/1", "score_collection_1"),
+        ("exp1", None, "/test/path/1", "score_collection_2"),
+        ("exp1", "run1", "/test/path/1", "array_collection_1"),
+        ("exp1", None, "/test/path/1", "array_collection_2"),
+        ("exp1", "run1", "/test/path/1", "plot_collection_1"),
+        ("exp1", None, "/test/path/1", "plot_collection_2"),
     ],
+    indirect=["artifact_result"],
 )
 def test_log(
     mocker: MockerFixture,
     adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[DummyNativeRun, DummyRunAdapter]
     ],
+    experiment_id: str,
+    run_id: Optional[str],
     artifact_path: str,
-    artifact: ArtifactResult,
+    artifact_result: ArtifactResult,
 ):
-    native_run, adapter = adapter_factory("test_exp", "test_run")
+    native_run, adapter = adapter_factory(experiment_id, run_id)
     native_run.log = mocker.MagicMock()
-    adapter.log(artifact_path=artifact_path, artifact=artifact)
-    native_run.log.assert_called_with(artifact_path=artifact_path, artifact=artifact)
+    adapter.log(artifact_path=artifact_path, artifact=artifact_result)
+    native_run.log.assert_called_with(artifact_path=artifact_path, artifact=artifact_result)
 
 
 @pytest.mark.parametrize(
-    "path_source, dir_target",
+    "experiment_id, run_id, path_source, dir_target",
     [
-        ("/test/path", "uploads"),
-        ("/data/models/model.pkl", "models"),
-        ("/logs/experiment.log", "logs"),
-        ("/artifacts/plot.png", "plots"),
-        ("/results/summary.json", "results"),
+        ("exp1", "run1", "/test/path", "uploads"),
+        ("exp1", None, "/data/models/model.pkl", "models"),
+        ("exp1", "run1", "/logs/experiment.log", "logs"),
+        ("exp1", None, "/artifacts/plot.png", "plots"),
+        ("exp1", "run1", "/results/summary.json", "results"),
     ],
 )
 def test_upload(
@@ -117,10 +140,12 @@ def test_upload(
     adapter_factory: Callable[
         [Optional[str], Optional[str]], Tuple[DummyNativeRun, DummyRunAdapter]
     ],
+    experiment_id: str,
+    run_id: Optional[str],
     path_source: str,
     dir_target: str,
 ):
-    native_run, adapter = adapter_factory("test_exp", "test_run")
+    native_run, adapter = adapter_factory(experiment_id, run_id)
     native_run.upload = mocker.MagicMock()
     adapter = DummyRunAdapter.from_native_run(native_run=native_run)
     adapter.upload(path_source=path_source, dir_target=dir_target)
