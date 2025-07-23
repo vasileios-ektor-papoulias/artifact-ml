@@ -1,4 +1,5 @@
-from typing import Callable, Optional, Tuple
+import os
+from typing import Callable, List, Optional, Tuple
 
 import pytest
 from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRunAdapter
@@ -15,6 +16,29 @@ from artifact_experiment.libs.tracking.filesystem.loggers.score_collections impo
 )
 from artifact_experiment.libs.tracking.filesystem.loggers.scores import FilesystemScoreLogger
 from artifact_experiment.libs.tracking.filesystem.native_run import FilesystemRun
+from pytest_mock import MockerFixture
+
+
+@pytest.fixture
+def patched_incremental_generator(mocker: MockerFixture) -> List[str]:
+    generated_paths: List[str] = []
+
+    def fake_generate(dir_path: str, fmt: Optional[str] = None) -> str:
+        count = 1 + sum(1 for p in generated_paths if p.startswith(dir_path + os.sep))
+        path = (
+            os.path.join(dir_path, f"{count}.{fmt}")
+            if fmt is not None
+            else os.path.join(dir_path, str(count))
+        )
+        generated_paths.append(path)
+        return path
+
+    mocker.patch(
+        "artifact_experiment.libs.utils.incremental_path_generator.IncrementalPathGenerator.generate",
+        side_effect=fake_generate,
+    )
+
+    return generated_paths
 
 
 @pytest.fixture

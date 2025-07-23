@@ -1,78 +1,118 @@
-# import os
-# from typing import Callable, Dict, List, Optional, Tuple
+import os
+from typing import Callable, Dict, List, Optional, Tuple
 
-# import pytest
-# from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter
-# from artifact_experiment.libs.tracking.neptune.loggers.array_collections import (
-#     NeptuneArrayCollectionLogger,
-# )
-# from numpy import ndarray
-# from pytest_mock import MockerFixture
+import pytest
+from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRunAdapter
+from artifact_experiment.libs.tracking.filesystem.loggers.array_collections import (
+    FilesystemArrayCollectionLogger,
+)
+from numpy import ndarray
+from pytest_mock import MockerFixture
 
 
-# @pytest.mark.parametrize(
-#     "experiment_id, run_id, ls_array_collection_names, ls_array_collections",
-#     [
-#         ("exp1", "run1", [], []),
-#         ("exp1", "run1", ["array_collection_1"], ["array_collection_1"]),
-#         (
-#             "exp1",
-#             "run1",
-#             ["array_collection_1", "array_collection_2"],
-#             ["array_collection_1", "array_collection_2"],
-#         ),
-#         (
-#             "exp1",
-#             "run1",
-#             ["array_collection_1", "array_collection_3"],
-#             ["array_collection_1", "array_collection_3"],
-#         ),
-#         (
-#             "exp1",
-#             "run1",
-#             ["array_collection_1", "array_collection_2", "array_collection_3"],
-#             ["array_collection_1", "array_collection_2", "array_collection_3"],
-#         ),
-#         (
-#             "exp1",
-#             "run1",
-#             [
-#                 "array_collection_1",
-#                 "array_collection_2",
-#                 "array_collection_3",
-#                 "array_collection_4",
-#                 "array_collection_5",
-#             ],
-#             [
-#                 "array_collection_1",
-#                 "array_collection_2",
-#                 "array_collection_3",
-#                 "array_collection_4",
-#                 "array_collection_5",
-#             ],
-#         ),
-#     ],
-#     indirect=["ls_array_collections"],
-# )
-# def test_log(
-#     mocker: MockerFixture,
-#     array_collection_logger_factory: Callable[
-#         [Optional[str], Optional[str]], Tuple[NeptuneRunAdapter, NeptuneArrayCollectionLogger]
-#     ],
-#     experiment_id: str,
-#     run_id: str,
-#     ls_array_collection_names: List[str],
-#     ls_array_collections: List[Dict[str, ndarray]],
-# ):
-#     adapter, logger = array_collection_logger_factory(experiment_id, run_id)
-#     adapter.log = mocker.MagicMock()
-#     for array_collection_name, array_collection in zip(
-#         ls_array_collection_names, ls_array_collections
-#     ):
-#         logger.log(artifact_name=array_collection_name, artifact=array_collection)
-#     assert adapter.log.call_count == len(ls_array_collections)
-#     for idx, call_args in enumerate(adapter.log.call_args_list):
-#         array_collection_name = ls_array_collection_names[idx]
-#         array_collection = ls_array_collections[idx]
-#         expected_path = os.path.join("artifacts", "array_collections", array_collection_name)
-#         assert call_args.kwargs == {"artifact_path": expected_path, "artifact": array_collection}
+@pytest.mark.parametrize(
+    "experiment_id, run_id, ls_array_collection_names, ls_array_collections, ls_step",
+    [
+        ("exp1", "run1", [], [], []),
+        ("exp1", "run1", ["array_collection_1"], ["array_collection_1"], [1]),
+        (
+            "exp1",
+            "run1",
+            ["array_collection_1", "array_collection_2"],
+            ["array_collection_1", "array_collection_2"],
+            [1, 1],
+        ),
+        (
+            "exp1",
+            "run1",
+            ["array_collection_1", "array_collection_3"],
+            ["array_collection_1", "array_collection_3"],
+            [1, 1],
+        ),
+        (
+            "exp1",
+            "run1",
+            ["array_collection_1", "array_collection_2", "array_collection_3"],
+            ["array_collection_1", "array_collection_2", "array_collection_3"],
+            [1, 1, 1],
+        ),
+        (
+            "exp1",
+            "run1",
+            [
+                "array_collection_1",
+                "array_collection_2",
+                "array_collection_3",
+                "array_collection_4",
+                "array_collection_5",
+            ],
+            [
+                "array_collection_1",
+                "array_collection_2",
+                "array_collection_3",
+                "array_collection_4",
+                "array_collection_5",
+            ],
+            [1, 1, 1, 1, 1],
+        ),
+        (
+            "exp1",
+            "run1",
+            ["array_collection_1", "array_collection_2", "array_collection_1"],
+            ["array_collection_1", "array_collection_2", "array_collection_3"],
+            [1, 1, 2],
+        ),
+        (
+            "exp1",
+            "run1",
+            [
+                "array_collection_1",
+                "array_collection_1",
+                "array_collection_2",
+                "array_collection_2",
+                "array_collection_2",
+                "array_collection_1",
+                "array_collection_3",
+            ],
+            [
+                "array_collection_1",
+                "array_collection_2",
+                "array_collection_3",
+                "array_collection_1",
+                "array_collection_2",
+                "array_collection_3",
+                "array_collection_5",
+            ],
+            [1, 2, 1, 2, 3, 3, 1],
+        ),
+    ],
+    indirect=["ls_array_collections"],
+)
+def test_log_array_collection(
+    mocker: MockerFixture,
+    patched_incremental_generator: List[str],
+    array_collection_logger_factory: Callable[
+        [Optional[str], Optional[str]],
+        Tuple[FilesystemRunAdapter, FilesystemArrayCollectionLogger],
+    ],
+    experiment_id: str,
+    run_id: str,
+    ls_array_collection_names: List[str],
+    ls_array_collections: List[Dict[str, ndarray]],
+    ls_step: List[int],
+):
+    _, logger = array_collection_logger_factory(experiment_id, run_id)
+    mock_savez = mocker.patch("numpy.savez_compressed")
+    for name, coll in zip(ls_array_collection_names, ls_array_collections):
+        logger.log(artifact_name=name, artifact=coll)
+    assert mock_savez.call_count == len(ls_array_collections)
+    assert len(patched_incremental_generator) == len(ls_array_collections)
+    for i, (name, array_collection, step) in enumerate(
+        zip(ls_array_collection_names, ls_array_collections, ls_step)
+    ):
+        expected_dir = os.path.join(
+            "test_root", experiment_id, run_id, "artifacts", "array_collections", name
+        )
+        expected_path = os.path.join(expected_dir, f"{step}.npz")
+        assert patched_incremental_generator[i] == expected_path
+        mock_savez.assert_any_call(file=expected_path, allow_pickle=True, **array_collection)

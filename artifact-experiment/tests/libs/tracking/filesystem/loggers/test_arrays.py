@@ -8,24 +8,6 @@ from numpy import ndarray
 from pytest_mock import MockerFixture
 
 
-@pytest.fixture
-def patched_incremental_generator(mocker: MockerFixture) -> List[str]:
-    generated_paths: List[str] = []
-
-    def fake_generate(dir_path: str, fmt: str) -> str:
-        count = 1 + sum(1 for p in generated_paths if p.startswith(dir_path + os.sep))
-        path = os.path.join(dir_path, f"{count}.{fmt}")
-        generated_paths.append(path)
-        return path
-
-    mocker.patch(
-        "artifact_experiment.libs.utils.incremental_path_generator.IncrementalPathGenerator.generate",
-        side_effect=fake_generate,
-    )
-
-    return generated_paths
-
-
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_array_names, ls_arrays, ls_step",
     [
