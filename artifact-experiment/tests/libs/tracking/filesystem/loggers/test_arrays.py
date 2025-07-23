@@ -13,8 +13,8 @@ def patched_incremental_generator(mocker: MockerFixture) -> List[str]:
     generated_paths: List[str] = []
 
     def fake_generate(dir_path: str, fmt: str) -> str:
-        idx = len(generated_paths)
-        path = os.path.join(dir_path, f"{idx}.{fmt}")
+        count = 1 + sum(1 for p in generated_paths if p.startswith(dir_path + os.sep))
+        path = os.path.join(dir_path, f"{count}.{fmt}")
         generated_paths.append(path)
         return path
 
@@ -27,35 +27,39 @@ def patched_incremental_generator(mocker: MockerFixture) -> List[str]:
 
 
 @pytest.mark.parametrize(
-    "experiment_id, run_id, ls_array_names, ls_arrays",
+    "experiment_id, run_id, ls_array_names, ls_arrays, ls_step",
     [
-        ("exp1", "run1", [], []),
-        ("exp1", "run1", ["array_1"], ["array_1"]),
-        ("exp1", "run1", ["array_1", "array_2"], ["array_1", "array_2"]),
-        ("exp1", "run1", ["array_1", "array_3"], ["array_1", "array_3"]),
+        ("exp1", "run1", [], [], []),
+        ("exp1", "run1", ["array_1"], ["array_1"], [1]),
+        ("exp1", "run1", ["array_1", "array_2"], ["array_1", "array_2"], [1, 1]),
+        ("exp1", "run1", ["array_1", "array_3"], ["array_1", "array_3"], [1, 1]),
         (
             "exp1",
             "run1",
             ["array_1", "array_2", "array_3"],
             ["array_1", "array_2", "array_3"],
+            [1, 1, 1],
         ),
         (
             "exp1",
             "run1",
             ["array_1", "array_2", "array_3", "array_4", "array_5"],
             ["array_1", "array_2", "array_3", "array_4", "array_5"],
+            [1, 1, 1, 1, 1],
         ),
         (
             "exp1",
             "run1",
             ["array_1", "array_2", "array_1"],
             ["array_1", "array_2", "array_3"],
+            [1, 1, 2],
         ),
         (
             "exp1",
             "run1",
             ["array_1", "array_1", "array_2", "array_2", "array_2", "array_1", "array_3"],
             ["array_1", "array_2", "array_3", "array_1", "array_2", "array_3", "array_5"],
+            [1, 2, 1, 2, 3, 3, 1],
         ),
     ],
     indirect=["ls_arrays"],
@@ -70,6 +74,7 @@ def test_log(
     run_id: str,
     ls_array_names: List[str],
     ls_arrays: List[ndarray],
+    ls_step: List[int],
 ):
     _, logger = array_logger_factory(experiment_id, run_id)
     mock_save = mocker.patch("numpy.save")
@@ -77,8 +82,8 @@ def test_log(
         logger.log(artifact_name=name, artifact=array)
     assert mock_save.call_count == len(ls_arrays)
     assert len(patched_incremental_generator) == len(ls_arrays)
-    for i, (name, array) in enumerate(zip(ls_array_names, ls_arrays)):
+    for i, (name, array, step) in enumerate(zip(ls_array_names, ls_arrays, ls_step)):
         expected_dir = os.path.join("test_root", experiment_id, run_id, "artifacts", "arrays", name)
-        expected_path = os.path.join(expected_dir, f"{i}.npy")
+        expected_path = os.path.join(expected_dir, f"{step}.npy")
         assert patched_incremental_generator[i] == expected_path
         mock_save.assert_any_call(file=expected_path, arr=array)
