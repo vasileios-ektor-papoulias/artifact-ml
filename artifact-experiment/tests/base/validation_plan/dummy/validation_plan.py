@@ -149,7 +149,7 @@ class DummyScoreCollectionArtifact(
 ):
     def _compute(self, resources: DummyArtifactResources) -> Dict[str, float]:
         _ = resources
-        return {"sub_score1": 1.0, "sub_score2": 2.0}
+        return {"score1": 1.0, "score2": 2.0}
 
     def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
         return resources
@@ -171,7 +171,7 @@ class DummyArrayCollectionArtifact(
 ):
     def _compute(self, resources: DummyArtifactResources) -> Dict[str, np.ndarray]:
         _ = resources
-        return {"sub_array1": np.array([1, 2]), "sub_array2": np.array([3, 4])}
+        return {"array1": np.array([1, 2]), "array2": np.array([3, 4])}
 
     def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
         return resources
@@ -193,7 +193,7 @@ class DummyPlotCollectionArtifact(
 ):
     def _compute(self, resources: DummyArtifactResources) -> Dict[str, Figure]:
         _ = resources
-        return {"sub_plot1": Figure(), "sub_plot2": Figure()}
+        return {"plot1": Figure(), "plot2": Figure()}
 
     def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
         return resources

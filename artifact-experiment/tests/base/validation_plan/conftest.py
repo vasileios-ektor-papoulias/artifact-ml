@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Callable, Dict, Tuple
 from unittest.mock import MagicMock
 
 import pytest
@@ -25,7 +25,7 @@ def mock_tracking_client(mocker: MockerFixture) -> MagicMock:
 
 
 @pytest.fixture
-def mock_handlers(mocker: MockerFixture) -> Dict[str, MagicMock]:
+def mock_callback_handlers(mocker: MockerFixture) -> Dict[str, MagicMock]:
     dict_handlers = {}
     for handler_type in [
         "scores",
@@ -36,6 +36,7 @@ def mock_handlers(mocker: MockerFixture) -> Dict[str, MagicMock]:
         "plot_collections",
     ]:
         handler = mocker.Mock()
+        handler.tracking_client = None
         handler.active_cache = {}
         handler.execute = mocker.Mock()
         handler.clear = mocker.Mock()
@@ -44,15 +45,28 @@ def mock_handlers(mocker: MockerFixture) -> Dict[str, MagicMock]:
 
 
 @pytest.fixture
-def resource_spec() -> DummyResourceSpec:
-    return DummyResourceSpec()
+def mock_tracking_client_factory(mocker: MockerFixture) -> Callable[[], MagicMock]:
+    def _factory() -> MagicMock:
+        client = mocker.Mock(spec=TrackingClient)
+        client.log_score = mocker.Mock()
+        client.log_array = mocker.Mock()
+        client.log_plot = mocker.Mock()
+        client.log_score_collection = mocker.Mock()
+        client.log_array_collection = mocker.Mock()
+        client.log_plot_collection = mocker.Mock()
+        return client
+
+    return _factory
 
 
 @pytest.fixture
-def artifact_resources() -> DummyArtifactResources:
-    return DummyArtifactResources()
+def resources_factory() -> Callable[
+    [], Tuple[ArtifactCallbackResources, DummyArtifactResources, DummyResourceSpec]
+]:
+    def _factory() -> Tuple[ArtifactCallbackResources, DummyArtifactResources, DummyResourceSpec]:
+        artifact_resources = DummyArtifactResources()
+        callback_resources = ArtifactCallbackResources(artifact_resources=artifact_resources)
+        resource_spec = DummyResourceSpec()
+        return callback_resources, artifact_resources, resource_spec
 
-
-@pytest.fixture
-def callback_resources(artifact_resources: DummyArtifactResources) -> ArtifactCallbackResources:
-    return ArtifactCallbackResources(artifact_resources=artifact_resources)
+    return _factory

@@ -1,14 +1,14 @@
-from typing import Dict, Optional
+from typing import Callable, Dict, List, Optional, Tuple
 from unittest.mock import MagicMock
 
-import numpy as np
 import pytest
+from artifact_core.base.artifact_dependencies import ArtifactResult
 from artifact_experiment.base.callbacks.artifact import (
     ArtifactCallbackResources,
 )
-from matplotlib.figure import Figure
 
 from tests.base.validation_plan.dummy.validation_plan import (
+    DummyArtifactResources,
     DummyResourceSpec,
     DummyValidationPlan,
 )
@@ -19,11 +19,14 @@ from tests.base.validation_plan.dummy.validation_plan import (
     [True, False],
 )
 def test_build(
-    mock_tracking_client: MagicMock,
-    resource_spec: DummyResourceSpec,
+    resources_factory: Callable[
+        [], Tuple[ArtifactCallbackResources, DummyArtifactResources, DummyResourceSpec]
+    ],
+    mock_tracking_client_factory: Callable[[], MagicMock],
     tracking_client_provided: bool,
 ):
-    tracking_client = mock_tracking_client if tracking_client_provided else None
+    _, _, resource_spec = resources_factory()
+    tracking_client = mock_tracking_client_factory() if tracking_client_provided else None
     plan = DummyValidationPlan.build(resource_spec=resource_spec, tracking_client=tracking_client)
     assert isinstance(plan, DummyValidationPlan)
     assert plan.tracking_enabled == tracking_client_provided
@@ -39,14 +42,16 @@ def test_build(
     ],
 )
 def test_tracking_client_setter(
-    mock_tracking_client: MagicMock,
-    resource_spec: DummyResourceSpec,
-    callback_resources: ArtifactCallbackResources,
+    resources_factory: Callable[
+        [], Tuple[ArtifactCallbackResources, DummyArtifactResources, DummyResourceSpec]
+    ],
+    mock_tracking_client_factory: Callable[[], MagicMock],
     initial_client: Optional[bool],
     new_client: Optional[bool],
 ):
-    initial_tracking_client = mock_tracking_client if initial_client else None
-    new_tracking_client = mock_tracking_client if new_client else None
+    callback_resources, _, resource_spec = resources_factory()
+    initial_tracking_client = mock_tracking_client_factory() if initial_client else None
+    new_tracking_client = mock_tracking_client_factory() if new_client else None
     plan = DummyValidationPlan.build(
         resource_spec=resource_spec, tracking_client=initial_tracking_client
     )
@@ -54,130 +59,119 @@ def test_tracking_client_setter(
     plan.tracking_client = new_tracking_client
     assert plan.tracking_client == new_tracking_client
     assert plan.tracking_enabled == (new_client is not None)
-
     plan.execute(resources=callback_resources)
-
-    if new_client is not None:
-        mock_tracking_client.log_score.assert_called()
-        mock_tracking_client.log_array.assert_called()
-        mock_tracking_client.log_plot.assert_called()
-        mock_tracking_client.log_score_collection.assert_called()
-        mock_tracking_client.log_array_collection.assert_called()
-        mock_tracking_client.log_plot_collection.assert_called()
-    else:
-        mock_tracking_client.log_score.assert_not_called()
-        mock_tracking_client.log_array.assert_not_called()
-        mock_tracking_client.log_plot.assert_not_called()
-        mock_tracking_client.log_score_collection.assert_not_called()
-        mock_tracking_client.log_array_collection.assert_not_called()
-        mock_tracking_client.log_plot_collection.assert_not_called()
+    if new_tracking_client is not None:
+        new_tracking_client.log_score.assert_called()
+        new_tracking_client.log_array.assert_called()
+        new_tracking_client.log_plot.assert_called()
+        new_tracking_client.log_score_collection.assert_called()
+        new_tracking_client.log_array_collection.assert_called()
+        new_tracking_client.log_plot_collection.assert_called()
 
 
 @pytest.mark.parametrize(
-    "cache_type, expected_values",
+    "cache_type, ls_artifact_results",
     [
-        ("scores", {"score1": 1.0, "score2": 2.0}),
-        ("arrays", {"array1": np.array([1, 2, 3])}),
-        ("plots", {"plot1": Figure()}),
-        ("score_collections", {"collection1": {"sub1": 1.0, "sub2": 2.0}}),
-        ("array_collections", {"collection1": {"sub1": np.array([1, 2])}}),
-        ("plot_collections", {"collection1": {"sub1": Figure()}}),
+        ("scores", ["score_1", "score_2"]),
+        ("arrays", ["array_1", "array_2"]),
+        ("plots", ["plot_1", "plot_2"]),
+        ("score_collections", ["score_collection_1", "score_collection_2"]),
+        ("array_collections", ["array_collection_1", "array_collection_2"]),
+        ("plot_collections", ["plot_collection_1", "plot_collection_2"]),
     ],
+    indirect=["ls_artifact_results"],
 )
 def test_artifact_result_accessors(
-    mock_handlers: Dict[str, MagicMock],
+    mock_callback_handlers: Dict[str, MagicMock],
     cache_type: str,
-    expected_values: Dict,
+    ls_artifact_results: List[ArtifactResult],
 ):
-    for handler in mock_handlers.values():
+    dict_cache = {
+        "entry_{idx}": artifact_result for idx, artifact_result in enumerate(ls_artifact_results)
+    }
+    for handler in mock_callback_handlers.values():
         handler.tracking_client = None
     plan = DummyValidationPlan(
-        score_handler=mock_handlers["scores"],
-        array_handler=mock_handlers["arrays"],
-        plot_handler=mock_handlers["plots"],
-        score_collection_handler=mock_handlers["score_collections"],
-        array_collection_handler=mock_handlers["array_collections"],
-        plot_collection_handler=mock_handlers["plot_collections"],
+        score_handler=mock_callback_handlers["scores"],
+        array_handler=mock_callback_handlers["arrays"],
+        plot_handler=mock_callback_handlers["plots"],
+        score_collection_handler=mock_callback_handlers["score_collections"],
+        array_collection_handler=mock_callback_handlers["array_collections"],
+        plot_collection_handler=mock_callback_handlers["plot_collections"],
     )
     assert not plan.tracking_enabled
-    mock_handlers[cache_type].active_cache = expected_values
+    mock_callback_handlers[cache_type].active_cache = dict_cache
     actual_values = getattr(plan, cache_type)
-    assert actual_values == expected_values
+    assert actual_values == dict_cache
 
 
 def test_execute(
-    mock_handlers: Dict[str, MagicMock],
-    callback_resources: ArtifactCallbackResources,
+    resources_factory: Callable[
+        [], Tuple[ArtifactCallbackResources, DummyArtifactResources, DummyResourceSpec]
+    ],
+    mock_callback_handlers: Dict[str, MagicMock],
 ):
-    for handler in mock_handlers.values():
-        handler.tracking_client = None
+    callback_resources, _, _ = resources_factory()
     plan = DummyValidationPlan(
-        score_handler=mock_handlers["scores"],
-        array_handler=mock_handlers["arrays"],
-        plot_handler=mock_handlers["plots"],
-        score_collection_handler=mock_handlers["score_collections"],
-        array_collection_handler=mock_handlers["array_collections"],
-        plot_collection_handler=mock_handlers["plot_collections"],
+        score_handler=mock_callback_handlers["scores"],
+        array_handler=mock_callback_handlers["arrays"],
+        plot_handler=mock_callback_handlers["plots"],
+        score_collection_handler=mock_callback_handlers["score_collections"],
+        array_collection_handler=mock_callback_handlers["array_collections"],
+        plot_collection_handler=mock_callback_handlers["plot_collections"],
     )
     plan.execute(resources=callback_resources)
-    for handler in mock_handlers.values():
+    for handler in mock_callback_handlers.values():
         handler.execute.assert_called_once_with(resources=callback_resources)
 
 
-def test_tracking_client_integration(
-    mock_tracking_client: MagicMock,
-    resource_spec: DummyResourceSpec,
-    callback_resources: ArtifactCallbackResources,
+def test_execute_integration(
+    resources_factory: Callable[
+        [], Tuple[ArtifactCallbackResources, DummyArtifactResources, DummyResourceSpec]
+    ],
+    mock_tracking_client_factory: Callable[[], MagicMock],
 ):
-    plan = DummyValidationPlan.build(
-        resource_spec=resource_spec, tracking_client=mock_tracking_client
-    )
+    callback_resources, _, resource_spec = resources_factory()
+    tracking_client = mock_tracking_client_factory()
+    plan = DummyValidationPlan.build(resource_spec=resource_spec, tracking_client=tracking_client)
     assert plan.tracking_enabled
     plan.execute(resources=callback_resources)
-
-    score_calls = mock_tracking_client.log_score.call_args_list
+    score_calls = tracking_client.log_score.call_args_list
     assert len(score_calls) == 2
     score_names = [call[1]["name"] for call in score_calls]
     assert "SCORE1" in score_names
     assert "SCORE2" in score_names
-
-    array_calls = mock_tracking_client.log_array.call_args_list
+    array_calls = tracking_client.log_array.call_args_list
     assert len(array_calls) == 1
     assert array_calls[0][1]["name"] == "ARRAY1"
-
-    plot_calls = mock_tracking_client.log_plot.call_args_list
+    plot_calls = tracking_client.log_plot.call_args_list
     assert len(plot_calls) == 1
     assert plot_calls[0][1]["name"] == "PLOT1"
-
-    score_collection_calls = mock_tracking_client.log_score_collection.call_args_list
+    score_collection_calls = tracking_client.log_score_collection.call_args_list
     assert len(score_collection_calls) == 1
     assert score_collection_calls[0][1]["name"] == "SCORE_COLLECTION1"
-
-    array_collection_calls = mock_tracking_client.log_array_collection.call_args_list
+    array_collection_calls = tracking_client.log_array_collection.call_args_list
     assert len(array_collection_calls) == 1
     assert array_collection_calls[0][1]["name"] == "ARRAY_COLLECTION1"
-
-    plot_collection_calls = mock_tracking_client.log_plot_collection.call_args_list
+    plot_collection_calls = tracking_client.log_plot_collection.call_args_list
     assert len(plot_collection_calls) == 1
     assert plot_collection_calls[0][1]["name"] == "PLOT_COLLECTION1"
 
 
 def test_clear_cache(
-    mock_handlers: Dict[str, MagicMock],
+    mock_callback_handlers: Dict[str, MagicMock],
 ):
-    for handler in mock_handlers.values():
+    for handler in mock_callback_handlers.values():
         handler.tracking_client = None
     plan = DummyValidationPlan(
-        score_handler=mock_handlers["scores"],
-        array_handler=mock_handlers["arrays"],
-        plot_handler=mock_handlers["plots"],
-        score_collection_handler=mock_handlers["score_collections"],
-        array_collection_handler=mock_handlers["array_collections"],
-        plot_collection_handler=mock_handlers["plot_collections"],
+        score_handler=mock_callback_handlers["scores"],
+        array_handler=mock_callback_handlers["arrays"],
+        plot_handler=mock_callback_handlers["plots"],
+        score_collection_handler=mock_callback_handlers["score_collections"],
+        array_collection_handler=mock_callback_handlers["array_collections"],
+        plot_collection_handler=mock_callback_handlers["plot_collections"],
     )
     assert not plan.tracking_enabled
-
     plan.clear_cache()
-
-    for handler in mock_handlers.values():
+    for handler in mock_callback_handlers.values():
         handler.clear.assert_called_once()
