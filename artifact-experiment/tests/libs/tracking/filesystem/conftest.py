@@ -19,19 +19,6 @@ from artifact_experiment.libs.tracking.filesystem.loggers.score_collections impo
 )
 from artifact_experiment.libs.tracking.filesystem.loggers.scores import FilesystemScoreLogger
 from artifact_experiment.libs.tracking.filesystem.native_run import FilesystemRun
-from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter
-from artifact_experiment.libs.tracking.neptune.loggers.array_collections import (
-    NeptuneArrayCollectionLogger,
-)
-from artifact_experiment.libs.tracking.neptune.loggers.arrays import NeptuneArrayLogger
-from artifact_experiment.libs.tracking.neptune.loggers.plot_collections import (
-    NeptunePlotCollectionLogger,
-)
-from artifact_experiment.libs.tracking.neptune.loggers.plots import NeptunePlotLogger
-from artifact_experiment.libs.tracking.neptune.loggers.score_collections import (
-    NeptuneScoreCollectionLogger,
-)
-from artifact_experiment.libs.tracking.neptune.loggers.scores import NeptuneScoreLogger
 from pytest_mock import MockerFixture
 
 
@@ -92,38 +79,38 @@ def adapter_factory(
 def loggers_factory(
     adapter_factory: Callable[
         [Optional[str], Optional[str]],
-        Tuple[MagicMock, NeptuneRunAdapter],
+        Tuple[MagicMock, FilesystemRunAdapter],
     ],
 ) -> Callable[
     [Optional[str], Optional[str]],
     Tuple[
-        NeptuneRunAdapter,
-        NeptuneScoreLogger,
-        NeptuneArrayLogger,
-        NeptunePlotLogger,
-        NeptuneScoreCollectionLogger,
-        NeptuneArrayCollectionLogger,
-        NeptunePlotCollectionLogger,
+        FilesystemRunAdapter,
+        FilesystemScoreLogger,
+        FilesystemArrayLogger,
+        FilesystemPlotLogger,
+        FilesystemScoreCollectionLogger,
+        FilesystemArrayCollectionLogger,
+        FilesystemPlotCollectionLogger,
     ],
 ]:
     def _factory(
         experiment_id: Optional[str] = None, run_id: Optional[str] = None
     ) -> Tuple[
-        NeptuneRunAdapter,
-        NeptuneScoreLogger,
-        NeptuneArrayLogger,
-        NeptunePlotLogger,
-        NeptuneScoreCollectionLogger,
-        NeptuneArrayCollectionLogger,
-        NeptunePlotCollectionLogger,
+        FilesystemRunAdapter,
+        FilesystemScoreLogger,
+        FilesystemArrayLogger,
+        FilesystemPlotLogger,
+        FilesystemScoreCollectionLogger,
+        FilesystemArrayCollectionLogger,
+        FilesystemPlotCollectionLogger,
     ]:
         _, adapter = adapter_factory(experiment_id, run_id)
-        score_logger = NeptuneScoreLogger(run=adapter)
-        array_logger = NeptuneArrayLogger(run=adapter)
-        plot_logger = NeptunePlotLogger(run=adapter)
-        score_collection_logger = NeptuneScoreCollectionLogger(run=adapter)
-        array_collection_logger = NeptuneArrayCollectionLogger(run=adapter)
-        plot_collection_logger = NeptunePlotCollectionLogger(run=adapter)
+        score_logger = FilesystemScoreLogger(run=adapter)
+        array_logger = FilesystemArrayLogger(run=adapter)
+        plot_logger = FilesystemPlotLogger(run=adapter)
+        score_collection_logger = FilesystemScoreCollectionLogger(run=adapter)
+        array_collection_logger = FilesystemArrayCollectionLogger(run=adapter)
+        plot_collection_logger = FilesystemPlotCollectionLogger(run=adapter)
         return (
             adapter,
             score_logger,
