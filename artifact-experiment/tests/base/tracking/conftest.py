@@ -27,9 +27,9 @@ def native_run_factory() -> Callable[[Optional[str], Optional[str]], DummyNative
 
 
 @pytest.fixture
-def adapter_factory() -> Callable[
-    [Optional[str], Optional[str]], Tuple[DummyNativeRun, DummyRunAdapter]
-]:
+def adapter_factory(
+    native_run_factory: Callable[[Optional[str], Optional[str]], DummyNativeRun],
+) -> Callable[[Optional[str], Optional[str]], Tuple[DummyNativeRun, DummyRunAdapter]]:
     def _factory(
         experiment_id: Optional[str] = None, run_id: Optional[str] = None
     ) -> Tuple[DummyNativeRun, DummyRunAdapter]:
@@ -37,8 +37,8 @@ def adapter_factory() -> Callable[
             experiment_id = "test_experiment"
         if run_id is None:
             run_id = "test_run"
-        native_run = DummyNativeRun(experiment_id=experiment_id, run_id=run_id)
-        adapter = DummyRunAdapter.from_native_run(native_run=native_run)
+        native_run = native_run_factory(experiment_id, run_id)
+        adapter = DummyRunAdapter(native_run=native_run)
         return native_run, adapter
 
     return _factory
