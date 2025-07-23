@@ -1,4 +1,5 @@
-from typing import Callable, Optional, Tuple
+import os
+from typing import Callable, Dict, Optional, Tuple
 from unittest.mock import MagicMock
 
 import pytest
@@ -16,20 +17,51 @@ from artifact_experiment.libs.tracking.neptune.loggers.score_collections import 
     NeptuneScoreCollectionLogger,
 )
 from artifact_experiment.libs.tracking.neptune.loggers.scores import NeptuneScoreLogger
+from pytest_mock import MockerFixture
 
 
 @pytest.fixture
-def native_run_factory() -> Callable[[Optional[str], Optional[str]], MagicMock]:
+def native_run_factory(
+    mocker: MockerFixture,
+) -> Callable[[Optional[str], Optional[str]], MagicMock]:
+    mocker.patch(
+        "artifact_experiment.libs.tracking.neptune.adapter.getpass", return_value="dummy-token"
+    )
+
     def _factory(experiment_id: Optional[str] = None, run_id: Optional[str] = None) -> MagicMock:
         if experiment_id is None:
-            experiment_id = "test_experiment"
+            experiment_id = "default_experiment_id"
         if run_id is None:
-            run_id = "test_run"
+            run_id = "default_run_id"
+        channel_mocks = {}
+        state_container = {"state": "running"}
 
-        run = MagicMock()
-        run.experiment_id = experiment_id
-        run.run_id = run_id
-        return run
+        def getitem_side_effect(key: str):
+            if key not in channel_mocks:
+                channel = mocker.MagicMock(name=f"channel[{key}]")
+                channel.upload = mocker.MagicMock(name=f"upload[{key}]")
+                channel.append = mocker.MagicMock(name=f"append[{key}]")
+                channel.fetch = mocker.MagicMock(name=f"fetch[{key}]")
+                channel_mocks[key] = channel
+            return channel_mocks[key]
+
+        def stop_side_effect(state_container: Dict[str, str]):
+            state_container["state"] = "inactive"
+
+        native_run = mocker.MagicMock(name="native_run")
+        native_run.experiment_id = experiment_id
+        native_run.run_id = run_id
+        native_run.__getitem__.side_effect = getitem_side_effect
+        native_run.stop = mocker.MagicMock(
+            side_effect=lambda: stop_side_effect(state_container=state_container)
+        )
+        native_run.fetch.side_effect = lambda: {"sys": {"state": state_container["state"]}}
+        channel_mocks["sys/id"] = mocker.MagicMock()
+        channel_mocks["sys/id"].fetch.return_value = run_id
+        channel_mocks["sys/experiment/name"] = mocker.MagicMock()
+        channel_mocks["sys/experiment/name"].fetch.return_value = experiment_id
+        mocker.patch("neptune.init_run", return_value=native_run)
+        return native_run
 
     return _factory
 
@@ -45,6 +77,7 @@ def adapter_factory(
             experiment_id = "test_experiment"
         if run_id is None:
             run_id = "test_run"
+
         native_run = native_run_factory(experiment_id, run_id)
         adapter = NeptuneRunAdapter(native_run=native_run)
         return native_run, adapter
@@ -261,3 +294,11 @@ def client_factory(
         )
 
     return _factory
+
+
+@pytest.fixture
+def get_absolute_log_path() -> Callable[[str], str]:
+    def _prepend(path: str) -> str:
+        return os.path.join("artifact_ml", path.lstrip("/")).replace("\\", "/")
+
+    return _prepend
