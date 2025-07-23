@@ -1,25 +1,46 @@
 from typing import Callable, Dict, List, Optional, Tuple
 
 import pytest
-from artifact_experiment.libs.tracking.in_memory.adapter import (
-    InMemoryRunAdapter,
-)
-from artifact_experiment.libs.tracking.in_memory.loggers.score_collections import (  # noqa: E501
+from artifact_experiment.libs.tracking.in_memory.adapter import InMemoryRunAdapter
+from artifact_experiment.libs.tracking.in_memory.loggers.score_collections import (
     InMemoryScoreCollectionLogger,
 )
+from pytest_mock import MockerFixture
 
 
 @pytest.mark.parametrize(
-    "experiment_id, run_id, ls_score_collections",
+    "experiment_id, run_id, ls_score_collection_names, ls_score_collections",
     [
-        ("exp1", "run1", []),
-        ("exp1", "run1", ["score_collection_1"]),
-        ("exp1", "run1", ["score_collection_1", "score_collection_2"]),
-        ("exp1", "run1", ["score_collection_1", "score_collection_3"]),
-        ("exp1", "run1", ["score_collection_1", "score_collection_2", "score_collection_3"]),
+        ("exp1", "run1", [], []),
+        ("exp1", "run1", ["score_collection_1"], ["score_collection_1"]),
         (
             "exp1",
             "run1",
+            ["score_collection_1", "score_collection_2"],
+            ["score_collection_1", "score_collection_2"],
+        ),
+        (
+            "exp1",
+            "run1",
+            ["score_collection_1", "score_collection_3"],
+            ["score_collection_1", "score_collection_3"],
+        ),
+        (
+            "exp1",
+            "run1",
+            ["score_collection_1", "score_collection_2", "score_collection_3"],
+            ["score_collection_1", "score_collection_2", "score_collection_3"],
+        ),
+        (
+            "exp1",
+            "run1",
+            [
+                "score_collection_1",
+                "score_collection_2",
+                "score_collection_3",
+                "score_collection_4",
+                "score_collection_5",
+            ],
             [
                 "score_collection_1",
                 "score_collection_2",
@@ -32,18 +53,22 @@ from artifact_experiment.libs.tracking.in_memory.loggers.score_collections impor
     indirect=["ls_score_collections"],
 )
 def test_log(
+    mocker: MockerFixture,
     score_collection_logger_factory: Callable[
         [Optional[str], Optional[str]], Tuple[InMemoryRunAdapter, InMemoryScoreCollectionLogger]
     ],
     experiment_id: str,
     run_id: str,
+    ls_score_collection_names: List[str],
     ls_score_collections: List[Dict[str, float]],
 ):
     adapter, logger = score_collection_logger_factory(experiment_id, run_id)
-    for idx, score_collection in enumerate(ls_score_collections, start=1):
-        logger.log(artifact_name=f"score_collection_{idx}", artifact=score_collection)
-    assert adapter.n_score_collections == len(ls_score_collections)
-    for idx, expected_collection in enumerate(ls_score_collections, start=1):
-        key = f"{experiment_id}/{run_id}/score_collections/score_collection_{idx}/1"
-        stored_collection = adapter.dict_score_collections[key]
-        assert stored_collection == expected_collection
+    spy = mocker.spy(adapter, "log_score_collection")
+    for name, score_collection in zip(ls_score_collection_names, ls_score_collections):
+        logger.log(artifact_name=name, artifact=score_collection)
+    assert spy.call_count == len(ls_score_collections)
+    for idx, call_args in enumerate(spy.call_args_list):
+        name = ls_score_collection_names[idx]
+        score_collection = ls_score_collections[idx]
+        expected_path = f"{experiment_id}/{run_id}/score_collections/{name}/1"
+        assert call_args.kwargs == {"path": expected_path, "score_collection": score_collection}
