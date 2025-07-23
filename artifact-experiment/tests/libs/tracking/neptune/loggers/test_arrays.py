@@ -36,11 +36,11 @@ def test_log(
     ls_arrays: List[ndarray],
 ):
     adapter, logger = array_logger_factory(experiment_id, run_id)
-    adapter.log = mocker.MagicMock()
+    spy_adapter_log = mocker.spy(adapter, "log")
     for array_name, array in zip(ls_array_names, ls_arrays):
         logger.log(artifact_name=array_name, artifact=array)
-    assert adapter.log.call_count == len(ls_arrays)
-    for idx, call_args in enumerate(adapter.log.call_args_list):
+    assert spy_adapter_log.call_count == len(ls_arrays)
+    for idx, call_args in enumerate(spy_adapter_log.call_args_list):
         array_name = ls_array_names[idx]
         array = ls_arrays[idx]
         expected_path = os.path.join("artifacts", "arrays", array_name)

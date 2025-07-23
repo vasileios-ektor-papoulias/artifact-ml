@@ -36,11 +36,11 @@ def test_log(
     ls_plots: List[Figure],
 ):
     adapter, logger = plot_logger_factory(experiment_id, run_id)
-    adapter.log = mocker.MagicMock()
+    spy_adapter_log = mocker.spy(adapter, "log")
     for plot_name, plot in zip(ls_plot_names, ls_plots):
         logger.log(artifact_name=plot_name, artifact=plot)
-    assert adapter.log.call_count == len(ls_plots)
-    for idx, call_args in enumerate(adapter.log.call_args_list):
+    assert spy_adapter_log.call_count == len(ls_plots)
+    for idx, call_args in enumerate(spy_adapter_log.call_args_list):
         plot_name = ls_plot_names[idx]
         plot = ls_plots[idx]
         expected_path = os.path.join("artifacts", "plots", plot_name)

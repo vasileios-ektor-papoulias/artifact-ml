@@ -35,11 +35,11 @@ def test_log(
     ls_scores: List[float],
 ):
     adapter, logger = score_logger_factory(experiment_id, run_id)
-    adapter.log = mocker.MagicMock()
+    spy_adapter_log = mocker.spy(adapter, "log")
     for score_name, score in zip(ls_score_names, ls_scores):
         logger.log(artifact_name=score_name, artifact=score)
-    assert adapter.log.call_count == len(ls_scores)
-    for idx, call_args in enumerate(adapter.log.call_args_list):
+    assert spy_adapter_log.call_count == len(ls_scores)
+    for idx, call_args in enumerate(spy_adapter_log.call_args_list):
         score_name = ls_score_names[idx]
         score = ls_scores[idx]
         expected_path = os.path.join("artifacts", "scores", score_name)

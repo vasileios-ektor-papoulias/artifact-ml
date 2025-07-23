@@ -43,14 +43,11 @@ def test_log(
     ls_artifact_results: List[ArtifactResult],
 ):
     adapter, logger = logger_factory(experiment_id, run_id)
-    adapter.log = mocker.MagicMock()
-
+    spy_adapter_log = mocker.spy(adapter, "log")
     for artifact_name, artifact in zip(ls_artifact_names, ls_artifact_results):
         logger.log(artifact_name=artifact_name, artifact=artifact)
-
-    assert adapter.log.call_count == len(ls_artifact_results)
-
-    for idx, call_args in enumerate(adapter.log.call_args_list):
+    assert spy_adapter_log.call_count == len(ls_artifact_results)
+    for idx, call_args in enumerate(spy_adapter_log.call_args_list):
         artifact_name = ls_artifact_names[idx]
         artifact = ls_artifact_results[idx]
         expected_path = os.path.join("", artifact_name)

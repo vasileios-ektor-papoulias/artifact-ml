@@ -65,13 +65,13 @@ def test_log(
     ls_array_collections: List[Dict[str, ndarray]],
 ):
     adapter, logger = array_collection_logger_factory(experiment_id, run_id)
-    adapter.log = mocker.MagicMock()
+    spy_adapter_log = mocker.spy(adapter, "log")
     for array_collection_name, array_collection in zip(
         ls_array_collection_names, ls_array_collections
     ):
         logger.log(artifact_name=array_collection_name, artifact=array_collection)
-    assert adapter.log.call_count == len(ls_array_collections)
-    for idx, call_args in enumerate(adapter.log.call_args_list):
+    assert spy_adapter_log.call_count == len(ls_array_collections)
+    for idx, call_args in enumerate(spy_adapter_log.call_args_list):
         array_collection_name = ls_array_collection_names[idx]
         array_collection = ls_array_collections[idx]
         expected_path = os.path.join("artifacts", "array_collections", array_collection_name)

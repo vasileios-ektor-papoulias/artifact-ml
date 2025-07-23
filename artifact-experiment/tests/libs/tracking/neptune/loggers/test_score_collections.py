@@ -64,13 +64,13 @@ def test_log(
     ls_score_collections: List[Dict[str, float]],
 ):
     adapter, logger = score_collection_logger_factory(experiment_id, run_id)
-    adapter.log = mocker.MagicMock()
+    spy_adapter_log = mocker.spy(adapter, "log")
     for score_collection_name, score_collection in zip(
         ls_score_collection_names, ls_score_collections
     ):
         logger.log(artifact_name=score_collection_name, artifact=score_collection)
-    assert adapter.log.call_count == len(ls_score_collections)
-    for idx, call_args in enumerate(adapter.log.call_args_list):
+    assert spy_adapter_log.call_count == len(ls_score_collections)
+    for idx, call_args in enumerate(spy_adapter_log.call_args_list):
         score_collection_name = ls_score_collection_names[idx]
         score_collection = ls_score_collections[idx]
         expected_path = os.path.join("artifacts", "score_collections", score_collection_name)

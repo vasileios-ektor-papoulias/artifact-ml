@@ -65,11 +65,11 @@ def test_log(
     ls_plot_collections: List[Dict[str, Figure]],
 ):
     adapter, logger = plot_collection_logger_factory(experiment_id, run_id)
-    adapter.log = mocker.MagicMock()
+    spy_adapter_log = mocker.spy(adapter, "log")
     for plot_collection_name, plot_collection in zip(ls_plot_collection_names, ls_plot_collections):
         logger.log(artifact_name=plot_collection_name, artifact=plot_collection)
-    assert adapter.log.call_count == len(ls_plot_collections)
-    for idx, call_args in enumerate(adapter.log.call_args_list):
+    assert spy_adapter_log.call_count == len(ls_plot_collections)
+    for idx, call_args in enumerate(spy_adapter_log.call_args_list):
         plot_collection_name = ls_plot_collection_names[idx]
         plot_collection = ls_plot_collections[idx]
         expected_path = os.path.join("artifacts", "plot_collections", plot_collection_name)
