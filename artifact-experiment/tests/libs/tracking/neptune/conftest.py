@@ -223,7 +223,9 @@ def client_factory(
 
 @pytest.fixture
 def get_absolute_log_path() -> Callable[[str], str]:
-    def _prepend(path: str) -> str:
-        return os.path.join("artifact_ml", path.lstrip("/")).replace("\\", "/")
+    def _prepend(path_relative_to_artifact_folder: str) -> str:
+        return os.path.join("artifact_ml", path_relative_to_artifact_folder.lstrip("/")).replace(
+            "\\", "/"
+        )
 
     return _prepend
