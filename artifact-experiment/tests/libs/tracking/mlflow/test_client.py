@@ -22,10 +22,6 @@
 # from numpy import ndarray
 # from pytest_mock import MockerFixture
 
-# #
-
-# STANDARD_UUID_LENGTH = 36
-
 
 # @pytest.mark.parametrize(
 #     "experiment_id, run_id",

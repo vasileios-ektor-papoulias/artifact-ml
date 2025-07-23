@@ -10,6 +10,11 @@ matplotlib.use("Agg")
 
 
 @pytest.fixture
+def standard_uuid_length() -> int:
+    return 36
+
+
+@pytest.fixture
 def artifact_result(request) -> ArtifactResult:
     return request.getfixturevalue(request.param)
 

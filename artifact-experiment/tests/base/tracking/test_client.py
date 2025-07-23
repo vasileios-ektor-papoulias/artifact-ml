@@ -10,8 +10,6 @@ from tests.base.tracking.dummy.adapter import DummyNativeRun, DummyRunAdapter
 from tests.base.tracking.dummy.client import DummyTrackingClient
 from tests.base.tracking.dummy.logger import DummyArtifactLogger
 
-STANDARD_UUID_LENGTH = 36
-
 
 def _get_name(key: str, idx: int) -> str:
     return f"{key}_{idx}"
@@ -90,6 +88,7 @@ def test_from_native_run(
     ],
 )
 def test_build(
+    standard_uuid_length: int,
     experiment_id: str,
     run_id: Optional[str],
 ):
@@ -101,7 +100,7 @@ def test_build(
         assert client.run.run_id == run_id
     else:
         assert client.run.run_id is not None
-        assert len(client.run.run_id) == STANDARD_UUID_LENGTH
+        assert len(client.run.run_id) == standard_uuid_length
         UUID(client.run.run_id)
 
 

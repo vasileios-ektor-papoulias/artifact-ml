@@ -21,8 +21,6 @@ from matplotlib.figure import Figure
 from numpy import ndarray
 from pytest_mock import MockerFixture
 
-STANDARD_UUID_LENGTH = 36
-
 
 @pytest.mark.parametrize(
     "experiment_id, run_id",
@@ -115,6 +113,7 @@ def test_from_native_run(
 )
 def test_build(
     patch_filesystem_run_creation,
+    standard_uuid_length: int,
     experiment_id: str,
     run_id: Optional[str],
 ):
@@ -126,7 +125,7 @@ def test_build(
         assert client.run.run_id == run_id
     else:
         assert client.run.run_id is not None
-        assert len(client.run.run_id) == STANDARD_UUID_LENGTH
+        assert len(client.run.run_id) == standard_uuid_length
         UUID(client.run.run_id)
 
 

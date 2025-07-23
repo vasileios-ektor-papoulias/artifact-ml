@@ -11,8 +11,6 @@ from artifact_experiment.libs.tracking.in_memory.native_run import (
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-STANDARD_UUID_LENGTH = 36
-
 
 @pytest.mark.parametrize(
     "experiment_id, run_id",
@@ -22,6 +20,7 @@ STANDARD_UUID_LENGTH = 36
     ],
 )
 def test_build(
+    standard_uuid_length: int,
     experiment_id: str,
     run_id: Optional[str],
 ):
@@ -32,7 +31,7 @@ def test_build(
         assert adapter.run_id == run_id
     else:
         assert adapter.run_id is not None
-        assert len(adapter.run_id) == STANDARD_UUID_LENGTH
+        assert len(adapter.run_id) == standard_uuid_length
         UUID(adapter.run_id)
 
 
