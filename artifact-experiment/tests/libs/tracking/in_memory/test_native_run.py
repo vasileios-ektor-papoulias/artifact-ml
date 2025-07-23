@@ -17,7 +17,7 @@ def test_init(
     run_id: str,
     native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
 ):
-    native_run: InMemoryRun = native_run_factory(experiment_id, run_id)
+    native_run = native_run_factory(experiment_id, run_id)
     assert native_run.experiment_id == experiment_id
     assert native_run.run_id == run_id
     assert native_run.is_active is True
