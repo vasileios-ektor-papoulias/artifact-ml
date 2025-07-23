@@ -1,5 +1,5 @@
 import os
-from typing import Callable, Dict, Optional, Tuple
+from typing import Callable, Optional, Tuple
 from unittest.mock import MagicMock
 
 import pytest
@@ -24,15 +24,12 @@ from pytest_mock import MockerFixture
 def native_run_factory(
     mocker: MockerFixture,
 ) -> Callable[[Optional[str], Optional[str]], MagicMock]:
-    mocker.patch(
-        "artifact_experiment.libs.tracking.neptune.adapter.getpass", return_value="dummy-token"
-    )
-
     def _factory(experiment_id: Optional[str] = None, run_id: Optional[str] = None) -> MagicMock:
         if experiment_id is None:
             experiment_id = "default_experiment_id"
         if run_id is None:
             run_id = "default_run_id"
+
         channel_mocks = {}
         state_container = {"state": "running"}
 
@@ -45,25 +42,43 @@ def native_run_factory(
                 channel_mocks[key] = channel
             return channel_mocks[key]
 
-        def stop_side_effect(state_container: Dict[str, str]):
+        def stop_side_effect():
             state_container["state"] = "inactive"
 
         native_run = mocker.MagicMock(name="native_run")
         native_run.experiment_id = experiment_id
         native_run.run_id = run_id
         native_run.__getitem__.side_effect = getitem_side_effect
-        native_run.stop = mocker.MagicMock(
-            side_effect=lambda: stop_side_effect(state_container=state_container)
-        )
+        native_run.stop = mocker.MagicMock(side_effect=stop_side_effect)
         native_run.fetch.side_effect = lambda: {"sys": {"state": state_container["state"]}}
         channel_mocks["sys/id"] = mocker.MagicMock()
         channel_mocks["sys/id"].fetch.return_value = run_id
         channel_mocks["sys/experiment/name"] = mocker.MagicMock()
         channel_mocks["sys/experiment/name"].fetch.return_value = experiment_id
-        mocker.patch("neptune.init_run", return_value=native_run)
+
         return native_run
 
     return _factory
+
+
+@pytest.fixture
+def patch_neptune_run_creation(
+    mocker: MockerFixture,
+    native_run_factory: Callable[[Optional[str], Optional[str]], MagicMock],
+):
+    mocker.patch(
+        "artifact_experiment.libs.tracking.neptune.adapter.getpass",
+        return_value="dummy-token",
+    )
+
+    def init_run_side_effect(api_token: str, project: str, custom_run_id: Optional[str] = None):
+        _ = api_token
+        native_run = native_run_factory(project, custom_run_id)
+        native_run.experiment_id = project
+        native_run.run_id = custom_run_id
+        return native_run
+
+    mocker.patch("neptune.init_run", side_effect=init_run_side_effect)
 
 
 @pytest.fixture
