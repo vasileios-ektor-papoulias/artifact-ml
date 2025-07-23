@@ -1,107 +1,119 @@
-# from typing import Callable, Optional, Tuple
-# from unittest.mock import MagicMock
+from typing import Callable, Optional, Tuple
 
-# import pytest
-# from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter
-# from artifact_experiment.libs.tracking.neptune.loggers.array_collections import (
-#     NeptuneArrayCollectionLogger,
-# )
-# from artifact_experiment.libs.tracking.neptune.loggers.arrays import NeptuneArrayLogger
-# from artifact_experiment.libs.tracking.neptune.loggers.plot_collections import (
-#     NeptunePlotCollectionLogger,
-# )
-# from artifact_experiment.libs.tracking.neptune.loggers.plots import NeptunePlotLogger
-# from artifact_experiment.libs.tracking.neptune.loggers.score_collections import (
-#     NeptuneScoreCollectionLogger,
-# )
-# from artifact_experiment.libs.tracking.neptune.loggers.scores import NeptuneScoreLogger
-
-
-# @pytest.fixture
-# def score_logger_factory(
-#     adapter_factory: Callable[[Optional[str], Optional[str]], Tuple[MagicMock, NeptuneRunAdapter]],
-# ) -> Callable[[Optional[str], Optional[str]], Tuple[NeptuneRunAdapter, NeptuneScoreLogger]]:
-#     def _factory(
-#         experiment_id: Optional[str] = None, run_id: Optional[str] = None
-#     ) -> Tuple[NeptuneRunAdapter, NeptuneScoreLogger]:
-#         _, adapter = adapter_factory(experiment_id, run_id)
-#         logger = NeptuneScoreLogger(run=adapter)
-#         return adapter, logger
-
-#     return _factory
+import pytest
+from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRunAdapter
+from artifact_experiment.libs.tracking.filesystem.loggers.array_collections import (
+    FilesystemArrayCollectionLogger,
+)
+from artifact_experiment.libs.tracking.filesystem.loggers.arrays import FilesystemArrayLogger
+from artifact_experiment.libs.tracking.filesystem.loggers.plot_collections import (
+    FilesystemPlotCollectionLogger,
+)
+from artifact_experiment.libs.tracking.filesystem.loggers.plots import FilesystemPlotLogger
+from artifact_experiment.libs.tracking.filesystem.loggers.score_collections import (
+    FilesystemScoreCollectionLogger,
+)
+from artifact_experiment.libs.tracking.filesystem.loggers.scores import FilesystemScoreLogger
+from artifact_experiment.libs.tracking.filesystem.native_run import FilesystemRun
 
 
-# @pytest.fixture
-# def array_logger_factory(
-#     adapter_factory: Callable[[Optional[str], Optional[str]], Tuple[MagicMock, NeptuneRunAdapter]],
-# ) -> Callable[[Optional[str], Optional[str]], Tuple[NeptuneRunAdapter, NeptuneArrayLogger]]:
-#     def _factory(
-#         experiment_id: Optional[str] = None, run_id: Optional[str] = None
-#     ) -> Tuple[NeptuneRunAdapter, NeptuneArrayLogger]:
-#         _, adapter = adapter_factory(experiment_id, run_id)
-#         logger = NeptuneArrayLogger(run=adapter)
-#         return adapter, logger
+@pytest.fixture
+def score_logger_factory(
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[FilesystemRun, FilesystemRunAdapter]
+    ],
+) -> Callable[[Optional[str], Optional[str]], Tuple[FilesystemRunAdapter, FilesystemScoreLogger]]:
+    def _factory(
+        experiment_id: Optional[str] = None, run_id: Optional[str] = None
+    ) -> Tuple[FilesystemRunAdapter, FilesystemScoreLogger]:
+        _, adapter = adapter_factory(experiment_id, run_id)
+        logger = FilesystemScoreLogger(run=adapter)
+        return adapter, logger
 
-#     return _factory
-
-
-# @pytest.fixture
-# def plot_logger_factory(
-#     adapter_factory: Callable[[Optional[str], Optional[str]], Tuple[MagicMock, NeptuneRunAdapter]],
-# ) -> Callable[[Optional[str], Optional[str]], Tuple[NeptuneRunAdapter, NeptunePlotLogger]]:
-#     def _factory(
-#         experiment_id: Optional[str] = None, run_id: Optional[str] = None
-#     ) -> Tuple[NeptuneRunAdapter, NeptunePlotLogger]:
-#         _, adapter = adapter_factory(experiment_id, run_id)
-#         logger = NeptunePlotLogger(run=adapter)
-#         return adapter, logger
-
-#     return _factory
+    return _factory
 
 
-# @pytest.fixture
-# def score_collection_logger_factory(
-#     adapter_factory: Callable[[Optional[str], Optional[str]], Tuple[MagicMock, NeptuneRunAdapter]],
-# ) -> Callable[
-#     [Optional[str], Optional[str]], Tuple[NeptuneRunAdapter, NeptuneScoreCollectionLogger]
-# ]:
-#     def _factory(
-#         experiment_id: Optional[str] = None, run_id: Optional[str] = None
-#     ) -> Tuple[NeptuneRunAdapter, NeptuneScoreCollectionLogger]:
-#         _, adapter = adapter_factory(experiment_id, run_id)
-#         logger = NeptuneScoreCollectionLogger(run=adapter)
-#         return adapter, logger
+@pytest.fixture
+def array_logger_factory(
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[FilesystemRun, FilesystemRunAdapter]
+    ],
+) -> Callable[[Optional[str], Optional[str]], Tuple[FilesystemRunAdapter, FilesystemArrayLogger]]:
+    def _factory(
+        experiment_id: Optional[str] = None, run_id: Optional[str] = None
+    ) -> Tuple[FilesystemRunAdapter, FilesystemArrayLogger]:
+        _, adapter = adapter_factory(experiment_id, run_id)
+        logger = FilesystemArrayLogger(run=adapter)
+        return adapter, logger
 
-#     return _factory
-
-
-# @pytest.fixture
-# def array_collection_logger_factory(
-#     adapter_factory: Callable[[Optional[str], Optional[str]], Tuple[MagicMock, NeptuneRunAdapter]],
-# ) -> Callable[
-#     [Optional[str], Optional[str]], Tuple[NeptuneRunAdapter, NeptuneArrayCollectionLogger]
-# ]:
-#     def _factory(
-#         experiment_id: Optional[str] = None, run_id: Optional[str] = None
-#     ) -> Tuple[NeptuneRunAdapter, NeptuneArrayCollectionLogger]:
-#         _, adapter = adapter_factory(experiment_id, run_id)
-#         logger = NeptuneArrayCollectionLogger(run=adapter)
-#         return adapter, logger
-
-#     return _factory
+    return _factory
 
 
-# @pytest.fixture
-# def plot_collection_logger_factory(
-#     adapter_factory: Callable[[Optional[str], Optional[str]], Tuple[MagicMock, NeptuneRunAdapter]],
-# ) -> Callable[
-#     [Optional[str], Optional[str]], Tuple[NeptuneRunAdapter, NeptunePlotCollectionLogger]
-# ]:
-#     def _factory(
-#         experiment_id: Optional[str] = None, run_id: Optional[str] = None
-#     ) -> Tuple[NeptuneRunAdapter, NeptunePlotCollectionLogger]:
-#         _, adapter = adapter_factory(experiment_id, run_id)
-#         logger = NeptunePlotCollectionLogger(run=adapter)
-#         return adapter, logger
+@pytest.fixture
+def plot_logger_factory(
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[FilesystemRun, FilesystemRunAdapter]
+    ],
+) -> Callable[[Optional[str], Optional[str]], Tuple[FilesystemRunAdapter, FilesystemPlotLogger]]:
+    def _factory(
+        experiment_id: Optional[str] = None, run_id: Optional[str] = None
+    ) -> Tuple[FilesystemRunAdapter, FilesystemPlotLogger]:
+        _, adapter = adapter_factory(experiment_id, run_id)
+        logger = FilesystemPlotLogger(run=adapter)
+        return adapter, logger
 
-#     return _factory
+    return _factory
+
+
+@pytest.fixture
+def score_collection_logger_factory(
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[FilesystemRun, FilesystemRunAdapter]
+    ],
+) -> Callable[
+    [Optional[str], Optional[str]], Tuple[FilesystemRunAdapter, FilesystemScoreCollectionLogger]
+]:
+    def _factory(
+        experiment_id: Optional[str] = None, run_id: Optional[str] = None
+    ) -> Tuple[FilesystemRunAdapter, FilesystemScoreCollectionLogger]:
+        _, adapter = adapter_factory(experiment_id, run_id)
+        logger = FilesystemScoreCollectionLogger(run=adapter)
+        return adapter, logger
+
+    return _factory
+
+
+@pytest.fixture
+def array_collection_logger_factory(
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[FilesystemRun, FilesystemRunAdapter]
+    ],
+) -> Callable[
+    [Optional[str], Optional[str]], Tuple[FilesystemRunAdapter, FilesystemArrayCollectionLogger]
+]:
+    def _factory(
+        experiment_id: Optional[str] = None, run_id: Optional[str] = None
+    ) -> Tuple[FilesystemRunAdapter, FilesystemArrayCollectionLogger]:
+        _, adapter = adapter_factory(experiment_id, run_id)
+        logger = FilesystemArrayCollectionLogger(run=adapter)
+        return adapter, logger
+
+    return _factory
+
+
+@pytest.fixture
+def plot_collection_logger_factory(
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[FilesystemRun, FilesystemRunAdapter]
+    ],
+) -> Callable[
+    [Optional[str], Optional[str]], Tuple[FilesystemRunAdapter, FilesystemPlotCollectionLogger]
+]:
+    def _factory(
+        experiment_id: Optional[str] = None, run_id: Optional[str] = None
+    ) -> Tuple[FilesystemRunAdapter, FilesystemPlotCollectionLogger]:
+        _, adapter = adapter_factory(experiment_id, run_id)
+        logger = FilesystemPlotCollectionLogger(run=adapter)
+        return adapter, logger
+
+    return _factory
