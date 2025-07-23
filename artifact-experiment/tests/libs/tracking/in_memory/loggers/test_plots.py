@@ -8,27 +8,30 @@ from pytest_mock import MockerFixture
 
 
 @pytest.mark.parametrize(
-    "experiment_id, run_id, ls_plot_names, ls_plots",
+    "experiment_id, run_id, ls_plot_names, ls_plots, ls_step",
     [
-        ("exp1", "run1", [], []),
-        ("exp1", "run1", ["plot_1"], ["plot_1"]),
+        ("exp1", "run1", [], [], []),
+        ("exp1", "run1", ["plot_1"], ["plot_1"], [1]),
         (
             "exp1",
             "run1",
             ["plot_1", "plot_2"],
             ["plot_1", "plot_2"],
+            [1, 1],
         ),
         (
             "exp1",
             "run1",
             ["plot_1", "plot_3"],
             ["plot_1", "plot_3"],
+            [1, 1],
         ),
         (
             "exp1",
             "run1",
             ["plot_1", "plot_2", "plot_3"],
             ["plot_1", "plot_2", "plot_3"],
+            [1, 1, 1],
         ),
         (
             "exp1",
@@ -47,6 +50,37 @@ from pytest_mock import MockerFixture
                 "plot_4",
                 "plot_5",
             ],
+            [1, 1, 1, 1, 1],
+        ),
+        (
+            "exp1",
+            "run1",
+            ["plot_1", "plot_2", "plot_1"],
+            ["plot_1", "plot_2", "plot_3"],
+            [1, 1, 2],
+        ),
+        (
+            "exp1",
+            "run1",
+            [
+                "plot_1",
+                "plot_1",
+                "plot_2",
+                "plot_2",
+                "plot_2",
+                "plot_1",
+                "plot_3",
+            ],
+            [
+                "plot_1",
+                "plot_2",
+                "plot_3",
+                "plot_1",
+                "plot_2",
+                "plot_3",
+                "plot_5",
+            ],
+            [1, 2, 1, 2, 3, 3, 1],
         ),
     ],
     indirect=["ls_plots"],
@@ -60,6 +94,7 @@ def test_log(
     run_id: str,
     ls_plot_names: List[str],
     ls_plots: List[Figure],
+    ls_step: List[int],
 ):
     adapter, logger = plot_logger_factory(experiment_id, run_id)
     spy = mocker.spy(adapter, "log_plot")
@@ -69,5 +104,6 @@ def test_log(
     for idx, call_args in enumerate(spy.call_args_list):
         name = ls_plot_names[idx]
         plot = ls_plots[idx]
-        expected_path = f"{experiment_id}/{run_id}/plots/{name}/1"
+        step = ls_step[idx]
+        expected_path = f"{experiment_id}/{run_id}/plots/{name}/{step}"
         assert call_args.kwargs == {"path": expected_path, "plot": plot}

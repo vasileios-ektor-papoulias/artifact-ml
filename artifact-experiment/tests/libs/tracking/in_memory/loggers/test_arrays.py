@@ -8,27 +8,30 @@ from pytest_mock import MockerFixture
 
 
 @pytest.mark.parametrize(
-    "experiment_id, run_id, ls_array_names, ls_arrays",
+    "experiment_id, run_id, ls_array_names, ls_arrays, ls_step",
     [
-        ("exp1", "run1", [], []),
-        ("exp1", "run1", ["array_1"], ["array_1"]),
+        ("exp1", "run1", [], [], []),
+        ("exp1", "run1", ["array_1"], ["array_1"], [1]),
         (
             "exp1",
             "run1",
             ["array_1", "array_2"],
             ["array_1", "array_2"],
+            [1, 1],
         ),
         (
             "exp1",
             "run1",
             ["array_1", "array_3"],
             ["array_1", "array_3"],
+            [1, 1],
         ),
         (
             "exp1",
             "run1",
             ["array_1", "array_2", "array_3"],
             ["array_1", "array_2", "array_3"],
+            [1, 1, 1],
         ),
         (
             "exp1",
@@ -47,6 +50,37 @@ from pytest_mock import MockerFixture
                 "array_4",
                 "array_5",
             ],
+            [1, 1, 1, 1, 1],
+        ),
+        (
+            "exp1",
+            "run1",
+            ["array_1", "array_2", "array_1"],
+            ["array_1", "array_2", "array_3"],
+            [1, 1, 2],
+        ),
+        (
+            "exp1",
+            "run1",
+            [
+                "array_1",
+                "array_1",
+                "array_2",
+                "array_2",
+                "array_2",
+                "array_1",
+                "array_3",
+            ],
+            [
+                "array_1",
+                "array_2",
+                "array_3",
+                "array_1",
+                "array_2",
+                "array_3",
+                "array_5",
+            ],
+            [1, 2, 1, 2, 3, 3, 1],
         ),
     ],
     indirect=["ls_arrays"],
@@ -60,6 +94,7 @@ def test_log(
     run_id: str,
     ls_array_names: List[str],
     ls_arrays: List[ndarray],
+    ls_step: List[int],
 ):
     adapter, logger = array_logger_factory(experiment_id, run_id)
     spy = mocker.spy(adapter, "log_array")
@@ -69,5 +104,6 @@ def test_log(
     for idx, call_args in enumerate(spy.call_args_list):
         name = ls_array_names[idx]
         array = ls_arrays[idx]
-        expected_path = f"{experiment_id}/{run_id}/arrays/{name}/1"
+        step = ls_step[idx]
+        expected_path = f"{experiment_id}/{run_id}/arrays/{name}/{step}"
         assert call_args.kwargs == {"path": expected_path, "array": array}

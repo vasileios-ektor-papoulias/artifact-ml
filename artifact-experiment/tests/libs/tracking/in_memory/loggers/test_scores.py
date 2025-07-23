@@ -7,45 +7,39 @@ from pytest_mock import MockerFixture
 
 
 @pytest.mark.parametrize(
-    "experiment_id, run_id, ls_score_names, ls_scores",
+    "experiment_id, run_id, ls_score_names, ls_scores, ls_step",
     [
-        ("exp1", "run1", [], []),
-        ("exp1", "run1", ["score_1"], ["score_1"]),
-        (
-            "exp1",
-            "run1",
-            ["score_1", "score_2"],
-            ["score_1", "score_2"],
-        ),
-        (
-            "exp1",
-            "run1",
-            ["score_1", "score_3"],
-            ["score_1", "score_3"],
-        ),
+        ("exp1", "run1", [], [], []),
+        ("exp1", "run1", ["score_1"], ["score_1"], [1]),
+        ("exp1", "run1", ["score_1", "score_2"], ["score_1", "score_2"], [1, 1]),
+        ("exp1", "run1", ["score_1", "score_3"], ["score_1", "score_3"], [1, 1]),
         (
             "exp1",
             "run1",
             ["score_1", "score_2", "score_3"],
             ["score_1", "score_2", "score_3"],
+            [1, 1, 1],
         ),
         (
             "exp1",
             "run1",
-            [
-                "score_1",
-                "score_2",
-                "score_3",
-                "score_4",
-                "score_5",
-            ],
-            [
-                "score_1",
-                "score_2",
-                "score_3",
-                "score_4",
-                "score_5",
-            ],
+            ["score_1", "score_2", "score_3", "score_4", "score_5"],
+            ["score_1", "score_2", "score_3", "score_4", "score_5"],
+            [1, 1, 1, 1, 1],
+        ),
+        (
+            "exp1",
+            "run1",
+            ["score_1", "score_2", "score_1"],
+            ["score_1", "score_2", "score_3"],
+            [1, 1, 2],
+        ),
+        (
+            "exp1",
+            "run1",
+            ["score_1", "score_1", "score_2", "score_2", "score_2", "score_1", "score_3"],
+            ["score_1", "score_2", "score_3", "score_1", "score_2", "score_3", "score_5"],
+            [1, 2, 1, 2, 3, 3, 1],
         ),
     ],
     indirect=["ls_scores"],
@@ -59,6 +53,7 @@ def test_log(
     run_id: str,
     ls_score_names: List[str],
     ls_scores: List[float],
+    ls_step: List[int],
 ):
     adapter, logger = score_logger_factory(experiment_id, run_id)
     spy = mocker.spy(adapter, "log_score")
@@ -68,5 +63,6 @@ def test_log(
     for idx, call_args in enumerate(spy.call_args_list):
         name = ls_score_names[idx]
         score = ls_scores[idx]
-        expected_path = f"{experiment_id}/{run_id}/scores/{name}/1"
+        step = ls_step[idx]
+        expected_path = f"{experiment_id}/{run_id}/scores/{name}/{step}"
         assert call_args.kwargs == {"path": expected_path, "score": score}

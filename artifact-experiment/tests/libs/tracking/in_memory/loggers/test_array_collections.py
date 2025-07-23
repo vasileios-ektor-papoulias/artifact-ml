@@ -10,27 +10,30 @@ from pytest_mock import MockerFixture
 
 
 @pytest.mark.parametrize(
-    "experiment_id, run_id, ls_array_collection_names, ls_array_collections",
+    "experiment_id, run_id, ls_array_collection_names, ls_array_collections, ls_step",
     [
-        ("exp1", "run1", [], []),
-        ("exp1", "run1", ["array_collection_1"], ["array_collection_1"]),
+        ("exp1", "run1", [], [], []),
+        ("exp1", "run1", ["array_collection_1"], ["array_collection_1"], [1]),
         (
             "exp1",
             "run1",
             ["array_collection_1", "array_collection_2"],
             ["array_collection_1", "array_collection_2"],
+            [1, 1],
         ),
         (
             "exp1",
             "run1",
             ["array_collection_1", "array_collection_3"],
             ["array_collection_1", "array_collection_3"],
+            [1, 1],
         ),
         (
             "exp1",
             "run1",
             ["array_collection_1", "array_collection_2", "array_collection_3"],
             ["array_collection_1", "array_collection_2", "array_collection_3"],
+            [1, 1, 1],
         ),
         (
             "exp1",
@@ -49,6 +52,37 @@ from pytest_mock import MockerFixture
                 "array_collection_4",
                 "array_collection_5",
             ],
+            [1, 1, 1, 1, 1],
+        ),
+        (
+            "exp1",
+            "run1",
+            ["array_collection_1", "array_collection_2", "array_collection_1"],
+            ["array_collection_1", "array_collection_2", "array_collection_3"],
+            [1, 1, 2],
+        ),
+        (
+            "exp1",
+            "run1",
+            [
+                "array_collection_1",
+                "array_collection_1",
+                "array_collection_2",
+                "array_collection_2",
+                "array_collection_2",
+                "array_collection_1",
+                "array_collection_3",
+            ],
+            [
+                "array_collection_1",
+                "array_collection_2",
+                "array_collection_3",
+                "array_collection_1",
+                "array_collection_2",
+                "array_collection_3",
+                "array_collection_5",
+            ],
+            [1, 2, 1, 2, 3, 3, 1],
         ),
     ],
     indirect=["ls_array_collections"],
@@ -62,6 +96,7 @@ def test_log(
     run_id: str,
     ls_array_collection_names: List[str],
     ls_array_collections: List[Dict[str, ndarray]],
+    ls_step: List[int],
 ):
     adapter, logger = array_collection_logger_factory(experiment_id, run_id)
     spy = mocker.spy(adapter, "log_array_collection")
@@ -71,5 +106,6 @@ def test_log(
     for idx, call_args in enumerate(spy.call_args_list):
         name = ls_array_collection_names[idx]
         array_collection = ls_array_collections[idx]
-        expected_path = f"{experiment_id}/{run_id}/array_collections/{name}/1"
+        step = ls_step[idx]
+        expected_path = f"{experiment_id}/{run_id}/array_collections/{name}/{step}"
         assert call_args.kwargs == {"path": expected_path, "array_collection": array_collection}

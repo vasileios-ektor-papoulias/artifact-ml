@@ -10,45 +10,79 @@ from pytest_mock import MockerFixture
 
 
 @pytest.mark.parametrize(
-    "experiment_id, run_id, ls_plot_collection_names, ls_plot_collections",
+    "experiment_id, run_id, ls_plot_collection_names, ls_plot_collections, ls_step",
     [
-        ("exp1", "run1", [], []),
-        ("exp1", "run1", ["plot_collection_1"], ["plot_collection_1"]),
+        ("exp1", "run1", [], [], []),
+        ("exp1", "run1", ["array_collection_1"], ["array_collection_1"], [1]),
         (
             "exp1",
             "run1",
-            ["plot_collection_1", "plot_collection_2"],
-            ["plot_collection_1", "plot_collection_2"],
+            ["array_collection_1", "array_collection_2"],
+            ["array_collection_1", "array_collection_2"],
+            [1, 1],
         ),
         (
             "exp1",
             "run1",
-            ["plot_collection_1", "plot_collection_3"],
-            ["plot_collection_1", "plot_collection_3"],
+            ["array_collection_1", "array_collection_3"],
+            ["array_collection_1", "array_collection_3"],
+            [1, 1],
         ),
         (
             "exp1",
             "run1",
-            ["plot_collection_1", "plot_collection_2", "plot_collection_3"],
-            ["plot_collection_1", "plot_collection_2", "plot_collection_3"],
+            ["array_collection_1", "array_collection_2", "array_collection_3"],
+            ["array_collection_1", "array_collection_2", "array_collection_3"],
+            [1, 1, 1],
         ),
         (
             "exp1",
             "run1",
             [
-                "plot_collection_1",
-                "plot_collection_2",
-                "plot_collection_3",
-                "plot_collection_4",
-                "plot_collection_5",
+                "array_collection_1",
+                "array_collection_2",
+                "array_collection_3",
+                "array_collection_4",
+                "array_collection_5",
             ],
             [
-                "plot_collection_1",
-                "plot_collection_2",
-                "plot_collection_3",
-                "plot_collection_4",
-                "plot_collection_5",
+                "array_collection_1",
+                "array_collection_2",
+                "array_collection_3",
+                "array_collection_4",
+                "array_collection_5",
             ],
+            [1, 1, 1, 1, 1],
+        ),
+        (
+            "exp1",
+            "run1",
+            ["array_collection_1", "array_collection_2", "array_collection_1"],
+            ["array_collection_1", "array_collection_2", "array_collection_3"],
+            [1, 1, 2],
+        ),
+        (
+            "exp1",
+            "run1",
+            [
+                "array_collection_1",
+                "array_collection_1",
+                "array_collection_2",
+                "array_collection_2",
+                "array_collection_2",
+                "array_collection_1",
+                "array_collection_3",
+            ],
+            [
+                "array_collection_1",
+                "array_collection_2",
+                "array_collection_3",
+                "array_collection_1",
+                "array_collection_2",
+                "array_collection_3",
+                "array_collection_5",
+            ],
+            [1, 2, 1, 2, 3, 3, 1],
         ),
     ],
     indirect=["ls_plot_collections"],
@@ -62,6 +96,7 @@ def test_log(
     run_id: str,
     ls_plot_collection_names: List[str],
     ls_plot_collections: List[Dict[str, Figure]],
+    ls_step: List[int],
 ):
     adapter, logger = plot_collection_logger_factory(experiment_id, run_id)
     spy = mocker.spy(adapter, "log_plot_collection")
@@ -71,5 +106,6 @@ def test_log(
     for idx, call_args in enumerate(spy.call_args_list):
         name = ls_plot_collection_names[idx]
         plot_collection = ls_plot_collections[idx]
-        expected_path = f"{experiment_id}/{run_id}/plot_collections/{name}/1"
+        step = ls_step[idx]
+        expected_path = f"{experiment_id}/{run_id}/plot_collections/{name}/{step}"
         assert call_args.kwargs == {"path": expected_path, "plot_collection": plot_collection}
