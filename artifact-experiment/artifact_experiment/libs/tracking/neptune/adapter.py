@@ -71,11 +71,11 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
         dir_target = self._prepend_root_dir(path=dir_target).replace("\\", "/")
         self._native_run[dir_target].upload(path_source)
 
-    def log(self, path: str, artifact: ArtifactResult):
+    def log(self, artifact_path: str, artifact: ArtifactResult):
         if not self.is_active:
             raise InactiveNeptuneRunError("Run is inactive")
-        path = self._prepend_root_dir(path=path).replace("\\", "/")
-        self._native_run[path].append(artifact)
+        artifact_path = self._prepend_root_dir(path=artifact_path).replace("\\", "/")
+        self._native_run[artifact_path].append(artifact)
 
     @classmethod
     def _build_native_run(cls, experiment_id: str, run_id: str) -> neptune.Run:
