@@ -1,5 +1,6 @@
 from typing import Callable, Optional, Tuple
 from unittest.mock import MagicMock
+from uuid import UUID
 
 import pytest
 from artifact_core.base.artifact_dependencies import ArtifactResult
@@ -16,19 +17,19 @@ STANDARD_UUID_LENGTH = 36
     ],
 )
 def test_build(
-    native_run_factory: Callable[[Optional[str], Optional[str]], MagicMock],
+    patch_neptune_run_creation,
     experiment_id: str,
     run_id: Optional[str],
 ):
-    native_run = native_run_factory(experiment_id, run_id)
     adapter = NeptuneRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
+    assert adapter.is_active is True
     assert adapter.experiment_id == experiment_id
-    assert adapter.experiment_id == native_run.experiment_id
-    assert adapter.run_id == native_run.run_id
     if run_id is not None:
         assert adapter.run_id == run_id
-        assert native_run.run_id == run_id
-    assert adapter.is_active is True
+    else:
+        assert adapter.run_id is not None
+        assert len(adapter.run_id) == STANDARD_UUID_LENGTH
+        UUID(adapter.run_id)
 
 
 @pytest.mark.parametrize(
@@ -45,13 +46,13 @@ def test_from_native_run(
 ):
     native_run = native_run_factory(experiment_id, run_id)
     adapter = NeptuneRunAdapter.from_native_run(native_run=native_run)
+    assert adapter.is_active is True
     assert adapter.experiment_id == experiment_id
     assert adapter.experiment_id == native_run.experiment_id
     assert adapter.run_id == native_run.run_id
     if run_id is not None:
         assert adapter.run_id == run_id
         assert native_run.run_id == run_id
-    assert adapter.is_active is True
 
 
 @pytest.mark.parametrize(
