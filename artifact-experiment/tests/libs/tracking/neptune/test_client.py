@@ -27,10 +27,6 @@ from pytest_mock import MockerFixture
 STANDARD_UUID_LENGTH = 36
 
 
-def _get_name(key: str, idx: int) -> str:
-    return f"{key}_{idx}"
-
-
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [("exp1", "run1")],
