@@ -16,10 +16,9 @@ def native_run_factory() -> Callable[[Optional[str], Optional[str]], DummyNative
         experiment_id: Optional[str] = None, run_id: Optional[str] = None
     ) -> DummyNativeRun:
         if experiment_id is None:
-            experiment_id = "test_experiment"
+            experiment_id = "default_experiment"
         if run_id is None:
-            run_id = "test_run"
-
+            run_id = "default_run"
         run = DummyNativeRun(experiment_id=experiment_id, run_id=run_id)
         return run
 
@@ -34,9 +33,7 @@ def adapter_factory(
         experiment_id: Optional[str] = None, run_id: Optional[str] = None
     ) -> Tuple[DummyNativeRun, DummyRunAdapter]:
         if experiment_id is None:
-            experiment_id = "test_experiment"
-        if run_id is None:
-            run_id = "test_run"
+            experiment_id = "default_experiment"
         native_run = native_run_factory(experiment_id, run_id)
         adapter = DummyRunAdapter(native_run=native_run)
         return native_run, adapter
