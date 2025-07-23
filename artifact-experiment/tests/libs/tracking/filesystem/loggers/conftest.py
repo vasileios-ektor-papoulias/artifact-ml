@@ -1,6 +1,8 @@
 import os
-from typing import Callable, List, Optional, Tuple
+from pathlib import Path
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
+import pandas as pd
 import pytest
 from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRunAdapter
 from artifact_experiment.libs.tracking.filesystem.loggers.array_collections import (
@@ -17,6 +19,38 @@ from artifact_experiment.libs.tracking.filesystem.loggers.score_collections impo
 from artifact_experiment.libs.tracking.filesystem.loggers.scores import FilesystemScoreLogger
 from artifact_experiment.libs.tracking.filesystem.native_run import FilesystemRun
 from pytest_mock import MockerFixture
+
+
+@pytest.fixture
+def in_memory_df_store(mocker: MockerFixture) -> Dict[str, pd.DataFrame]:
+    score_store = {}
+
+    def fake_path_exists(self):
+        return str(self) in score_store
+
+    def fake_read_csv(path: Union[Path, str]):
+        path_str = str(path)
+        if path_str not in score_store:
+            raise FileNotFoundError(f"{path_str} not found in store.")
+        return score_store[path_str].copy()
+
+    def fake_to_csv(self, path: Union[Path, str], index: bool = True):
+        _ = index
+        score_store[str(path)] = self.copy()
+
+    mocker.patch("os.makedirs")
+    mocker.patch("pandas.DataFrame.to_csv", new=fake_to_csv)
+    mocker.patch("pathlib.Path.exists", new=fake_path_exists)
+    mocker.patch("pandas.read_csv", side_effect=fake_read_csv)
+    return score_store
+
+
+@pytest.fixture
+def expected_logs(request) -> Dict[str, List[float]]:
+    logs = {}
+    for name, ls_values in request.param.items():
+        logs[name] = [request.getfixturevalue(v) for v in ls_values]
+    return logs
 
 
 @pytest.fixture
