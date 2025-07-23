@@ -62,11 +62,8 @@ def logger_factory(
 
 @pytest.fixture
 def client_factory(
-    adapter_factory: Callable[
-        [Optional[str], Optional[str]], Tuple[DummyNativeRun, DummyRunAdapter]
-    ],
     logger_factory: Callable[
-        [Optional[DummyRunAdapter]], Tuple[DummyRunAdapter, DummyArtifactLogger]
+        [Optional[str], Optional[str]], Tuple[DummyRunAdapter, DummyArtifactLogger]
     ],
 ) -> Callable[
     [Optional[str], Optional[str]], Tuple[DummyRunAdapter, DummyArtifactLogger, DummyTrackingClient]
@@ -75,8 +72,7 @@ def client_factory(
         experiment_id: Optional[str] = None,
         run_id: Optional[str] = None,
     ) -> Tuple[DummyRunAdapter, DummyArtifactLogger, DummyTrackingClient]:
-        _, adapter = adapter_factory(experiment_id, run_id)
-        adapter, logger = logger_factory(adapter)
+        adapter, logger = logger_factory(experiment_id, run_id)
         client = DummyTrackingClient(
             run=adapter,
             score_logger=logger,
