@@ -1,4 +1,5 @@
 from typing import Callable, Dict, List, Optional, Tuple
+from uuid import UUID
 
 import pytest
 from artifact_experiment.libs.tracking.in_memory.adapter import (
@@ -7,8 +8,13 @@ from artifact_experiment.libs.tracking.in_memory.adapter import (
 from artifact_experiment.libs.tracking.in_memory.client import (
     InMemoryTrackingClient,
 )
+from artifact_experiment.libs.tracking.in_memory.native_run import (
+    InMemoryRun,
+)
 from matplotlib.figure import Figure
 from numpy import ndarray
+
+STANDARD_UUID_LENGTH = 36
 
 
 @pytest.mark.parametrize(
@@ -24,10 +30,70 @@ def test_init(
 ):
     adapter, client = client_factory(experiment_id, run_id)
     assert isinstance(client, InMemoryTrackingClient)
-    assert client.run == adapter
+    assert client.run is adapter
     assert client.run.experiment_id == experiment_id
     assert client.run.run_id == run_id
     assert client.run.is_active is True
+
+
+@pytest.mark.parametrize(
+    "experiment_id, run_id",
+    [("exp1", "run1")],
+)
+def test_from_run(
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[InMemoryRun, InMemoryRunAdapter]
+    ],
+    experiment_id: str,
+    run_id: str,
+):
+    _, adapter = adapter_factory(experiment_id, run_id)
+    client = InMemoryTrackingClient.from_run(run=adapter)
+    assert isinstance(client, InMemoryTrackingClient)
+    assert client.run is adapter
+    assert client.run.experiment_id == experiment_id
+    assert client.run.run_id == run_id
+    assert client.run.is_active is True
+
+
+@pytest.mark.parametrize(
+    "experiment_id, run_id",
+    [("exp1", "run1")],
+)
+def test_from_native_run(
+    native_run_factory: Callable[[Optional[str], Optional[str]], InMemoryRun],
+    experiment_id: str,
+    run_id: str,
+):
+    native_run = native_run_factory(experiment_id, run_id)
+    client = InMemoryTrackingClient.from_native_run(native_run=native_run)
+    assert isinstance(client, InMemoryTrackingClient)
+    assert client.run.experiment_id == experiment_id
+    assert client.run.run_id == run_id
+    assert client.run.is_active is True
+
+
+@pytest.mark.parametrize(
+    "experiment_id, run_id",
+    [
+        ("exp1", "run1"),
+        ("exp1", None),
+    ],
+)
+def test_build(
+    experiment_id: str,
+    run_id: Optional[str],
+):
+    client = InMemoryTrackingClient.build(experiment_id=experiment_id, run_id=run_id)
+    assert isinstance(client, InMemoryTrackingClient)
+    assert client.run.is_active is True
+    assert client.run.experiment_id == experiment_id
+    if run_id is not None:
+        assert client.run.run_id == run_id
+    else:
+        assert client.run.run_id is not None
+        assert len(client.run.run_id) == STANDARD_UUID_LENGTH
+        UUID(client.run.run_id)
 
 
 @pytest.mark.parametrize(
