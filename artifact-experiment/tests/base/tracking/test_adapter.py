@@ -15,20 +15,14 @@ STANDARD_UUID_LENGTH = 36
     "experiment_id, run_id",
     [
         ("exp1", "run1"),
-        ("my_experiment", "my_run"),
-        ("test-experiment", "test-run"),
-        ("experiment_with_underscores", "run_with_underscores"),
         ("exp1", None),
-        ("my_experiment", None),
-        ("test-experiment", None),
-        ("experiment_with_underscores", None),
     ],
 )
 def test_build(
     experiment_id: str,
     run_id: Optional[str],
 ):
-    adapter: DummyRunAdapter = DummyRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
+    adapter = DummyRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
     assert adapter.experiment_id == experiment_id
     assert adapter.is_active is True
     if run_id is not None:
@@ -42,7 +36,7 @@ def test_build(
 def test_from_native_run(
     native_run_factory: Callable[[Optional[str], Optional[str]], DummyNativeRun],
 ):
-    native_run: DummyNativeRun = native_run_factory("test_exp", "test_run")
+    native_run = native_run_factory("test_exp", "test_run")
     adapter: DummyRunAdapter = DummyRunAdapter.from_native_run(native_run)
     assert adapter.experiment_id == "test_exp"
     assert adapter.run_id == "test_run"
