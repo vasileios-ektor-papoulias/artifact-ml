@@ -5,21 +5,24 @@ from artifact_experiment.table_comparison.resources import TableComparisonCallba
 
 
 @pytest.mark.parametrize(
-    "real_data, synthetic_data",
+    "dataset_real_dispatcher, dataset_synthetic_dispatcher",
     [
-        (pd.DataFrame({"a": [1, 2]}), pd.DataFrame({"a": [3, 4]})),
-        (pd.DataFrame({"x": [1.1, 2.2]}), pd.DataFrame({"x": [2.2, 3.3]})),
-        (pd.DataFrame(), pd.DataFrame()),
+        ("df_1", "df_2"),
+        ("df_3", "df_4"),
+        ("df_5", "df_5"),
     ],
+    indirect=["dataset_real_dispatcher", "dataset_synthetic_dispatcher"],
 )
-def test_build(real_data: pd.DataFrame, synthetic_data: pd.DataFrame):
+def test_build(dataset_real_dispatcher: pd.DataFrame, dataset_synthetic_dispatcher: pd.DataFrame):
+    dataset_real = dataset_real_dispatcher
+    dataset_synthetic = dataset_synthetic_dispatcher
     resources = TableComparisonCallbackResources.build(
-        dataset_real=real_data, dataset_synthetic=synthetic_data
+        dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
     )
 
     assert isinstance(resources, TableComparisonCallbackResources)
     assert isinstance(resources.artifact_resources, DatasetComparisonArtifactResources)
     assert isinstance(resources.artifact_resources.dataset_real, pd.DataFrame)
     assert isinstance(resources.artifact_resources.dataset_synthetic, pd.DataFrame)
-    pd.testing.assert_frame_equal(resources.artifact_resources.dataset_real, real_data)
-    pd.testing.assert_frame_equal(resources.artifact_resources.dataset_synthetic, synthetic_data)
+    pd.testing.assert_frame_equal(resources.artifact_resources.dataset_real, dataset_real)
+    pd.testing.assert_frame_equal(resources.artifact_resources.dataset_synthetic, dataset_synthetic)

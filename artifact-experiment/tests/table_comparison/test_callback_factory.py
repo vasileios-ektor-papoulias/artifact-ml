@@ -32,11 +32,6 @@ from artifact_experiment.table_comparison.callback_factory import TableCompariso
 from pytest_mock import MockerFixture
 
 
-@pytest.fixture
-def tabular_data_spec() -> TabularDataSpec:
-    return TabularDataSpec.build()
-
-
 @pytest.mark.parametrize(
     "score_type",
     [TableComparisonScoreType.MEAN_JS_DISTANCE, TableComparisonScoreType.CORRELATION_DISTANCE],
