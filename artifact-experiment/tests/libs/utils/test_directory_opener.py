@@ -26,8 +26,7 @@ def platform(mocker, request) -> str:
 def test_open_directory(mocker: MockerFixture, platform: str, expected_popen_args: Tuple[Any]):
     mock_popen = mocker.patch("subprocess.Popen")
     path = "C:\\test\\path" if platform.startswith("win") else "/test/path"
-    opener = DirectoryOpener()
-    opener.open_directory(path=path)
+    DirectoryOpener.open_directory(path=path)
     mock_popen.assert_called_once()
     called_args, called_kwargs = mock_popen.call_args
     assert called_args == expected_popen_args
@@ -60,7 +59,6 @@ def test_open_directory_fallback_output(
     mocker.patch("subprocess.Popen", side_effect=OSError("Failure"))
     mocker.patch("os.path.isdir", return_value=exists)
     _ = platform
-    opener = DirectoryOpener()
-    opener.open_directory(path=path)
+    DirectoryOpener.open_directory(path=path)
     out, _ = capfd.readouterr()
     assert expected_msg in out
