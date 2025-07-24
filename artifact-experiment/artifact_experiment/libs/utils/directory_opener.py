@@ -1,3 +1,4 @@
+import os
 import subprocess
 import sys
 
@@ -48,4 +49,7 @@ class DirectoryOpener:
             self._fallback_print(path)
 
     def _fallback_print(self, path: str):
-        print(f"Directory is available at: {path}")
+        if os.path.isdir(path):
+            print(f"Directory is available at: {path}")
+        else:
+            print(f"Directory does not exist: {path}")
