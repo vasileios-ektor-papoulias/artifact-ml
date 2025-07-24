@@ -4,7 +4,7 @@ from pathlib import Path
 from artifact_experiment.base.tracking.adapter import InactiveRunError
 
 try:
-    from artifact_experiment.libs.utils.directory_open_button import DirectoryOpenButton
+    from artifact_experiment.libs.ui.directory_open_button import DirectoryOpenButton
 
 except ImportError:
     DirectoryOpenButton = None
