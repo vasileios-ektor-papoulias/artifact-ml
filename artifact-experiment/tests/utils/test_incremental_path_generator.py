@@ -45,7 +45,7 @@ def tmp_dir_factory() -> Generator[Callable[[List[str]], str], None, None]:
 )
 def test_generate(tmp_dir_factory, existing_files, fmt, expected_filename):
     tmp_dir = tmp_dir_factory(existing_files)
-    result_path = IncrementalPathGenerator.generate(tmp_dir, fmt)
+    result_path = IncrementalPathGenerator.generate(dir_path=tmp_dir, fmt=fmt)
     assert os.path.basename(result_path) == expected_filename
 
 
@@ -60,5 +60,5 @@ def test_generate(tmp_dir_factory, existing_files, fmt, expected_filename):
 )
 def test_format_path(tmp_dir_factory, next_idx, fmt, expected_filename):
     tmp_dir = tmp_dir_factory([])
-    result_path = IncrementalPathGenerator.format_path(tmp_dir, next_idx, fmt)
+    result_path = IncrementalPathGenerator.format_path(dir_path=tmp_dir, next_idx=next_idx, fmt=fmt)
     assert os.path.basename(result_path) == expected_filename
