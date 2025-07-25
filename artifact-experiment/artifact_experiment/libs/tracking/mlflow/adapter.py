@@ -1,5 +1,6 @@
 import os
 from dataclasses import dataclass
+from pathlib import Path
 from typing import List, Optional
 
 from mlflow.entities import Experiment, FileInfo, Metric, Run, RunStatus
@@ -58,30 +59,30 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeRun]):
     def upload(self, path_source: str, dir_target: str):
         if not self.is_active:
             raise InactiveMlflowRunError("Run is inactive")
-        path_source = self._prepend_root_dir(path=path_source)
+        dir_target = self._prepend_root_dir(path=dir_target)
+        key = self._get_store_key(path=dir_target)
         self._native_run.client.log_artifact(
             run_id=self.run_uuid,
             local_path=path_source,
-            artifact_path=dir_target,
+            artifact_path=key,
         )
 
     def log_score(self, backend_path: str, value: float, step: int = 0):
         if not self.is_active:
             raise InactiveMlflowRunError("Run is inactive")
         backend_path = self._prepend_root_dir(path=backend_path)
-        key = backend_path.replace("\\", "/")
+        key = self._get_store_key(path=backend_path)
         self._native_run.client.log_metric(run_id=self.run_uuid, key=key, value=value, step=step)
 
     def get_ls_artifact_info(self, backend_path: str) -> List[FileInfo]:
         backend_path = self._prepend_root_dir(path=backend_path)
-        ls_artifact_infos = self._native_run.client.list_artifacts(
-            run_id=self.run_uuid, path=backend_path
-        )
+        key = self._get_store_key(path=backend_path)
+        ls_artifact_infos = self._native_run.client.list_artifacts(run_id=self.run_uuid, path=key)
         return ls_artifact_infos
 
     def get_ls_score_history(self, backend_path: str) -> List[Metric]:
         backend_path = self._prepend_root_dir(path=backend_path)
-        key = backend_path.replace("\\", "/")
+        key = self._get_store_key(path=backend_path)
         ls_metric_history = self._native_run.client.get_metric_history(
             run_id=self.run_uuid, key=key
         )
@@ -157,4 +158,9 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeRun]):
 
     @classmethod
     def _prepend_root_dir(cls, path: str) -> str:
-        return os.path.join(cls._root_dir, path)
+        return os.path.join(cls._root_dir, path.lstrip("/"))
+
+    @staticmethod
+    def _get_store_key(path: str) -> str:
+        key = Path(path).as_posix()
+        return key
