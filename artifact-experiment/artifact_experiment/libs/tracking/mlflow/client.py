@@ -12,9 +12,9 @@ from artifact_experiment.libs.tracking.mlflow.loggers.array_collections import (
 )
 from artifact_experiment.libs.tracking.mlflow.loggers.arrays import MlflowArrayLogger
 from artifact_experiment.libs.tracking.mlflow.loggers.plot_collections import (
-    MLFlowPlotCollectionLogger,
+    MlflowPlotCollectionLogger,
 )
-from artifact_experiment.libs.tracking.mlflow.loggers.plots import MLFlowPlotLogger
+from artifact_experiment.libs.tracking.mlflow.loggers.plots import MlflowPlotLogger
 from artifact_experiment.libs.tracking.mlflow.loggers.score_collections import (
     MlflowScoreCollectionLogger,
 )
@@ -62,7 +62,7 @@ class MlflowTrackingClient(TrackingClient[MlflowRunAdapter]):
 
     @staticmethod
     def _get_plot_logger(run: MlflowRunAdapter) -> ArtifactLogger[Figure, MlflowRunAdapter]:
-        return MLFlowPlotLogger(run=run)
+        return MlflowPlotLogger(run=run)
 
     @staticmethod
     def _get_score_collection_logger(
@@ -80,4 +80,4 @@ class MlflowTrackingClient(TrackingClient[MlflowRunAdapter]):
     def _get_plot_collection_logger(
         run: MlflowRunAdapter,
     ) -> ArtifactLogger[Dict[str, Figure], MlflowRunAdapter]:
-        return MLFlowPlotCollectionLogger(run=run)
+        return MlflowPlotCollectionLogger(run=run)
