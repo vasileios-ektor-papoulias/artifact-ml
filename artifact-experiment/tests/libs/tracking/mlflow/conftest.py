@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Optional, Tuple
+from typing import Callable, Optional, Tuple
 from unittest.mock import MagicMock
 
 import pytest
@@ -25,44 +25,115 @@ from pytest_mock import MockerFixture
 
 
 @pytest.fixture
+def mock_client_factory(mocker) -> Callable[[], MagicMock]:
+    def _factory() -> MagicMock:
+        experiments = {}
+        runs = {}
+        client = mocker.MagicMock(spec=MlflowClient)
+
+        def get_experiment_by_name(name: str):
+            return experiments.get(name)
+
+        def get_experiment(experiment_id: str):
+            for exp in experiments.values():
+                if exp.experiment_id == experiment_id:
+                    return exp
+            return None
+
+        def create_experiment(name: str):
+            if name in experiments:
+                return experiments[name].experiment_id
+            exp = mocker.MagicMock()
+            exp.name = name
+            exp.experiment_id = f"{name}_uuid"
+            experiments[name] = exp
+            return exp.experiment_id
+
+        def search_runs(experiment_ids, filter_string=None):
+            exp_id = experiment_ids[0]
+            if not filter_string:
+                return list(runs.get(exp_id, {}).values())
+            if "tags.mlflow.runName" in filter_string:
+                name = filter_string.split("=")[-1].strip(" '\"")
+                return [run for run in runs.get(exp_id, {}).values() if run.info.run_name == name]
+            return []
+
+        def get_run(run_id: str):
+            for exp_runs in runs.values():
+                if run_id in exp_runs:
+                    return exp_runs[run_id]
+            raise ValueError("Run not found")
+
+        def create_run(experiment_id: str, run_name: str):
+            run_uuid = f"{run_name}_uuid"
+            run = mocker.MagicMock(spec=Run)
+            info = mocker.MagicMock()
+            info.run_id = run_uuid
+            info.experiment_id = experiment_id
+            info.run_name = run_name
+            info.status = RunStatus.to_string(RunStatus.RUNNING)
+            run.info = info
+            run.data = mocker.MagicMock()
+            runs.setdefault(experiment_id, {})[run_uuid] = run
+            return run
+
+        client.get_experiment_by_name.side_effect = get_experiment_by_name
+        client.get_experiment.side_effect = get_experiment
+        client.create_experiment.side_effect = create_experiment
+        client.search_runs.side_effect = search_runs
+        client.get_run.side_effect = get_run
+        client.create_run.side_effect = create_run
+
+        return client
+
+    return _factory
+
+
+@pytest.fixture
+def mock_experiment_factory(mocker) -> Callable[[str], MagicMock]:
+    def _factory(name: str) -> MagicMock:
+        experiment = mocker.MagicMock()
+        experiment.name = name
+        experiment.experiment_id = f"{name}_uuid"
+        return experiment
+
+    return _factory
+
+
+@pytest.fixture
+def mock_run_factory(mocker) -> Callable[[str, str], MagicMock]:
+    def _factory(experiment_name: str, run_name: str) -> MagicMock:
+        run_uuid = f"{run_name}_uuid"
+        experiment_uuid = f"{experiment_name}_uuid"
+        run_info = mocker.MagicMock()
+        run_info.run_id = run_uuid
+        run_info.experiment_id = experiment_uuid
+        run_info.run_name = run_name
+        run_info.status = RunStatus.to_string(RunStatus.RUNNING)
+        raw_run = mocker.MagicMock(spec=Run)
+        raw_run.info = run_info
+        raw_run.data = mocker.MagicMock()
+
+        return raw_run
+
+    return _factory
+
+
+@pytest.fixture
 def native_run_factory(
-    mocker,
-) -> Callable[[Optional[str], Optional[str]], Dict[str, MagicMock]]:
+    mock_client_factory: Callable[[], MagicMock],
+) -> Callable[[Optional[str], Optional[str]], MlflowNativeRun]:
     def _factory(
         experiment_id: Optional[str] = None,
         run_id: Optional[str] = None,
-    ) -> Dict[str, MagicMock]:
-        if experiment_id is None:
-            experiment_id = "default_experiment_id"
-        if run_id is None:
-            run_id = "default_run_id"
-        # Mock Run Info
-        run_info = mocker.MagicMock()
-        run_info.run_id = run_id
-        run_info.experiment_id = experiment_id
-        run_info.run_name = run_id
-        run_info.status = RunStatus.to_string(RunStatus.RUNNING)
-
-        # Mock Run
-        run = mocker.MagicMock(spec=Run)
-        run.info = run_info
-        run.data = mocker.MagicMock()
-
-        # Mock Client
-        client = mocker.MagicMock(spec=MlflowClient)
-        client.log_artifact = mocker.MagicMock()
-        client.list_artifacts = mocker.MagicMock()
-        client.log_metric = mocker.MagicMock()
-        client.get_metric_history = mocker.MagicMock()
-        client.set_terminated = mocker.MagicMock()
-        client.get_experiment = mocker.MagicMock()
-        client.get_run = mocker.MagicMock(return_value=run)
-        client.search_runs = mocker.MagicMock(return_value=[run])
-        return {
-            "client": client,
-            "run": run,
-            "run_info": run_info,
-        }
+    ) -> MlflowNativeRun:
+        experiment_id = experiment_id or "default_experiment"
+        run_id = run_id or "default_run"
+        client = mock_client_factory()
+        client.create_experiment(name=experiment_id)
+        experiment = client.get_experiment_by_name(name=experiment_id)
+        run = client.create_run(experiment_id=experiment.experiment_id, run_name=run_id)
+        return MlflowNativeRun(client=client, experiment=experiment, run=run)
 
     return _factory
 
@@ -70,52 +141,29 @@ def native_run_factory(
 @pytest.fixture
 def patch_mlflow_run_creation(
     mocker: MockerFixture,
-    native_run_factory: Callable[[Optional[str], Optional[str]], MagicMock],
+    native_run_factory: Callable[[Optional[str], Optional[str]], MlflowNativeRun],
 ):
-    mocked_client = mocker.MagicMock(name="MlflowClient")
-    mocker.patch(
-        "artifact_experiment.libs.tracking.mlflow.adapter.MlflowClient",
-        return_value=mocked_client,
-    )
-    mocked_client.search_runs.return_value = []
+    def _patch(experiment_id: Optional[str] = None, run_id: Optional[str] = None):
+        native_run = native_run_factory(experiment_id, run_id)
+        mocker.patch(
+            "artifact_experiment.libs.tracking.mlflow.adapter.MlflowClient",
+            return_value=native_run.client,
+        )
+        return native_run
 
-    def create_run_side_effect(experiment_id: str, run_name: str):
-        run = native_run_factory(experiment_id, run_name)
-        run.info.experiment_id = experiment_id
-        run.info.run_id = f"{experiment_id}_{run_name}"
-        run.info.run_name = run_name
-        run.info.status = "RUNNING"
-        return run
-
-    mocked_client.create_run.side_effect = create_run_side_effect
-
-    def get_run_side_effect(run_id: str):
-        run = MagicMock(name="run")
-        run.info.run_id = run_id
-        run.info.run_name = run_id.split("_")[-1]
-        run.info.experiment_id = run_id.split("_")[0]
-        run.info.status = "RUNNING"
-        return run
-
-    mocked_client.get_run.side_effect = get_run_side_effect
+    return _patch
 
 
 @pytest.fixture
 def adapter_factory(
-    native_run_factory: Callable[[Optional[str], Optional[str]], Dict[str, MagicMock]],
+    native_run_factory: Callable[[Optional[str], Optional[str]], MlflowNativeRun],
 ) -> Callable[[Optional[str], Optional[str]], Tuple[MlflowNativeRun, MlflowRunAdapter]]:
     def _factory(
         experiment_id: Optional[str] = None,
         run_id: Optional[str] = None,
     ) -> Tuple[MlflowNativeRun, MlflowRunAdapter]:
-        native_entities = native_run_factory(experiment_id, run_id)
-
-        native_run = MlflowNativeRun(
-            client=native_entities["client"],
-            run=native_entities["run"],
-        )
+        native_run = native_run_factory(experiment_id, run_id)
         adapter = MlflowRunAdapter(native_run=native_run)
-
         return native_run, adapter
 
     return _factory
@@ -125,7 +173,7 @@ def adapter_factory(
 def loggers_factory(
     adapter_factory: Callable[
         [Optional[str], Optional[str]],
-        Tuple[MagicMock, MlflowRunAdapter],
+        Tuple[MlflowNativeRun, MlflowRunAdapter],
     ],
 ) -> Callable[
     [Optional[str], Optional[str]],
