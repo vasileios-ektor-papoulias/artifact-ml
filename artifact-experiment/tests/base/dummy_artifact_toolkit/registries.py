@@ -7,7 +7,10 @@ from artifact_core.base.registry import (
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-from tests.base.dummy.artifact_dependencies import DummyArtifactResources, DummyResourceSpec
+from tests.base.dummy_artifact_toolkit.artifact_dependencies import (
+    DummyArtifactResources,
+    DummyResourceSpec,
+)
 
 
 class DummyScoreType(ArtifactType):

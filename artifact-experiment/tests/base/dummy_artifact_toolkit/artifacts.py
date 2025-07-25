@@ -10,7 +10,7 @@ from artifact_core.base.artifact_dependencies import (
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-from tests.base.dummy.registries import (
+from tests.base.dummy_artifact_toolkit.registries import (
     DummyArrayCollectionRegistry,
     DummyArrayCollectionType,
     DummyArrayRegistry,

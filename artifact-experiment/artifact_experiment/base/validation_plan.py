@@ -10,6 +10,7 @@ from artifact_core.base.registry import ArtifactType
 from matplotlib.figure import Figure
 from numpy import ndarray
 
+from artifact_experiment.base.callback_factory import ArtifactCallbackFactory
 from artifact_experiment.base.callbacks.artifact import (
     ArtifactArrayCallback,
     ArtifactArrayCollectionCallback,
@@ -20,7 +21,6 @@ from artifact_experiment.base.callbacks.artifact import (
     ArtifactScoreCallback,
     ArtifactScoreCollectionCallback,
 )
-from artifact_experiment.base.callbacks.factory import ArtifactCallbackFactory
 from artifact_experiment.base.callbacks.tracking import (
     ArrayCallbackHandler,
     ArrayCollectionCallbackHandler,

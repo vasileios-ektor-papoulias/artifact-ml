@@ -1,8 +1,8 @@
 from typing import Type
 
-from artifact_experiment.base.callbacks.factory import ArtifactCallbackFactory
+from artifact_experiment.base.callback_factory import ArtifactCallbackFactory
 
-from tests.base.dummy import (
+from tests.base.dummy_artifact_toolkit import (
     DummyArrayCollectionRegistry,
     DummyArrayCollectionType,
     DummyArrayRegistry,

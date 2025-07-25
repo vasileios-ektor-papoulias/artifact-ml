@@ -2,11 +2,11 @@ from pathlib import Path
 
 from artifact_core.libs.utils.package_importer import PackageImporter
 
-from tests.base.dummy.artifact_dependencies import (
+from tests.base.dummy_artifact_toolkit.artifact_dependencies import (
     DummyArtifactResources,
     DummyResourceSpec,
 )
-from tests.base.dummy.registries import (
+from tests.base.dummy_artifact_toolkit.registries import (
     DummyArrayCollectionRegistry,
     DummyArrayCollectionType,
     DummyArrayRegistry,

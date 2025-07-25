@@ -2,8 +2,8 @@ from typing import List, Type
 
 from artifact_experiment.base.validation_plan import ValidationPlan
 
-from tests.base.callbacks.dummy.factory import DummyCallbackFactory
-from tests.base.dummy import (
+from tests.base.callback_factory.dummy.callback_factory import DummyCallbackFactory
+from tests.base.dummy_artifact_toolkit import (
     DummyArrayCollectionType,
     DummyArrayType,
     DummyArtifactResources,
