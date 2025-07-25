@@ -1,229 +1,242 @@
-# import os
-# from typing import Callable, Optional, Tuple
-# from unittest.mock import MagicMock
+from typing import Callable, Dict, Optional, Tuple
+from unittest.mock import MagicMock
 
-# import pytest
-# from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter
-# from artifact_experiment.libs.tracking.neptune.client import NeptuneTrackingClient
-# from artifact_experiment.libs.tracking.neptune.loggers.array_collections import (
-#     NeptuneArrayCollectionLogger,
-# )
-# from artifact_experiment.libs.tracking.neptune.loggers.arrays import NeptuneArrayLogger
-# from artifact_experiment.libs.tracking.neptune.loggers.plot_collections import (
-#     NeptunePlotCollectionLogger,
-# )
-# from artifact_experiment.libs.tracking.neptune.loggers.plots import NeptunePlotLogger
-# from artifact_experiment.libs.tracking.neptune.loggers.score_collections import (
-#     NeptuneScoreCollectionLogger,
-# )
-# from artifact_experiment.libs.tracking.neptune.loggers.scores import NeptuneScoreLogger
-# from pytest_mock import MockerFixture
-
-
-# @pytest.fixture
-# def native_run_factory(
-#     mocker: MockerFixture,
-# ) -> Callable[[Optional[str], Optional[str]], MagicMock]:
-#     def _factory(experiment_id: Optional[str] = None, run_id: Optional[str] = None) -> MagicMock:
-#         if experiment_id is None:
-#             experiment_id = "default_experiment_id"
-#         if run_id is None:
-#             run_id = "default_run_id"
-
-#         channel_mocks = {}
-#         state_container = {"state": "running"}
-
-#         def getitem_side_effect(key: str):
-#             if key not in channel_mocks:
-#                 channel = mocker.MagicMock(name=f"channel[{key}]")
-#                 channel.upload = mocker.MagicMock(name=f"upload[{key}]")
-#                 channel.append = mocker.MagicMock(name=f"append[{key}]")
-#                 channel.fetch = mocker.MagicMock(name=f"fetch[{key}]")
-#                 channel_mocks[key] = channel
-#             return channel_mocks[key]
-
-#         def stop_side_effect():
-#             state_container["state"] = "inactive"
-
-#         native_run = mocker.MagicMock(name="native_run")
-#         native_run.experiment_id = experiment_id
-#         native_run.run_id = run_id
-#         native_run.__getitem__.side_effect = getitem_side_effect
-#         native_run.stop = mocker.MagicMock(side_effect=stop_side_effect)
-#         native_run.fetch.side_effect = lambda: {"sys": {"state": state_container["state"]}}
-#         channel_mocks["sys/id"] = mocker.MagicMock()
-#         channel_mocks["sys/id"].fetch.return_value = run_id
-#         channel_mocks["sys/experiment/name"] = mocker.MagicMock()
-#         channel_mocks["sys/experiment/name"].fetch.return_value = experiment_id
-
-#         return native_run
-
-#     return _factory
+import pytest
+from artifact_experiment.libs.tracking.mlflow.adapter import (
+    MlflowNativeRun,
+    MlflowRunAdapter,
+)
+from artifact_experiment.libs.tracking.mlflow.client import MlflowTrackingClient
+from artifact_experiment.libs.tracking.mlflow.loggers.array_collections import (
+    MlflowArrayCollectionLogger,
+)
+from artifact_experiment.libs.tracking.mlflow.loggers.arrays import MlflowArrayLogger
+from artifact_experiment.libs.tracking.mlflow.loggers.plot_collections import (
+    MlflowPlotCollectionLogger,
+)
+from artifact_experiment.libs.tracking.mlflow.loggers.plots import MlflowPlotLogger
+from artifact_experiment.libs.tracking.mlflow.loggers.score_collections import (
+    MlflowScoreCollectionLogger,
+)
+from artifact_experiment.libs.tracking.mlflow.loggers.scores import MlflowScoreLogger
+from mlflow.entities import Run, RunStatus
+from mlflow.tracking import MlflowClient
+from pytest_mock import MockerFixture
 
 
-# @pytest.fixture
-# def patch_neptune_run_creation(
-#     mocker: MockerFixture,
-#     native_run_factory: Callable[[Optional[str], Optional[str]], MagicMock],
-# ):
-#     mocker.patch(
-#         "artifact_experiment.libs.tracking.neptune.adapter.getpass",
-#         return_value="dummy-token",
-#     )
+@pytest.fixture
+def native_run_factory(
+    mocker,
+) -> Callable[[Optional[str], Optional[str]], Dict[str, MagicMock]]:
+    def _factory(
+        experiment_id: Optional[str] = None,
+        run_id: Optional[str] = None,
+    ) -> Dict[str, MagicMock]:
+        if experiment_id is None:
+            experiment_id = "default_experiment_id"
+        if run_id is None:
+            run_id = "default_run_id"
+        # Mock Run Info
+        run_info = mocker.MagicMock()
+        run_info.run_id = run_id
+        run_info.experiment_id = experiment_id
+        run_info.run_name = run_id
+        run_info.status = RunStatus.to_string(RunStatus.RUNNING)
 
-#     def init_run_side_effect(api_token: str, project: str, custom_run_id: Optional[str] = None):
-#         _ = api_token
-#         native_run = native_run_factory(project, custom_run_id)
-#         native_run.experiment_id = project
-#         native_run.run_id = custom_run_id
-#         return native_run
+        # Mock Run
+        run = mocker.MagicMock(spec=Run)
+        run.info = run_info
+        run.data = mocker.MagicMock()
 
-#     mocker.patch("neptune.init_run", side_effect=init_run_side_effect)
+        # Mock Client
+        client = mocker.MagicMock(spec=MlflowClient)
+        client.log_artifact = mocker.MagicMock()
+        client.list_artifacts = mocker.MagicMock()
+        client.log_metric = mocker.MagicMock()
+        client.get_metric_history = mocker.MagicMock()
+        client.set_terminated = mocker.MagicMock()
+        client.get_experiment = mocker.MagicMock()
+        client.get_run = mocker.MagicMock(return_value=run)
+        client.search_runs = mocker.MagicMock(return_value=[run])
+        return {
+            "client": client,
+            "run": run,
+            "run_info": run_info,
+        }
 
-
-# @pytest.fixture
-# def adapter_factory(
-#     native_run_factory: Callable[[Optional[str], Optional[str]], MagicMock],
-# ) -> Callable[[Optional[str], Optional[str]], Tuple[MagicMock, NeptuneRunAdapter]]:
-#     def _factory(
-#         experiment_id: Optional[str] = None, run_id: Optional[str] = None
-#     ) -> Tuple[MagicMock, NeptuneRunAdapter]:
-#         if experiment_id is None:
-#             experiment_id = "test_experiment"
-#         if run_id is None:
-#             run_id = "test_run"
-
-#         native_run = native_run_factory(experiment_id, run_id)
-#         adapter = NeptuneRunAdapter(native_run=native_run)
-#         return native_run, adapter
-
-#     return _factory
-
-
-# @pytest.fixture
-# def loggers_factory(
-#     adapter_factory: Callable[
-#         [Optional[str], Optional[str]],
-#         Tuple[MagicMock, NeptuneRunAdapter],
-#     ],
-# ) -> Callable[
-#     [Optional[str], Optional[str]],
-#     Tuple[
-#         NeptuneRunAdapter,
-#         NeptuneScoreLogger,
-#         NeptuneArrayLogger,
-#         NeptunePlotLogger,
-#         NeptuneScoreCollectionLogger,
-#         NeptuneArrayCollectionLogger,
-#         NeptunePlotCollectionLogger,
-#     ],
-# ]:
-#     def _factory(
-#         experiment_id: Optional[str] = None, run_id: Optional[str] = None
-#     ) -> Tuple[
-#         NeptuneRunAdapter,
-#         NeptuneScoreLogger,
-#         NeptuneArrayLogger,
-#         NeptunePlotLogger,
-#         NeptuneScoreCollectionLogger,
-#         NeptuneArrayCollectionLogger,
-#         NeptunePlotCollectionLogger,
-#     ]:
-#         _, adapter = adapter_factory(experiment_id, run_id)
-#         score_logger = NeptuneScoreLogger(run=adapter)
-#         array_logger = NeptuneArrayLogger(run=adapter)
-#         plot_logger = NeptunePlotLogger(run=adapter)
-#         score_collection_logger = NeptuneScoreCollectionLogger(run=adapter)
-#         array_collection_logger = NeptuneArrayCollectionLogger(run=adapter)
-#         plot_collection_logger = NeptunePlotCollectionLogger(run=adapter)
-#         return (
-#             adapter,
-#             score_logger,
-#             array_logger,
-#             plot_logger,
-#             score_collection_logger,
-#             array_collection_logger,
-#             plot_collection_logger,
-#         )
-
-#     return _factory
+    return _factory
 
 
-# @pytest.fixture
-# def client_factory(
-#     loggers_factory: Callable[
-#         [Optional[str], Optional[str]],
-#         Tuple[
-#             NeptuneRunAdapter,
-#             NeptuneScoreLogger,
-#             NeptuneArrayLogger,
-#             NeptunePlotLogger,
-#             NeptuneScoreCollectionLogger,
-#             NeptuneArrayCollectionLogger,
-#             NeptunePlotCollectionLogger,
-#         ],
-#     ],
-# ) -> Callable[
-#     [Optional[str], Optional[str]],
-#     Tuple[
-#         NeptuneRunAdapter,
-#         NeptuneScoreLogger,
-#         NeptuneArrayLogger,
-#         NeptunePlotLogger,
-#         NeptuneScoreCollectionLogger,
-#         NeptuneArrayCollectionLogger,
-#         NeptunePlotCollectionLogger,
-#         NeptuneTrackingClient,
-#     ],
-# ]:
-#     def _factory(
-#         experiment_id: Optional[str] = None,
-#         run_id: Optional[str] = None,
-#     ) -> Tuple[
-#         NeptuneRunAdapter,
-#         NeptuneScoreLogger,
-#         NeptuneArrayLogger,
-#         NeptunePlotLogger,
-#         NeptuneScoreCollectionLogger,
-#         NeptuneArrayCollectionLogger,
-#         NeptunePlotCollectionLogger,
-#         NeptuneTrackingClient,
-#     ]:
-#         (
-#             adapter,
-#             score_logger,
-#             array_logger,
-#             plot_logger,
-#             score_collection_logger,
-#             array_collection_logger,
-#             plot_collection_logger,
-#         ) = loggers_factory(experiment_id, run_id)
-#         client = NeptuneTrackingClient(
-#             run=adapter,
-#             score_logger=score_logger,
-#             array_logger=array_logger,
-#             plot_logger=plot_logger,
-#             score_collection_logger=score_collection_logger,
-#             array_collection_logger=array_collection_logger,
-#             plot_collection_logger=plot_collection_logger,
-#         )
-#         return (
-#             adapter,
-#             score_logger,
-#             array_logger,
-#             plot_logger,
-#             score_collection_logger,
-#             array_collection_logger,
-#             plot_collection_logger,
-#             client,
-#         )
+@pytest.fixture
+def patch_mlflow_run_creation(
+    mocker: MockerFixture,
+    native_run_factory: Callable[[Optional[str], Optional[str]], MagicMock],
+):
+    mocked_client = mocker.MagicMock(name="MlflowClient")
+    mocker.patch(
+        "artifact_experiment.libs.tracking.mlflow.adapter.MlflowClient",
+        return_value=mocked_client,
+    )
+    mocked_client.search_runs.return_value = []
 
-#     return _factory
+    def create_run_side_effect(experiment_id: str, run_name: str):
+        run = native_run_factory(experiment_id, run_name)
+        run.info.experiment_id = experiment_id
+        run.info.run_id = f"{experiment_id}_{run_name}"
+        run.info.run_name = run_name
+        run.info.status = "RUNNING"
+        return run
+
+    mocked_client.create_run.side_effect = create_run_side_effect
+
+    def get_run_side_effect(run_id: str):
+        run = MagicMock(name="run")
+        run.info.run_id = run_id
+        run.info.run_name = run_id.split("_")[-1]
+        run.info.experiment_id = run_id.split("_")[0]
+        run.info.status = "RUNNING"
+        return run
+
+    mocked_client.get_run.side_effect = get_run_side_effect
 
 
-# @pytest.fixture
-# def get_absolute_log_path() -> Callable[[str], str]:
-#     def _prepend(path: str) -> str:
-#         return os.path.join("artifact_ml", path.lstrip("/")).replace("\\", "/")
+@pytest.fixture
+def adapter_factory(
+    native_run_factory: Callable[[Optional[str], Optional[str]], Dict[str, MagicMock]],
+) -> Callable[[Optional[str], Optional[str]], Tuple[MlflowNativeRun, MlflowRunAdapter]]:
+    def _factory(
+        experiment_id: Optional[str] = None,
+        run_id: Optional[str] = None,
+    ) -> Tuple[MlflowNativeRun, MlflowRunAdapter]:
+        native_entities = native_run_factory(experiment_id, run_id)
 
-#     return _prepend
+        native_run = MlflowNativeRun(
+            client=native_entities["client"],
+            run=native_entities["run"],
+        )
+        adapter = MlflowRunAdapter(native_run=native_run)
+
+        return native_run, adapter
+
+    return _factory
+
+
+@pytest.fixture
+def loggers_factory(
+    adapter_factory: Callable[
+        [Optional[str], Optional[str]],
+        Tuple[MagicMock, MlflowRunAdapter],
+    ],
+) -> Callable[
+    [Optional[str], Optional[str]],
+    Tuple[
+        MlflowRunAdapter,
+        MlflowScoreLogger,
+        MlflowArrayLogger,
+        MlflowPlotLogger,
+        MlflowScoreCollectionLogger,
+        MlflowArrayCollectionLogger,
+        MlflowPlotCollectionLogger,
+    ],
+]:
+    def _factory(
+        experiment_id: Optional[str] = None, run_id: Optional[str] = None
+    ) -> Tuple[
+        MlflowRunAdapter,
+        MlflowScoreLogger,
+        MlflowArrayLogger,
+        MlflowPlotLogger,
+        MlflowScoreCollectionLogger,
+        MlflowArrayCollectionLogger,
+        MlflowPlotCollectionLogger,
+    ]:
+        _, adapter = adapter_factory(experiment_id, run_id)
+        score_logger = MlflowScoreLogger(run=adapter)
+        array_logger = MlflowArrayLogger(run=adapter)
+        plot_logger = MlflowPlotLogger(run=adapter)
+        score_collection_logger = MlflowScoreCollectionLogger(run=adapter)
+        array_collection_logger = MlflowArrayCollectionLogger(run=adapter)
+        plot_collection_logger = MlflowPlotCollectionLogger(run=adapter)
+        return (
+            adapter,
+            score_logger,
+            array_logger,
+            plot_logger,
+            score_collection_logger,
+            array_collection_logger,
+            plot_collection_logger,
+        )
+
+    return _factory
+
+
+@pytest.fixture
+def client_factory(
+    loggers_factory: Callable[
+        [Optional[str], Optional[str]],
+        Tuple[
+            MlflowRunAdapter,
+            MlflowScoreLogger,
+            MlflowArrayLogger,
+            MlflowPlotLogger,
+            MlflowScoreCollectionLogger,
+            MlflowArrayCollectionLogger,
+            MlflowPlotCollectionLogger,
+        ],
+    ],
+) -> Callable[
+    [Optional[str], Optional[str]],
+    Tuple[
+        MlflowRunAdapter,
+        MlflowScoreLogger,
+        MlflowArrayLogger,
+        MlflowPlotLogger,
+        MlflowScoreCollectionLogger,
+        MlflowArrayCollectionLogger,
+        MlflowPlotCollectionLogger,
+        MlflowTrackingClient,
+    ],
+]:
+    def _factory(
+        experiment_id: Optional[str] = None,
+        run_id: Optional[str] = None,
+    ) -> Tuple[
+        MlflowRunAdapter,
+        MlflowScoreLogger,
+        MlflowArrayLogger,
+        MlflowPlotLogger,
+        MlflowScoreCollectionLogger,
+        MlflowArrayCollectionLogger,
+        MlflowPlotCollectionLogger,
+        MlflowTrackingClient,
+    ]:
+        (
+            adapter,
+            score_logger,
+            array_logger,
+            plot_logger,
+            score_collection_logger,
+            array_collection_logger,
+            plot_collection_logger,
+        ) = loggers_factory(experiment_id, run_id)
+        client = MlflowTrackingClient(
+            run=adapter,
+            score_logger=score_logger,
+            array_logger=array_logger,
+            plot_logger=plot_logger,
+            score_collection_logger=score_collection_logger,
+            array_collection_logger=array_collection_logger,
+            plot_collection_logger=plot_collection_logger,
+        )
+        return (
+            adapter,
+            score_logger,
+            array_logger,
+            plot_logger,
+            score_collection_logger,
+            array_collection_logger,
+            plot_collection_logger,
+            client,
+        )
+
+    return _factory
