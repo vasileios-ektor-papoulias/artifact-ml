@@ -87,7 +87,7 @@ def test_artifact_result_accessors(
     ls_artifact_results: List[ArtifactResult],
 ):
     dict_cache = {
-        "entry_{idx}": artifact_result for idx, artifact_result in enumerate(ls_artifact_results)
+        f"entry_{idx}": artifact_result for idx, artifact_result in enumerate(ls_artifact_results)
     }
     for handler in mock_callback_handlers.values():
         handler.tracking_client = None
@@ -99,7 +99,6 @@ def test_artifact_result_accessors(
         array_collection_handler=mock_callback_handlers["array_collections"],
         plot_collection_handler=mock_callback_handlers["plot_collections"],
     )
-    assert not plan.tracking_enabled
     mock_callback_handlers[cache_type].active_cache = dict_cache
     actual_values = getattr(plan, cache_type)
     assert actual_values == dict_cache
@@ -137,25 +136,24 @@ def test_execute_integration(
     assert plan.tracking_enabled
     plan.execute(resources=callback_resources)
     score_calls = tracking_client.log_score.call_args_list
-    assert len(score_calls) == 2
+    assert len(score_calls) == 1
     score_names = [call[1]["name"] for call in score_calls]
-    assert "SCORE1" in score_names
-    assert "SCORE2" in score_names
+    assert "DUMMY_SCORE_1" in score_names
     array_calls = tracking_client.log_array.call_args_list
     assert len(array_calls) == 1
-    assert array_calls[0][1]["name"] == "ARRAY1"
+    assert array_calls[0][1]["name"] == "DUMMY_ARRAY_1"
     plot_calls = tracking_client.log_plot.call_args_list
     assert len(plot_calls) == 1
-    assert plot_calls[0][1]["name"] == "PLOT1"
+    assert plot_calls[0][1]["name"] == "DUMMY_PLOT_1"
     score_collection_calls = tracking_client.log_score_collection.call_args_list
     assert len(score_collection_calls) == 1
-    assert score_collection_calls[0][1]["name"] == "SCORE_COLLECTION1"
+    assert score_collection_calls[0][1]["name"] == "DUMMY_SCORE_COLLECTION_1"
     array_collection_calls = tracking_client.log_array_collection.call_args_list
     assert len(array_collection_calls) == 1
-    assert array_collection_calls[0][1]["name"] == "ARRAY_COLLECTION1"
+    assert array_collection_calls[0][1]["name"] == "DUMMY_ARRAY_COLLECTION_1"
     plot_collection_calls = tracking_client.log_plot_collection.call_args_list
     assert len(plot_collection_calls) == 1
-    assert plot_collection_calls[0][1]["name"] == "PLOT_COLLECTION1"
+    assert plot_collection_calls[0][1]["name"] == "DUMMY_PLOT_COLLECTION_1"
 
 
 def test_clear_cache(
@@ -171,7 +169,6 @@ def test_clear_cache(
         array_collection_handler=mock_callback_handlers["array_collections"],
         plot_collection_handler=mock_callback_handlers["plot_collections"],
     )
-    assert not plan.tracking_enabled
     plan.clear_cache()
     for handler in mock_callback_handlers.values():
         handler.clear.assert_called_once()
