@@ -2,7 +2,7 @@ from typing import Type
 
 from artifact_experiment.base.callbacks.factory import ArtifactCallbackFactory
 
-from tests.base.dummy.registries import (
+from tests.base.dummy import (
     DummyArrayCollectionRegistry,
     DummyArrayCollectionType,
     DummyArrayRegistry,

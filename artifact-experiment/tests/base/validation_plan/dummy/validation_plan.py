@@ -3,7 +3,7 @@ from typing import List, Type
 from artifact_experiment.base.validation_plan import ValidationPlan
 
 from tests.base.callbacks.dummy.factory import DummyCallbackFactory
-from tests.base.dummy.registries import (
+from tests.base.dummy import (
     DummyArrayCollectionType,
     DummyArrayType,
     DummyArtifactResources,
