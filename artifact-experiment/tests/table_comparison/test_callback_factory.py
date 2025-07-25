@@ -40,7 +40,9 @@ def test_build_score_callback(
     mocker: MockerFixture, tabular_data_spec: TabularDataSpec, score_type: TableComparisonScoreType
 ):
     spy_registry_get = mocker.spy(TableComparisonScoreRegistry, "get")
-    callback = TableComparisonCallbackFactory.build_score_callback(score_type, tabular_data_spec)
+    callback = TableComparisonCallbackFactory.build_score_callback(
+        score_type=score_type, resource_spec=tabular_data_spec
+    )
     spy_registry_get.assert_called_once_with(
         artifact_type=score_type, resource_spec=tabular_data_spec
     )
@@ -53,7 +55,9 @@ def test_build_array_callback(
     mocker: MockerFixture, tabular_data_spec: TabularDataSpec, array_type: TableComparisonArrayType
 ):
     spy_registry_get = mocker.spy(TableComparisonArrayRegistry, "get")
-    callback = TableComparisonCallbackFactory.build_array_callback(array_type, tabular_data_spec)
+    callback = TableComparisonCallbackFactory.build_array_callback(
+        array_type=array_type, resource_spec=tabular_data_spec
+    )
     spy_registry_get.assert_called_once_with(
         artifact_type=array_type, resource_spec=tabular_data_spec
     )
@@ -85,7 +89,9 @@ def test_build_plot_callback(
     mocker: MockerFixture, tabular_data_spec: TabularDataSpec, plot_type: TableComparisonPlotType
 ):
     spy_registry_get = mocker.spy(TableComparisonPlotRegistry, "get")
-    callback = TableComparisonCallbackFactory.build_plot_callback(plot_type, tabular_data_spec)
+    callback = TableComparisonCallbackFactory.build_plot_callback(
+        plot_type=plot_type, resource_spec=tabular_data_spec
+    )
     spy_registry_get.assert_called_once_with(
         artifact_type=plot_type, resource_spec=tabular_data_spec
     )
@@ -101,7 +107,7 @@ def test_build_score_collection_callback(
 ):
     spy_registry_get = mocker.spy(TableComparisonScoreCollectionRegistry, "get")
     callback = TableComparisonCallbackFactory.build_score_collection_callback(
-        score_collection_type, tabular_data_spec
+        score_collection_type=score_collection_type, resource_spec=tabular_data_spec
     )
     spy_registry_get.assert_called_once_with(
         artifact_type=score_collection_type, resource_spec=tabular_data_spec
@@ -130,7 +136,7 @@ def test_build_array_collection_callback(
 ):
     spy_registry_get = mocker.spy(TableComparisonArrayCollectionRegistry, "get")
     callback = TableComparisonCallbackFactory.build_array_collection_callback(
-        array_collection_type, tabular_data_spec
+        array_collection_type=array_collection_type, resource_spec=tabular_data_spec
     )
     spy_registry_get.assert_called_once_with(
         artifact_type=array_collection_type, resource_spec=tabular_data_spec
@@ -154,7 +160,7 @@ def test_build_plot_collection_callback(
 ):
     spy_registry_get = mocker.spy(TableComparisonPlotCollectionRegistry, "get")
     callback = TableComparisonCallbackFactory.build_plot_collection_callback(
-        plot_collection_type, tabular_data_spec
+        plot_collection_type=plot_collection_type, resource_spec=tabular_data_spec
     )
     spy_registry_get.assert_called_once_with(
         artifact_type=plot_collection_type, resource_spec=tabular_data_spec
