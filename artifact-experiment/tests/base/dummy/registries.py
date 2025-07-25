@@ -11,7 +11,7 @@ from tests.base.dummy.artifact_dependencies import DummyArtifactResources, Dummy
 
 
 class DummyScoreType(ArtifactType):
-    DUMMY_SCORE_ARTIFACT = "dummy_score_artifact"
+    DUMMY_SCORE_1 = "dummy_score_1"
 
 
 class DummyScoreRegistry(
@@ -23,7 +23,7 @@ class DummyScoreRegistry(
 
 
 class DummyArrayType(ArtifactType):
-    DUMMY_ARRAY_ARTIFACT = "dummy_array_artifact"
+    DUMMY_ARRAY_1 = "dummy_array_1"
 
 
 class DummyArrayRegistry(
@@ -35,7 +35,7 @@ class DummyArrayRegistry(
 
 
 class DummyPlotType(ArtifactType):
-    DUMMY_PLOT_ARTIFACT = "dummy_plot_artifact"
+    DUMMY_PLOT_1 = "dummy_plot_1"
 
 
 class DummyPlotRegistry(
@@ -47,7 +47,7 @@ class DummyPlotRegistry(
 
 
 class DummyScoreCollectionType(ArtifactType):
-    DUMMY_SCORE_COLLECTION_ARTIFACT = "dummy_score_collection_artifact"
+    DUMMY_SCORE_COLLECTION_1 = "dummy_score_collection_1"
 
 
 class DummyScoreCollectionRegistry(
@@ -61,7 +61,7 @@ class DummyScoreCollectionRegistry(
 
 
 class DummyArrayCollectionType(ArtifactType):
-    DUMMY_ARRAY_COLLECTION_ARTIFACT = "dummy_array_collection_artifact"
+    DUMMY_ARRAY_COLLECTION_1 = "dummy_array_collection_1"
 
 
 class DummyArrayCollectionRegistry(
@@ -75,7 +75,7 @@ class DummyArrayCollectionRegistry(
 
 
 class DummyPlotCollectionType(ArtifactType):
-    DUMMY_PLOT_COLLECTION_ARTIFACT = "dummy_plot_collection_artifact"
+    DUMMY_PLOT_COLLECTION_1 = "dummy_plot_collection_1"
 
 
 class DummyPlotCollectionRegistry(

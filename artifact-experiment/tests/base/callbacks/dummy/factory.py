@@ -20,7 +20,7 @@ from tests.base.dummy.registries import (
 )
 
 
-class TableComparisonCallbackFactory(
+class DummyCallbackFactory(
     ArtifactCallbackFactory[
         DummyScoreType,
         DummyArrayType,

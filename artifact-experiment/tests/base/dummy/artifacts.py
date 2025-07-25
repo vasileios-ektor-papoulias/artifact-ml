@@ -35,8 +35,8 @@ class DummyArtifact(
 ): ...
 
 
-@DummyScoreRegistry.register_artifact(artifact_type=DummyScoreType.DUMMY_SCORE_ARTIFACT)
-class DummyScoreArtifact(DummyArtifact[float]):
+@DummyScoreRegistry.register_artifact(artifact_type=DummyScoreType.DUMMY_SCORE_1)
+class DummyScore1(DummyArtifact[float]):
     def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
         return resources
 
@@ -45,8 +45,8 @@ class DummyScoreArtifact(DummyArtifact[float]):
         return 0
 
 
-@DummyArrayRegistry.register_artifact(artifact_type=DummyArrayType.DUMMY_ARRAY_ARTIFACT)
-class DummyArrayArtifact(DummyArtifact[ndarray]):
+@DummyArrayRegistry.register_artifact(artifact_type=DummyArrayType.DUMMY_ARRAY_1)
+class DummyArray1(DummyArtifact[ndarray]):
     def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
         return resources
 
@@ -55,8 +55,8 @@ class DummyArrayArtifact(DummyArtifact[ndarray]):
         return np.array([1.0, 2.0, 3.0])
 
 
-@DummyPlotRegistry.register_artifact(artifact_type=DummyPlotType.DUMMY_PLOT_ARTIFACT)
-class DummyPlotArtifact(DummyArtifact[Figure]):
+@DummyPlotRegistry.register_artifact(artifact_type=DummyPlotType.DUMMY_PLOT_1)
+class DummyPlot1(DummyArtifact[Figure]):
     def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
         return resources
 
@@ -68,9 +68,9 @@ class DummyPlotArtifact(DummyArtifact[Figure]):
 
 
 @DummyScoreCollectionRegistry.register_artifact(
-    artifact_type=DummyScoreCollectionType.DUMMY_SCORE_COLLECTION_ARTIFACT
+    artifact_type=DummyScoreCollectionType.DUMMY_SCORE_COLLECTION_1
 )
-class DummyScoreCollectionArtifact(DummyArtifact[Dict[str, float]]):
+class DummyScoreCollection1(DummyArtifact[Dict[str, float]]):
     def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
         return resources
 
@@ -80,9 +80,9 @@ class DummyScoreCollectionArtifact(DummyArtifact[Dict[str, float]]):
 
 
 @DummyArrayCollectionRegistry.register_artifact(
-    artifact_type=DummyArrayCollectionType.DUMMY_ARRAY_COLLECTION_ARTIFACT
+    artifact_type=DummyArrayCollectionType.DUMMY_ARRAY_COLLECTION_1
 )
-class DummyArrayCollectionArtifact(DummyArtifact[Dict[str, ndarray]]):
+class DummyArrayCollection1(DummyArtifact[Dict[str, ndarray]]):
     def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
         return resources
 
@@ -92,9 +92,9 @@ class DummyArrayCollectionArtifact(DummyArtifact[Dict[str, ndarray]]):
 
 
 @DummyPlotCollectionRegistry.register_artifact(
-    artifact_type=DummyPlotCollectionType.DUMMY_PLOT_COLLECTION_ARTIFACT
+    artifact_type=DummyPlotCollectionType.DUMMY_PLOT_COLLECTION_1
 )
-class DummyPlotCollectionArtifact(DummyArtifact[Dict[str, Figure]]):
+class DummyPlotCollection1(DummyArtifact[Dict[str, Figure]]):
     def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
         return resources
 
