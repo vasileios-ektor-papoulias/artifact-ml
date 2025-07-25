@@ -16,6 +16,7 @@ class InactiveMlflowRunError(InactiveRunError):
 @dataclass
 class MlflowNativeRun:
     client: MlflowClient
+    experiment: Experiment
     run: Run
 
 
@@ -27,8 +28,7 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeRun]):
     @property
     def experiment_id(self) -> str:
         """User-chosen experiment ID (stored as name in MLflow)."""
-        experiment = self._native_run.client.get_experiment(experiment_id=self.experiment_id)
-        return experiment.name
+        return self._native_run.experiment.name
 
     @property
     def experiment_uuid(self) -> str:
@@ -38,7 +38,9 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeRun]):
     @property
     def run_id(self) -> str:
         """User-chosen run ID (stored as run_name in MLflow)."""
-        return str(self._native_run.run.info.run_name)
+        run_id = self._native_run.run.info.run_name
+        assert run_id is not None
+        return run_id
 
     @property
     def run_uuid(self) -> str:
@@ -95,7 +97,7 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeRun]):
             native_client=native_client, experiment_id=experiment_id
         )
         run = cls._create_run(native_client=native_client, experiment=experiment, run_id=run_id)
-        native_run = MlflowNativeRun(client=native_client, run=run)
+        native_run = MlflowNativeRun(client=native_client, experiment=experiment, run=run)
         return native_run
 
     @classmethod
