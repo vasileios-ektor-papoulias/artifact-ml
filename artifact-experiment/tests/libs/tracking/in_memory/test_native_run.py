@@ -74,7 +74,7 @@ def test_log_score(
     native_run: InMemoryRun = native_run_factory(experiment_id, run_id)
     scores_dict = native_run.dict_scores
     assert len(scores_dict) == 0
-    native_run.log_score(path=score_key, score=score)
+    native_run.log_score(key=score_key, score=score)
     assert len(native_run.dict_scores) == 1
     assert native_run.dict_scores[score_key] == score
 
@@ -99,7 +99,7 @@ def test_log_array(
     native_run: InMemoryRun = native_run_factory(experiment_id, run_id)
     arrays_dict = native_run.dict_arrays
     assert len(arrays_dict) == 0
-    native_run.log_array(path=array_key, array=array)
+    native_run.log_array(key=array_key, array=array)
     assert len(native_run.dict_arrays) == 1
     assert (native_run.dict_arrays[array_key] == array).all()
 
@@ -124,7 +124,7 @@ def test_log_plot(
     native_run: InMemoryRun = native_run_factory(experiment_id, run_id)
     plots_dict = native_run.dict_plots
     assert len(plots_dict) == 0
-    native_run.log_plot(path=plot_key, plot=plot)
+    native_run.log_plot(key=plot_key, plot=plot)
     assert len(native_run.dict_plots) == 1
 
 
@@ -148,7 +148,7 @@ def test_log_score_collection(
     native_run: InMemoryRun = native_run_factory(experiment_id, run_id)
     scores_dict = native_run.dict_scores
     assert len(scores_dict) == 0
-    native_run.log_score_collection(path=score_collection_key, score_collection=score_collection)
+    native_run.log_score_collection(key=score_collection_key, score_collection=score_collection)
     assert len(native_run.dict_score_collections) == 1
     assert (
         native_run.dict_score_collections[score_collection_key].keys()
@@ -177,7 +177,7 @@ def test_log_array_collection(
     native_run: InMemoryRun = native_run_factory(experiment_id, run_id)
     arrays_dict = native_run.dict_arrays
     assert len(arrays_dict) == 0
-    native_run.log_array_collection(path=array_collection_key, array_collection=array_collection)
+    native_run.log_array_collection(key=array_collection_key, array_collection=array_collection)
     assert len(native_run.dict_array_collections) == 1
     assert (
         native_run.dict_array_collections[array_collection_key].keys()
@@ -208,7 +208,7 @@ def test_log_plot_collection(
     native_run: InMemoryRun = native_run_factory(experiment_id, run_id)
     plots_dict = native_run.dict_plots
     assert len(plots_dict) == 0
-    native_run.log_plot_collection(path=plot_collection_key, plot_collection=plot_collection)
+    native_run.log_plot_collection(key=plot_collection_key, plot_collection=plot_collection)
     assert len(native_run.dict_plot_collections) == 1
     assert (native_run.dict_plot_collections[plot_collection_key].keys()) == plot_collection.keys()
     for key in plot_collection.keys():

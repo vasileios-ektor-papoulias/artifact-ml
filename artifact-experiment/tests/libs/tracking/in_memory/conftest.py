@@ -65,31 +65,31 @@ def populated_adapter_factory(
         for fixture_name in fixture_names:
             artifact = request.getfixturevalue(fixture_name)
             if isinstance(artifact, float):
-                native_run.log_score(path=f"test_score/{score_idx}", score=artifact)
+                native_run.log_score(key=f"test_score/{score_idx}", score=artifact)
                 score_idx += 1
             elif isinstance(artifact, np.ndarray):
-                native_run.log_array(path=f"test_array/{array_idx}", array=artifact)
+                native_run.log_array(key=f"test_array/{array_idx}", array=artifact)
                 array_idx += 1
             elif hasattr(artifact, "add_subplot"):
-                native_run.log_plot(path=f"test_plot/{plot_idx}", plot=artifact)
+                native_run.log_plot(key=f"test_plot/{plot_idx}", plot=artifact)
                 plot_idx += 1
             elif isinstance(artifact, dict):
                 values = artifact.values()
                 if all(isinstance(v, float) for v in values):
                     native_run.log_score_collection(
-                        path=f"test_score_collection/{score_collection_idx}",
+                        key=f"test_score_collection/{score_collection_idx}",
                         score_collection=artifact,
                     )
                     score_collection_idx += 1
                 elif all(isinstance(v, np.ndarray) for v in values):
                     native_run.log_array_collection(
-                        path=f"test_array_collection/{array_collection_idx}",
+                        key=f"test_array_collection/{array_collection_idx}",
                         array_collection=artifact,
                     )
                     array_collection_idx += 1
                 elif all(hasattr(v, "add_subplot") for v in values):
                     native_run.log_plot_collection(
-                        path=f"test_plot_collection/{plot_collection_idx}",
+                        key=f"test_plot_collection/{plot_collection_idx}",
                         plot_collection=artifact,
                     )
                     plot_collection_idx += 1

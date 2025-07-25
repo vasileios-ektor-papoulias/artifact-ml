@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Callable, Dict, List, Optional, Tuple
 
 import pytest
@@ -107,4 +108,6 @@ def test_log(
         score_collection = ls_score_collections[idx]
         step = ls_step[idx]
         expected_path = f"{experiment_id}/{run_id}/score_collections/{name}/{step}"
-        assert call_args.kwargs == {"path": expected_path, "score_collection": score_collection}
+        actual_path = call_args.kwargs["path"]
+        assert Path(actual_path) == Path(expected_path)
+        assert call_args.kwargs["score_collection"] is score_collection

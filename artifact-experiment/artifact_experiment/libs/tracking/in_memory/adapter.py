@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any, Dict, List
 
 from matplotlib.figure import Figure
@@ -102,22 +103,28 @@ class InMemoryRunAdapter(RunAdapter[InMemoryRun]):
         self._native_run.is_active = False
 
     def log_score(self, path: str, score: float):
-        self._native_run.log_score(path=path, score=score)
+        key = Path(path).as_posix()
+        self._native_run.log_score(key=key, score=score)
 
     def log_array(self, path: str, array: ndarray):
-        self._native_run.log_array(path=path, array=array)
+        key = Path(path).as_posix()
+        self._native_run.log_array(key=key, array=array)
 
     def log_plot(self, path: str, plot: Figure):
-        self._native_run.log_plot(path=path, plot=plot)
+        key = Path(path).as_posix()
+        self._native_run.log_plot(key=key, plot=plot)
 
     def log_score_collection(self, path: str, score_collection: Dict[str, float]):
-        self._native_run.log_score_collection(path=path, score_collection=score_collection)
+        key = Path(path).as_posix()
+        self._native_run.log_score_collection(key=key, score_collection=score_collection)
 
     def log_array_collection(self, path: str, array_collection: Dict[str, ndarray]):
-        self._native_run.log_array_collection(path=path, array_collection=array_collection)
+        key = Path(path).as_posix()
+        self._native_run.log_array_collection(key=key, array_collection=array_collection)
 
     def log_plot_collection(self, path: str, plot_collection: Dict[str, Figure]):
-        self._native_run.log_plot_collection(path=path, plot_collection=plot_collection)
+        key = Path(path).as_posix()
+        self._native_run.log_plot_collection(key=key, plot_collection=plot_collection)
 
     def upload(self, path_source: str, dir_target: str):
         self._native_run.upload(path_source=path_source, dir_target=dir_target)
@@ -154,4 +161,5 @@ class InMemoryRunAdapter(RunAdapter[InMemoryRun]):
 
     @staticmethod
     def _search_store(artifact_path: str, store: Dict[str, Any]) -> List[str]:
+        artifact_path = Path(artifact_path).as_posix()
         return [key for key in store.keys() if key.startswith(artifact_path)]
