@@ -103,27 +103,27 @@ class InMemoryRunAdapter(RunAdapter[InMemoryRun]):
         self._native_run.is_active = False
 
     def log_score(self, path: str, score: float):
-        key = Path(path).as_posix()
+        key = self._get_store_key(path=path)
         self._native_run.log_score(key=key, score=score)
 
     def log_array(self, path: str, array: ndarray):
-        key = Path(path).as_posix()
+        key = self._get_store_key(path=path)
         self._native_run.log_array(key=key, array=array)
 
     def log_plot(self, path: str, plot: Figure):
-        key = Path(path).as_posix()
+        key = self._get_store_key(path=path)
         self._native_run.log_plot(key=key, plot=plot)
 
     def log_score_collection(self, path: str, score_collection: Dict[str, float]):
-        key = Path(path).as_posix()
+        key = self._get_store_key(path=path)
         self._native_run.log_score_collection(key=key, score_collection=score_collection)
 
     def log_array_collection(self, path: str, array_collection: Dict[str, ndarray]):
-        key = Path(path).as_posix()
+        key = self._get_store_key(path=path)
         self._native_run.log_array_collection(key=key, array_collection=array_collection)
 
     def log_plot_collection(self, path: str, plot_collection: Dict[str, Figure]):
-        key = Path(path).as_posix()
+        key = self._get_store_key(path=path)
         self._native_run.log_plot_collection(key=key, plot_collection=plot_collection)
 
     def upload(self, path_source: str, dir_target: str):
@@ -163,3 +163,8 @@ class InMemoryRunAdapter(RunAdapter[InMemoryRun]):
     def _search_store(artifact_path: str, store: Dict[str, Any]) -> List[str]:
         artifact_path = Path(artifact_path).as_posix()
         return [key for key in store.keys() if key.startswith(artifact_path)]
+
+    @staticmethod
+    def _get_store_key(path: str) -> str:
+        key = Path(path).as_posix()
+        return key
