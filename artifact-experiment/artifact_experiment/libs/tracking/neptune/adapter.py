@@ -2,6 +2,7 @@ import os
 import time
 from enum import Enum
 from getpass import getpass
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 import neptune
@@ -68,14 +69,16 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
     def upload(self, path_source: str, dir_target: str):
         if not self.is_active:
             raise InactiveNeptuneRunError("Run is inactive")
-        dir_target = self._prepend_root_dir(path=dir_target).replace("\\", "/")
-        self._native_run[dir_target].upload(path_source)
+        dir_target = self._prepend_root_dir(path=dir_target)
+        key = self._get_store_key(path=dir_target)
+        self._native_run[key].upload(path_source)
 
     def log(self, artifact_path: str, artifact: ArtifactResult):
         if not self.is_active:
             raise InactiveNeptuneRunError("Run is inactive")
-        artifact_path = self._prepend_root_dir(path=artifact_path).replace("\\", "/")
-        self._native_run[artifact_path].append(artifact)
+        artifact_path = self._prepend_root_dir(path=artifact_path)
+        key = self._get_store_key(path=artifact_path)
+        self._native_run[key].append(artifact)
 
     @classmethod
     def _build_native_run(cls, experiment_id: str, run_id: str) -> neptune.Run:
@@ -98,3 +101,8 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
     @classmethod
     def _prepend_root_dir(cls, path: str) -> str:
         return os.path.join(cls._root_dir, path.lstrip("/"))
+
+    @staticmethod
+    def _get_store_key(path: str) -> str:
+        key = Path(path).as_posix()
+        return key
