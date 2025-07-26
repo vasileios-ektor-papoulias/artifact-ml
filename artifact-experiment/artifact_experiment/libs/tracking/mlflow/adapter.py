@@ -7,6 +7,7 @@ from mlflow.entities import Experiment, FileInfo, Metric, Run, RunStatus
 from mlflow.tracking import MlflowClient
 
 from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
+from artifact_experiment.libs.utils.environment_variable_reader import EnvironmentVariableReader
 
 
 class InactiveMlflowRunError(InactiveRunError):
@@ -22,8 +23,8 @@ class MlflowNativeRun:
 
 class MlflowRunAdapter(RunAdapter[MlflowNativeRun]):
     _root_dir = "artifact_ml"
-    _default_tracking_uri = "http://localhost:5000"
-    TRACKING_URI = os.environ.get("MLFLOW_TRACKING_URI", _default_tracking_uri)
+    _tracking_uri_env_var_name = "MLFLOW_TRACKING_URI"
+    _tracking_uri: Optional[str] = None
 
     @property
     def experiment_id(self) -> str:
@@ -92,7 +93,7 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeRun]):
 
     @classmethod
     def _build_native_run(cls, experiment_id: str, run_id: str) -> MlflowNativeRun:
-        native_client = MlflowClient(tracking_uri=cls.TRACKING_URI)
+        native_client = cls._create_client()
         experiment = cls._create_experiment(
             native_client=native_client, experiment_id=experiment_id
         )
@@ -129,6 +130,12 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeRun]):
             assert experiment is not None, "Experiment creation failed"
         return experiment
 
+    @classmethod
+    def _create_client(cls) -> MlflowClient:
+        tracking_uri = cls._get_tracking_uri()
+        native_client = MlflowClient(tracking_uri=tracking_uri)
+        return native_client
+
     @staticmethod
     def _get_run_from_id(
         native_client: MlflowClient, experiment: Experiment, run_id: str
@@ -157,6 +164,14 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeRun]):
         experiment = native_client.get_experiment(experiment_id=experiment_uuid)
         if experiment is not None:
             return experiment
+
+    @classmethod
+    def _get_tracking_uri(cls) -> str:
+        if cls._tracking_uri is None:
+            cls._tracking_uri = EnvironmentVariableReader.get(
+                env_var_name=cls._tracking_uri_env_var_name
+            )
+        return cls._tracking_uri
 
     @classmethod
     def _prepend_root_dir(cls, path: str) -> str:
