@@ -5,23 +5,27 @@ from typing import Optional
 
 
 class EnvironmentVariableReader:
-    def __init__(self, env_var_name: str, prompt: Optional[str] = None):
-        if prompt is None:
-            prompt = self._get_default_prompt(env_var_name=env_var_name)
-        self.env_var_name = env_var_name
-        self.prompt = prompt
-
-    def get(self) -> str:
-        env_var = os.getenv(self.env_var_name)
+    @classmethod
+    def get(cls, env_var_name: str, prompt: Optional[str] = None, set_env: bool = False) -> str:
+        env_var = os.getenv(key=env_var_name)
         if env_var is not None:
-            value = env_var
-        elif self._in_interactive_environment():
-            value = getpass(self.prompt)
-        else:
-            raise RuntimeError(
-                f"{self.env_var_name} must be set as an environment variable "
-                f"in non-interactive environments."
-            )
+            return env_var
+
+        if cls._in_interactive_environment():
+            if prompt is None:
+                prompt = cls._get_default_prompt(env_var_name)
+            return cls._get_from_prompt(env_var_name, prompt=prompt, set_env=set_env)
+
+        raise RuntimeError(
+            f"{env_var_name} must be set as an environment variable "
+            f"in non-interactive environments."
+        )
+
+    @classmethod
+    def _get_from_prompt(cls, env_var_name: str, prompt: str, set_env: bool) -> str:
+        value = getpass(prompt=prompt)
+        if set_env:
+            os.environ[env_var_name] = value
         return value
 
     @staticmethod
@@ -37,4 +41,4 @@ class EnvironmentVariableReader:
 
     @staticmethod
     def _get_default_prompt(env_var_name: str) -> str:
-        return f"Enter value for {env_var_name}:"
+        return f"Enter {env_var_name}:"
