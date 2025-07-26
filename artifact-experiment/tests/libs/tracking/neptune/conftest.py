@@ -67,7 +67,7 @@ def patch_neptune_run_creation(
     native_run_factory: Callable[[Optional[str], Optional[str]], MagicMock],
 ):
     mocker.patch(
-        "artifact_experiment.libs.tracking.neptune.adapter.getpass",
+        "artifact_experiment.libs.utils.environment_variable_reader.EnvironmentVariableReader.get",
         return_value="dummy-token",
     )
 
