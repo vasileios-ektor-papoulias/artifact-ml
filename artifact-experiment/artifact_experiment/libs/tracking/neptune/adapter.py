@@ -24,6 +24,7 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
     _root_dir = "artifact_ml"
     _time_to_wait_before_stopping_seconds: int = 1
     _active_run_status = NeptuneRunStatus.RUNNING
+    _api_token_env_var_name = "NEPTUNE_API_TOKEN"
     _api_token: Optional[str] = None
 
     def __init__(self, native_run: neptune.Run):
@@ -93,7 +94,7 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
     @classmethod
     def _get_api_token(cls) -> str:
         if cls._api_token is None:
-            cls._api_token = EnvironmentVariableReader("NEPTUNE_API_TOKEN").get()
+            cls._api_token = EnvironmentVariableReader.get(env_var_name=cls._api_token_env_var_name)
         return cls._api_token
 
     @classmethod
