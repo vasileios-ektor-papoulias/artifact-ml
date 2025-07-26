@@ -4,7 +4,7 @@ from getpass import getpass
 from typing import Optional
 
 
-class EnvVarReader:
+class EnvironmentVariableReader:
     def __init__(self, env_var_name: str, prompt: Optional[str] = None):
         if prompt is None:
             prompt = self._get_default_prompt(env_var_name=env_var_name)

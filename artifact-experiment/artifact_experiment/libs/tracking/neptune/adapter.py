@@ -8,7 +8,7 @@ import neptune
 from artifact_core.base.artifact_dependencies import ArtifactResult
 
 from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
-from artifact_experiment.libs.utils.env_var_reader import EnvVarReader
+from artifact_experiment.libs.utils.environment_variable_reader import EnvironmentVariableReader
 
 
 class NeptuneRunStatus(Enum):
@@ -93,7 +93,7 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
     @classmethod
     def _get_api_token(cls) -> str:
         if cls._api_token is None:
-            cls._api_token = EnvVarReader("NEPTUNE_API_TOKEN").get()
+            cls._api_token = EnvironmentVariableReader("NEPTUNE_API_TOKEN").get()
         return cls._api_token
 
     @classmethod
