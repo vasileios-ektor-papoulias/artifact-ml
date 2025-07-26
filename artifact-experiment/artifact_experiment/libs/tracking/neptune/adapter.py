@@ -1,7 +1,6 @@
 import os
 import time
 from enum import Enum
-from getpass import getpass
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -9,6 +8,7 @@ import neptune
 from artifact_core.base.artifact_dependencies import ArtifactResult
 
 from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
+from artifact_experiment.libs.utils.env_var_reader import EnvVarReader
 
 
 class NeptuneRunStatus(Enum):
@@ -93,9 +93,7 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
     @classmethod
     def _get_api_token(cls) -> str:
         if cls._api_token is None:
-            cls._api_token = os.getenv(
-                "NEPTUNE_API_TOKEN", default=getpass("Enter your Neptune API token: ")
-            )
+            cls._api_token = EnvVarReader("NEPTUNE_API_TOKEN").get()
         return cls._api_token
 
     @classmethod
