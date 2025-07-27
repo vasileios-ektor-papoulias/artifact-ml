@@ -1,4 +1,3 @@
-import os
 from typing import Callable, Optional, Tuple
 from unittest.mock import MagicMock
 
@@ -219,13 +218,3 @@ def client_factory(
         )
 
     return _factory
-
-
-@pytest.fixture
-def get_absolute_log_path() -> Callable[[str], str]:
-    def _prepend(path_relative_to_artifact_folder: str) -> str:
-        return os.path.join("artifact_ml", path_relative_to_artifact_folder.lstrip("/")).replace(
-            "\\", "/"
-        )
-
-    return _prepend

@@ -92,57 +92,54 @@ def test_stop_run(
 
 
 @pytest.mark.parametrize(
-    "experiment_id, run_id, artifact_path, artifact_result",
+    "experiment_id, run_id, artifact_path, expected_log_path, artifact_result",
     [
-        ("exp1", "run1", "/test/path/1", "score_1"),
-        ("exp1", None, "/test/path/1", "score_2"),
-        ("exp1", "run1", "/test/path/1", "array_1"),
-        ("exp1", None, "/test/path/1", "array_2"),
-        ("exp1", "run1", "/test/path/1", "plot_1"),
-        ("exp1", None, "/test/path/1", "plot_2"),
-        ("exp1", "run1", "/test/path/1", "score_collection_1"),
-        ("exp1", None, "/test/path/1", "score_collection_2"),
-        ("exp1", "run1", "/test/path/1", "array_collection_1"),
-        ("exp1", None, "/test/path/1", "array_collection_2"),
-        ("exp1", "run1", "/test/path/1", "plot_collection_1"),
-        ("exp1", None, "/test/path/1", "plot_collection_2"),
+        ("exp1", "run1", "/test/path/1", "artifact_ml/test/path/1", "score_1"),
+        ("exp1", None, "/test/path/1", "artifact_ml/test/path/1", "score_2"),
+        ("exp1", "run1", "/test/path/1", "artifact_ml/test/path/1", "array_1"),
+        ("exp1", None, "/test/path/1", "artifact_ml/test/path/1", "array_2"),
+        ("exp1", "run1", "/test/path/1", "artifact_ml/test/path/1", "plot_1"),
+        ("exp1", None, "/test/path/1", "artifact_ml/test/path/1", "plot_2"),
+        ("exp1", "run1", "/test/path/1", "artifact_ml/test/path/1", "score_collection_1"),
+        ("exp1", None, "/test/path/1", "artifact_ml/test/path/1", "score_collection_2"),
+        ("exp1", "run1", "/test/path/1", "artifact_ml/test/path/1", "array_collection_1"),
+        ("exp1", None, "/test/path/1", "artifact_ml/test/path/1", "array_collection_2"),
+        ("exp1", "run1", "/test/path/1", "artifact_ml/test/path/1", "plot_collection_1"),
+        ("exp1", None, "/test/path/1", "artifact_ml/test/path/1", "plot_collection_2"),
     ],
     indirect=["artifact_result"],
 )
 def test_log(
-    get_absolute_log_path: Callable[[str], str],
     adapter_factory: Callable[[Optional[str], Optional[str]], Tuple[MagicMock, NeptuneRunAdapter]],
     experiment_id: str,
     run_id: str,
     artifact_path: str,
+    expected_log_path: str,
     artifact_result: ArtifactResult,
 ):
     native_run, adapter = adapter_factory(experiment_id, run_id)
     adapter.log(artifact_path=artifact_path, artifact=artifact_result)
-    log_path = get_absolute_log_path(artifact_path)
-    native_run[log_path].append.assert_called_once_with(artifact_result)
+    native_run[expected_log_path].append.assert_called_once_with(artifact_result)
 
 
 @pytest.mark.parametrize(
-    "experiment_id, run_id, path_source, dir_target",
+    "experiment_id, run_id, path_source, dir_target, expected_log_path",
     [
-        ("exp1", "run1", "/test/path", "uploads"),
-        ("exp1", None, "/data/models/model.pkl", "models"),
-        ("exp1", "run1", "/logs/experiment.log", "logs"),
-        ("exp1", None, "/artifacts/plot.png", "plots"),
-        ("exp1", "run1", "/results/summary.json", "results"),
+        ("exp1", "run1", "/test/path", "uploads", "artifact_ml/uploads"),
+        ("exp1", None, "/data/models/model.pkl", "models", "artifact_ml/models"),
+        ("exp1", "run1", "/logs/experiment.log", "logs", "artifact_ml/logs"),
+        ("exp1", None, "/artifacts/plot.png", "plots", "artifact_ml/plots"),
+        ("exp1", "run1", "/results/summary.json", "results", "artifact_ml/results"),
     ],
 )
 def test_upload(
-    get_absolute_log_path: Callable[[str], str],
     adapter_factory: Callable[[Optional[str], Optional[str]], Tuple[MagicMock, NeptuneRunAdapter]],
     experiment_id: str,
     run_id: Optional[str],
     path_source: str,
     dir_target: str,
+    expected_log_path: str,
 ):
     native_run, adapter = adapter_factory(experiment_id, run_id)
     adapter.upload(path_source=path_source, dir_target=dir_target)
-
-    expected_path = get_absolute_log_path(dir_target)
-    native_run[expected_path].upload.assert_called_once_with(path_source)
+    native_run[expected_log_path].upload.assert_called_once_with(path_source)
