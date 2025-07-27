@@ -47,7 +47,6 @@ def mock_run_factory(mocker: MockerFixture) -> Callable[[str, str], MagicMock]:
         mock_run_info.status = RunStatus.to_string(RunStatus.RUNNING)
         mock_run = mocker.MagicMock(spec=Run)
         mock_run.info = mock_run_info
-        mock_run.data = mocker.MagicMock()
 
         return mock_run
 
@@ -104,6 +103,13 @@ def mock_client(
         runs.setdefault(experiment_id, {})[run.info.run_id] = run
         return run
 
+    def set_terminated(run_id: str):
+        for exp_runs in runs.values():
+            if run_id in exp_runs:
+                exp_runs[run_id].info.status = RunStatus.to_string(RunStatus.FINISHED)
+                return
+        raise ValueError(f"Run ID {run_id} not found to terminate")
+
     mock_client = mocker.MagicMock(spec=MlflowClient)
     mock_client.get_experiment_by_name.side_effect = get_experiment_by_name
     mock_client.get_experiment.side_effect = get_experiment
@@ -111,6 +117,7 @@ def mock_client(
     mock_client.search_runs.side_effect = search_runs
     mock_client.get_run.side_effect = get_run
     mock_client.create_run.side_effect = create_run
+    mock_client.set_terminated.side_effect = set_terminated
 
     return mock_client
 
