@@ -111,7 +111,14 @@ def test_log_plot_collection(
         zip(ls_plot_collection_names, ls_plot_collections, ls_step)
     ):
         expected_dir = os.path.join(
-            "test_root", experiment_id, run_id, "artifacts", "plot_collections", name, str(step)
+            "mock_home_dir",
+            "artifact_ml",
+            experiment_id,
+            run_id,
+            "artifacts",
+            "plot_collections",
+            name,
+            str(step),
         )
         assert patched_incremental_generator[i] == expected_dir
         for plot_name in plot_collection.keys():

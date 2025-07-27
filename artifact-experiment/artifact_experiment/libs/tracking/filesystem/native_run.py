@@ -15,7 +15,6 @@ class InactiveFilesystemRunError(InactiveRunError):
 
 
 class FilesystemRun:
-    _root_dir = Path.home() / "artifact_ml"
     _open_button_description = "Open Run Dir"
 
     def __init__(self, experiment_id: str, run_id: str):
@@ -41,6 +40,10 @@ class FilesystemRun:
     @property
     def run_dir(self) -> str:
         return os.path.join(self.experiment_dir, self._run_id)
+
+    @property
+    def _root_dir(self) -> Path:
+        return Path.home() / "artifact_ml"
 
     def stop(self):
         self._is_active = False

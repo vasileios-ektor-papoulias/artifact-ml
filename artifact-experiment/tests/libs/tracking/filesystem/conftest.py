@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from typing import Callable, Optional, Tuple
 from unittest.mock import MagicMock
@@ -33,7 +32,7 @@ def native_run_factory(
             experiment_id = "default_experiment_id"
         if run_id is None:
             run_id = "default_run_id"
-        mocker.patch.object(FilesystemRun, "_root_dir", new=Path("test_root"))
+        mocker.patch("pathlib.Path.home", return_value=Path("mock_home_dir"))
         mocker.patch("artifact_experiment.libs.tracking.filesystem.native_run.os.makedirs")
         mocker.patch(
             "artifact_experiment.libs.tracking.filesystem.native_run.DirectoryOpenButton",
@@ -194,13 +193,3 @@ def client_factory(
         )
 
     return _factory
-
-
-@pytest.fixture
-def get_absolute_log_path() -> Callable[[str, str, str], str]:
-    def _prepend(experiment_id: str, run_id: str, path_relative_to_run_dir: str) -> str:
-        return os.path.join(
-            "test_dir", "artifact_ml", experiment_id, run_id, path_relative_to_run_dir.lstrip("/")
-        ).replace("\\", "/")
-
-    return _prepend

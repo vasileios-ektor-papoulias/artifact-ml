@@ -40,7 +40,14 @@ def test_log_plot(
     assert len(patched_incremental_generator) == len(ls_plots)
     for i, (name, plot, step) in enumerate(zip(ls_plot_names, ls_plots, ls_step)):
         expected_path = os.path.join(
-            "test_root", experiment_id, run_id, "artifacts", "plots", name, f"{step}.png"
+            "mock_home_dir",
+            "artifact_ml",
+            experiment_id,
+            run_id,
+            "artifacts",
+            "plots",
+            name,
+            f"{step}.png",
         )
         assert patched_incremental_generator[i] == expected_path
         savefig_mock.assert_any_call(

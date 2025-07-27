@@ -111,7 +111,13 @@ def test_log_array_collection(
         zip(ls_array_collection_names, ls_array_collections, ls_step)
     ):
         expected_dir = os.path.join(
-            "test_root", experiment_id, run_id, "artifacts", "array_collections", name
+            "mock_home_dir",
+            "artifact_ml",
+            experiment_id,
+            run_id,
+            "artifacts",
+            "array_collections",
+            name,
         )
         expected_path = os.path.join(expected_dir, f"{step}.npz")
         assert patched_incremental_generator[i] == expected_path

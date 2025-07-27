@@ -65,7 +65,9 @@ def test_log(
     assert mock_save.call_count == len(ls_arrays)
     assert len(patched_incremental_generator) == len(ls_arrays)
     for i, (name, array, step) in enumerate(zip(ls_array_names, ls_arrays, ls_step)):
-        expected_dir = os.path.join("test_root", experiment_id, run_id, "artifacts", "arrays", name)
+        expected_dir = os.path.join(
+            "mock_home_dir", "artifact_ml", experiment_id, run_id, "artifacts", "arrays", name
+        )
         expected_path = os.path.join(expected_dir, f"{step}.npy")
         assert patched_incremental_generator[i] == expected_path
         mock_save.assert_any_call(file=expected_path, arr=array)

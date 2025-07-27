@@ -67,7 +67,13 @@ def test_log_score_collection(
         logger.log(artifact_name=name, artifact=score_dict)
     for name, expected_rows in expected_logs.items():
         path = os.path.join(
-            "test_root", experiment_id, run_id, "artifacts", "score_collections", name
+            "mock_home_dir",
+            "artifact_ml",
+            experiment_id,
+            run_id,
+            "artifacts",
+            "score_collections",
+            name,
         )
         df = in_memory_df_store[path]
         expected_df = pd.DataFrame(expected_rows)

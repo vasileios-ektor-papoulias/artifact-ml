@@ -53,7 +53,9 @@ def test_log(
         logger.log(artifact_name=score_name, artifact=score)
 
     for score_name, ls_logged_scores_actual in expected_logs.items():
-        path = os.path.join("test_root", experiment_id, run_id, "artifacts", "scores", score_name)
+        path = os.path.join(
+            "mock_home_dir", "artifact_ml", experiment_id, run_id, "artifacts", "scores", score_name
+        )
         df = in_memory_df_store[path]
         ls_logged_scores = df["value"].tolist()
         assert ls_logged_scores == ls_logged_scores_actual, (
