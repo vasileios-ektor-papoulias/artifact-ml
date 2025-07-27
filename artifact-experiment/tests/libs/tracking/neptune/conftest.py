@@ -61,15 +61,10 @@ def native_run_factory(
 
 
 @pytest.fixture
-def patch_neptune_run_creation(
+def mock_neptune_run_constructor(
     mocker: MockerFixture,
     native_run_factory: Callable[[Optional[str], Optional[str]], MagicMock],
-):
-    mocker.patch(
-        "artifact_experiment.libs.utils.environment_variable_reader.EnvironmentVariableReader.get",
-        return_value="dummy-token",
-    )
-
+) -> MagicMock:
     def init_run_side_effect(api_token: str, project: str, custom_run_id: Optional[str] = None):
         _ = api_token
         native_run = native_run_factory(project, custom_run_id)
@@ -77,7 +72,24 @@ def patch_neptune_run_creation(
         native_run.run_id = custom_run_id
         return native_run
 
-    mocker.patch("neptune.init_run", side_effect=init_run_side_effect)
+    mock_run_constructor = mocker.patch("neptune.init_run", side_effect=init_run_side_effect)
+    return mock_run_constructor
+
+
+@pytest.fixture
+def mock_get_env(mocker: MockerFixture) -> MagicMock:
+    get_env_mock = mocker.patch(
+        "artifact_experiment.libs.utils.environment_variable_reader.EnvironmentVariableReader.get",
+        return_value="mock-api-token",
+    )
+    return get_env_mock
+
+
+@pytest.fixture(autouse=True)
+def reset_api_token_cache():
+    NeptuneRunAdapter._api_token = None
+    yield
+    NeptuneRunAdapter._api_token = None
 
 
 @pytest.fixture

@@ -15,12 +15,18 @@ from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter,
     ],
 )
 def test_build(
-    patch_neptune_run_creation,
+    reset_api_token_cache,
+    mock_get_env: MagicMock,
+    mock_neptune_run_constructor: MagicMock,
     standard_uuid_length: int,
     experiment_id: str,
     run_id: Optional[str],
 ):
     adapter = NeptuneRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
+    mock_get_env.assert_called_once_with(env_var_name="NEPTUNE_API_TOKEN")
+    mock_neptune_run_constructor.assert_called_once_with(
+        api_token="mock-api-token", project=adapter.experiment_id, custom_run_id=adapter.run_id
+    )
     assert adapter.is_active is True
     assert adapter.experiment_id == experiment_id
     if run_id is not None:
