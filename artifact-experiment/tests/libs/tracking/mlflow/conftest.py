@@ -123,47 +123,73 @@ def mock_client(
 
 
 @pytest.fixture
-def patch_mlflow_run_creation(mocker: MockerFixture, mock_client: MagicMock):
-    mocker.patch(
-        "artifact_experiment.libs.utils.environment_variable_reader.EnvironmentVariableReader.get",
-        return_value="dummy-tracking_uri",
-    )
-    mocker.patch(
+def mock_mlflow_client_constructor(mocker: MockerFixture, mock_client: MagicMock) -> MagicMock:
+    mock_client_constructor = mocker.patch(
         "artifact_experiment.libs.tracking.mlflow.adapter.MlflowClient",
         return_value=mock_client,
     )
+    return mock_client_constructor
+
+
+@pytest.fixture
+def mock_get_env(mocker: MockerFixture) -> MagicMock:
+    get_env_mock = mocker.patch(
+        "artifact_experiment.libs.utils.environment_variable_reader.EnvironmentVariableReader.get",
+        return_value="mock-tracking_uri",
+    )
+    return get_env_mock
 
 
 @pytest.fixture
 def native_run_factory(
-    patch_mlflow_run_creation,
+    mock_get_env: MagicMock,
+    mock_mlflow_client_constructor: MagicMock,
     mock_client: MagicMock,
-) -> Callable[[Optional[str], Optional[str]], MlflowNativeRun]:
+) -> Callable[
+    [Optional[str], Optional[str]], Tuple[MagicMock, MagicMock, MagicMock, MlflowNativeRun]
+]:
     def _factory(
         experiment_id: Optional[str] = None,
         run_id: Optional[str] = None,
-    ) -> MlflowNativeRun:
+    ) -> Tuple[MagicMock, MagicMock, MagicMock, MlflowNativeRun]:
         experiment_id = experiment_id or "default_experiment"
         run_id = run_id or "default_run"
         mock_client.create_experiment(name=experiment_id)
-        experiment = mock_client.get_experiment_by_name(name=experiment_id)
-        run = mock_client.create_run(experiment_id=experiment.experiment_id, run_name=run_id)
-        return MlflowNativeRun(client=mock_client, experiment=experiment, run=run)
+        mock_experiment = mock_client.get_experiment_by_name(name=experiment_id)
+        mock_run = mock_client.create_run(
+            experiment_id=mock_experiment.experiment_id, run_name=run_id
+        )
+        native_run = MlflowNativeRun(client=mock_client, experiment=mock_experiment, run=mock_run)
+        return mock_client, mock_experiment, mock_run, native_run
 
     return _factory
 
 
+@pytest.fixture(autouse=True)
+def reset_tracking_uri_cache():
+    MlflowRunAdapter._tracking_uri = None
+    yield
+    MlflowRunAdapter._tracking_uri = None
+
+
 @pytest.fixture
 def adapter_factory(
-    native_run_factory: Callable[[Optional[str], Optional[str]], MlflowNativeRun],
-) -> Callable[[Optional[str], Optional[str]], Tuple[MlflowNativeRun, MlflowRunAdapter]]:
+    native_run_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[MagicMock, MagicMock, MagicMock, MlflowNativeRun]
+    ],
+) -> Callable[
+    [Optional[str], Optional[str]],
+    Tuple[MagicMock, MagicMock, MagicMock, MlflowNativeRun, MlflowRunAdapter],
+]:
     def _factory(
         experiment_id: Optional[str] = None,
         run_id: Optional[str] = None,
-    ) -> Tuple[MlflowNativeRun, MlflowRunAdapter]:
-        native_run = native_run_factory(experiment_id, run_id)
+    ) -> Tuple[MagicMock, MagicMock, MagicMock, MlflowNativeRun, MlflowRunAdapter]:
+        mock_client, mock_experiment, mock_run, native_run = native_run_factory(
+            experiment_id, run_id
+        )
         adapter = MlflowRunAdapter(native_run=native_run)
-        return native_run, adapter
+        return mock_client, mock_experiment, mock_run, native_run, adapter
 
     return _factory
 
@@ -172,7 +198,7 @@ def adapter_factory(
 def loggers_factory(
     adapter_factory: Callable[
         [Optional[str], Optional[str]],
-        Tuple[MlflowNativeRun, MlflowRunAdapter],
+        Tuple[MagicMock, MagicMock, MagicMock, MlflowNativeRun, MlflowRunAdapter],
     ],
 ) -> Callable[
     [Optional[str], Optional[str]],
@@ -197,7 +223,7 @@ def loggers_factory(
         MlflowArrayCollectionLogger,
         MlflowPlotCollectionLogger,
     ]:
-        _, adapter = adapter_factory(experiment_id, run_id)
+        _, _, _, native_run, adapter = adapter_factory(experiment_id, run_id)
         score_logger = MlflowScoreLogger(run=adapter)
         array_logger = MlflowArrayLogger(run=adapter)
         plot_logger = MlflowPlotLogger(run=adapter)
