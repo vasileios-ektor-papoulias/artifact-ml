@@ -111,12 +111,20 @@ def test_from_native_run(
     ],
 )
 def test_build(
-    patch_neptune_run_creation,
+    reset_api_token_cache,
+    mock_get_env: MagicMock,
+    mock_neptune_run_constructor: MagicMock,
     standard_uuid_length: int,
     experiment_id: str,
     run_id: Optional[str],
 ):
     client = NeptuneTrackingClient.build(experiment_id=experiment_id, run_id=run_id)
+    mock_get_env.assert_called_once_with(env_var_name="NEPTUNE_API_TOKEN")
+    mock_neptune_run_constructor.assert_called_once_with(
+        api_token="mock-api-token",
+        project=client.run.experiment_id,
+        custom_run_id=client.run.run_id,
+    )
     assert isinstance(client, NeptuneTrackingClient)
     assert client.run.is_active is True
     assert client.run.experiment_id == experiment_id
