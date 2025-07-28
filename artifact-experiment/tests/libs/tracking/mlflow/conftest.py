@@ -223,7 +223,7 @@ def loggers_factory(
         MlflowArrayCollectionLogger,
         MlflowPlotCollectionLogger,
     ]:
-        _, _, _, native_run, adapter = adapter_factory(experiment_id, run_id)
+        _, _, _, _, adapter = adapter_factory(experiment_id, run_id)
         score_logger = MlflowScoreLogger(run=adapter)
         array_logger = MlflowArrayLogger(run=adapter)
         plot_logger = MlflowPlotLogger(run=adapter)
