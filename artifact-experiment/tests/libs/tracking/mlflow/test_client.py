@@ -396,7 +396,7 @@ def test_log_score_collection(
         expected_log_call_count = idx
         client.log_score_collection(score_collection=score_collection, name=score_collection_name)
         assert mock_get_ls_score_history.call_count == expected_get_call_count
-        for score_name, score in score_collection.items():
+        for score_name in score_collection.keys():
             expected_score_backend_path = os.path.join(
                 expected_score_collection_backend_path, score_name
             )
