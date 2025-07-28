@@ -1,7 +1,8 @@
 import os
-import sys
 from getpass import getpass
 from typing import Optional
+
+from artifact_experiment.libs.utils.environment_detector import EnvironmentDetector
 
 
 class EnvironmentVariableReader:
@@ -11,7 +12,7 @@ class EnvironmentVariableReader:
         if env_var is not None:
             return env_var
 
-        if cls._in_interactive_environment():
+        if cls._in_headed_environment():
             if prompt is None:
                 prompt = cls._get_default_prompt(env_var_name)
             return cls._get_from_prompt(env_var_name, prompt=prompt, set_env=set_env)
@@ -28,17 +29,10 @@ class EnvironmentVariableReader:
             os.environ[env_var_name] = value
         return value
 
-    @staticmethod
-    def _in_interactive_environment() -> bool:
-        try:
-            from IPython.core.getipython import get_ipython
-
-            if get_ipython():
-                return True
-        except ImportError:
-            pass
-        return sys.stdin.isatty()
+    @classmethod
+    def _in_headed_environment(cls) -> bool:
+        return EnvironmentDetector.in_headed_environment()
 
     @staticmethod
     def _get_default_prompt(env_var_name: str) -> str:
-        return f"Enter {env_var_name}:"
+        return f"{env_var_name}: "
