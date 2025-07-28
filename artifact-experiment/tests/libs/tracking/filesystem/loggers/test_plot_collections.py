@@ -91,7 +91,7 @@ from pytest_mock import MockerFixture
 )
 def test_log_plot_collection(
     mocker: MockerFixture,
-    patched_incremental_generator: List[str],
+    mock_incremental_path_generator: List[str],
     plot_collection_logger_factory: Callable[
         [Optional[str], Optional[str]],
         Tuple[FilesystemRunAdapter, FilesystemPlotCollectionLogger],
@@ -106,7 +106,7 @@ def test_log_plot_collection(
     savefig_mock = mocker.patch.object(Figure, "savefig")
     for name, plots in zip(ls_plot_collection_names, ls_plot_collections):
         logger.log(artifact_name=name, artifact=plots)
-    assert len(patched_incremental_generator) == len(ls_plot_collections)
+    assert len(mock_incremental_path_generator) == len(ls_plot_collections)
     for i, (name, plot_collection, step) in enumerate(
         zip(ls_plot_collection_names, ls_plot_collections, ls_step)
     ):
@@ -120,7 +120,7 @@ def test_log_plot_collection(
             name,
             str(step),
         )
-        assert patched_incremental_generator[i] == expected_dir
+        assert mock_incremental_path_generator[i] == expected_dir
         for plot_name in plot_collection.keys():
             filename = f"{plot_name}.png"
             expected_path = os.path.join(expected_dir, filename)

@@ -54,7 +54,7 @@ def expected_logs(request) -> Dict[str, List[float]]:
 
 
 @pytest.fixture
-def patched_incremental_generator(mocker: MockerFixture) -> List[str]:
+def mock_incremental_path_generator(mocker: MockerFixture) -> List[str]:
     generated_paths: List[str] = []
 
     def fake_generate(dir_path: str, fmt: Optional[str] = None) -> str:

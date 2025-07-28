@@ -22,7 +22,7 @@ from pytest_mock import MockerFixture
 )
 def test_log_plot(
     mocker: MockerFixture,
-    patched_incremental_generator: List[str],
+    mock_incremental_path_generator: List[str],
     plot_logger_factory: Callable[
         [Optional[str], Optional[str]],
         Tuple[FilesystemRunAdapter, FilesystemPlotLogger],
@@ -37,7 +37,7 @@ def test_log_plot(
     savefig_mock = mocker.patch.object(Figure, "savefig")
     for name, plot in zip(ls_plot_names, ls_plots):
         logger.log(artifact_name=name, artifact=plot)
-    assert len(patched_incremental_generator) == len(ls_plots)
+    assert len(mock_incremental_path_generator) == len(ls_plots)
     for i, (name, plot, step) in enumerate(zip(ls_plot_names, ls_plots, ls_step)):
         expected_path = os.path.join(
             "mock_home_dir",
@@ -49,7 +49,7 @@ def test_log_plot(
             name,
             f"{step}.png",
         )
-        assert patched_incremental_generator[i] == expected_path
+        assert mock_incremental_path_generator[i] == expected_path
         savefig_mock.assert_any_call(
             fname=expected_path,
             dpi=ANY,

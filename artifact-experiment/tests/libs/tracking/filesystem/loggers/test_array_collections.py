@@ -90,7 +90,7 @@ from pytest_mock import MockerFixture
 )
 def test_log_array_collection(
     mocker: MockerFixture,
-    patched_incremental_generator: List[str],
+    mock_incremental_path_generator: List[str],
     array_collection_logger_factory: Callable[
         [Optional[str], Optional[str]],
         Tuple[FilesystemRunAdapter, FilesystemArrayCollectionLogger],
@@ -106,7 +106,7 @@ def test_log_array_collection(
     for name, coll in zip(ls_array_collection_names, ls_array_collections):
         logger.log(artifact_name=name, artifact=coll)
     assert mock_savez.call_count == len(ls_array_collections)
-    assert len(patched_incremental_generator) == len(ls_array_collections)
+    assert len(mock_incremental_path_generator) == len(ls_array_collections)
     for i, (name, array_collection, step) in enumerate(
         zip(ls_array_collection_names, ls_array_collections, ls_step)
     ):
@@ -120,5 +120,5 @@ def test_log_array_collection(
             name,
         )
         expected_path = os.path.join(expected_dir, f"{step}.npz")
-        assert patched_incremental_generator[i] == expected_path
+        assert mock_incremental_path_generator[i] == expected_path
         mock_savez.assert_any_call(file=expected_path, allow_pickle=True, **array_collection)

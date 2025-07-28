@@ -48,7 +48,7 @@ from pytest_mock import MockerFixture
 )
 def test_log(
     mocker: MockerFixture,
-    patched_incremental_generator: List[str],
+    mock_incremental_path_generator: List[str],
     array_logger_factory: Callable[
         [Optional[str], Optional[str]], Tuple[FilesystemRunAdapter, FilesystemArrayLogger]
     ],
@@ -63,11 +63,13 @@ def test_log(
     for name, array in zip(ls_array_names, ls_arrays):
         logger.log(artifact_name=name, artifact=array)
     assert mock_save.call_count == len(ls_arrays)
-    assert len(patched_incremental_generator) == len(ls_arrays)
+    assert len(mock_incremental_path_generator) == len(ls_arrays)
     for i, (name, array, step) in enumerate(zip(ls_array_names, ls_arrays, ls_step)):
         expected_dir = os.path.join(
             "mock_home_dir", "artifact_ml", experiment_id, run_id, "artifacts", "arrays", name
         )
         expected_path = os.path.join(expected_dir, f"{step}.npy")
-        assert patched_incremental_generator[i] == expected_path
+        assert mock_incremental_path_generator[i] == expected_path
         mock_save.assert_any_call(file=expected_path, arr=array)
+    for call in mock_save.call_args_list:
+        print(call)
