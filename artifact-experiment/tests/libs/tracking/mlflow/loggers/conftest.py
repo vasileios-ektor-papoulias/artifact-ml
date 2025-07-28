@@ -1,4 +1,5 @@
-from typing import Callable, Optional, Tuple
+import os
+from typing import Callable, Dict, Optional, Tuple
 from unittest.mock import MagicMock
 
 import pytest
@@ -15,6 +16,16 @@ from artifact_experiment.libs.tracking.mlflow.loggers.score_collections import (
     MlflowScoreCollectionLogger,
 )
 from artifact_experiment.libs.tracking.mlflow.loggers.scores import MlflowScoreLogger
+
+
+@pytest.fixture
+def mock_tempdir(mocker) -> Dict[str, MagicMock]:
+    fake_temp_dir_path = os.path.join("mock", "tmp", "dir")
+    mock_tempdir_cm = mocker.patch("tempfile.TemporaryDirectory")
+    tempdir_instance = mock_tempdir_cm.return_value
+    tempdir_instance.__enter__.return_value = fake_temp_dir_path
+    tempdir_instance.name = fake_temp_dir_path
+    return {"mock_tempdir_cm": mock_tempdir_cm}
 
 
 @pytest.fixture
