@@ -15,6 +15,7 @@ def _get_name(key: str, idx: int) -> str:
     return f"{key}_{idx}"
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [("exp1", "run1")],
@@ -43,6 +44,7 @@ def test_init(
     assert client.run.is_active is True
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [("exp1", "run1")],
@@ -63,6 +65,7 @@ def test_from_run(
     assert client.run.is_active is True
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [("exp1", "run1")],
@@ -80,6 +83,7 @@ def test_from_native_run(
     assert client.run.is_active is True
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -104,6 +108,7 @@ def test_build(
         UUID(client.run.run_id)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_scores",
     [
@@ -138,6 +143,7 @@ def test_log_score(
         assert call_args.kwargs == {"artifact_name": name, "artifact": score}
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_arrays",
     [
@@ -172,6 +178,7 @@ def test_log_array(
         assert call_args.kwargs == {"artifact_name": name, "artifact": array}
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_plots",
     [
@@ -207,6 +214,7 @@ def test_log_plot(
         assert call_args.kwargs == {"artifact_name": name, "artifact": plot}
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_score_collections",
     [
@@ -251,6 +259,7 @@ def test_log_score_collection(
         assert call_args.kwargs == {"artifact_name": name, "artifact": collection}
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_array_collections",
     [
@@ -295,6 +304,7 @@ def test_log_array_collection(
         assert call_args.kwargs == {"artifact_name": name, "artifact": collection}
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_plot_collections",
     [
@@ -339,6 +349,7 @@ def test_log_plot_collection(
         assert call_args.kwargs == {"artifact_name": name, "artifact": collection}
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, path_source, dir_target",
     [

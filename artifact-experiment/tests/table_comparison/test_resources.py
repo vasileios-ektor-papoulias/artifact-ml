@@ -4,6 +4,7 @@ from artifact_core.core.dataset_comparison.artifact import DatasetComparisonArti
 from artifact_experiment.table_comparison.resources import TableComparisonCallbackResources
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "dataset_real_dispatcher, dataset_synthetic_dispatcher",
     [

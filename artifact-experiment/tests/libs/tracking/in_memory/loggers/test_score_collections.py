@@ -9,6 +9,7 @@ from artifact_experiment.libs.tracking.in_memory.loggers.score_collections impor
 from pytest_mock import MockerFixture
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_score_collection_names, ls_score_collections, ls_step",
     [

@@ -27,6 +27,7 @@ from artifact_core.table_comparison.artifacts.base import (
 from pytest_mock import MockerFixture
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "artifact_class, statistic",
     [

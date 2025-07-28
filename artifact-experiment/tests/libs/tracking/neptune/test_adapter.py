@@ -7,6 +7,7 @@ from artifact_core.base.artifact_dependencies import ArtifactResult
 from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter, NeptuneRunStatus
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -37,6 +38,7 @@ def test_build(
         UUID(adapter.run_id)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -60,6 +62,7 @@ def test_from_native_run(
         assert native_run.run_id == run_id
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -77,6 +80,7 @@ def test_native_context_manager(
         assert ctx_native_run is native_run
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -97,6 +101,7 @@ def test_stop_run(
     assert adapter.run_status == NeptuneRunStatus.INACTIVE
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, artifact_path, expected_log_path, artifact_result",
     [
@@ -128,6 +133,7 @@ def test_log(
     native_run[expected_log_path].append.assert_called_once_with(artifact_result)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, path_source, dir_target, expected_log_path",
     [

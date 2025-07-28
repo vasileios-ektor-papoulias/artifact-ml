@@ -7,6 +7,7 @@ from artifact_experiment.libs.tracking.neptune.loggers.scores import NeptuneScor
 from pytest_mock import MockerFixture
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_score_names, ls_scores",
     [

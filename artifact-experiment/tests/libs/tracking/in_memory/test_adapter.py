@@ -12,6 +12,7 @@ from matplotlib.figure import Figure
 from numpy import ndarray
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -35,6 +36,7 @@ def test_build(
         UUID(adapter.run_id)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [("exp1", "run1")],
@@ -51,6 +53,7 @@ def test_from_native_run(
     assert adapter.is_active is True
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [("exp1", "run1")],
@@ -70,6 +73,7 @@ def test_stop_run(
     assert not adapter.is_active
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [("exp1", "run1")],
@@ -86,6 +90,7 @@ def test_native_context_manager(
         assert ctx_native_run is native_run
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, score_key, score",
     [
@@ -115,6 +120,7 @@ def test_log_score(
     assert adapter.ls_scores == [score]
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, array_key, array",
     [
@@ -144,6 +150,7 @@ def test_log_array(
     assert (adapter.ls_arrays[0] == array).all
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, plot_key, plot",
     [
@@ -173,6 +180,7 @@ def test_log_plot(
     assert isinstance(adapter.ls_plots[0], Figure)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, score_collection_key, score_collection",
     [
@@ -202,6 +210,7 @@ def test_log_score_collection(
     assert adapter.ls_score_collections == [score_collection]
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, array_collection_key, array_collection",
     [
@@ -234,6 +243,7 @@ def test_log_array_collection(
         ).all()
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, plot_collection_key, plot_collection",
     [
@@ -265,6 +275,7 @@ def test_log_plot_collection(
         assert isinstance(plot_collection[key], Figure)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_file_entries, expected_store_length",
     [
@@ -299,6 +310,7 @@ def test_upload(
         assert adapter.uploaded_files[i] == file_entry
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, populated_adapter_factory, artifact_path, expected_ls_paths",
     [
@@ -330,6 +342,7 @@ def test_search_score(
     assert ls_paths == expected_ls_paths
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, populated_adapter_factory, artifact_path, expected_ls_paths",
     [
@@ -361,6 +374,7 @@ def test_search_array(
     assert ls_paths == expected_ls_paths
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, populated_adapter_factory, artifact_path, expected_ls_paths",
     [
@@ -392,6 +406,7 @@ def test_search_plot(
     assert ls_paths == expected_ls_paths
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, populated_adapter_factory, artifact_path, expected_ls_paths",
     [
@@ -441,6 +456,7 @@ def test_search_score_collection(
     assert ls_paths == expected_ls_paths
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, populated_adapter_factory, artifact_path, expected_ls_paths",
     [
@@ -490,6 +506,7 @@ def test_search_array_collection(
     assert ls_paths == expected_ls_paths
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, populated_adapter_factory, artifact_path, expected_ls_paths",
     [

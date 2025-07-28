@@ -15,6 +15,7 @@ from matplotlib.figure import Figure
 from numpy import ndarray
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [("exp1", "run1")],
@@ -34,6 +35,7 @@ def test_init(
     assert client.run.is_active is True
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [("exp1", "run1")],
@@ -54,6 +56,7 @@ def test_from_run(
     assert client.run.is_active is True
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [("exp1", "run1")],
@@ -71,6 +74,7 @@ def test_from_native_run(
     assert client.run.is_active is True
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -95,6 +99,7 @@ def test_build(
         UUID(client.run.run_id)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_scores",
     [
@@ -122,6 +127,7 @@ def test_log_score(
     assert adapter.ls_scores == ls_scores
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_arrays",
     [
@@ -151,6 +157,7 @@ def test_log_array(
         assert (array_value == ls_arrays[idx]).all
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_plots",
     [
@@ -180,6 +187,7 @@ def test_log_plot(
         assert isinstance(plot, Figure)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_score_collections",
     [
@@ -219,6 +227,7 @@ def test_log_score_collection(
     assert adapter.ls_score_collections == ls_score_collections
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_array_collections",
     [
@@ -265,6 +274,7 @@ def test_log_array_collection(
             assert (actual_array == expected_array).all
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_plot_collections",
     [
@@ -307,6 +317,7 @@ def test_log_plot_collection(
             isinstance(plot, Figure)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_file_entries, expected_store_length",
     [

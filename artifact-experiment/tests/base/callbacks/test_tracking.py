@@ -246,6 +246,7 @@ def handler_factory(
     return _factory
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "callback_type, artifact_result, has_tracking_client",
     [
@@ -301,6 +302,7 @@ def test_callback_execute(
         assert list(log_method_kwargs.values()) == [callback.value, callback.key]
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "callback_type, tracking_is_enabled_start, tracking_is_enabled_end",
     [
@@ -349,6 +351,7 @@ def test_callback_tracking_client_setter(
     assert callback.tracking_enabled == tracking_is_enabled_end
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "callback_type, ls_callback_keys, has_tracking_client",
     [
@@ -396,6 +399,7 @@ def test_handler_execute(
             assert list(kwargs.values()) == [callback.value, callback.key]
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "callback_type, ls_callback_keys",
     [
@@ -430,6 +434,7 @@ def test_handler_clear(
     assert all(callback.value is None for callback in ls_callbacks)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "callback_type, ls_callback_keys, remove_tracking_client",
     [

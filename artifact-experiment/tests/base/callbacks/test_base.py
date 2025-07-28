@@ -33,6 +33,8 @@ def callback_factory() -> Callable[[CallbackType], DummyCallback]:
     return _factory
 
 
+@pytest.mark.unit
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "callback_type, x, y, expected_result",
     [

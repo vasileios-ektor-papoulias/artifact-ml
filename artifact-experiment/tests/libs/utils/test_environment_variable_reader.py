@@ -65,6 +65,7 @@ def environment_scenario_dispatcher(request) -> Callable[[str, str], Dict[str, M
     return request.getfixturevalue(f"{request.param}_state_constructor")
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "environment_scenario_dispatcher, env_var_name, env_var_value, set_env, "
     + "expected_var_value, should_raise",

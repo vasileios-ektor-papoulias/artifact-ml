@@ -8,6 +8,7 @@ from artifact_experiment.libs.tracking.filesystem.native_run import FilesystemRu
 from pytest_mock import MockerFixture
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -32,6 +33,7 @@ def test_build(
         UUID(adapter.run_id)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -55,6 +57,7 @@ def test_from_native_run(
         assert native_run.run_id == run_id
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -74,6 +77,7 @@ def test_native_context_manager(
         assert ctx_native_run is native_run
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -94,6 +98,7 @@ def test_stop_run(
     assert not adapter.is_active
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, path_source, dir_target",
     [

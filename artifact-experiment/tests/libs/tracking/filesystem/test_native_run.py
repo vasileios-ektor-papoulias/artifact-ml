@@ -5,6 +5,7 @@ import pytest
 from artifact_experiment.libs.tracking.filesystem.native_run import FilesystemRun
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [("exp1", "run1")],
@@ -22,6 +23,7 @@ def test_init(
     assert native_run.run_dir == os.path.join("mock_home_dir", "artifact_ml", experiment_id, run_id)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [("exp1", "run1")],

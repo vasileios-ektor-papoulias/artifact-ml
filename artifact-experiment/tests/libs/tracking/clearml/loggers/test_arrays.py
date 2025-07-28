@@ -8,7 +8,8 @@
 # from pytest_mock import MockerFixture
 
 
-# @pytest.mark.parametrize(
+# @pytest.mark.unit
+@pytest.mark.parametrize(
 #     "experiment_id, run_id, ls_array_names, ls_arrays",
 #     [
 #         ("exp1", "run1", [], []),

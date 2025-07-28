@@ -25,6 +25,7 @@ def tmp_dir_factory() -> Generator[Callable[[List[str]], str], None, None]:
             shutil.rmtree(tmp_dir)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "existing_files, fmt, expected_filename",
     [
@@ -49,6 +50,7 @@ def test_generate(tmp_dir_factory, existing_files, fmt, expected_filename):
     assert os.path.basename(result_path) == expected_filename
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "next_idx, fmt, expected_filename",
     [

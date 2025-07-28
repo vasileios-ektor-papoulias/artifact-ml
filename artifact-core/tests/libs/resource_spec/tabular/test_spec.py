@@ -11,6 +11,7 @@ from artifact_core.libs.resource_spec.tabular.protocol import (
 from artifact_core.libs.resource_spec.tabular.spec import TabularDataSpec
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "ls_cts_features, ls_cat_features, "
     + "expected_exception, "
@@ -217,6 +218,7 @@ def test_build(
         )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_dispatcher, ls_cts_features, ls_cat_features, "
     + "expected_exception, "
@@ -464,6 +466,7 @@ def test_fit(
         )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_dispatcher, ls_cts_features, ls_cat_features, "
     + "expected_exception, "
@@ -732,6 +735,7 @@ def test_from_df(
         )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_dispatcher, ls_cts_features, ls_cat_features, "
     + "new_cat_unique_map, expected_exception, "
@@ -870,6 +874,7 @@ def test_cat_unique_map_setter(
         )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_dispatcher, ls_cts_features, ls_cat_features, feature_name, "
     + "expected_exception, expected_categories",
@@ -938,6 +943,7 @@ def test_get_unique_categories(
         )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_dispatcher, ls_cts_features, ls_cat_features, feature_name, "
     + "expected_exception, expected_count",
@@ -1005,6 +1011,7 @@ def test_get_n_unique_categories(
         )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_dispatcher, ls_cts_features, ls_cat_features, feature_name, new_categories, "
     + "expected_exception, expected_categories, expected_count",
@@ -1105,6 +1112,7 @@ def test_set_unique_categories(
         )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_dispatcher, ls_cts_features, ls_cat_features",
     [
@@ -1152,6 +1160,7 @@ def test_serialization_deserialization(
     assert deserialized_spec.ls_n_cat == spec.ls_n_cat
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_dispatcher, ls_cts_features, ls_cat_features",
     [

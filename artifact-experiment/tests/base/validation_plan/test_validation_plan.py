@@ -14,6 +14,7 @@ from tests.base.validation_plan.dummy.validation_plan import (
 )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "tracking_client_provided",
     [True, False],
@@ -32,6 +33,7 @@ def test_build(
     assert plan.tracking_enabled == tracking_client_provided
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "initial_client, new_client",
     [
@@ -69,6 +71,7 @@ def test_tracking_client_setter(
         new_tracking_client.log_plot_collection.assert_called()
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "cache_type, ls_artifact_results",
     [

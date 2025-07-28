@@ -14,6 +14,7 @@ def platform(mocker, request) -> str:
     return platform
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "platform, expected_popen_args",
     [
@@ -34,6 +35,7 @@ def test_open_directory(mocker: MockerFixture, platform: str, expected_popen_arg
     assert called_kwargs["stderr"] == subprocess.DEVNULL
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "platform, path, exists, expected_msg",
     [

@@ -8,6 +8,7 @@ from numpy import ndarray
 from pytest_mock import MockerFixture
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_array_names, ls_arrays, ls_step",
     [

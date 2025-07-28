@@ -83,6 +83,8 @@ def callback_factory(
     return _factory
 
 
+@pytest.mark.unit
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "callback_type, artifact_result, has_tracking_client",
     [

@@ -9,6 +9,7 @@ from tests.base.tracking.dummy.adapter import DummyRunAdapter
 from tests.base.tracking.dummy.logger import DummyArtifactLogger
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_artifact_names, ls_artifact_results",
     [

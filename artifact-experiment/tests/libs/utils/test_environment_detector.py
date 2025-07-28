@@ -85,6 +85,7 @@ def environment_scenario_dispatcher(request) -> Callable[[], Dict[str, MagicMock
     return request.getfixturevalue(f"{request.param}_state_constructor")
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "environment_scenario_dispatcher, expected_environment, should_raise",
     [
@@ -110,6 +111,7 @@ def test_detect(
         assert result == expected_environment
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "environment_scenario_dispatcher, expected_in_headed",
     [

@@ -8,6 +8,7 @@ from mlflow.entities import RunStatus
 from pytest_mock import MockerFixture
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -40,6 +41,7 @@ def test_build(
     assert adapter.run_uuid == expected_run_uuid
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -67,6 +69,7 @@ def test_from_native_run(
         assert native_run.run.info.run_name == run_id
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -87,6 +90,7 @@ def test_native_context_manager(
         assert ctx_native_run is native_run
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -111,6 +115,7 @@ def test_stop_run(
     assert adapter.run_status == RunStatus.to_string(RunStatus.FINISHED)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, path_source, dir_target, expected_artifact_path",
     [
@@ -143,6 +148,7 @@ def test_upload(
     )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, backend_path, artifact_result, step, expected_key",
     [
@@ -182,6 +188,7 @@ def test_log_score(
     )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, backend_path, expected_key",
     [
@@ -206,6 +213,7 @@ def test_get_ls_artifact_info(
     mock_list_artifacts.assert_called_once_with(run_id=mock_run.info.run_id, path=expected_key)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, backend_path, expected_key",
     [

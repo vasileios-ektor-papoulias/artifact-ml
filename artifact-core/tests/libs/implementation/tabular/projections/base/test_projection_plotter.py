@@ -8,6 +8,7 @@ from artifact_core.libs.implementation.tabular.projections.base.plotter import (
 from matplotlib.figure import Figure
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "projection_2d_real_dispatcher, projection_plotter_dispatcher, projection_name, "
     + "expected_title_contains, expected_axis_labels, expect_has_collections, expected_figsize",
@@ -90,6 +91,7 @@ def test_produce_projection_plot(
             )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "projection_2d_real_dispatcher, projection_2d_synthetic_dispatcher, "
     + "projection_plotter_dispatcher, projection_name, "

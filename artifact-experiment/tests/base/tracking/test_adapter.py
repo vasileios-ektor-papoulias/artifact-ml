@@ -8,6 +8,7 @@ from pytest_mock import MockerFixture
 from tests.base.tracking.dummy.adapter import DummyNativeRun, DummyRunAdapter
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -31,6 +32,7 @@ def test_build(
         UUID(adapter.run_id)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [("exp1", "run1")],
@@ -49,6 +51,7 @@ def test_from_native_run(
     assert adapter.run_id == run_id
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -68,6 +71,7 @@ def test_native_context_manager(
         assert ctx_native_run is native_run
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -90,6 +94,7 @@ def test_stop_run(
     assert not adapter.is_active
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, artifact_path, artifact_result",
     [
@@ -124,6 +129,7 @@ def test_log(
     native_run.log.assert_called_with(artifact_path=artifact_path, artifact=artifact_result)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, path_source, dir_target",
     [

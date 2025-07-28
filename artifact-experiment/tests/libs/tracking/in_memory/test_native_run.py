@@ -8,6 +8,7 @@ from matplotlib.figure import Figure
 from numpy import ndarray
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [("exp1", "run1")],
@@ -30,6 +31,7 @@ def test_init(
     assert len(native_run.uploaded_files) == 0
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, initial_state,new_state",
     [
@@ -54,6 +56,7 @@ def test_is_active_property(
     assert native_run.is_active == new_state
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, score_key, score",
     [
@@ -79,6 +82,7 @@ def test_log_score(
     assert native_run.dict_scores[score_key] == score
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, array_key, array",
     [
@@ -104,6 +108,7 @@ def test_log_array(
     assert (native_run.dict_arrays[array_key] == array).all()
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, plot_key, plot",
     [
@@ -128,6 +133,7 @@ def test_log_plot(
     assert len(native_run.dict_plots) == 1
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, score_collection_key, score_collection",
     [
@@ -157,6 +163,7 @@ def test_log_score_collection(
         assert native_run.dict_score_collections[score_collection_key][key] == score_collection[key]
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, array_collection_key, array_collection",
     [
@@ -188,6 +195,7 @@ def test_log_array_collection(
         ).all()
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, plot_collection_key, plot_collection",
     [
@@ -216,6 +224,7 @@ def test_log_plot_collection(
         assert isinstance(plot_collection[key], Figure)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_file_entries, expected_store_length",
     [

@@ -10,6 +10,7 @@ from artifact_core.libs.implementation.tabular.descriptive_stats.calculator impo
 )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df, ls_cts_features, stat, expected_stats, expect_raise_missing, expect_raise_unsupported",
     [
@@ -121,6 +122,7 @@ def test_descriptive_statistics_compute(
             )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_real, df_synthetic, ls_cts_features, stat, "
     + "expected_juxtaposition, expect_raise_missing, expect_raise_unsupported",

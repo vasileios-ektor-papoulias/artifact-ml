@@ -32,6 +32,7 @@ from artifact_experiment.table_comparison.callback_factory import TableCompariso
 from pytest_mock import MockerFixture
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "score_type",
     [TableComparisonScoreType.MEAN_JS_DISTANCE, TableComparisonScoreType.CORRELATION_DISTANCE],
@@ -50,6 +51,7 @@ def test_build_score_callback(
     assert callback.key == score_type.name
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize("array_type", [])
 def test_build_array_callback(
     mocker: MockerFixture, tabular_data_spec: TabularDataSpec, array_type: TableComparisonArrayType
@@ -65,6 +67,7 @@ def test_build_array_callback(
     assert callback.key == array_type.name
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "plot_type",
     [
@@ -99,6 +102,7 @@ def test_build_plot_callback(
     assert callback.key == plot_type.name
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize("score_collection_type", [TableComparisonScoreCollectionType.JS_DISTANCE])
 def test_build_score_collection_callback(
     mocker: MockerFixture,
@@ -116,6 +120,7 @@ def test_build_score_collection_callback(
     assert callback.key == score_collection_type.name
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "array_collection_type",
     [
@@ -145,6 +150,7 @@ def test_build_array_collection_callback(
     assert callback.key == array_collection_type.name
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "plot_collection_type",
     [

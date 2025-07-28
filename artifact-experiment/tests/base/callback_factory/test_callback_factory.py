@@ -32,6 +32,8 @@ def dummy_resource_spec() -> DummyResourceSpec:
     return DummyResourceSpec()
 
 
+@pytest.mark.unit
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "score_type",
     [DummyScoreType.DUMMY_SCORE_1],
@@ -48,6 +50,8 @@ def test_build_score_callback(
     assert callback.key == score_type.name
 
 
+@pytest.mark.unit
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "array_type",
     [DummyArrayType.DUMMY_ARRAY_1],
@@ -64,6 +68,8 @@ def test_build_array_callback(
     assert callback.key == array_type.name
 
 
+@pytest.mark.unit
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "plot_type",
     [DummyPlotType.DUMMY_PLOT_1],
@@ -80,6 +86,8 @@ def test_build_plot_callback(
     assert callback.key == plot_type.name
 
 
+@pytest.mark.unit
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "score_collection_type",
     [DummyScoreCollectionType.DUMMY_SCORE_COLLECTION_1],
@@ -100,6 +108,8 @@ def test_build_score_collection_callback(
     assert callback.key == score_collection_type.name
 
 
+@pytest.mark.unit
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "array_collection_type",
     [DummyArrayCollectionType.DUMMY_ARRAY_COLLECTION_1],
@@ -120,6 +130,8 @@ def test_build_array_collection_callback(
     assert callback.key == array_collection_type.name
 
 
+@pytest.mark.unit
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "plot_collection_type",
     [DummyPlotCollectionType.DUMMY_PLOT_COLLECTION_1],

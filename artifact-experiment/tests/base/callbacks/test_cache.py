@@ -32,6 +32,8 @@ def callback_factory() -> Callable[[str, str], CacheCallback]:
     return _factory
 
 
+@pytest.mark.unit
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "callback_type, callback_key",
     [
@@ -53,6 +55,8 @@ def test_callback_key(
     assert callback.cache[callback_key] is None
 
 
+@pytest.mark.unit
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "callback_type, callback_key, x, y, expected_result",
     [
@@ -81,6 +85,8 @@ def test_callback_execute(
     assert callback.cache[callback_key] == expected_result
 
 
+@pytest.mark.unit
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "clear_after_execution",
     [
@@ -105,6 +111,8 @@ def test_callback_clear(
         assert callback.value is None
 
 
+@pytest.mark.unit
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "ls_callback_types, ls_callback_keys, x, y, ls_expected_results",
     [
@@ -147,6 +155,8 @@ def test_handler_execute(
         assert handler.active_cache[key] == expected_result
 
 
+@pytest.mark.unit
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "num_callbacks, clear_after_execution",
     [

@@ -23,7 +23,8 @@
 # from pytest_mock import MockerFixture
 
 
-# @pytest.mark.parametrize(
+# @pytest.mark.unit
+@pytest.mark.parametrize(
 #     "experiment_id, run_id",
 #     [("exp1", "run1")],
 # )
@@ -68,7 +69,8 @@
 #     assert client.run.is_active is True
 
 
-# @pytest.mark.parametrize(
+# @pytest.mark.unit
+@pytest.mark.parametrize(
 #     "experiment_id, run_id",
 #     [("exp1", "run1")],
 # )
@@ -86,7 +88,8 @@
 #     assert client.run.is_active is True
 
 
-# @pytest.mark.parametrize(
+# @pytest.mark.unit
+@pytest.mark.parametrize(
 #     "experiment_id, run_id",
 #     [("exp1", "run1")],
 # )
@@ -103,7 +106,8 @@
 #     assert client.run.is_active is True
 
 
-# @pytest.mark.parametrize(
+# @pytest.mark.unit
+@pytest.mark.parametrize(
 #     "experiment_id, run_id",
 #     [
 #         ("exp1", "run1"),
@@ -127,7 +131,8 @@
 #         UUID(client.run.run_id)
 
 
-# @pytest.mark.parametrize(
+# @pytest.mark.unit
+@pytest.mark.parametrize(
 #     "experiment_id, run_id, ls_scores",
 #     [
 #         ("exp1", "run1", []),
@@ -187,7 +192,8 @@
 #         )
 
 
-# @pytest.mark.parametrize(
+# @pytest.mark.unit
+@pytest.mark.parametrize(
 #     "experiment_id, run_id, ls_arrays",
 #     [
 #         ("exp1", "run1", []),
@@ -247,7 +253,8 @@
 #         )
 
 
-# @pytest.mark.parametrize(
+# @pytest.mark.unit
+@pytest.mark.parametrize(
 #     "experiment_id, run_id, ls_plots",
 #     [
 #         ("exp1", "run1", []),
@@ -307,7 +314,8 @@
 #         )
 
 
-# @pytest.mark.parametrize(
+# @pytest.mark.unit
+@pytest.mark.parametrize(
 #     "experiment_id, run_id, ls_score_collections",
 #     [
 #         ("exp1", "run1", []),
@@ -379,7 +387,8 @@
 #         )
 
 
-# @pytest.mark.parametrize(
+# @pytest.mark.unit
+@pytest.mark.parametrize(
 #     "experiment_id, run_id, ls_array_collections",
 #     [
 #         ("exp1", "run1", []),
@@ -451,7 +460,8 @@
 #         )
 
 
-# @pytest.mark.parametrize(
+# @pytest.mark.unit
+@pytest.mark.parametrize(
 #     "experiment_id, run_id, ls_plot_collections",
 #     [
 #         ("exp1", "run1", []),
@@ -521,7 +531,8 @@
 #         )
 
 
-# @pytest.mark.parametrize(
+# @pytest.mark.unit
+@pytest.mark.parametrize(
 #     "experiment_id, run_id, ls_file_entries",
 #     [
 #         ("exp1", "run1", []),

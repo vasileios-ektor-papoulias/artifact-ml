@@ -48,6 +48,7 @@ def _add_prefix_to_package_structure(
     return [(importer, prefix + name, ispkg) for importer, name, ispkg in package_structure]
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "path, root, expected_package_prefix, expected_parent_in_syspath",
     [

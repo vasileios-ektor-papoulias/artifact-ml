@@ -76,6 +76,7 @@ def test_build(
         )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "dataset_real_dispatcher, dataset_synthetic_dispatcher",
     [("df_1", "df_2"), ("df_3", "df_4")],
@@ -123,6 +124,7 @@ def test_execute(
     assert set(plan.plot_collections.keys()) == set(t.name for t in expected_plot_collection_types)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "dataset_real_dispatcher, dataset_synthetic_dispatcher",
     [("df_1", "df_2"), ("df_3", "df_4")],

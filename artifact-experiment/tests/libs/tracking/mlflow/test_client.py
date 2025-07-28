@@ -23,6 +23,7 @@ from numpy import ndarray
 from pytest_mock import MockerFixture
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [("exp1", "run1")],
@@ -68,6 +69,7 @@ def test_init(
     assert client.run.is_active is True
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [("exp1", "run1")],
@@ -89,6 +91,7 @@ def test_from_run(
     assert client.run.is_active is True
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [("exp1", "run1")],
@@ -108,6 +111,7 @@ def test_from_native_run(
     assert client.run.is_active is True
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id",
     [
@@ -137,6 +141,7 @@ def test_build(
         UUID(client.run.run_id)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_scores",
     [
@@ -199,6 +204,7 @@ def test_log_score(
         ls_logged.append(score)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_arrays",
     [
@@ -261,6 +267,7 @@ def test_log_array(
         ls_logged.append(array)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_plots",
     [
@@ -323,6 +330,7 @@ def test_log_plot(
         ls_logged.append(plot)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_score_collections",
     [
@@ -402,6 +410,7 @@ def test_log_score_collection(
             ls_logged.append(score)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_array_collections",
     [
@@ -477,6 +486,7 @@ def test_log_array_collection(
         ls_logged.append(array_collection)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_plot_collections",
     [
@@ -549,6 +559,7 @@ def test_log_plot_collection(
         ls_logged.append(plot_collection)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_file_entries",
     [

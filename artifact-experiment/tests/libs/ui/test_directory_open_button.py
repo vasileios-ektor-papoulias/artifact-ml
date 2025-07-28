@@ -3,6 +3,7 @@ from artifact_experiment.libs.ui.directory_open_button import DirectoryOpenButto
 from pytest_mock import MockerFixture
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "path, description",
     [

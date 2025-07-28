@@ -7,6 +7,7 @@ from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRunAd
 from artifact_experiment.libs.tracking.filesystem.loggers.scores import FilesystemScoreLogger
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_score_names, ls_scores, expected_logs",
     [

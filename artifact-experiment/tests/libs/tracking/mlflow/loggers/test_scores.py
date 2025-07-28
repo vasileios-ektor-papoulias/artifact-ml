@@ -7,6 +7,7 @@ from artifact_experiment.libs.tracking.mlflow.loggers.scores import MlflowScoreL
 from pytest_mock import MockerFixture
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "experiment_id, run_id, ls_score_names, ls_scores",
     [

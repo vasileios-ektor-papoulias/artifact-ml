@@ -4,6 +4,7 @@ from tests.base.dummy.artifact_dependencies import DummyArtifactResources, Dummy
 from tests.base.dummy.artifacts import DummyScoreArtifact, DummyScoreHyperparams
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "hyperparams, resource_spec, artifact_resources, expected",
     [
