@@ -75,3 +75,61 @@ def test_log(
             path_source=expected_path_source, dir_target=expected_backend_path
         )
         ls_logged.append(array)
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "experiment_id, run_id, ls_array_names, ls_arrays",
+    [
+        ("exp1", "run1", [], []),
+        ("exp1", "run1", ["array_1"], ["array_1"]),
+        ("exp1", "run1", ["array_1", "array_2"], ["array_1", "array_2"]),
+        ("exp1", "run1", ["array_1", "array_3"], ["array_1", "array_3"]),
+        ("exp1", "run1", ["array_1", "array_2", "array_3"], ["array_1", "array_2", "array_3"]),
+        (
+            "exp1",
+            "run1",
+            ["array_1", "array_2", "array_3", "array_4", "array_5"],
+            ["array_1", "array_2", "array_3", "array_4", "array_5"],
+        ),
+    ],
+    indirect=["ls_arrays"],
+)
+def test_log_fs_integration(
+    mocker: MockerFixture,
+    array_logger_factory: Callable[
+        [Optional[str], Optional[str]], Tuple[MlflowRunAdapter, MlflowArrayLogger]
+    ],
+    experiment_id: str,
+    run_id: str,
+    ls_array_names: List[str],
+    ls_arrays: List[ndarray],
+):
+    adapter, logger = array_logger_factory(experiment_id, run_id)
+    ls_logged = []
+    mock_get_ls_artifact_info = mocker.patch.object(
+        adapter, "get_ls_artifact_info", return_value=ls_logged
+    )
+    spy_tempdir = mocker.spy(tempfile, "TemporaryDirectory")
+    spy_np_save = mocker.spy(np, "save")
+    adapter_upload_spy = mocker.spy(adapter, "upload")
+    for idx, (array_name, array) in enumerate(zip(ls_array_names, ls_arrays), start=1):
+        expected_get_call_count = idx
+        expected_log_call_count = idx
+        expected_tempdir_call_count = idx
+        expected_np_save_call_count = idx
+        expected_backend_path = os.path.join("artifacts", "arrays", array_name)
+        logger.log(artifact_name=array_name, artifact=array)
+        expected_path_source = os.path.join(
+            spy_tempdir.spy_return.name, f"{1 + len(ls_logged)}.npy"
+        )
+        assert mock_get_ls_artifact_info.call_count == expected_get_call_count
+        mock_get_ls_artifact_info.assert_any_call(backend_path=expected_backend_path)
+        assert spy_tempdir.call_count == expected_tempdir_call_count
+        assert spy_np_save.call_count == expected_np_save_call_count
+        spy_np_save.assert_any_call(file=expected_path_source, arr=array)
+        assert adapter_upload_spy.call_count == expected_log_call_count
+        adapter_upload_spy.assert_any_call(
+            path_source=expected_path_source, dir_target=expected_backend_path
+        )
+        ls_logged.append(array)
