@@ -9,8 +9,6 @@
 # from pytest_mock import MockerFixture
 
 
-# @pytest.mark.unit
-@pytest.mark.parametrize(
 #     "experiment_id, run_id, ls_score_collection_names, ls_score_collections",
 #     [
 #         ("exp1", "run1", [], []),

@@ -10,8 +10,6 @@
 # from pytest_mock import MockerFixture
 
 
-# @pytest.mark.unit
-@pytest.mark.parametrize(
 #     "experiment_id, run_id, ls_plot_collection_names, ls_plot_collections",
 #     [
 #         ("exp1", "run1", [], []),

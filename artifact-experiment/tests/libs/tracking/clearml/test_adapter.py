@@ -7,8 +7,6 @@
 # from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter, NeptuneRunStatus
 
 
-# @pytest.mark.unit
-@pytest.mark.parametrize(
 #     "experiment_id, run_id",
 #     [
 #         ("exp1", "run1"),
@@ -31,8 +29,6 @@
 #         UUID(adapter.run_id)
 
 
-# @pytest.mark.unit
-@pytest.mark.parametrize(
 #     "experiment_id, run_id",
 #     [
 #         ("exp1", "run1"),
@@ -55,8 +51,6 @@
 #         assert native_run.run_id == run_id
 
 
-# @pytest.mark.unit
-@pytest.mark.parametrize(
 #     "experiment_id, run_id",
 #     [
 #         ("exp1", "run1"),
@@ -73,8 +67,6 @@
 #         assert ctx_native_run is native_run
 
 
-# @pytest.mark.unit
-@pytest.mark.parametrize(
 #     "experiment_id, run_id",
 #     [
 #         ("exp1", "run1"),
@@ -94,8 +86,6 @@
 #     assert adapter.run_status == NeptuneRunStatus.INACTIVE
 
 
-# @pytest.mark.unit
-@pytest.mark.parametrize(
 #     "experiment_id, run_id, artifact_path, artifact_result",
 #     [
 #         ("exp1", "run1", "/test/path/1", "score_1"),
@@ -127,8 +117,6 @@
 #     native_run[log_path].append.assert_called_once_with(artifact_result)
 
 
-# @pytest.mark.unit
-@pytest.mark.parametrize(
 #     "experiment_id, run_id, path_source, dir_target",
 #     [
 #         ("exp1", "run1", "/test/path", "uploads"),
