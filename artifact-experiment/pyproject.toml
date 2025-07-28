@@ -29,6 +29,3 @@ ruff = "^0.11.4"
 pytest = "^8.3.5"
 pytest-mock = "^3.14.0"
 ipykernel = "^6.29.5"
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
