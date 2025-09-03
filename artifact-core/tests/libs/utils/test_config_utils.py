@@ -1,30 +1,33 @@
 import json
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Generator, Optional, Tuple
 
 import pytest
 from artifact_core.libs.utils.config_utils import (
     ConfigMerger,
     ConfigOverrideLocator,
-    EngineConfigType,
+    DomainToolkitConfigType,
 )
+from pytest_mock import MockerFixture
 
 
 @pytest.fixture
-def temp_dir_with_config(tmp_path):
-    config_path = tmp_path / ".validation_engine"
-    config_path.mkdir()
-    config_file = config_path / EngineConfigType.TABLE_COMPARISON.value
+def temp_dir_with_config(
+    tmp_path: Path,
+) -> Generator[Tuple[Path, Path, Path, Dict[str, Any]], None, None]:
+    config_dirpath = tmp_path / ".artifact-ml"
+    config_dirpath.mkdir()
+    config_filepath = config_dirpath / DomainToolkitConfigType.TABLE_COMPARISON.value
     config_data = {"test": "value", "nested": {"key": "value"}}
-    with open(config_file, "w") as f:
+    with open(config_filepath, "w") as f:
         json.dump(config_data, f)
     subdir = tmp_path / "subdir" / "deeper"
     subdir.mkdir(parents=True)
-    yield tmp_path, config_path, config_file, config_data
-    if config_file.exists():
-        config_file.unlink()
-    if config_path.exists():
-        config_path.rmdir()
+    yield tmp_path, config_dirpath, config_filepath, config_data
+    if config_filepath.exists():
+        config_filepath.unlink()
+    if config_dirpath.exists():
+        config_dirpath.rmdir()
     if (tmp_path / "subdir" / "deeper").exists():
         (tmp_path / "subdir" / "deeper").rmdir()
     if (tmp_path / "subdir").exists():
@@ -40,14 +43,16 @@ def temp_dir_with_config(tmp_path):
     ],
 )
 def test_get_config_override(
-    temp_dir_with_config, monkeypatch, config_exists: bool, expected_result: bool
+    temp_dir_with_config: Tuple[Path, Path, Path, Dict[str, Any]],
+    mocker: MockerFixture,
+    config_exists: bool,
+    expected_result: bool,
 ):
-    tmp_path, _, config_file, config_data = temp_dir_with_config
-
-    if not config_exists and config_file.exists():
-        config_file.unlink()
-    monkeypatch.setattr(Path, "cwd", lambda: tmp_path)
-    result = ConfigOverrideLocator.get_config_override(EngineConfigType.TABLE_COMPARISON)
+    tmp_path, _, config_filepath, config_data = temp_dir_with_config
+    if not config_exists and config_filepath.exists():
+        config_filepath.unlink()
+    mocker.patch.object(Path, "cwd", return_value=tmp_path)
+    result = ConfigOverrideLocator.get_config_override(DomainToolkitConfigType.TABLE_COMPARISON)
     if expected_result:
         assert result == config_data
     else:

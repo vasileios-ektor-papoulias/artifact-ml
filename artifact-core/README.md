@@ -435,25 +435,25 @@ When using `artifact-core` as a package in your own project, you can override th
 
 #### How Configuration Override Works
 
-1. Create a `.artifact` directory in your project root
-2. Create a configuration file named after the engine type (e.g., `table_comparison.json`)
+1. Create a `.artifact-ml` directory in your project root
+2. Create a configuration file named after the domain toolkit of interest (e.g., `table_comparison.json`)
 3. Define your custom configuration in JSON format
 4. Your configuration override will be automatically detected and merged with the default one
 
 #### Example: Overriding Table Comparison Configuration
 
-Create a file at `.artifact/table_comparison.json` in your project root:
+Create a file at `.artifact-ml/table_comparison.json` in your project root:
 
 ```json
 {
   "scores": {
-    "mean_js_distance": {
+    "MEAN_JS_DISTANCE": {
       "n_bins_cts_histogram": 200,
       "categorical_only": true
     }
   },
   "plots": {
-    "tsne_projection_plot": {
+    "TSNE_JUXTAPOSITION": {
       "perplexity": 50,
       "learning_rate": 200,
       "max_iter": 2000
@@ -462,7 +462,7 @@ Create a file at `.artifact/table_comparison.json` in your project root:
 }
 ```
 
-This configuration will override the default settings for the `mean_js_distance` score and the `tsne_projection_plot` plot, while keeping the default settings for all other artifacts.
+This configuration will override the default settings for the `MEAN_JS_DISTANCE` score and the `TSNE_JUXTAPOSITION` plot, while keeping the default settings for all other artifacts.
 
 #### Configuration Structure
 

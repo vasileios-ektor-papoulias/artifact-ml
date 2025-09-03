@@ -4,18 +4,21 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 
-class EngineConfigType(Enum):
+class DomainToolkitConfigType(Enum):
     TABLE_COMPARISON = "table_comparison.json"
+    BINARY_CLASSIFICATION = "binary_classification.json"
 
 
 class ConfigOverrideLocator:
-    _config_dir_name = ".validation_engine"
+    _config_dir_name = ".artifact-ml"
 
     @classmethod
-    def get_config_override(cls, engine_config_type: EngineConfigType) -> Optional[Dict[str, Any]]:
+    def get_config_override(
+        cls, domain_toolkit_config_type: DomainToolkitConfigType
+    ) -> Optional[Dict[str, Any]]:
         user_config_dir = cls._ascend_to_marker(marker=cls._config_dir_name)
         if user_config_dir is not None:
-            user_config_file = user_config_dir / engine_config_type.value
+            user_config_file = user_config_dir / domain_toolkit_config_type.value
             if user_config_file.exists():
                 with user_config_file.open() as f:
                     user_overrides = json.load(f)
