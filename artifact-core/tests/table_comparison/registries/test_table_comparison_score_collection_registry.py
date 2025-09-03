@@ -12,6 +12,7 @@ from artifact_core.table_comparison.registries.score_collections.registry import
 )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "artifact_type, artifact_class",
     [

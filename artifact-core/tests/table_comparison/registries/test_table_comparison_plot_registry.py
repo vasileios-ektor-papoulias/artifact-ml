@@ -36,6 +36,7 @@ from artifact_core.table_comparison.registries.plots.registry import (
 )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "artifact_type, artifact_class",
     [

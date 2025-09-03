@@ -28,6 +28,7 @@ def mock_dependency_factory(
     return _factory
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "resource_spec, resources, expected_result",
     [
@@ -53,6 +54,7 @@ def test_produce_score(
     assert result == expected_result
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "resource_spec, resources, expected_result",
     [
@@ -78,6 +80,7 @@ def test_produce_array(
     assert (result == expected_result).all()
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "resource_spec, resources, expected_result",
     [
@@ -103,6 +106,7 @@ def test_produce_plot(
     assert result == expected_result
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "resource_spec, resources, expected_result",
     [
@@ -130,6 +134,7 @@ def test_produce_score_collection(
     assert result == expected_result
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "resource_spec, resources, expected_result",
     [
@@ -170,6 +175,7 @@ def test_produce_array_collection(
         assert (result[array_name] == expected_result[array_name]).all()
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "resource_spec, resources, expected_result",
     [

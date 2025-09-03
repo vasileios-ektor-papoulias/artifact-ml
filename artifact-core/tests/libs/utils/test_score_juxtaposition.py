@@ -7,6 +7,7 @@ from artifact_core.libs.utils.score_juxtaposition import (
 )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "dict_scores_real, dict_scores_synthetic, ls_keys, expected",
     [
@@ -41,6 +42,7 @@ def test_juxtaposition_array(
         assert np.allclose(result[key], expected[key]), f"Mismatch for key '{key}'"
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "score_real, score_synthetic, expected",
     [

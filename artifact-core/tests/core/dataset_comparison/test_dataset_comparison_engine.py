@@ -32,6 +32,7 @@ def mock_dependency_factory(
     return _factory
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "resource_spec, dataset_real, dataset_synthetic, expected_result",
     [
@@ -71,6 +72,7 @@ def test_produce_dataset_comparison_score(
     assert result == expected_result
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "resource_spec, dataset_real, dataset_synthetic, expected_result",
     [
@@ -105,6 +107,7 @@ def test_produce_dataset_comparison_array(
     assert result == expected_result
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "resource_spec, dataset_real, dataset_synthetic, expected_result",
     [
@@ -139,6 +142,7 @@ def test_produce_dataset_comparison_plot(
     assert result == expected_result
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "resource_spec, dataset_real, dataset_synthetic, expected_result",
     [
@@ -180,6 +184,7 @@ def test_produce_dataset_comparison_score_collection(
     assert result == expected_result
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "resource_spec, dataset_real, dataset_synthetic, expected_result",
     [
@@ -216,6 +221,7 @@ def test_produce_dataset_comparison_array_collection(
     assert result == expected_result
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "resource_spec, dataset_real, dataset_synthetic, expected_result",
     [

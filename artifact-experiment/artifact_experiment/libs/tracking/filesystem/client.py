@@ -5,9 +5,7 @@ from numpy import ndarray
 
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_experiment.base.tracking.logger import ArtifactLogger
-from artifact_experiment.libs.tracking.filesystem.adapter import (
-    FilesystemRunAdapter,
-)
+from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRun, FilesystemRunAdapter
 from artifact_experiment.libs.tracking.filesystem.loggers.array_collections import (
     FilesystemArrayCollectionLogger,
 )
@@ -30,7 +28,15 @@ class FilesystemTrackingClient(TrackingClient[FilesystemRunAdapter]):
         cls: Type[FilesystemTrackingClientT], experiment_id: str, run_id: Optional[str] = None
     ) -> FilesystemTrackingClientT:
         run = FilesystemRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
-        client = cls(run=run)
+        client = cls._build(run=run)
+        return client
+
+    @classmethod
+    def from_native_run(
+        cls: Type[FilesystemTrackingClientT], native_run: FilesystemRun
+    ) -> FilesystemTrackingClientT:
+        run = FilesystemRunAdapter.from_native_run(native_run=native_run)
+        client = cls._build(run=run)
         return client
 
     @property

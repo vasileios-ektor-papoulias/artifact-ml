@@ -7,6 +7,7 @@ import pytest
 from artifact_core.libs.implementation.tabular.js.calculator import JSDistanceCalculator
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_real, df_synth, ls_cts_features, ls_cat_features, cat_unique_map, n_bins, "
     + "categorical_only, expected, expect_raise_missing, expect_raise_overlap",
@@ -224,6 +225,7 @@ def test_compute_mean_js(
             )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_real, df_synth, ls_cts_features, ls_cat_features, cat_unique_map, "
     "n_bins, categorical_only, expected_js_dict, expect_raise_missing, expect_raise_overlap",

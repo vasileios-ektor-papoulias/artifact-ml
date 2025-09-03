@@ -11,6 +11,7 @@ from tests.core.dataset_comparison.dummy.artifacts import (
 )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "hyperparams, resource_spec, artifact_resources, expected, expect_raise_invalid_resource",
     [

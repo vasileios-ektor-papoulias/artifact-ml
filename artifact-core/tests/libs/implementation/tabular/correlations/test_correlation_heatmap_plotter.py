@@ -13,6 +13,7 @@ from artifact_core.libs.utils.plot_combiner import PlotCombinationConfig
 from matplotlib.figure import Figure
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_dispatcher, cat_features, cat_corr_type, cont_corr_type",
     [
@@ -65,6 +66,7 @@ def test_get_correlation_heatmap(
     assert width > 0 and height > 0, f"Figure size should be positive, got {width}x{height}"
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_pair_dispatcher, cat_features, cat_corr_type, cont_corr_type",
     [
@@ -118,6 +120,7 @@ def test_get_correlation_difference_heatmap(
     assert width > 0 and height > 0, f"Figure size should be positive, got {width}x{height}"
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_pair_dispatcher, cat_features, cat_corr_type, cont_corr_type, expected_subplot_titles",
     [
@@ -175,6 +178,7 @@ def test_get_combined_correlation_plot(
         assert ax.get_window_extent().height > 0, f"Subplot {i} height should be positive"
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_pair_dispatcher, cat_features, custom_config",
     [

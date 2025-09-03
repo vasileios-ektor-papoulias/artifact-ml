@@ -6,6 +6,7 @@ from artifact_core.libs.implementation.tabular.cdf.overlaid_plotter import Overl
 from matplotlib.figure import Figure
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_pair_dispatcher, cts_features, expected_plot_count",
     [
@@ -43,6 +44,7 @@ def test_get_overlaid_cdf_plot_collection(
         )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_pair_dispatcher, cts_features, expected_axes_count",
     [

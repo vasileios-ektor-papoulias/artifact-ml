@@ -7,6 +7,7 @@ from pytest_mock import MockerFixture
 from sklearn.decomposition import PCA
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "dataset_dispatcher, projector_config",
     [

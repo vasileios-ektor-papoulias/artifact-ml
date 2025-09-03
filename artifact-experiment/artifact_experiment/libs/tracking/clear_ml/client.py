@@ -29,7 +29,7 @@ class ClearMLTrackingClient(TrackingClient[ClearMLRunAdapter]):
         cls: Type[ClearMLTrackingClientT], experiment_id: str, run_id: Optional[str] = None
     ) -> ClearMLTrackingClientT:
         run = ClearMLRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
-        client = cls(run=run)
+        client = cls._build(run=run)
         return client
 
     @classmethod
@@ -37,7 +37,7 @@ class ClearMLTrackingClient(TrackingClient[ClearMLRunAdapter]):
         cls: Type[ClearMLTrackingClientT], native_run: Task
     ) -> ClearMLTrackingClientT:
         run = ClearMLRunAdapter.from_native_run(native_run=native_run)
-        client = cls(run=run)
+        client = cls._build(run=run)
         return client
 
     @staticmethod

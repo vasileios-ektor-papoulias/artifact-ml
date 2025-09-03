@@ -1,11 +1,13 @@
 import os
 from dataclasses import dataclass
+from pathlib import Path
 from typing import List, Optional
 
-from mlflow.entities import FileInfo, Metric, Run, RunStatus
+from mlflow.entities import Experiment, FileInfo, Metric, Run, RunStatus
 from mlflow.tracking import MlflowClient
 
 from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
+from artifact_experiment.libs.utils.environment_variable_reader import EnvironmentVariableReader
 
 
 class InactiveMlflowRunError(InactiveRunError):
@@ -13,32 +15,38 @@ class InactiveMlflowRunError(InactiveRunError):
 
 
 @dataclass
-class MlflowNativeClient:
+class MlflowNativeRun:
     client: MlflowClient
+    experiment: Experiment
     run: Run
 
 
-class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
+class MlflowRunAdapter(RunAdapter[MlflowNativeRun]):
     _root_dir = "artifact_ml"
-    _default_tracking_uri = "http://localhost:5000"
-    TRACKING_URI = os.environ.get("MLFLOW_TRACKING_URI", _default_tracking_uri)
+    _tracking_uri_env_var_name = "MLFLOW_TRACKING_URI"
+    _tracking_uri: Optional[str] = None
 
     @property
     def experiment_id(self) -> str:
+        """User-chosen experiment ID (stored as name in MLflow)."""
+        return self._native_run.experiment.name
+
+    @property
+    def experiment_uuid(self) -> str:
+        """Internal MLflow experiment UUID."""
         return self._native_run.run.info.experiment_id
 
     @property
-    def experiment_name(self) -> str:
-        experiment = self._native_run.client.get_experiment(experiment_id=self.experiment_id)
-        return experiment.name
+    def run_id(self) -> str:
+        """User-chosen run ID (stored as run_name in MLflow)."""
+        run_id = self._native_run.run.info.run_name
+        assert run_id is not None
+        return run_id
 
     @property
     def run_uuid(self) -> str:
+        """Internal MLflow run UUID."""
         return self._native_run.run.info.run_id
-
-    @property
-    def run_id(self) -> str:
-        return str(self._native_run.run.info.run_name)
 
     @property
     def run_status(self) -> str:
@@ -54,54 +62,53 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
     def upload(self, path_source: str, dir_target: str):
         if not self.is_active:
             raise InactiveMlflowRunError("Run is inactive")
-        path_source = self._prepend_root_dir(path=path_source)
+        dir_target = self._prepend_root_dir(path=dir_target)
+        key = self._get_store_key(path=dir_target)
         self._native_run.client.log_artifact(
             run_id=self.run_uuid,
             local_path=path_source,
-            artifact_path=dir_target,
+            artifact_path=key,
         )
 
     def log_score(self, backend_path: str, value: float, step: int = 0):
         if not self.is_active:
             raise InactiveMlflowRunError("Run is inactive")
         backend_path = self._prepend_root_dir(path=backend_path)
-        key = backend_path.replace("\\", "/")
+        key = self._get_store_key(path=backend_path)
         self._native_run.client.log_metric(run_id=self.run_uuid, key=key, value=value, step=step)
 
     def get_ls_artifact_info(self, backend_path: str) -> List[FileInfo]:
         backend_path = self._prepend_root_dir(path=backend_path)
-        ls_artifact_infos = self._native_run.client.list_artifacts(
-            run_id=self.run_uuid, path=backend_path
-        )
+        key = self._get_store_key(path=backend_path)
+        ls_artifact_infos = self._native_run.client.list_artifacts(run_id=self.run_uuid, path=key)
         return ls_artifact_infos
 
     def get_ls_score_history(self, backend_path: str) -> List[Metric]:
         backend_path = self._prepend_root_dir(path=backend_path)
-        key = backend_path.replace("\\", "/")
+        key = self._get_store_key(path=backend_path)
         ls_metric_history = self._native_run.client.get_metric_history(
             run_id=self.run_uuid, key=key
         )
         return ls_metric_history
 
     @classmethod
-    def _build_native_run(cls, experiment_id: str, run_id: str) -> MlflowNativeClient:
-        mlflow_client = MlflowClient(tracking_uri=cls.TRACKING_URI)
-        run = cls._create_mlflow_run(
-            mlflow_client=mlflow_client, experiment_id=experiment_id, run_id=run_id
+    def _build_native_run(cls, experiment_id: str, run_id: str) -> MlflowNativeRun:
+        native_client = cls._create_client()
+        experiment = cls._create_experiment(
+            native_client=native_client, experiment_id=experiment_id
         )
-        native_run = MlflowNativeClient(client=mlflow_client, run=run)
+        run = cls._create_run(native_client=native_client, experiment=experiment, run_id=run_id)
+        native_run = MlflowNativeRun(client=native_client, experiment=experiment, run=run)
         return native_run
 
     @classmethod
-    def _create_mlflow_run(
-        cls, mlflow_client: MlflowClient, experiment_id: str, run_id: str
-    ) -> Run:
+    def _create_run(cls, native_client: MlflowClient, experiment: Experiment, run_id: str) -> Run:
         run = cls._get_run_from_id(
-            mlflow_client=mlflow_client, experiment_id=experiment_id, run_id=run_id
+            native_client=native_client, experiment=experiment, run_id=run_id
         )
         if run is None:
-            run = mlflow_client.create_run(
-                experiment_id=experiment_id,
+            run = native_client.create_run(
+                experiment_id=experiment.experiment_id,
                 run_name=run_id,
             )
         if run.info.status != RunStatus.to_string(RunStatus.RUNNING):
@@ -110,18 +117,67 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeClient]):
             )
         return run
 
+    @classmethod
+    def _create_experiment(cls, native_client: MlflowClient, experiment_id: str) -> Experiment:
+        experiment = cls._get_experiment_from_id(
+            native_client=native_client, experiment_id=experiment_id
+        )
+        if experiment is None:
+            experiment_uuid = native_client.create_experiment(name=experiment_id)
+            experiment = cls._get_experiment_from_uuid(
+                native_client=native_client, experiment_uuid=experiment_uuid
+            )
+            assert experiment is not None, "Experiment creation failed"
+        return experiment
+
+    @classmethod
+    def _create_client(cls) -> MlflowClient:
+        tracking_uri = cls._get_tracking_uri()
+        native_client = MlflowClient(tracking_uri=tracking_uri)
+        return native_client
+
     @staticmethod
     def _get_run_from_id(
-        mlflow_client: MlflowClient, experiment_id: str, run_id: str
+        native_client: MlflowClient, experiment: Experiment, run_id: str
     ) -> Optional[Run]:
-        ls_runs = mlflow_client.search_runs(
-            experiment_ids=[experiment_id], filter_string=f"tags.mlflow.runName = '{run_id}'"
+        ls_runs = native_client.search_runs(
+            experiment_ids=[experiment.experiment_id],
+            filter_string=f"tags.mlflow.runName = '{run_id}'",
         )
         if ls_runs:
             run_info = ls_runs[0].info
-            run = mlflow_client.get_run(run_id=run_info.run_id)
+            run = native_client.get_run(run_id=run_info.run_id)
             return run
+
+    @staticmethod
+    def _get_experiment_from_id(
+        native_client: MlflowClient, experiment_id: str
+    ) -> Optional[Experiment]:
+        experiment = native_client.get_experiment_by_name(name=experiment_id)
+        if experiment is not None:
+            return experiment
+
+    @staticmethod
+    def _get_experiment_from_uuid(
+        native_client: MlflowClient, experiment_uuid: str
+    ) -> Optional[Experiment]:
+        experiment = native_client.get_experiment(experiment_id=experiment_uuid)
+        if experiment is not None:
+            return experiment
+
+    @classmethod
+    def _get_tracking_uri(cls) -> str:
+        if cls._tracking_uri is None:
+            cls._tracking_uri = EnvironmentVariableReader.get(
+                env_var_name=cls._tracking_uri_env_var_name
+            )
+        return cls._tracking_uri
 
     @classmethod
     def _prepend_root_dir(cls, path: str) -> str:
-        return os.path.join(cls._root_dir, path)
+        return os.path.join(cls._root_dir, path.lstrip("/"))
+
+    @staticmethod
+    def _get_store_key(path: str) -> str:
+        key = Path(path).as_posix()
+        return key

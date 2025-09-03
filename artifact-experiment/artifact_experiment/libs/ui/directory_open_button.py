@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Optional
 
 from IPython.display import display
 from ipywidgets import Button, HBox, Layout
@@ -19,22 +20,32 @@ class DirectoryOpenButtonConfig:
 
 
 class DirectoryOpenButton:
+    _default_description = "Open Dir"
+
     def __init__(
         self,
         path: str,
-        description: str,
+        description: Optional[str] = None,
         config: DirectoryOpenButtonConfig = DirectoryOpenButtonConfig(),
     ):
+        if description is None:
+            description = self._default_description
         self._path = path
         self._description = description
         self._config = config
-        self._opener = DirectoryOpener()
         self._render_button()
 
+    @property
+    def button(self) -> Button:
+        return self._button
+
+    def click(self):
+        self._on_click(None)
+
     def _render_button(self):
-        open_btn = self._create_open_button()
+        self._button = self._create_open_button()
         path_label = self._create_path_label()
-        display(HBox([open_btn, path_label]))
+        display(HBox([self._button, path_label]))
 
     def _create_open_button(self) -> Button:
         cfg = self._config
@@ -66,4 +77,4 @@ class DirectoryOpenButton:
         )
 
     def _on_click(self, _):
-        self._opener.open_directory(path=self._path)
+        DirectoryOpener.open_directory(path=self._path)

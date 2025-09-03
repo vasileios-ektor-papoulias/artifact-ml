@@ -36,6 +36,7 @@ def sample_figures_factory():
     return _factory
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "num_figs, n_cols, combined_title, expected_num_axes",
     [

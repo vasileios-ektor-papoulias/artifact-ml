@@ -26,8 +26,17 @@ class TrackingCallback(
         super().__init__(key=key)
         self._tracking_client = tracking_client
 
-    def set_tracking_client(self, tracking_client: Optional[TrackingClient]):
+    @property
+    def tracking_client(self) -> Optional[TrackingClient]:
+        return self._tracking_client
+
+    @tracking_client.setter
+    def tracking_client(self, tracking_client: Optional[TrackingClient]):
         self._tracking_client = tracking_client
+
+    @property
+    def tracking_enabled(self) -> bool:
+        return self._tracking_client is not None
 
     @abstractmethod
     def _compute(self, resources: CallbackResourcesTContr) -> CacheDataT: ...
@@ -161,6 +170,19 @@ class TrackingCallbackHandler(
         super().__init__(ls_callbacks=ls_callbacks)
         self._tracking_client = tracking_client
 
+    @property
+    def tracking_client(self) -> Optional[TrackingClient]:
+        return self._tracking_client
+
+    @tracking_client.setter
+    def tracking_client(self, tracking_client: Optional[TrackingClient]):
+        self._invalidate_callback_tracking_clients(ls_callbacks=self._ls_callbacks)
+        self._tracking_client = tracking_client
+
+    @property
+    def tracking_enabled(self) -> bool:
+        return self._tracking_client is not None
+
     @staticmethod
     @abstractmethod
     def _export(cache: Dict[str, CacheDataT], tracking_client: TrackingClient):
@@ -180,7 +202,7 @@ class TrackingCallbackHandler(
     @staticmethod
     def _invalidate_callback_tracking_clients(ls_callbacks: List[TrackingCallbackT]):
         for callback in ls_callbacks:
-            callback.set_tracking_client(tracking_client=None)
+            callback.tracking_client = None
 
 
 class ScoreHandlerExportMixin:

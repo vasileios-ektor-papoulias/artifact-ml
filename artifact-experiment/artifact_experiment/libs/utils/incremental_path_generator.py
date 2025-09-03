@@ -13,8 +13,8 @@ class IncrementalPathGenerator:
         if fmt is not None:
             fmt = cls._ensure_extension(fmt=fmt)
         cls._ensure_directory(dir_path=dir_path)
-        ls_existing_filepaths = os.listdir(dir_path)
-        ls_indices = cls._gather_indices(ls_filepaths=ls_existing_filepaths, fmt=fmt)
+        ls_filenames = os.listdir(dir_path)
+        ls_indices = cls._gather_indices(ls_filenames=ls_filenames, fmt=fmt)
         next_idx = cls._compute_next_index(ls_indices=ls_indices)
         path = cls.format_path(dir_path=dir_path, next_idx=next_idx, fmt=fmt)
         return path
@@ -37,9 +37,9 @@ class IncrementalPathGenerator:
         return max(ls_indices) + 1 if ls_indices else 0
 
     @classmethod
-    def _gather_indices(cls, ls_filepaths: List[str], fmt: Optional[str] = None) -> List[int]:
+    def _gather_indices(cls, ls_filenames: List[str], fmt: Optional[str] = None) -> List[int]:
         ls_indices: List[int] = []
-        for filename in ls_filepaths:
+        for filename in ls_filenames:
             index = cls._get_index_from_filename(filename=filename, fmt=fmt)
             if index is not None:
                 ls_indices.append(index)

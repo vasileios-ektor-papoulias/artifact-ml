@@ -31,6 +31,7 @@ from tests.base.dummy.registries import (
 )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "artifact_registry, artifact_type, resource_spec, expected_artifact_class, "
     + "expected_hyperparams, expect_raise_unregistered_artifact, "
@@ -186,6 +187,7 @@ def test_get(
 registreeT = TypeVar("registreeT")
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     ("registry_method, artifact_type, registree, expected_error_message"),
     [

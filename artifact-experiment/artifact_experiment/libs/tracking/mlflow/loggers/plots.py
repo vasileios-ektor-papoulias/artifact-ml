@@ -12,7 +12,7 @@ from artifact_experiment.libs.tracking.mlflow.loggers.base import MlflowArtifact
 from artifact_experiment.libs.utils.incremental_path_generator import IncrementalPathGenerator
 
 
-class MLFlowPlotLogger(MlflowArtifactLogger[Figure]):
+class MlflowPlotLogger(MlflowArtifactLogger[Figure]):
     _fmt = "png"
 
     def _append(self, artifact_path: str, artifact: Figure):

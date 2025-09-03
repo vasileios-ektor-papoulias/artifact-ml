@@ -14,6 +14,7 @@ from tests.libs.implementation.tabular.projections.base.dummy.projector import (
 )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "ls_cat_features, ls_cts_features, hyperparams, "
     + "expected_projection_type, expected_exception",
@@ -105,6 +106,7 @@ def test_build(
         assert isinstance(projector._plotter, ProjectionPlotter)
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "hyperparams, dataset_dispatcher, expected_shape, expected_exception",
     [
@@ -166,6 +168,7 @@ def test_project(
         )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "dataset_dispatcher",
     [
@@ -194,6 +197,7 @@ def test_produce_projection_plot(
     assert "dataset_projection_2d" in kwargs
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "dataset_dispatcher",
     [

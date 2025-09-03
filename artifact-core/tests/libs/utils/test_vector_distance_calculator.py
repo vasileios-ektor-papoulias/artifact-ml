@@ -26,6 +26,7 @@ def test_unsupported_metric():
         )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "metric, v1, v2, expected",
     [
