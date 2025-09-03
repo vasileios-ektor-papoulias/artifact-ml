@@ -1,0 +1,10 @@
+{
+  "native_artifact_path": "binary_classification/artifacts",
+  "custom_artifact_path": null,
+  "scores": {},
+  "arrays": {},
+  "plots": {},
+  "score_collections": {},
+  "array_collections": {},
+  "plot_collections": {}
+}
