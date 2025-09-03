@@ -4,12 +4,12 @@ from typing import Any, Dict, List, Optional, Type, TypeVar
 
 import pandas as pd
 
-from artifact_core.libs.resource_spec.labels.protocol import LabelsSpecProtocol
+from artifact_core.libs.resource_spec.labels.protocol import LabelSpecProtocol
 
-LabelsSpecT = TypeVar("LabelsSpecT", bound="LabelsSpec")
+LabelSpecT = TypeVar("LabelSpecT", bound="LabelSpec")
 
 
-class LabelsSpec(LabelsSpecProtocol):
+class LabelSpec(LabelSpecProtocol):
     """
     Static metadata for a multi-label classification schema.
 
@@ -29,11 +29,11 @@ class LabelsSpec(LabelsSpecProtocol):
 
     @classmethod
     def build(
-        cls: Type[LabelsSpecT],
+        cls: Type[LabelSpecT],
         id_name: str,
         ls_labels: Optional[List[str]] = None,
         label_classes_map: Optional[Dict[str, List[str]]] = None,
-    ) -> LabelsSpecT:
+    ) -> LabelSpecT:
         if ls_labels is None:
             ls_labels = []
 
@@ -56,13 +56,13 @@ class LabelsSpec(LabelsSpecProtocol):
 
     @classmethod
     def from_df(
-        cls: Type[LabelsSpecT],
+        cls: Type[LabelSpecT],
         df: pd.DataFrame,
         id_col: str,
         label_names: Optional[List[str]] = None,
         coerce_to_str: bool = True,
         dropna_classes: bool = True,
-    ) -> LabelsSpecT:
+    ) -> LabelSpecT:
         if id_col not in df.columns:
             raise ValueError(f"'{id_col}' not found in DataFrame columns.")
 
@@ -151,7 +151,7 @@ class LabelsSpec(LabelsSpecProtocol):
         return json.dumps(self._internal_spec)
 
     @classmethod
-    def deserialize(cls: Type[LabelsSpecT], json_str: str) -> LabelsSpecT:
+    def deserialize(cls: Type[LabelSpecT], json_str: str) -> LabelSpecT:
         return cls(internal_spec=json.loads(json_str))
 
     def export(self, filepath: Path) -> None:
@@ -162,7 +162,7 @@ class LabelsSpec(LabelsSpecProtocol):
             f.write(self.serialize())
 
     @classmethod
-    def load(cls: Type[LabelsSpecT], filepath: Path) -> LabelsSpecT:
+    def load(cls: Type[LabelSpecT], filepath: Path) -> LabelSpecT:
         if filepath.suffix != ".json":
             filepath = filepath.with_suffix(".json")
         with open(filepath, "r", encoding="utf-8") as f:

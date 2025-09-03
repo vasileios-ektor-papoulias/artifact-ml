@@ -1,7 +1,7 @@
 from typing import Dict, List, Protocol
 
 
-class LabelsSpecProtocol(Protocol):
+class LabelSpecProtocol(Protocol):
     @property
     def id_name(self) -> str: ...
 

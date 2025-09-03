@@ -9,7 +9,7 @@ from artifact_core.base.registry import ArtifactType
 from artifact_core.core.classification.registry import (
     ClassificationArtifactRegistry,
 )
-from artifact_core.libs.resource_spec.labels.protocol import LabelsSpecProtocol
+from artifact_core.libs.resource_spec.labels.protocol import LabelSpecProtocol
 
 ArtifactTypeT = TypeVar("ArtifactTypeT", bound="ArtifactType")
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
@@ -19,7 +19,7 @@ BinaryClassificationArtifactRegistry = ClassificationArtifactRegistry[
     ArtifactTypeT,
     pd.DataFrame,
     ArtifactResultT,
-    LabelsSpecProtocol,
+    LabelSpecProtocol,
 ]
 
 BinaryClassificationScoreRegistryBase = BinaryClassificationArtifactRegistry[ArtifactTypeT, float]

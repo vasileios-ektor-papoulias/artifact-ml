@@ -1,9 +1,9 @@
 from typing import List, Optional
 
-from artifact_core.libs.resource_spec.labels.spec import LabelsSpec
+from artifact_core.libs.resource_spec.labels.spec import LabelSpec
 
 
-class BinaryLabelsSpec(LabelsSpec):
+class BinaryLabelSpec(LabelSpec):
     _binary_cardinality = 2
 
     def add_label(self, label_name: str, classes: Optional[List[str]] = None) -> None:
