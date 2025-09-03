@@ -20,23 +20,23 @@ from artifact_core.libs.resource_validation.tabular.table_validator import (
     TableValidator,
 )
 
-artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
-artifactHyperparamsT = TypeVar("artifactHyperparamsT", bound="ArtifactHyperparams")
+ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
+ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound="ArtifactHyperparams")
 
 
 class TableComparisonArtifact(
     DatasetComparisonArtifact[
         pd.DataFrame,
-        artifactResultT,
-        artifactHyperparamsT,
+        ArtifactResultT,
+        ArtifactHyperparamsT,
         TabularDataSpecProtocol,
     ],
-    Generic[artifactResultT, artifactHyperparamsT],
+    Generic[ArtifactResultT, ArtifactHyperparamsT],
 ):
     @abstractmethod
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> artifactResultT: ...
+    ) -> ArtifactResultT: ...
 
     def _validate_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
@@ -64,9 +64,9 @@ class TableComparisonArtifact(
 
 TableComparisonArtifactResources = DatasetComparisonArtifactResources[pd.DataFrame]
 
-TableComparisonScore = TableComparisonArtifact[float, artifactHyperparamsT]
-TableComparisonArray = TableComparisonArtifact[ndarray, artifactHyperparamsT]
-TableComparisonPlot = TableComparisonArtifact[Figure, artifactHyperparamsT]
-TableComparisonScoreCollection = TableComparisonArtifact[Dict[str, float], artifactHyperparamsT]
-TableComparisonArrayCollection = TableComparisonArtifact[Dict[str, ndarray], artifactHyperparamsT]
-TableComparisonPlotCollection = TableComparisonArtifact[Dict[str, Figure], artifactHyperparamsT]
+TableComparisonScore = TableComparisonArtifact[float, ArtifactHyperparamsT]
+TableComparisonArray = TableComparisonArtifact[ndarray, ArtifactHyperparamsT]
+TableComparisonPlot = TableComparisonArtifact[Figure, ArtifactHyperparamsT]
+TableComparisonScoreCollection = TableComparisonArtifact[Dict[str, float], ArtifactHyperparamsT]
+TableComparisonArrayCollection = TableComparisonArtifact[Dict[str, ndarray], ArtifactHyperparamsT]
+TableComparisonPlotCollection = TableComparisonArtifact[Dict[str, Figure], ArtifactHyperparamsT]

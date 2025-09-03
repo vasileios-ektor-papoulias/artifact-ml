@@ -13,26 +13,26 @@ from artifact_core.libs.resource_spec.tabular.protocol import (
     TabularDataSpecProtocol,
 )
 
-artifactTypeT = TypeVar("artifactTypeT", bound="ArtifactType")
-artifactResultT = TypeVar("artifactResultT", bound=ArtifactResult)
+ArtifactTypeT = TypeVar("ArtifactTypeT", bound="ArtifactType")
+ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 
 TableComparisonArtifactRegistry = DatasetComparisonArtifactRegistry[
-    artifactTypeT,
+    ArtifactTypeT,
     pd.DataFrame,
-    artifactResultT,
+    ArtifactResultT,
     TabularDataSpecProtocol,
 ]
 
-TableComparisonScoreRegistryBase = TableComparisonArtifactRegistry[artifactTypeT, float]
-TableComparisonArrayRegistryBase = TableComparisonArtifactRegistry[artifactTypeT, ndarray]
-TableComparisonPlotRegistryBase = TableComparisonArtifactRegistry[artifactTypeT, Figure]
+TableComparisonScoreRegistryBase = TableComparisonArtifactRegistry[ArtifactTypeT, float]
+TableComparisonArrayRegistryBase = TableComparisonArtifactRegistry[ArtifactTypeT, ndarray]
+TableComparisonPlotRegistryBase = TableComparisonArtifactRegistry[ArtifactTypeT, Figure]
 TableComparisonScoreCollectionRegistryBase = TableComparisonArtifactRegistry[
-    artifactTypeT, Dict[str, float]
+    ArtifactTypeT, Dict[str, float]
 ]
 TableComparisonArrayCollectionRegistryBase = TableComparisonArtifactRegistry[
-    artifactTypeT, Dict[str, ndarray]
+    ArtifactTypeT, Dict[str, ndarray]
 ]
 TableComparisonPlotCollectionRegistryBase = TableComparisonArtifactRegistry[
-    artifactTypeT, Dict[str, Figure]
+    ArtifactTypeT, Dict[str, Figure]
 ]
