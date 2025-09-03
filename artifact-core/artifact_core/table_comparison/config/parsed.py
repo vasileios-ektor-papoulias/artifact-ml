@@ -6,7 +6,7 @@ from typing import Any, Dict
 from artifact_core.libs.utils.config_utils import (
     ConfigMerger,
     ConfigOverrideLocator,
-    EngineConfigType,
+    DomainToolkitConfigType,
 )
 
 ARTIFACT_CORE_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -17,7 +17,7 @@ with CONFIG_FILE.open() as f:
     _dict_artifact_configs: Dict[str, Any] = json.load(f)
 
 _user_override = ConfigOverrideLocator.get_config_override(
-    engine_config_type=EngineConfigType.TABLE_COMPARISON
+    domain_toolkit_config_type=DomainToolkitConfigType.TABLE_COMPARISON
 )
 
 _merged_artifact_configs = ConfigMerger.merge(
@@ -26,7 +26,7 @@ _merged_artifact_configs = ConfigMerger.merge(
 
 
 NATIVE_ARTIFACT_PATH = os.path.join(
-    ARTIFACT_CORE_ROOT, _merged_artifact_configs.get("native_artifact_path")
+    ARTIFACT_CORE_ROOT, _merged_artifact_configs.get("native_artifact_path", "")
 )
 CUSTOM_ARTIFACT_PATH = _merged_artifact_configs.get("custom_artifact_path")
 DICT_SCORES_CONFIG = _merged_artifact_configs.get("scores", {})
