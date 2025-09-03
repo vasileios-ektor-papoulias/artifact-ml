@@ -13,6 +13,7 @@ from artifact_core.libs.utils.vector_distance_calculator import (
 )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df, cat_features, cat_corr, cont_corr, expected_shape",
     [
@@ -52,6 +53,7 @@ def test_compute_df_correlations(
     )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_real, df_synthetic, cat_features, cat_corr, cont_corr, expected_shape",
     [
@@ -95,6 +97,7 @@ def test_compute_df_correlation_difference(
     )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_real, df_synthetic, cat_features, cat_corr, cont_corr, distance_metric, expected_distance",
     [

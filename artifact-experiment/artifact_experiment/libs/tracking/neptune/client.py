@@ -29,7 +29,7 @@ class NeptuneTrackingClient(TrackingClient[NeptuneRunAdapter]):
         cls: Type[NeptuneTrackingClientT], experiment_id: str, run_id: Optional[str] = None
     ) -> NeptuneTrackingClientT:
         run = NeptuneRunAdapter.build(experiment_id=experiment_id, run_id=run_id)
-        client = cls(run=run)
+        client = cls._build(run=run)
         return client
 
     @classmethod
@@ -37,7 +37,7 @@ class NeptuneTrackingClient(TrackingClient[NeptuneRunAdapter]):
         cls: Type[NeptuneTrackingClientT], native_run: neptune.Run
     ) -> NeptuneTrackingClientT:
         run = NeptuneRunAdapter.from_native_run(native_run=native_run)
-        client = cls(run=run)
+        client = cls._build(run=run)
         return client
 
     @staticmethod

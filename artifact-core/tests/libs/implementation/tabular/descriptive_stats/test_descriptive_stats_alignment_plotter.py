@@ -9,6 +9,7 @@ from artifact_core.libs.implementation.tabular.descriptive_stats.alignment_plott
 from matplotlib.figure import Figure
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_pair_dispatcher, ls_cts_features, stat, "
     + "expected_title, expected_ax_title, expected_xlabel, expected_ylabel",
@@ -182,6 +183,7 @@ def test_get_stat_comparison_plot(
     assert ax.get_yticklabels(), "Axis should have y tick labels"
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_pair_dispatcher, ls_cts_features, expected_title",
     [

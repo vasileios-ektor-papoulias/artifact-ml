@@ -60,6 +60,7 @@ def test_descriptive_stats_comparison_plot(
     assert result == fake_plot
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "artifact_class, statistic",
     [

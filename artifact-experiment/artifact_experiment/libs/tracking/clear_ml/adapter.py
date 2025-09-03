@@ -6,6 +6,7 @@ from clearml import Task, TaskTypes
 from matplotlib.figure import Figure
 
 from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
+from artifact_experiment.libs.tracking.clear_ml.setup_validator import ClearMLSetupValidator
 from artifact_experiment.libs.tracking.clear_ml.stores.files import ClearMLFileStore
 from artifact_experiment.libs.tracking.clear_ml.stores.plots import ClearMLPlotStore
 from artifact_experiment.libs.tracking.clear_ml.stores.scores import ClearMLScoreStore
@@ -121,12 +122,16 @@ class ClearMLRunAdapter(RunAdapter[Task]):
 
     @classmethod
     def _build_native_run(cls, experiment_id: str, run_id: str) -> Task:
-        return Task.init(
+        if not ClearMLSetupValidator.is_configured():
+            setup_instructions = ClearMLSetupValidator.get_setup_instructions()
+            raise RuntimeError(setup_instructions)
+        native_run = Task.init(
             project_name=experiment_id,
             task_name=run_id,
             task_type=cls._new_task_type,
             reuse_last_task_id=False,
         )
+        return native_run
 
     @classmethod
     def _prepend_root_dir(cls, path: str) -> str:

@@ -1,6 +1,8 @@
+import os
 import sys
 from pathlib import Path
 from typing import Generator, List, Optional, Tuple, Union
+from unittest.mock import MagicMock
 
 import pytest
 from artifact_core.libs.utils.package_importer import PackageImporter
@@ -26,10 +28,27 @@ def mock_package_structure() -> List[Tuple[str, str, bool]]:
     ]
 
 
+@pytest.fixture
+def mock_walk_packages(mocker: MockerFixture) -> MagicMock:
+    return mocker.patch("pkgutil.walk_packages")  # Important: patch at correct scope
+
+
+@pytest.fixture
+def mock_import_module(mocker: MockerFixture) -> MagicMock:
+    return mocker.patch("importlib.import_module")
+
+
 def _adjust_path_to_os(path: Union[str, Path]) -> str:
-    return str(Path(path).resolve())
+    return os.path.normcase(str(Path(path).resolve()))
 
 
+def _add_prefix_to_package_structure(
+    prefix: str, package_structure: List[Tuple[str, str, bool]]
+) -> List[Tuple[str, str, bool]]:
+    return [(importer, prefix + name, ispkg) for importer, name, ispkg in package_structure]
+
+
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "path, root, expected_package_prefix, expected_parent_in_syspath",
     [
@@ -50,25 +69,24 @@ def _adjust_path_to_os(path: Union[str, Path]) -> str:
     ],
 )
 def test_import_all_from_package_path(
-    mocker: MockerFixture,
     mock_sys_path: List[str],
     mock_package_structure: List[Tuple[str, str, bool]],
+    mock_walk_packages: MagicMock,
+    mock_import_module: MagicMock,
     path: Union[str, Path],
     root: Optional[str],
     expected_package_prefix: str,
     expected_parent_in_syspath: str,
 ):
     os_adjusted_path = _adjust_path_to_os(path)
-    os_adjusted_parent = _adjust_path_to_os(Path(expected_parent_in_syspath))
-    prefixed_mock_structure = [
-        (importer, expected_package_prefix + name, ispkg)
-        for importer, name, ispkg in mock_package_structure
-    ]
-    mock_walk_packages = mocker.patch("pkgutil.walk_packages")
-    mock_import_module = mocker.patch("importlib.import_module")
+    os_adjusted_parent = _adjust_path_to_os(expected_parent_in_syspath)
+    prefixed_mock_structure = _add_prefix_to_package_structure(
+        prefix=expected_package_prefix,
+        package_structure=mock_package_structure,
+    )
     mock_walk_packages.return_value = prefixed_mock_structure
     PackageImporter.import_all_from_package_path(path=path, root=root)
-    assert os_adjusted_parent in sys.path
+    assert os_adjusted_parent in map(os.path.normcase, sys.path)
     mock_walk_packages.assert_called_once_with([os_adjusted_path], prefix=expected_package_prefix)
     expected_imports = [
         expected_package_prefix + "module1",

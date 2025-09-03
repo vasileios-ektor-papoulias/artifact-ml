@@ -1,13 +1,14 @@
 import os
 import time
 from enum import Enum
-from getpass import getpass
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 import neptune
 from artifact_core.base.artifact_dependencies import ArtifactResult
 
 from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
+from artifact_experiment.libs.utils.environment_variable_reader import EnvironmentVariableReader
 
 
 class NeptuneRunStatus(Enum):
@@ -23,6 +24,7 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
     _root_dir = "artifact_ml"
     _time_to_wait_before_stopping_seconds: int = 1
     _active_run_status = NeptuneRunStatus.RUNNING
+    _api_token_env_var_name = "NEPTUNE_API_TOKEN"
     _api_token: Optional[str] = None
 
     def __init__(self, native_run: neptune.Run):
@@ -45,13 +47,15 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
         return self._run_id
 
     @property
-    def run_status(self) -> str:
-        run_metadata = self.run_metadata
-        return run_metadata["sys"]["state"]
+    def run_status(self) -> NeptuneRunStatus:
+        try:
+            return NeptuneRunStatus(self.run_metadata["sys"]["state"])
+        except ValueError:
+            raise RuntimeError(f"Unknown Neptune run state: {self.run_metadata['sys']['state']}")
 
     @property
     def is_active(self) -> bool:
-        return self.run_status == self._active_run_status.value
+        return self.run_status == self._active_run_status
 
     @property
     def run_metadata(self) -> Dict[str, Any]:
@@ -66,14 +70,16 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
     def upload(self, path_source: str, dir_target: str):
         if not self.is_active:
             raise InactiveNeptuneRunError("Run is inactive")
-        dir_target = self._prepend_root_dir(path=dir_target).replace("\\", "/")
-        self._native_run[dir_target].upload(path_source)
+        dir_target = self._prepend_root_dir(path=dir_target)
+        key = self._get_store_key(path=dir_target)
+        self._native_run[key].upload(path_source)
 
-    def log(self, path: str, artifact: ArtifactResult):
+    def log(self, artifact_path: str, artifact: ArtifactResult):
         if not self.is_active:
             raise InactiveNeptuneRunError("Run is inactive")
-        path = self._prepend_root_dir(path=path).replace("\\", "/")
-        self._native_run[path].append(artifact)
+        artifact_path = self._prepend_root_dir(path=artifact_path)
+        key = self._get_store_key(path=artifact_path)
+        self._native_run[key].append(artifact)
 
     @classmethod
     def _build_native_run(cls, experiment_id: str, run_id: str) -> neptune.Run:
@@ -88,11 +94,14 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
     @classmethod
     def _get_api_token(cls) -> str:
         if cls._api_token is None:
-            cls._api_token = os.getenv(
-                "NEPTUNE_API_TOKEN", default=getpass("Enter your Neptune API token: ")
-            )
+            cls._api_token = EnvironmentVariableReader.get(env_var_name=cls._api_token_env_var_name)
         return cls._api_token
 
     @classmethod
     def _prepend_root_dir(cls, path: str) -> str:
-        return os.path.join(cls._root_dir, path)
+        return os.path.join(cls._root_dir, path.lstrip("/"))
+
+    @staticmethod
+    def _get_store_key(path: str) -> str:
+        key = Path(path).as_posix()
+        return key

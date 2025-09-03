@@ -6,6 +6,7 @@ import pytest
 from artifact_core.libs.resource_validation.tabular.table_validator import TableValidator
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_dispatcher, ls_features, ls_cts_features, ls_cat_features, "
     + "expected_cols, expected_dtype_names, expected_exception",

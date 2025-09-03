@@ -16,7 +16,7 @@ class FilesystemRunAdapter(RunAdapter[FilesystemRun]):
 
     @property
     def run_id(self) -> str:
-        return self._native_run.id
+        return self._native_run.run_id
 
     @property
     def is_active(self) -> bool:

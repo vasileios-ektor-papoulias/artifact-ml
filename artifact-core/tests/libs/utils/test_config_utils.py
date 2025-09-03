@@ -31,6 +31,7 @@ def temp_dir_with_config(tmp_path):
         (tmp_path / "subdir").rmdir()
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "config_exists, expected_result",
     [
@@ -53,6 +54,7 @@ def test_get_config_override(
         assert result is None
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "base_config, override, expected",
     [

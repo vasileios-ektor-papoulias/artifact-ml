@@ -35,7 +35,7 @@ from artifact_core.table_comparison.registries.scores.registry import (
     TableComparisonScoreType,
 )
 
-from artifact_experiment.base.callbacks.factory import ArtifactCallbackFactory
+from artifact_experiment.base.callback_factory import ArtifactCallbackFactory
 
 
 class TableComparisonCallbackFactory(

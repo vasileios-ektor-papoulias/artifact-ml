@@ -6,6 +6,7 @@ from artifact_core.libs.implementation.tabular.pdf.plotter import PDFPlotter
 from matplotlib.figure import Figure
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_dispatcher, cat_unique_map, features_order, cts_features, cat_features, "
     + "expected_plot_count",
@@ -120,6 +121,7 @@ def test_get_pdf_plot_collection(
         )
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "df_dispatcher, cat_unique_map, features_order, cts_features, cat_features, "
     + "expected_axes_count",

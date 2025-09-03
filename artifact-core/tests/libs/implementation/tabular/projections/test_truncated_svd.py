@@ -10,6 +10,7 @@ from pytest_mock import MockerFixture
 from sklearn.decomposition import TruncatedSVD
 
 
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "dataset_dispatcher, projector_config",
     [

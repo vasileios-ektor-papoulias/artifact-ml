@@ -4,7 +4,7 @@ from pathlib import Path
 from artifact_experiment.base.tracking.adapter import InactiveRunError
 
 try:
-    from artifact_experiment.libs.utils.directory_open_button import DirectoryOpenButton
+    from artifact_experiment.libs.ui.directory_open_button import DirectoryOpenButton
 
 except ImportError:
     DirectoryOpenButton = None
@@ -15,20 +15,19 @@ class InactiveFilesystemRunError(InactiveRunError):
 
 
 class FilesystemRun:
-    _root_dir = Path.home() / "artifact_ml"
     _open_button_description = "Open Run Dir"
 
     def __init__(self, experiment_id: str, run_id: str):
         self._experiment_id = experiment_id
-        self._start(id=run_id)
+        self._start(run_id=run_id)
 
     @property
     def experiment_id(self) -> str:
         return self._experiment_id
 
     @property
-    def id(self) -> str:
-        return self._id
+    def run_id(self) -> str:
+        return self._run_id
 
     @property
     def is_active(self) -> bool:
@@ -40,14 +39,18 @@ class FilesystemRun:
 
     @property
     def run_dir(self) -> str:
-        return os.path.join(self.experiment_dir, self._id)
+        return os.path.join(self.experiment_dir, self._run_id)
+
+    @property
+    def _root_dir(self) -> Path:
+        return Path.home() / "artifact_ml"
 
     def stop(self):
         self._is_active = False
 
-    def _start(self, id: str):
+    def _start(self, run_id: str):
         self._is_active = True
-        self._id = id
+        self._run_id = run_id
         self._create_run_dir()
         self._print_run_url()
 

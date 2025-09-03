@@ -7,6 +7,9 @@ from artifact_core.base.artifact_dependencies import (
     ResourceSpecProtocol,
 )
 from artifact_core.base.registry import ArtifactRegistry, ArtifactType
+from matplotlib.figure import Figure
+from numpy import ndarray
+
 from artifact_experiment.base.callbacks.artifact import (
     ArtifactArrayCallback,
     ArtifactArrayCollectionCallback,
@@ -15,8 +18,6 @@ from artifact_experiment.base.callbacks.artifact import (
     ArtifactScoreCallback,
     ArtifactScoreCollectionCallback,
 )
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 ArtifactTypeT = TypeVar("ArtifactTypeT", bound=ArtifactType)
 ScoreTypeT = TypeVar("ScoreTypeT", bound=ArtifactType)
