@@ -59,6 +59,38 @@ class TabularDataSpec(TabularDataSpecProtocol):
     def __init__(self, internal_spec: Dict[str, Any]):
         self._internal_spec = internal_spec
 
+    @classmethod
+    def from_df(
+        cls: Type[tabularDataSpecT],
+        df: pd.DataFrame,
+        ls_cts_features: Optional[List[str]] = None,
+        ls_cat_features: Optional[List[str]] = None,
+    ) -> tabularDataSpecT:
+        spec = cls.build(
+            ls_cts_features=ls_cts_features,
+            ls_cat_features=ls_cat_features,
+        )
+        spec.fit(df=df)
+        return spec
+
+    @classmethod
+    def build(
+        cls: Type[tabularDataSpecT],
+        ls_cts_features: Optional[List[str]] = None,
+        ls_cat_features: Optional[List[str]] = None,
+    ) -> tabularDataSpecT:
+        if ls_cts_features is None:
+            ls_cts_features = []
+        if ls_cat_features is None:
+            ls_cat_features = []
+        cls._validate(ls_cat_features=ls_cat_features, ls_cts_features=ls_cts_features)
+        internal_spec = cls._build_internal_spec(
+            ls_cts_features=ls_cts_features,
+            ls_cat_features=ls_cat_features,
+        )
+        spec = cls(internal_spec=internal_spec)
+        return spec
+
     @property
     def ls_features(self) -> List[str]:
         return self._ls_features.copy()
@@ -135,38 +167,6 @@ class TabularDataSpec(TabularDataSpecProtocol):
     @property
     def _categorical(self) -> Dict[str, Any]:
         return self._internal_spec["categorical"]
-
-    @classmethod
-    def from_df(
-        cls: Type[tabularDataSpecT],
-        df: pd.DataFrame,
-        ls_cts_features: Optional[List[str]] = None,
-        ls_cat_features: Optional[List[str]] = None,
-    ) -> tabularDataSpecT:
-        spec = cls.build(
-            ls_cts_features=ls_cts_features,
-            ls_cat_features=ls_cat_features,
-        )
-        spec.fit(df=df)
-        return spec
-
-    @classmethod
-    def build(
-        cls: Type[tabularDataSpecT],
-        ls_cts_features: Optional[List[str]] = None,
-        ls_cat_features: Optional[List[str]] = None,
-    ) -> tabularDataSpecT:
-        if ls_cts_features is None:
-            ls_cts_features = []
-        if ls_cat_features is None:
-            ls_cat_features = []
-        cls._validate(ls_cat_features=ls_cat_features, ls_cts_features=ls_cts_features)
-        internal_spec = cls._build_internal_spec(
-            ls_cts_features=ls_cts_features,
-            ls_cat_features=ls_cat_features,
-        )
-        spec = cls(internal_spec=internal_spec)
-        return spec
 
     def fit(self, df: pd.DataFrame) -> None:
         set_cts_features, set_cat_features = self._partition_features(
