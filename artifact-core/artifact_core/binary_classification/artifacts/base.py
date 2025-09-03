@@ -13,7 +13,7 @@ from artifact_core.core.classification.artifact import (
     ClassificationArtifact,
     ClassificationArtifactResources,
 )
-from artifact_core.libs.resource_spec.labels.binary import BinaryLabelsSpec
+from artifact_core.libs.resource_spec.labels.protocol import LabelsSpecProtocol
 from artifact_core.libs.resource_validation.labels.label_validator import LabelValidator
 
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
@@ -25,7 +25,7 @@ class BinaryClassificationArtifact(
         pd.DataFrame,
         ArtifactResultT,
         ArtifactHyperparamsT,
-        BinaryLabelsSpec,
+        LabelsSpecProtocol,
     ],
     Generic[ArtifactResultT, ArtifactHyperparamsT],
 ):
