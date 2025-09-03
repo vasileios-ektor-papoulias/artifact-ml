@@ -7,16 +7,16 @@ class LabelValidator:
     @classmethod
     def validate(
         cls,
-        df: pd.DataFrame,
+        df_labels: pd.DataFrame,
         id_col: str,
         label_classes_map: Dict[str, List[str]],
     ) -> pd.DataFrame:
-        df = cls._validate_df(df)
-        df = cls._validate_id_column(df, id_col)
-        df = cls._validate_label_columns_exist(df, label_classes_map)
-        df = cls._validate_label_categories(df, label_classes_map)
+        df_labels = cls._validate_df(df_labels)
+        df_labels = cls._validate_id_column(df_labels, id_col)
+        df_labels = cls._validate_label_columns_exist(df_labels, label_classes_map)
+        df_labels = cls._validate_label_categories(df_labels, label_classes_map)
         cols = [id_col] + list(label_classes_map.keys())
-        return df[cols].copy()
+        return df_labels[cols].copy()
 
     @staticmethod
     def _validate_df(df: pd.DataFrame) -> pd.DataFrame:
