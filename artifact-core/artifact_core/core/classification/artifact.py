@@ -91,7 +91,8 @@ class ClassificationArtifact(
             true_category_store=resources.true_category_store,
             classification_results=resources.classification_results,
         )
-        return ClassificationArtifactResources[CategoricalFeatureSpecProtocolT](
+        resources = ClassificationArtifactResources[CategoricalFeatureSpecProtocolT](
             true_category_store=true_category_store,
             classification_results=classification_results,
         )
+        return resources
