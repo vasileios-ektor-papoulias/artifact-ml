@@ -5,7 +5,7 @@ from artifact_core.binary_classification.artifacts.base import (
     BinaryClassificationArtifactResources,
     BinaryFeatureSpecProtocol,
 )
-from artifact_core.libs.resources.base.resource_store import IdentifierType
+from artifact_core.libs.types.entity_store import IdentifierType
 from numpy import ndarray
 
 from artifact_experiment.base.callback_factory import ArtifactCallbackFactory
@@ -62,13 +62,15 @@ class BinaryClassifierEvaluationPlan(
 
     def execute_classifier_evaluation(
         self,
-        id_to_category: Dict[IdentifierType, str],
-        id_to_logits: Optional[Dict[IdentifierType, ndarray]] = None,
+        true: Dict[IdentifierType, str],
+        predicted: Dict[IdentifierType, str],
+        logits: Optional[Dict[IdentifierType, ndarray]] = None,
     ):
         callback_resources = BinaryClassificationCallbackResources.build(
             ls_categories=self._resource_spec.ls_categories,
-            id_to_category=id_to_category,
-            id_to_logits=id_to_logits,
+            true=true,
+            predicted=predicted,
+            logits=logits,
         )
         super().execute(resources=callback_resources)
 

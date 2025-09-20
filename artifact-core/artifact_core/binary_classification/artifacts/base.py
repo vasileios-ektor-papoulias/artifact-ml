@@ -13,6 +13,7 @@ from artifact_core.core.classification.artifact import (
     ClassificationArtifactResources,
 )
 from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
+from artifact_core.libs.resources.categorical.category_store import BinaryCategoryStore
 from artifact_core.libs.resources.classification.classification_results import (
     BinaryClassificationResults,
 )
@@ -33,7 +34,9 @@ class BinaryClassificationArtifact(
 ):
     @abstractmethod
     def _evaluate_classification(
-        self, classification_results: BinaryClassificationResults
+        self,
+        true_category_store: BinaryCategoryStore,
+        classification_results: BinaryClassificationResults,
     ) -> ArtifactResultT: ...
 
 

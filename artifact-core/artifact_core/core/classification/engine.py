@@ -7,7 +7,7 @@ from artifact_core.base.engine import ArtifactEngine
 from artifact_core.base.registry import ArtifactType
 from artifact_core.core.classification.artifact import ClassificationArtifactResources
 from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
-from artifact_core.libs.resources.base.resource_store import IdentifierType
+from artifact_core.libs.types.entity_store import IdentifierType
 
 ScoreTypeT = TypeVar("ScoreTypeT", bound="ArtifactType")
 ArrayTypeT = TypeVar("ArrayTypeT", bound="ArtifactType")
@@ -44,52 +44,60 @@ class ClassifierEvaluationEngine(
     def produce_classifier_evaluation_score(
         self,
         score_type: Union[ScoreTypeT, str],
-        id_to_category: Dict[IdentifierType, str],
-        id_to_logits: Optional[Dict[IdentifierType, ndarray]] = None,
+        true: Dict[IdentifierType, str],
+        predicted: Dict[IdentifierType, str],
+        logits: Optional[Dict[IdentifierType, ndarray]] = None,
     ) -> float:
         resources = ClassificationArtifactResources[CategoricalFeatureSpecProtocolT].build(
             ls_categories=self._resource_spec.ls_categories,
-            id_to_category=id_to_category,
-            id_to_logits=id_to_logits,
+            true=true,
+            predicted=predicted,
+            logits=logits,
         )
         return super().produce_score(score_type=score_type, resources=resources)
 
     def produce_classifier_evaluation_array(
         self,
         array_type: Union[ArrayTypeT, str],
-        id_to_category: Dict[IdentifierType, str],
-        id_to_logits: Optional[Dict[IdentifierType, ndarray]] = None,
+        true: Dict[IdentifierType, str],
+        predicted: Dict[IdentifierType, str],
+        logits: Optional[Dict[IdentifierType, ndarray]] = None,
     ) -> ndarray:
         resources = ClassificationArtifactResources[CategoricalFeatureSpecProtocolT].build(
             ls_categories=self._resource_spec.ls_categories,
-            id_to_category=id_to_category,
-            id_to_logits=id_to_logits,
+            true=true,
+            predicted=predicted,
+            logits=logits,
         )
         return super().produce_array(array_type=array_type, resources=resources)
 
     def produce_classifier_evaluation_plot(
         self,
         plot_type: Union[PlotTypeT, str],
-        id_to_category: Dict[IdentifierType, str],
-        id_to_logits: Optional[Dict[IdentifierType, ndarray]] = None,
+        true: Dict[IdentifierType, str],
+        predicted: Dict[IdentifierType, str],
+        logits: Optional[Dict[IdentifierType, ndarray]] = None,
     ) -> Figure:
         resources = ClassificationArtifactResources[CategoricalFeatureSpecProtocolT].build(
             ls_categories=self._resource_spec.ls_categories,
-            id_to_category=id_to_category,
-            id_to_logits=id_to_logits,
+            true=true,
+            predicted=predicted,
+            logits=logits,
         )
         return super().produce_plot(plot_type=plot_type, resources=resources)
 
     def produce_classifier_evaluation_score_collection(
         self,
         score_collection_type: Union[ScoreCollectionTypeT, str],
-        id_to_category: Dict[IdentifierType, str],
-        id_to_logits: Optional[Dict[IdentifierType, ndarray]] = None,
+        true: Dict[IdentifierType, str],
+        predicted: Dict[IdentifierType, str],
+        logits: Optional[Dict[IdentifierType, ndarray]] = None,
     ) -> Dict[str, float]:
         resources = ClassificationArtifactResources[CategoricalFeatureSpecProtocolT].build(
             ls_categories=self._resource_spec.ls_categories,
-            id_to_category=id_to_category,
-            id_to_logits=id_to_logits,
+            true=true,
+            predicted=predicted,
+            logits=logits,
         )
         return super().produce_score_collection(
             score_collection_type=score_collection_type, resources=resources
@@ -98,13 +106,15 @@ class ClassifierEvaluationEngine(
     def produce_classifier_evaluation_array_collection(
         self,
         array_collection_type: Union[ArrayCollectionTypeT, str],
-        id_to_category: Dict[IdentifierType, str],
-        id_to_logits: Optional[Dict[IdentifierType, ndarray]] = None,
+        true: Dict[IdentifierType, str],
+        predicted: Dict[IdentifierType, str],
+        logits: Optional[Dict[IdentifierType, ndarray]] = None,
     ) -> Dict[str, ndarray]:
         resources = ClassificationArtifactResources[CategoricalFeatureSpecProtocolT].build(
             ls_categories=self._resource_spec.ls_categories,
-            id_to_category=id_to_category,
-            id_to_logits=id_to_logits,
+            true=true,
+            predicted=predicted,
+            logits=logits,
         )
         return super().produce_array_collection(
             array_collection_type=array_collection_type, resources=resources
@@ -113,13 +123,15 @@ class ClassifierEvaluationEngine(
     def produce_classifier_evaluation_plot_collection(
         self,
         plot_collection_type: Union[PlotCollectionTypeT, str],
-        id_to_category: Dict[IdentifierType, str],
-        id_to_logits: Optional[Dict[IdentifierType, ndarray]] = None,
+        true: Dict[IdentifierType, str],
+        predicted: Dict[IdentifierType, str],
+        logits: Optional[Dict[IdentifierType, ndarray]] = None,
     ) -> Dict[str, Figure]:
         resources = ClassificationArtifactResources[CategoricalFeatureSpecProtocolT].build(
             ls_categories=self._resource_spec.ls_categories,
-            id_to_category=id_to_category,
-            id_to_logits=id_to_logits,
+            true=true,
+            predicted=predicted,
+            logits=logits,
         )
         return super().produce_plot_collection(
             plot_collection_type=plot_collection_type, resources=resources

@@ -20,7 +20,7 @@ from artifact_core.libs.types.entity_store import EntityStore, IdentifierType
 
 CategoricalDistribution = Union[Sequence[float], np.ndarray]
 CategoricalFeatureSpecProtocolT = TypeVar(
-    "CategoricalFeatureSpecProtocolT", bound=CategoricalFeatureSpecProtocol
+    "CategoricalFeatureSpecProtocolT", bound=CategoricalFeatureSpecProtocol, covariant=True
 )
 CategoricalDistributionStoreT = TypeVar(
     "CategoricalDistributionStoreT", bound="CategoricalDistributionStore"

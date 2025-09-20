@@ -11,6 +11,10 @@ from artifact_core.base.artifact_dependencies import (
     ArtifactResult,
 )
 from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
+from artifact_core.libs.resource_validation.classification.classification_resource_validator import (
+    ClassificationResourcesValidator,
+)
+from artifact_core.libs.resources.categorical.category_store import CategoryStore
 from artifact_core.libs.resources.categorical.distribution_store import IdentifierType
 from artifact_core.libs.resources.classification.classification_results import ClassificationResults
 
@@ -26,21 +30,28 @@ ClassificationArtifactResourcesT = TypeVar(
 
 @dataclass(frozen=True)
 class ClassificationArtifactResources(ArtifactResources, Generic[CategoricalFeatureSpecProtocolT]):
+    true_category_store: CategoryStore[CategoricalFeatureSpecProtocolT]
     classification_results: ClassificationResults[CategoricalFeatureSpecProtocolT]
 
     @classmethod
     def build(
         cls: Type[ClassificationArtifactResourcesT],
         ls_categories: List[str],
-        id_to_category: Dict[IdentifierType, str],
-        id_to_logits: Optional[Dict[IdentifierType, ndarray]] = None,
+        true: Dict[IdentifierType, str],
+        predicted: Dict[IdentifierType, str],
+        logits: Optional[Dict[IdentifierType, ndarray]] = None,
     ) -> ClassificationArtifactResourcesT:
+        true_category_store = CategoryStore[CategoricalFeatureSpecProtocolT].from_categories(
+            feature_name="true", ls_categories=ls_categories, id_to_category=true
+        )
         classification_results = ClassificationResults[CategoricalFeatureSpecProtocolT].build(
             ls_categories=ls_categories,
-            id_to_category=id_to_category,
-            id_to_logits=id_to_logits,
+            id_to_category=predicted,
+            id_to_logits=logits,
         )
-        resources = cls(classification_results=classification_results)
+        resources = cls(
+            true_category_store=true_category_store, classification_results=classification_results
+        )
         return resources
 
 
@@ -59,33 +70,28 @@ class ClassificationArtifact(
 ):
     @abstractmethod
     def _evaluate_classification(
-        self, classification_results: ClassificationResults[CategoricalFeatureSpecProtocolT]
+        self,
+        true_category_store: CategoryStore[CategoricalFeatureSpecProtocolT],
+        classification_results: ClassificationResults[CategoricalFeatureSpecProtocolT],
     ) -> ArtifactResultT: ...
-
-    def _validate_classification_results(
-        self, classification_results: ClassificationResults[CategoricalFeatureSpecProtocolT]
-    ) -> ClassificationResults[CategoricalFeatureSpecProtocolT]:
-        assert len(classification_results) > 0, (
-            f"Expected nonempty classification results, got {classification_results.n_items=}"
-        )
-        return classification_results
 
     def _compute(
         self, resources: ClassificationArtifactResources[CategoricalFeatureSpecProtocolT]
     ) -> ArtifactResultT:
         result = self._evaluate_classification(
-            classification_results=resources.classification_results
+            true_category_store=resources.true_category_store,
+            classification_results=resources.classification_results,
         )
         return result
 
     def _validate(
         self, resources: ClassificationArtifactResources[CategoricalFeatureSpecProtocolT]
     ) -> ClassificationArtifactResources[CategoricalFeatureSpecProtocolT]:
-        classification_results = resources.classification_results
-        classification_results_validated = self._validate_classification_results(
-            classification_results=classification_results
+        true_category_store, classification_results = ClassificationResourcesValidator.validate(
+            true_category_store=resources.true_category_store,
+            classification_results=resources.classification_results,
         )
-        resources_validated = ClassificationArtifactResources[CategoricalFeatureSpecProtocolT](
-            classification_results=classification_results_validated
+        return ClassificationArtifactResources[CategoricalFeatureSpecProtocolT](
+            true_category_store=true_category_store,
+            classification_results=classification_results,
         )
-        return resources_validated

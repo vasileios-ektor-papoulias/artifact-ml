@@ -20,7 +20,7 @@ from artifact_core.libs.resources.categorical.distribution_store import (
 )
 
 CategoricalFeatureSpecProtocolT = TypeVar(
-    "CategoricalFeatureSpecProtocolT", bound=CategoricalFeatureSpecProtocol
+    "CategoricalFeatureSpecProtocolT", bound=CategoricalFeatureSpecProtocol, covariant=True
 )
 ClassificationResultsT = TypeVar("ClassificationResultsT", bound="ClassificationResults")
 

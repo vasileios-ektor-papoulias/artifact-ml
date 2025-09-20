@@ -6,7 +6,7 @@ from artifact_core.libs.resource_spec.categorical.spec import CategoricalFeature
 from artifact_core.libs.types.entity_store import EntityStore, IdentifierType
 
 CategoricalFeatureSpecProtocolT = TypeVar(
-    "CategoricalFeatureSpecProtocolT", bound=CategoricalFeatureSpecProtocol
+    "CategoricalFeatureSpecProtocolT", bound=CategoricalFeatureSpecProtocol, covariant=True
 )
 CategoryStoreT = TypeVar("CategoryStoreT", bound="CategoryStore")
 
@@ -33,6 +33,20 @@ class CategoryStore(EntityStore[int], Generic[CategoricalFeatureSpecProtocolT]):
             feature_name=feature_name, ls_categories=ls_categories
         )
         return cls(feature_spec=feature_spec, id_to_category_idx=id_to_category_idx)
+
+    @classmethod
+    def from_categories(
+        cls: Type[CategoryStoreT],
+        feature_name: str,
+        ls_categories: List[str],
+        id_to_category: Mapping[IdentifierType, str],
+    ) -> CategoryStoreT:
+        feature_spec = CategoricalFeatureSpec(
+            feature_name=feature_name, ls_categories=ls_categories
+        )
+        store = cls(feature_spec=feature_spec, id_to_category_idx=None)
+        store.set_multiple_cat(id_to_category=id_to_category)
+        return store
 
     @property
     def feature_name(self) -> str:

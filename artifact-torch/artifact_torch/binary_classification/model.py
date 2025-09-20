@@ -23,7 +23,13 @@ BinaryFeatureSpecProtocolT = TypeVar("BinaryFeatureSpecProtocolT", bound=BinaryF
 
 
 class BinaryClassifier(
-    Classifier[ModelInputTContr, ModelOutputTCov, ClassificationParamsT, BinaryFeatureSpecProtocol],
+    Classifier[
+        ModelInputTContr,
+        ModelOutputTCov,
+        BinaryFeatureSpecProtocol,
+        ClassificationParamsT,
+        pd.DataFrame,
+    ],
     Generic[ModelInputTContr, ModelOutputTCov, ClassificationParamsT],
 ):
     @abstractmethod
