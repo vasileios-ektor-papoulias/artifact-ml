@@ -1,67 +1,93 @@
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import Generic, Tuple, TypeVar
+from typing import Dict, Generic, List, Optional, Type, TypeVar
+
+from numpy import ndarray
 
 from artifact_core.base.artifact import Artifact
 from artifact_core.base.artifact_dependencies import (
     ArtifactHyperparams,
     ArtifactResources,
     ArtifactResult,
-    ResourceSpecProtocol,
 )
+from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
+from artifact_core.libs.resources.categorical.distribution_store import (
+    IdentifierType,
+)
+from artifact_core.libs.resources.classification.classification_results import ClassificationResults
 
-ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
 ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound="ArtifactHyperparams")
-LabelsT = TypeVar("LabelsT")
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
+CategoricalFeatureSpecProtocolT = TypeVar(
+    "CategoricalFeatureSpecProtocolT", bound=CategoricalFeatureSpecProtocol
+)
+ClassificationArtifactResourcesT = TypeVar(
+    "ClassificationArtifactResourcesT", bound="ClassificationArtifactResources"
+)
 
 
 @dataclass(frozen=True)
-class ClassificationArtifactResources(ArtifactResources, Generic[LabelsT]):
-    labels_ground_truth: LabelsT
-    labels_predicted: LabelsT
+class ClassificationArtifactResources(ArtifactResources, Generic[CategoricalFeatureSpecProtocolT]):
+    classification_results: ClassificationResults[CategoricalFeatureSpecProtocolT]
+
+    @classmethod
+    def build(
+        cls: Type[ClassificationArtifactResourcesT],
+        ls_categories: List[str],
+        id_to_category: Dict[IdentifierType, str],
+        id_to_logits: Optional[Dict[IdentifierType, ndarray]] = None,
+    ) -> ClassificationArtifactResourcesT:
+        classification_results = ClassificationResults[CategoricalFeatureSpecProtocolT].build(
+            ls_categories=ls_categories,
+            id_to_category=id_to_category,
+            id_to_logits=id_to_logits,
+        )
+        resources = cls(classification_results=classification_results)
+        return resources
 
 
 class ClassificationArtifact(
     Artifact[
-        ClassificationArtifactResources,
+        ClassificationArtifactResources[CategoricalFeatureSpecProtocolT],
         ArtifactResultT,
         ArtifactHyperparamsT,
-        ResourceSpecProtocolT,
+        CategoricalFeatureSpecProtocolT,
     ],
     Generic[
-        LabelsT,
         ArtifactResultT,
         ArtifactHyperparamsT,
-        ResourceSpecProtocolT,
+        CategoricalFeatureSpecProtocolT,
     ],
 ):
     @abstractmethod
     def _evaluate_classification(
-        self, labels_ground_truth: LabelsT, labels_predicted: LabelsT
+        self, classification_results: ClassificationResults[CategoricalFeatureSpecProtocolT]
     ) -> ArtifactResultT: ...
 
-    @abstractmethod
-    def _validate_labels(
-        self, labels_ground_truth: LabelsT, labels_predicted: LabelsT
-    ) -> Tuple[LabelsT, LabelsT]: ...
+    def _validate_classification_results(
+        self, classification_results: ClassificationResults[CategoricalFeatureSpecProtocolT]
+    ) -> ClassificationResults[CategoricalFeatureSpecProtocolT]:
+        assert len(classification_results) > 0, (
+            f"Expected nonempty classification results, got {classification_results.n_items=}"
+        )
+        return classification_results
 
-    def _compute(self, resources: ClassificationArtifactResources[LabelsT]) -> ArtifactResultT:
+    def _compute(
+        self, resources: ClassificationArtifactResources[CategoricalFeatureSpecProtocolT]
+    ) -> ArtifactResultT:
         result = self._evaluate_classification(
-            labels_ground_truth=resources.labels_ground_truth,
-            labels_predicted=resources.labels_predicted,
+            classification_results=resources.classification_results
         )
         return result
 
     def _validate(
-        self, resources: ClassificationArtifactResources[LabelsT]
-    ) -> ClassificationArtifactResources[LabelsT]:
-        labels_ground_truth_validated, labels_predicted_validated = self._validate_labels(
-            labels_ground_truth=resources.labels_ground_truth,
-            labels_predicted=resources.labels_predicted,
+        self, resources: ClassificationArtifactResources[CategoricalFeatureSpecProtocolT]
+    ) -> ClassificationArtifactResources[CategoricalFeatureSpecProtocolT]:
+        classification_results = resources.classification_results
+        classification_results_validated = self._validate_classification_results(
+            classification_results=classification_results
         )
-        resources_validated = ClassificationArtifactResources[LabelsT](
-            labels_ground_truth=labels_ground_truth_validated,
-            labels_predicted=labels_predicted_validated,
+        resources_validated = ClassificationArtifactResources[CategoricalFeatureSpecProtocolT](
+            classification_results=classification_results_validated
         )
         return resources_validated

@@ -1,0 +1,16 @@
+from typing import List, Protocol
+
+
+class CategoricalFeatureSpecProtocol(Protocol):
+    @property
+    def feature_name(self) -> str: ...
+
+    @property
+    def ls_categories(self) -> List[str]: ...
+
+    @property
+    def n_categories(self) -> int: ...
+
+    def get_category_idx(self, category: str) -> int: ...
+
+    def has_category(self, category: str) -> bool: ...

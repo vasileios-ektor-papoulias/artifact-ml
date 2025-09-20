@@ -1,23 +1,30 @@
-from typing import TypeVar
+from typing import Generic, TypeVar
 
 from artifact_core.base.artifact_dependencies import (
     ArtifactResult,
-    ResourceSpecProtocol,
 )
 from artifact_core.base.registry import ArtifactRegistry, ArtifactType
 from artifact_core.core.classification.artifact import (
     ClassificationArtifactResources,
 )
+from artifact_core.libs.resource_spec.categorical.protocol import (
+    CategoricalFeatureSpecProtocol,
+)
 
 ArtifactTypeT = TypeVar("ArtifactTypeT", bound="ArtifactType")
-LabelsT = TypeVar("LabelsT")
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
-ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
+CategoricalFeatureSpecProtocolT = TypeVar(
+    "CategoricalFeatureSpecProtocolT", bound=CategoricalFeatureSpecProtocol
+)
 
 
-ClassificationArtifactRegistry = ArtifactRegistry[
-    ArtifactTypeT,
-    ClassificationArtifactResources[LabelsT],
-    ArtifactResultT,
-    ResourceSpecProtocolT,
-]
+class ClassificationArtifactRegistry(
+    ArtifactRegistry[
+        ArtifactTypeT,
+        ClassificationArtifactResources[CategoricalFeatureSpecProtocolT],
+        ArtifactResultT,
+        CategoricalFeatureSpecProtocolT,
+    ],
+    Generic[ArtifactTypeT, ArtifactResultT, CategoricalFeatureSpecProtocolT],
+):
+    pass
