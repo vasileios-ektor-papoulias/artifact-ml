@@ -20,6 +20,8 @@ from artifact_core.libs.resources.classification.classification_results import (
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound="ArtifactHyperparams")
 
+BinaryClassificationArtifactResources = ClassificationArtifactResources[BinaryFeatureSpecProtocol]
+
 
 class BinaryClassificationArtifact(
     ClassificationArtifact[
@@ -34,8 +36,6 @@ class BinaryClassificationArtifact(
         self, classification_results: BinaryClassificationResults
     ) -> ArtifactResultT: ...
 
-
-BinaryClassificationArtifactResources = ClassificationArtifactResources[BinaryFeatureSpecProtocol]
 
 BinaryClassificationScore = BinaryClassificationArtifact[float, ArtifactHyperparamsT]
 BinaryClassificationArray = BinaryClassificationArtifact[ndarray, ArtifactHyperparamsT]
