@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Type, TypeVar
+from typing import Any, Dict, Iterable, List, Optional, Set, Type, TypeVar
 
 import pandas as pd
 
@@ -139,6 +139,10 @@ class TabularDataSpec(Serializable, TabularDataSpecProtocol):
         self._dict_cat_specs = categorical
 
     def fit(self, df: pd.DataFrame) -> None:
+        self._assert_prescribed_features_exist(
+            df=df,
+            prescribed_features=set(self._dict_cts_specs.keys()) | self._dict_cat_specs.keys(),
+        )
         feature_partition = self._partition_features(
             df=df,
             set_cts_features=set(self._dict_cts_specs.keys()),
@@ -147,13 +151,9 @@ class TabularDataSpec(Serializable, TabularDataSpecProtocol):
         set_cts_features = set(feature_partition.ls_cts_features)
         set_cat_features = set(feature_partition.ls_cat_features)
         for feature in set_cts_features:
-            stored_spec = self._continuous.get(feature)
-            if stored_spec is None:
-                self._continuous[feature] = self._get_cts_spec_from_data(sr_data=df[feature])
+            self._continuous[feature] = self._get_cts_spec_from_data(sr_data=df[feature])
         for feature in set_cat_features:
-            stored_spec = self._categorical.get(feature)
-            if stored_spec is None:
-                self._categorical[feature] = self._get_cat_spec_from_data(sr_data=df[feature])
+            self._categorical[feature] = self._get_cat_spec_from_data(sr_data=df[feature])
             self._assert_known_categories(
                 sr_data=df[feature], cat_feature_spec=self._categorical[feature], name=feature
             )
@@ -232,11 +232,21 @@ class TabularDataSpec(Serializable, TabularDataSpecProtocol):
     def _assert_known_categories(
         self, sr_data: pd.Series, cat_feature_spec: CategoricalColumnSpec, name: str
     ) -> None:
-        idx_not_in_range = pd.Index(sr_data.dropna().astype(str).unique()).difference(
+        idx_unknown = pd.Index(sr_data.dropna().astype(str).unique()).difference(
             pd.Index(cat_feature_spec.ls_categories)
         )
-        if len(idx_not_in_range):
-            raise ValueError(f"Categorical '{name}' has unseen values: {list(idx_not_in_range)}")
+        if len(idx_unknown):
+            raise ValueError(f"Categorical '{name}' has unseen values: {list(idx_unknown)}")
+
+    @staticmethod
+    def _assert_prescribed_features_exist(
+        df: pd.DataFrame,
+        prescribed_features: Iterable[str],
+    ) -> None:
+        prescribed: Set[str] = set(prescribed_features)
+        missing = prescribed - set(df.columns)
+        if missing:
+            raise ValueError(f"Prescribed features {missing} not found in dataset columns")
 
     @staticmethod
     def _get_features_order_from_data(
@@ -251,8 +261,8 @@ class TabularDataSpec(Serializable, TabularDataSpecProtocol):
 
     @staticmethod
     def _get_cat_spec_from_data(sr_data: pd.Series) -> CategoricalColumnSpec:
-        ls_categories = list(map(str, sr_data.dropna().unique().tolist()))
-        spec = CategoricalColumnSpec(dtype=str, ls_categories=ls_categories)
+        ls_categories = sr_data.dropna().astype(str).unique().tolist()
+        spec = CategoricalColumnSpec(dtype=sr_data.dtype.type, ls_categories=ls_categories)
         return spec
 
     @classmethod
@@ -284,7 +294,7 @@ class TabularDataSpec(Serializable, TabularDataSpecProtocol):
         cat_set = set(ls_cat_features)
         intersection = cont_set.intersection(cat_set)
         if intersection:
-            raise ValueError(f"Features cannot be both continuous and categorical: {intersection}")
+            raise ValueError(f"Categorical and continuous features overlap: {intersection}")
         hardcoded_spec: Dict[str, Any] = {
             cls._cts_specs_key: {feat: cls._build_null_cts_spec() for feat in ls_cts_features},
             cls._cat_specs_key: {feat: cls._build_null_cat_spec() for feat in ls_cat_features},

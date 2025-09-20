@@ -43,7 +43,5 @@ class CategoricalColumnSpec(ColumnSpec):
             raise TypeError("`ls_categories` must be a list of strings.")
         if not all(isinstance(c, str) for c in ls_categories):
             raise TypeError("All entries in `ls_categories` must be strings.")
-        if len(ls_categories) == 0:
-            raise ValueError("`ls_categories` must be non-empty.")
         if len(set(ls_categories)) != len(ls_categories):
             raise ValueError(f"`ls_categories` must not contain duplicates: {ls_categories}")
