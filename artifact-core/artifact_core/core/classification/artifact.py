@@ -11,9 +11,7 @@ from artifact_core.base.artifact_dependencies import (
     ArtifactResult,
 )
 from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
-from artifact_core.libs.resources.categorical.distribution_store import (
-    IdentifierType,
-)
+from artifact_core.libs.resources.categorical.distribution_store import IdentifierType
 from artifact_core.libs.resources.classification.classification_results import ClassificationResults
 
 ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound="ArtifactHyperparams")
