@@ -11,6 +11,13 @@ from artifact_core.table_comparison.registries.arrays.registry import (
     TableComparisonArrayRegistry,
     TableComparisonArrayType,
 )
+from artifact_core.table_comparison.registries.base import (
+    TableComparisonArrayCollectionRegistryBase,
+    TableComparisonArrayRegistryBase,
+    TableComparisonPlotCollectionRegistryBase,
+    TableComparisonPlotRegistryBase,
+    TableComparisonScoreRegistryBase,
+)
 from artifact_core.table_comparison.registries.plot_collections.registry import (
     TableComparisonPlotCollectionRegistry,
     TableComparisonPlotCollectionType,
@@ -42,19 +49,19 @@ class TableComparisonEngine(
     @classmethod
     def _get_score_registry(
         cls,
-    ) -> Type[TableComparisonScoreRegistry]:
+    ) -> Type[TableComparisonScoreRegistryBase]:
         return TableComparisonScoreRegistry
 
     @classmethod
     def _get_array_registry(
         cls,
-    ) -> Type[TableComparisonArrayRegistry]:
+    ) -> Type[TableComparisonArrayRegistryBase]:
         return TableComparisonArrayRegistry
 
     @classmethod
     def _get_plot_registry(
         cls,
-    ) -> Type[TableComparisonPlotRegistry]:
+    ) -> Type[TableComparisonPlotRegistryBase]:
         return TableComparisonPlotRegistry
 
     @classmethod
@@ -66,11 +73,11 @@ class TableComparisonEngine(
     @classmethod
     def _get_array_collection_registry(
         cls,
-    ) -> Type[TableComparisonArrayCollectionRegistry]:
+    ) -> Type[TableComparisonArrayCollectionRegistryBase]:
         return TableComparisonArrayCollectionRegistry
 
     @classmethod
     def _get_plot_collection_registry(
         cls,
-    ) -> Type[TableComparisonPlotCollectionRegistry]:
+    ) -> Type[TableComparisonPlotCollectionRegistryBase]:
         return TableComparisonPlotCollectionRegistry
