@@ -3,7 +3,7 @@ from typing import Dict, Generic, List, Mapping, Optional, Type, TypeVar
 from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
 from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
 from artifact_core.libs.resource_spec.categorical.spec import CategoricalFeatureSpec
-from artifact_core.libs.resources.base.resource_store import IdentifierType, ResourceStore
+from artifact_core.libs.utils.entity_store import EntityStore, IdentifierType
 
 CategoricalFeatureSpecProtocolT = TypeVar(
     "CategoricalFeatureSpecProtocolT", bound=CategoricalFeatureSpecProtocol
@@ -11,7 +11,7 @@ CategoricalFeatureSpecProtocolT = TypeVar(
 CategoryStoreT = TypeVar("CategoryStoreT", bound="CategoryStore")
 
 
-class CategoryStore(ResourceStore[int], Generic[CategoricalFeatureSpecProtocolT]):
+class CategoryStore(EntityStore[int], Generic[CategoricalFeatureSpecProtocolT]):
     def __init__(
         self,
         feature_spec: CategoricalFeatureSpecProtocol,

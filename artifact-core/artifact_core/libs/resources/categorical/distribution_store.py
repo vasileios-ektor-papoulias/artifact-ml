@@ -16,7 +16,7 @@ from scipy.special import softmax
 from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
 from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
 from artifact_core.libs.resource_spec.categorical.spec import CategoricalFeatureSpec
-from artifact_core.libs.resources.base.resource_store import IdentifierType, ResourceStore
+from artifact_core.libs.utils.entity_store import EntityStore, IdentifierType
 
 CategoricalDistribution = Union[Sequence[float], np.ndarray]
 CategoricalFeatureSpecProtocolT = TypeVar(
@@ -28,7 +28,7 @@ CategoricalDistributionStoreT = TypeVar(
 
 
 class CategoricalDistributionStore(
-    ResourceStore[np.ndarray], Generic[CategoricalFeatureSpecProtocolT]
+    EntityStore[np.ndarray], Generic[CategoricalFeatureSpecProtocolT]
 ):
     def __init__(
         self,
