@@ -16,7 +16,7 @@ from scipy.special import softmax
 from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
 from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
 from artifact_core.libs.resource_spec.categorical.spec import CategoricalFeatureSpec
-from artifact_core.libs.utils.entity_store import EntityStore, IdentifierType
+from artifact_core.libs.types.entity_store import EntityStore, IdentifierType
 
 CategoricalDistribution = Union[Sequence[float], np.ndarray]
 CategoricalFeatureSpecProtocolT = TypeVar(

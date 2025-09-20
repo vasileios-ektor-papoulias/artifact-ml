@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Type, TypeVar
 from artifact_core.libs.resource_spec.categorical.protocol import (
     CategoricalFeatureSpecProtocol,
 )
-from artifact_core.libs.utils.serializable import Serializable
+from artifact_core.libs.types.serializable import Serializable
 
 CategoricalFeatureSpecT = TypeVar("CategoricalFeatureSpecT", bound="CategoricalFeatureSpec")
 
@@ -64,11 +64,8 @@ class CategoricalFeatureSpec(Serializable, CategoricalFeatureSpecProtocol):
     def from_dict(
         cls: Type[CategoricalFeatureSpecT], data: Dict[str, Any]
     ) -> CategoricalFeatureSpecT:
-        try:
-            feature_name = data[cls._feature_name_key]
-            ls_categories = data[cls._ls_categories_key]
-        except KeyError as e:
-            raise ValueError(f"Missing required field in dict: {e}")
+        feature_name = cls._get_from_data(key=cls._feature_name_key, data=data)
+        ls_categories = cls._get_from_data(key=cls._ls_categories_key, data=data)
         return cls(feature_name=feature_name, ls_categories=ls_categories)
 
     def _require_category(self, category: str) -> None:
