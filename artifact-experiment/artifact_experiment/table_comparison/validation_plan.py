@@ -18,7 +18,7 @@ from artifact_experiment.table_comparison.callback_factory import (
     TableComparisonScoreCollectionType,
     TableComparisonScoreType,
 )
-from artifact_experiment.table_comparison.resources import TableComparisonCallbackResources
+from artifact_experiment.table_comparison.callback_resources import TableComparisonCallbackResources
 
 
 class TableComparisonPlan(
