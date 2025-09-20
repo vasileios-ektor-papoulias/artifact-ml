@@ -3,8 +3,8 @@ from typing import Dict, Generic, List, Optional, Type, TypeVar
 
 from artifact_core.binary_classification.artifacts.base import ClassificationArtifactResources
 from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
-from artifact_core.libs.resources.categorical.category_store import CategoryStore
 from artifact_core.libs.resources.classification.classification_results import ClassificationResults
+from artifact_core.libs.resources.classification.true_category_store import TrueCategoryStore
 from artifact_core.libs.types.entity_store import IdentifierType
 from numpy import ndarray
 
@@ -40,7 +40,7 @@ class ClassificationCallbackResources(
     @classmethod
     def from_classification_results(
         cls: Type[ClassificationCallbackResourcesT],
-        true_category_store: CategoryStore[CategoricalFeatureSpecProtocolT],
+        true_category_store: TrueCategoryStore[CategoricalFeatureSpecProtocolT],
         classification_results: ClassificationResults[CategoricalFeatureSpecProtocolT],
     ) -> ClassificationCallbackResourcesT:
         artifact_resources = ClassificationArtifactResources(

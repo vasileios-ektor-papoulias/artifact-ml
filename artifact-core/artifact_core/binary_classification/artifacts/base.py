@@ -13,10 +13,10 @@ from artifact_core.core.classification.artifact import (
     ClassificationArtifactResources,
 )
 from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
-from artifact_core.libs.resources.categorical.category_store import BinaryCategoryStore
 from artifact_core.libs.resources.classification.classification_results import (
     BinaryClassificationResults,
 )
+from artifact_core.libs.resources.classification.true_category_store import BinaryTrueCategoryStore
 
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound="ArtifactHyperparams")
@@ -35,7 +35,7 @@ class BinaryClassificationArtifact(
     @abstractmethod
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_category_store: BinaryTrueCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> ArtifactResultT: ...
 

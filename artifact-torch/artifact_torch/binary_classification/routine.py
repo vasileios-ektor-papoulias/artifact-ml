@@ -4,7 +4,7 @@ from typing import Any, Generic, Optional, Type, TypeVar
 
 import pandas as pd
 from artifact_core.binary_classification.artifacts.base import BinaryClassificationArtifactResources
-from artifact_core.libs.resources.categorical.category_store import BinaryCategoryStore
+from artifact_core.libs.resources.classification.true_category_store import BinaryTrueCategoryStore
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_experiment.binary_classification.validation_plan import BinaryClassifierEvaluationPlan
 
@@ -31,7 +31,7 @@ class BinaryClassificationRoutineHyperparams(
 
 @dataclass
 class BinaryClassificationRoutineData(ArtifactRoutineData):
-    true_category_store: BinaryCategoryStore
+    true_category_store: BinaryTrueCategoryStore
     classification_data: pd.DataFrame
 
 
@@ -50,7 +50,7 @@ class BinaryClassificationRoutine(
     @classmethod
     def build(
         cls: Type[BinaryClassificationRoutineT],
-        true_category_store: BinaryCategoryStore,
+        true_category_store: BinaryTrueCategoryStore,
         classification_data: pd.DataFrame,
         class_spec: BinaryFeatureSpecProtocol,
         tracking_client: Optional[TrackingClient] = None,

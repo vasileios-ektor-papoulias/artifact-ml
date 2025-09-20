@@ -14,9 +14,9 @@ from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFea
 from artifact_core.libs.resource_validation.classification.classification_resource_validator import (
     ClassificationResourcesValidator,
 )
-from artifact_core.libs.resources.categorical.category_store import CategoryStore
 from artifact_core.libs.resources.categorical.distribution_store import IdentifierType
 from artifact_core.libs.resources.classification.classification_results import ClassificationResults
+from artifact_core.libs.resources.classification.true_category_store import TrueCategoryStore
 
 ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound="ArtifactHyperparams")
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
@@ -30,7 +30,7 @@ ClassificationArtifactResourcesT = TypeVar(
 
 @dataclass(frozen=True)
 class ClassificationArtifactResources(ArtifactResources, Generic[CategoricalFeatureSpecProtocolT]):
-    true_category_store: CategoryStore[CategoricalFeatureSpecProtocolT]
+    true_category_store: TrueCategoryStore[CategoricalFeatureSpecProtocolT]
     classification_results: ClassificationResults[CategoricalFeatureSpecProtocolT]
 
     @classmethod
@@ -41,8 +41,8 @@ class ClassificationArtifactResources(ArtifactResources, Generic[CategoricalFeat
         predicted: Dict[IdentifierType, str],
         logits: Optional[Dict[IdentifierType, ndarray]] = None,
     ) -> ClassificationArtifactResourcesT:
-        true_category_store = CategoryStore[CategoricalFeatureSpecProtocolT].from_categories(
-            feature_name="true", ls_categories=ls_categories, id_to_category=true
+        true_category_store = TrueCategoryStore[CategoricalFeatureSpecProtocolT].from_categories(
+            ls_categories=ls_categories, id_to_category=true
         )
         classification_results = ClassificationResults[CategoricalFeatureSpecProtocolT].build(
             ls_categories=ls_categories,
@@ -71,7 +71,7 @@ class ClassificationArtifact(
     @abstractmethod
     def _evaluate_classification(
         self,
-        true_category_store: CategoryStore[CategoricalFeatureSpecProtocolT],
+        true_category_store: TrueCategoryStore[CategoricalFeatureSpecProtocolT],
         classification_results: ClassificationResults[CategoricalFeatureSpecProtocolT],
     ) -> ArtifactResultT: ...
 
