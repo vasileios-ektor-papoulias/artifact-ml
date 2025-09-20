@@ -23,6 +23,8 @@ from artifact_core.libs.resource_validation.tabular.table_validator import (
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound="ArtifactHyperparams")
 
+TableComparisonArtifactResources = DatasetComparisonArtifactResources[pd.DataFrame]
+
 
 class TableComparisonArtifact(
     DatasetComparisonArtifact[
@@ -61,8 +63,6 @@ class TableComparisonArtifact(
         )
         return dataset_real_validated, dataset_synthetic_validated
 
-
-TableComparisonArtifactResources = DatasetComparisonArtifactResources[pd.DataFrame]
 
 TableComparisonScore = TableComparisonArtifact[float, ArtifactHyperparamsT]
 TableComparisonArray = TableComparisonArtifact[ndarray, ArtifactHyperparamsT]
