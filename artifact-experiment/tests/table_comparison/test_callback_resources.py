@@ -1,7 +1,10 @@
 import pandas as pd
 import pytest
 from artifact_core.core.dataset_comparison.artifact import DatasetComparisonArtifactResources
-from artifact_experiment.table_comparison.resources import TableComparisonCallbackResources
+from artifact_experiment.core.dataset_comparison.callback_resources import (
+    DatasetComparisonCallbackResources,
+)
+from artifact_experiment.table_comparison.callback_resources import TableComparisonCallbackResources
 
 
 @pytest.mark.unit
@@ -21,7 +24,7 @@ def test_build(dataset_real_dispatcher: pd.DataFrame, dataset_synthetic_dispatch
         dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
     )
 
-    assert isinstance(resources, TableComparisonCallbackResources)
+    assert isinstance(resources, DatasetComparisonCallbackResources)
     assert isinstance(resources.artifact_resources, DatasetComparisonArtifactResources)
     assert isinstance(resources.artifact_resources.dataset_real, pd.DataFrame)
     assert isinstance(resources.artifact_resources.dataset_synthetic, pd.DataFrame)
