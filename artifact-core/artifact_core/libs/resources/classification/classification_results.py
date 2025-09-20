@@ -26,23 +26,17 @@ ClassificationResultsT = TypeVar("ClassificationResultsT", bound="Classification
 
 
 class ClassificationResults(Generic[CategoricalFeatureSpecProtocolT]):
-    _categorical_feature_name = "classes"
+    _feature_name = "predicted"
 
     def __init__(
         self,
         feature_spec: CategoricalFeatureSpecProtocol,
-        id_to_category: Optional[Mapping[IdentifierType, str]] = None,
-        id_to_logits: Optional[Mapping[IdentifierType, np.ndarray]] = None,
+        pred_store: CategoryStore[CategoricalFeatureSpecProtocolT],
+        distn_store: CategoricalDistributionStore[CategoricalFeatureSpecProtocolT],
     ):
         self._feature_spec = feature_spec
-        self._pred_store = CategoryStore[CategoricalFeatureSpecProtocolT](feature_spec=feature_spec)
-        self._distn_store = CategoricalDistributionStore[CategoricalFeatureSpecProtocolT](
-            feature_spec=feature_spec
-        )
-        if id_to_category is not None:
-            self.set_results_multiple(
-                id_to_category=id_to_category, id_to_logits=id_to_logits or {}
-            )
+        self._pred_store = pred_store
+        self._distn_store = distn_store
 
     @classmethod
     def build(
@@ -52,13 +46,22 @@ class ClassificationResults(Generic[CategoricalFeatureSpecProtocolT]):
         id_to_logits: Optional[Mapping[IdentifierType, np.ndarray]] = None,
     ) -> ClassificationResultsT:
         feature_spec = CategoricalFeatureSpec(
-            feature_name=cls._categorical_feature_name, ls_categories=ls_categories
+            ls_categories=ls_categories, feature_name=cls._feature_name
         )
-        return cls(
+        pred_store = CategoryStore[CategoricalFeatureSpecProtocolT](feature_spec=feature_spec)
+        distn_store = CategoricalDistributionStore[CategoricalFeatureSpecProtocolT](
+            feature_spec=feature_spec
+        )
+        classification_results = cls(
             feature_spec=feature_spec,
-            id_to_category=id_to_category,
-            id_to_logits=id_to_logits,
+            pred_store=pred_store,
+            distn_store=distn_store,
         )
+        if id_to_category is not None:
+            classification_results.set_results_multiple(
+                id_to_category=id_to_category, id_to_logits=id_to_logits or {}
+            )
+        return classification_results
 
     @property
     def feature_name(self) -> str:
