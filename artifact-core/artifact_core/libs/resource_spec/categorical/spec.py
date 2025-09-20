@@ -1,18 +1,24 @@
-from typing import Dict, List, TypeVar
+from typing import Any, Dict, List, Type, TypeVar
 
 from artifact_core.libs.resource_spec.categorical.protocol import (
     CategoricalFeatureSpecProtocol,
 )
+from artifact_core.libs.utils.serializable import Serializable
 
 CategoricalFeatureSpecT = TypeVar("CategoricalFeatureSpecT", bound="CategoricalFeatureSpec")
 
 
-class CategoricalFeatureSpec(CategoricalFeatureSpecProtocol):
+class CategoricalFeatureSpec(Serializable, CategoricalFeatureSpecProtocol):
+    _feature_name_key = "feature_name"
+    _ls_categories_key = "ls_categories"
+
     def __init__(self, feature_name: str, ls_categories: List[str]):
-        self._validate_ls_categories(ls_categories)
+        self._validate_ls_categories(ls_categories=ls_categories)
         self._feature_name: str = str(feature_name)
         self._ls_categories: List[str] = ls_categories.copy()
-        self._cat_to_idx: Dict[str, int] = {c: i for i, c in enumerate(self._ls_categories)}
+        self._cat_to_idx: Dict[str, int] = {
+            category: idx for idx, category in enumerate(self._ls_categories)
+        }
 
     @property
     def feature_name(self) -> str:
@@ -47,6 +53,23 @@ class CategoricalFeatureSpec(CategoricalFeatureSpecProtocol):
 
     def has_category(self, category: str) -> bool:
         return category in self._cat_to_idx
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            self._feature_name_key: self._feature_name,
+            self._ls_categories_key: self._ls_categories.copy(),
+        }
+
+    @classmethod
+    def from_dict(
+        cls: Type[CategoricalFeatureSpecT], data: Dict[str, Any]
+    ) -> CategoricalFeatureSpecT:
+        try:
+            feature_name = data[cls._feature_name_key]
+            ls_categories = data[cls._ls_categories_key]
+        except KeyError as e:
+            raise ValueError(f"Missing required field in dict: {e}")
+        return cls(feature_name=feature_name, ls_categories=ls_categories)
 
     def _require_category(self, category: str) -> None:
         if category not in self._cat_to_idx:
