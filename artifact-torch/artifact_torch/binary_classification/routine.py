@@ -15,6 +15,7 @@ from artifact_torch.base.components.routines.artifact import (
 )
 from artifact_torch.binary_classification.model import BinaryClassifier, BinaryFeatureSpecProtocol
 from artifact_torch.core.model.classifier import ClassificationParams
+from artifact_torch.libs.exports.metadata import MetadataExporter
 
 ClassificationParamsT = TypeVar("ClassificationParamsT", bound=ClassificationParams)
 BinaryClassificationRoutineT = TypeVar(
@@ -112,10 +113,23 @@ class BinaryClassificationRoutine(
         n_epochs_elapsed: int,
         tracking_client: TrackingClient,
     ):
-        # MetadataExporter.export(
-        #     data=artifact_resources.classification_results,
-        #     tracking_client=tracking_client,
-        #     prefix=cls._resource_export_prefix,
-        #     step=n_epochs_elapsed,
-        # )
-        pass
+        true = artifact_resources.true_category_store.id_to_category
+        true = {str(identifier): category for identifier, category in true.items()}
+        predicted = artifact_resources.classification_results.prediction_store.id_to_category
+        predicted = {str(identifier): category for identifier, category in predicted.items()}
+        probs = artifact_resources.classification_results.distribution_store.id_to_probs
+        probs = {str(identifier): arr_probs.tolist() for identifier, arr_probs in probs.items()}
+        dict_resources = {
+            identifier: {
+                "true": true.get(identifier),
+                "predicted": predicted.get(identifier),
+                "probs": probs.get(identifier),
+            }
+            for identifier in set(true) | set(predicted) | set(probs)
+        }
+        MetadataExporter.export(
+            data=dict_resources,
+            tracking_client=tracking_client,
+            prefix=cls._resource_export_prefix,
+            step=n_epochs_elapsed,
+        )
