@@ -25,3 +25,9 @@ class Serializable(ABC):
         if not isinstance(data, dict):
             raise ValueError("Expected JSON object for CategoricalFeatureSpec.")
         return cls.from_dict(data=data)
+
+    @staticmethod
+    def _get_from_data(key: str, data: Dict[str, Any]) -> Any:
+        value = data.get(key)
+        if value is None:
+            raise KeyError(f"required key: '{key}', got keys: {data.keys()}")
