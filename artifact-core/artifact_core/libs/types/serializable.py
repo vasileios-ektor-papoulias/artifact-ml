@@ -9,8 +9,8 @@ class Serializable(ABC):
     @abstractmethod
     def to_dict(self) -> Dict[str, Any]: ...
 
-    @abstractmethod
     @classmethod
+    @abstractmethod
     def from_dict(cls: Type[SerializableT], data: Dict[str, Any]) -> SerializableT: ...
 
     def serialize(self) -> str:
@@ -31,3 +31,4 @@ class Serializable(ABC):
         value = data.get(key)
         if value is None:
             raise KeyError(f"required key: '{key}', got keys: {data.keys()}")
+        return value
