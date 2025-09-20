@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Type, TypeVar
+from typing import Any, Dict, List, Optional, Type, TypeVar
 
 from artifact_core.libs.resource_spec.categorical.protocol import (
     CategoricalFeatureSpecProtocol,
@@ -9,10 +9,17 @@ CategoricalFeatureSpecT = TypeVar("CategoricalFeatureSpecT", bound="CategoricalF
 
 
 class CategoricalFeatureSpec(Serializable, CategoricalFeatureSpecProtocol):
+    _default_name = "categorical_feature"
     _feature_name_key = "feature_name"
     _ls_categories_key = "ls_categories"
 
-    def __init__(self, feature_name: str, ls_categories: List[str]):
+    def __init__(
+        self,
+        ls_categories: List[str],
+        feature_name: Optional[str] = None,
+    ):
+        if feature_name is None:
+            feature_name = self._default_name
         self._validate_ls_categories(ls_categories=ls_categories)
         self._feature_name: str = str(feature_name)
         self._ls_categories: List[str] = ls_categories.copy()

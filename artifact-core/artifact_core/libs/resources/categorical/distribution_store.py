@@ -43,12 +43,12 @@ class CategoricalDistributionStore(
     @classmethod
     def build(
         cls: Type[CategoricalDistributionStoreT],
-        feature_name: str,
         ls_categories: List[str],
         id_to_logits: Optional[Mapping[IdentifierType, np.ndarray]] = None,
+        feature_name: Optional[str] = None,
     ) -> CategoricalDistributionStoreT:
         feature_spec = CategoricalFeatureSpec(
-            feature_name=feature_name, ls_categories=ls_categories
+            ls_categories=ls_categories, feature_name=feature_name
         )
         return cls(feature_spec=feature_spec, id_to_logits=id_to_logits)
 

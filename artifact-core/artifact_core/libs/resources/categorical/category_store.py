@@ -25,24 +25,24 @@ class CategoryStore(EntityStore[int], Generic[CategoricalFeatureSpecProtocolT]):
     @classmethod
     def build(
         cls: Type[CategoryStoreT],
-        feature_name: str,
         ls_categories: List[str],
         id_to_category_idx: Optional[Mapping[IdentifierType, int]] = None,
+        feature_name: Optional[str] = None,
     ) -> CategoryStoreT:
         feature_spec = CategoricalFeatureSpec(
-            feature_name=feature_name, ls_categories=ls_categories
+            ls_categories=ls_categories, feature_name=feature_name
         )
         return cls(feature_spec=feature_spec, id_to_category_idx=id_to_category_idx)
 
     @classmethod
     def from_categories(
         cls: Type[CategoryStoreT],
-        feature_name: str,
         ls_categories: List[str],
         id_to_category: Mapping[IdentifierType, str],
+        feature_name: Optional[str] = None,
     ) -> CategoryStoreT:
         feature_spec = CategoricalFeatureSpec(
-            feature_name=feature_name, ls_categories=ls_categories
+            ls_categories=ls_categories, feature_name=feature_name
         )
         store = cls(feature_spec=feature_spec, id_to_category_idx=None)
         store.set_multiple_cat(id_to_category=id_to_category)
