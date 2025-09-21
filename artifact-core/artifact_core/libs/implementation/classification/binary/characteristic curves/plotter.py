@@ -25,7 +25,6 @@ class BinaryClassificationCurveType(Enum):
 
 @dataclass(frozen=True)
 class BinaryClassificationCurvePlotConfig:
-    kind: BinaryClassificationCurveType = BinaryClassificationCurveType.ROC
     title: Optional[str] = None
     dpi: int = 120
     figsize: Tuple[float, float] = (6.0, 4.5)
@@ -38,6 +37,7 @@ class BinaryClassificationCurvePlotter:
     @classmethod
     def plot(
         cls,
+        plot_type: BinaryClassificationCurveType,
         true: Mapping[Hashable, str],
         probs: Mapping[Hashable, float],
         pos_label: str,
@@ -46,19 +46,18 @@ class BinaryClassificationCurvePlotter:
         y_true, y_score = cls._align_labels(true, probs)
         y_pos = (np.array(y_true) == pos_label).astype(int)
         s = np.array(y_score, dtype=float)
-
-        if config.kind is BinaryClassificationCurveType.ROC:
+        if BinaryClassificationCurveType is BinaryClassificationCurveType.ROC:
             return cls._plot_roc(y_pos, s, config)
-        elif config.kind is BinaryClassificationCurveType.PR:
+        elif BinaryClassificationCurveType is BinaryClassificationCurveType.PR:
             return cls._plot_pr(y_pos, s, config)
-        elif config.kind is BinaryClassificationCurveType.DET:
+        elif BinaryClassificationCurveType is BinaryClassificationCurveType.DET:
             return cls._plot_det(y_pos, s, config)
-        elif config.kind is BinaryClassificationCurveType.TPR_THRESHOLD:
+        elif BinaryClassificationCurveType is BinaryClassificationCurveType.TPR_THRESHOLD:
             return cls._plot_tpr_threshold(y_pos, s, config)
-        elif config.kind is BinaryClassificationCurveType.PRECISION_THRESHOLD:
+        elif BinaryClassificationCurveType is BinaryClassificationCurveType.PRECISION_THRESHOLD:
             return cls._plot_precision_threshold(y_pos, s, config)
         else:
-            raise ValueError(f"Unsupported curve kind: {config.kind}")
+            raise ValueError(f"Unsupported curve kind: {plot_type}")
 
     @classmethod
     def _plot_roc(cls, y_pos, s, config: BinaryClassificationCurvePlotConfig) -> Figure:
