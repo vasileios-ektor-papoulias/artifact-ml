@@ -10,7 +10,6 @@ from typing import (
 
 import numpy as np
 
-from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
 from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
 from artifact_core.libs.resource_spec.categorical.spec import CategoricalFeatureSpec
 from artifact_core.libs.resources.categorical.category_store import CategoryStore
@@ -30,7 +29,7 @@ class ClassificationResults(Generic[CategoricalFeatureSpecProtocolT]):
 
     def __init__(
         self,
-        feature_spec: CategoricalFeatureSpecProtocol,
+        feature_spec: CategoricalFeatureSpecProtocolT,
         pred_store: CategoryStore[CategoricalFeatureSpecProtocolT],
         distn_store: CategoricalDistributionStore[CategoricalFeatureSpecProtocolT],
     ):
@@ -141,6 +140,3 @@ class ClassificationResults(Generic[CategoricalFeatureSpecProtocolT]):
             self._distn_store.set_concentrated(identifier=identifier, category=category)
         else:
             self._distn_store.set_logits(identifier=identifier, logits=logits)
-
-
-BinaryClassificationResults = ClassificationResults[BinaryFeatureSpecProtocol]

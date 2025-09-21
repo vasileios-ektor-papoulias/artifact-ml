@@ -1,6 +1,5 @@
 from typing import Dict, Generic, List, Mapping, Optional, Type, TypeVar
 
-from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
 from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
 from artifact_core.libs.resource_spec.categorical.spec import CategoricalFeatureSpec
 from artifact_core.libs.types.entity_store import EntityStore, IdentifierType
@@ -14,7 +13,7 @@ CategoryStoreT = TypeVar("CategoryStoreT", bound="CategoryStore")
 class CategoryStore(EntityStore[int], Generic[CategoricalFeatureSpecProtocolT]):
     def __init__(
         self,
-        feature_spec: CategoricalFeatureSpecProtocol,
+        feature_spec: CategoricalFeatureSpecProtocolT,
         id_to_category_idx: Optional[Mapping[IdentifierType, int]] = None,
     ):
         super().__init__(initial=None)
@@ -69,13 +68,13 @@ class CategoryStore(EntityStore[int], Generic[CategoricalFeatureSpecProtocolT]):
         return {k: self._feature_spec.ls_categories[v] for k, v in self._data.items()}
 
     @property
-    def ls_predicted_indices(self) -> List[int]:
+    def ls_stored_indices(self) -> List[int]:
         return list(self._data.values())
 
     @property
-    def ls_predicted_categories(self) -> List[str]:
+    def ls_stored_categories(self) -> List[str]:
         cats = self._feature_spec.ls_categories
-        return [cats[i] for i in self.ls_predicted_indices]
+        return [cats[i] for i in self.ls_stored_indices]
 
     def __repr__(self) -> str:
         return (
@@ -132,6 +131,3 @@ class CategoryStore(EntityStore[int], Generic[CategoricalFeatureSpecProtocolT]):
                 f"0 <= category_idx < {self._feature_spec.n_categories}, "
                 f"got {category_idx}."
             )
-
-
-BinaryCategoryStore = CategoryStore[BinaryFeatureSpecProtocol]
