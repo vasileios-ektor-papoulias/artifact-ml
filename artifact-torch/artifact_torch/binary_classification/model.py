@@ -2,7 +2,6 @@ from abc import abstractmethod
 from typing import Generic, TypeVar
 
 import pandas as pd
-from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
 from artifact_core.libs.resources.classification.binary_classification_results import (
     BinaryClassificationResults,
 )
@@ -19,16 +18,15 @@ from artifact_torch.core.model.classifier import (
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
 ModelOutputTCov = TypeVar("ModelOutputTCov", bound=ModelOutput, covariant=True)
 ClassificationParamsT = TypeVar("ClassificationParamsT", bound=ClassificationParams)
-BinaryFeatureSpecProtocolT = TypeVar("BinaryFeatureSpecProtocolT", bound=BinaryFeatureSpecProtocol)
 
 
 class BinaryClassifier(
     Classifier[
         ModelInputTContr,
         ModelOutputTCov,
-        BinaryFeatureSpecProtocol,
         ClassificationParamsT,
         pd.DataFrame,
+        BinaryClassificationResults,
     ],
     Generic[ModelInputTContr, ModelOutputTCov, ClassificationParamsT],
 ):

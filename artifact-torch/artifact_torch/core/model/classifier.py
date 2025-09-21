@@ -2,7 +2,6 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Generic, TypeVar
 
-from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
 from artifact_core.libs.resources.classification.classification_results import ClassificationResults
 
 from artifact_torch.base.model.base import Model
@@ -15,9 +14,7 @@ ModelInputTContr = TypeVar("ModelInputTContr", bound="ModelInput", contravariant
 ModelOutputTCov = TypeVar("ModelOutputTCov", bound="ModelOutput", covariant=True)
 ClassificationParamsT = TypeVar("ClassificationParamsT", bound="ClassificationParams")
 ClassificationDataT = TypeVar("ClassificationDataT")
-CategoricalFeatureSpecProtocolT = TypeVar(
-    "CategoricalFeatureSpecProtocolT", bound=CategoricalFeatureSpecProtocol
-)
+ClassificationResultsT = TypeVar("ClassificationResultsT", bound=ClassificationResults)
 
 
 @dataclass
@@ -30,9 +27,9 @@ class Classifier(
     Generic[
         ModelInputTContr,
         ModelOutputTCov,
-        CategoricalFeatureSpecProtocolT,
         ClassificationParamsT,
         ClassificationDataT,
+        ClassificationResultsT,
     ],
 ):
     @abstractmethod
@@ -41,4 +38,4 @@ class Classifier(
     @abstractmethod
     def classify(
         self, data: ClassificationDataT, params: ClassificationParamsT
-    ) -> ClassificationResults[CategoricalFeatureSpecProtocolT]: ...
+    ) -> ClassificationResultsT: ...

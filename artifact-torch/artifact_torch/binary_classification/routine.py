@@ -4,7 +4,8 @@ from typing import Any, Generic, Optional, Type, TypeVar
 
 import pandas as pd
 from artifact_core.binary_classification.artifacts.base import BinaryClassificationArtifactResources
-from artifact_core.libs.resources.classification.true_category_store import BinaryTrueCategoryStore
+from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
+from artifact_core.libs.resources.categorical.category_store.binary import BinaryCategoryStore
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_experiment.binary_classification.validation_plan import BinaryClassifierEvaluationPlan
 
@@ -13,7 +14,7 @@ from artifact_torch.base.components.routines.artifact import (
     ArtifactRoutineHyperparams,
     ArtifactValidationRoutine,
 )
-from artifact_torch.binary_classification.model import BinaryClassifier, BinaryFeatureSpecProtocol
+from artifact_torch.binary_classification.model import BinaryClassifier
 from artifact_torch.core.model.classifier import ClassificationParams
 from artifact_torch.libs.exports.metadata import MetadataExporter
 
@@ -32,7 +33,7 @@ class BinaryClassificationRoutineHyperparams(
 
 @dataclass
 class BinaryClassificationRoutineData(ArtifactRoutineData):
-    true_category_store: BinaryTrueCategoryStore
+    true_category_store: BinaryCategoryStore
     classification_data: pd.DataFrame
 
 
@@ -51,7 +52,7 @@ class BinaryClassificationRoutine(
     @classmethod
     def build(
         cls: Type[BinaryClassificationRoutineT],
-        true_category_store: BinaryTrueCategoryStore,
+        true_category_store: BinaryCategoryStore,
         classification_data: pd.DataFrame,
         class_spec: BinaryFeatureSpecProtocol,
         tracking_client: Optional[TrackingClient] = None,
@@ -100,7 +101,7 @@ class BinaryClassificationRoutine(
         classification_results = model.classify(
             data=data.classification_data, params=hyperparams.classification_params
         )
-        resources = BinaryClassificationArtifactResources(
+        resources = BinaryClassificationArtifactResources.from_stores(
             true_category_store=data.true_category_store,
             classification_results=classification_results,
         )
@@ -115,9 +116,9 @@ class BinaryClassificationRoutine(
     ):
         true = artifact_resources.true_category_store.id_to_category
         true = {str(identifier): category for identifier, category in true.items()}
-        predicted = artifact_resources.classification_results.prediction_store.id_to_category
+        predicted = artifact_resources.classification_results.id_to_predicted_category
         predicted = {str(identifier): category for identifier, category in predicted.items()}
-        probs = artifact_resources.classification_results.distribution_store.id_to_probs
+        probs = artifact_resources.classification_results.id_to_probs
         probs = {str(identifier): arr_probs.tolist() for identifier, arr_probs in probs.items()}
         dict_resources = {
             identifier: {

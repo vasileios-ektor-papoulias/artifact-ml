@@ -1,15 +1,19 @@
-from typing import List
+from typing import List, Optional
 
 from artifact_core.libs.resource_spec.categorical.spec import CategoricalFeatureSpec
 
 
 class BinaryFeatureSpec(CategoricalFeatureSpec):
-    def __init__(self, feature_name: str, positive_category: str, ls_categories: List[str]):
-        self._assert_binary(ls_categories=ls_categories)
-        self._validate_positive_category(
-            positive_category=positive_category, ls_categories=ls_categories
-        )
+    _default_name = "binary_feature"
+
+    def __init__(
+        self, ls_categories: List[str], positive_category: str, feature_name: Optional[str] = None
+    ):
         super().__init__(feature_name=feature_name, ls_categories=ls_categories)
+        self._assert_binary(ls_categories=self._ls_categories)
+        self._validate_positive_category(
+            positive_category=positive_category, ls_categories=self._ls_categories
+        )
         self._positive_category = positive_category
         self._negative_category = self._get_negative_category(
             positive_category=positive_category, ls_categories=ls_categories

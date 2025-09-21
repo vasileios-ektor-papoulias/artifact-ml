@@ -22,7 +22,7 @@ class CategoricalFeatureSpec(Serializable, CategoricalFeatureSpecProtocol):
             feature_name = self._default_name
         self._validate_ls_categories(ls_categories=ls_categories)
         self._feature_name: str = str(feature_name)
-        self._ls_categories: List[str] = ls_categories.copy()
+        self._ls_categories: List[str] = [str(category) for category in ls_categories]
         self._cat_to_idx: Dict[str, int] = {
             category: idx for idx, category in enumerate(self._ls_categories)
         }

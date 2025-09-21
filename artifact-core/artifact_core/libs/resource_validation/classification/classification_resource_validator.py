@@ -1,20 +1,17 @@
-from typing import Iterable, Tuple
+from typing import Iterable
 
-from artifact_core.libs.resources.categorical.distribution_store import IdentifierType
+from artifact_core.libs.resources.categorical.category_store.category_store import CategoryStore
 from artifact_core.libs.resources.classification.classification_results import ClassificationResults
-from artifact_core.libs.resources.classification.true_category_store import TrueCategoryStore
+from artifact_core.libs.types.entity_store import IdentifierType
 
 
 class ClassificationResourcesValidator:
     @classmethod
     def validate(
         cls,
-        true_category_store: TrueCategoryStore,
+        true_category_store: CategoryStore,
         classification_results: ClassificationResults,
-    ) -> Tuple[
-        TrueCategoryStore,
-        ClassificationResults,
-    ]:
+    ) -> None:
         cls._require_non_empty_true(true_category_store)
         cls._require_non_empty_results(classification_results)
         cls._require_same_ids(true_category_store.ids, classification_results.ids)
@@ -22,11 +19,10 @@ class ClassificationResourcesValidator:
             true_category_store=true_category_store,
             classification_results=classification_results,
         )
-        return true_category_store, classification_results
 
     @staticmethod
     def _require_non_empty_true(
-        true_category_store: TrueCategoryStore,
+        true_category_store: CategoryStore,
     ) -> None:
         if len(true_category_store) == 0:
             raise ValueError("Expected non-empty true_categories store.")
@@ -56,7 +52,7 @@ class ClassificationResourcesValidator:
 
     @staticmethod
     def _require_compatible_specs(
-        true_category_store: TrueCategoryStore,
+        true_category_store: CategoryStore,
         classification_results: ClassificationResults,
     ) -> None:
         spec_true = true_category_store.ls_categories

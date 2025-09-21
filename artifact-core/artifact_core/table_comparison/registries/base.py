@@ -13,7 +13,7 @@ from artifact_core.libs.resource_spec.tabular.protocol import (
     TabularDataSpecProtocol,
 )
 
-ArtifactTypeT = TypeVar("ArtifactTypeT", bound="ArtifactType")
+ArtifactTypeT = TypeVar("ArtifactTypeT", bound=ArtifactType)
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 

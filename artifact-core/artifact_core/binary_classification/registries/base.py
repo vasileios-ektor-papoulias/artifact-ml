@@ -5,17 +5,17 @@ from numpy import ndarray
 
 from artifact_core.base.artifact_dependencies import ArtifactResult
 from artifact_core.base.registry import ArtifactType
-from artifact_core.core.classification.registry import (
-    ClassificationArtifactRegistry,
-)
+from artifact_core.binary_classification.artifacts.base import BinaryClassificationArtifactResources
+from artifact_core.core.classification.registry import ClassificationArtifactRegistry
 from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
 
-ArtifactTypeT = TypeVar("ArtifactTypeT", bound="ArtifactType")
+ArtifactTypeT = TypeVar("ArtifactTypeT", bound=ArtifactType)
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 
 BinaryClassificationArtifactRegistry = ClassificationArtifactRegistry[
     ArtifactTypeT,
+    BinaryClassificationArtifactResources,
     ArtifactResultT,
     BinaryFeatureSpecProtocol,
 ]

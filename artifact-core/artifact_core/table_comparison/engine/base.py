@@ -10,12 +10,12 @@ from artifact_core.libs.resource_spec.tabular.protocol import (
     TabularDataSpecProtocol,
 )
 
-ScoreTypeT = TypeVar("ScoreTypeT", bound="ArtifactType")
-ArrayTypeT = TypeVar("ArrayTypeT", bound="ArtifactType")
-PlotTypeT = TypeVar("PlotTypeT", bound="ArtifactType")
-ScoreCollectionTypeT = TypeVar("ScoreCollectionTypeT", bound="ArtifactType")
-ArrayCollectionTypeT = TypeVar("ArrayCollectionTypeT", bound="ArtifactType")
-PlotCollectionTypeT = TypeVar("PlotCollectionTypeT", bound="ArtifactType")
+ScoreTypeT = TypeVar("ScoreTypeT", bound=ArtifactType)
+ArrayTypeT = TypeVar("ArrayTypeT", bound=ArtifactType)
+PlotTypeT = TypeVar("PlotTypeT", bound=ArtifactType)
+ScoreCollectionTypeT = TypeVar("ScoreCollectionTypeT", bound=ArtifactType)
+ArrayCollectionTypeT = TypeVar("ArrayCollectionTypeT", bound=ArtifactType)
+PlotCollectionTypeT = TypeVar("PlotCollectionTypeT", bound=ArtifactType)
 
 
 TableComparisonEngineBase = DatasetComparisonEngine[

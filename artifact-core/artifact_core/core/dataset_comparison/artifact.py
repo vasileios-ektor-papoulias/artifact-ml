@@ -11,7 +11,7 @@ from artifact_core.base.artifact_dependencies import (
 )
 
 ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
-ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound="ArtifactHyperparams")
+ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound=ArtifactHyperparams)
 DatasetT = TypeVar("DatasetT")
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 

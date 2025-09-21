@@ -21,7 +21,7 @@ from artifact_core.libs.resource_validation.tabular.table_validator import (
 )
 
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
-ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound="ArtifactHyperparams")
+ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound=ArtifactHyperparams)
 
 TableComparisonArtifactResources = DatasetComparisonArtifactResources[pd.DataFrame]
 

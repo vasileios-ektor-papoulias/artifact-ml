@@ -10,25 +10,25 @@ from artifact_core.libs.implementation.binary_classification.prediction_metrics.
     BinaryPredictionMetric,
     BinaryPredictionMetricCalculator,
 )
+from artifact_core.libs.resources.categorical.category_store.binary import (
+    BinaryCategoryStore,
+)
 from artifact_core.libs.resources.classification.binary_classification_results import (
     BinaryClassificationResults,
-)
-from artifact_core.libs.resources.classification.binary_true_category_store import (
-    BinaryTrueCategoryStore,
 )
 
 
 @BinaryClassificationScoreRegistry.register_artifact(BinaryClassificationScoreType.ACCURACY)
 class AccuracyScore(BinaryClassificationScore[NoArtifactHyperparams]):
-    def _evaluate_binary_classification(
+    def _evaluate_classification(
         self,
-        true_category_store: BinaryTrueCategoryStore,
+        true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric=BinaryPredictionMetric.ACCURACY,
             true=true_category_store.id_to_category,
-            predicted=classification_results.prediction_store.id_to_category,
+            predicted=classification_results.id_to_predicted_category,
             pos_label=self._resource_spec.positive_category,
             neg_label=self._resource_spec.negative_category,
         )
@@ -39,15 +39,15 @@ class AccuracyScore(BinaryClassificationScore[NoArtifactHyperparams]):
     BinaryClassificationScoreType.BALANCED_ACCURACY
 )
 class BalancedAccuracyScore(BinaryClassificationScore[NoArtifactHyperparams]):
-    def _evaluate_binary_classification(
+    def _evaluate_classification(
         self,
-        true_category_store: BinaryTrueCategoryStore,
+        true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric=BinaryPredictionMetric.BALANCED_ACCURACY,
             true=true_category_store.id_to_category,
-            predicted=classification_results.prediction_store.id_to_category,
+            predicted=classification_results.id_to_predicted_category,
             pos_label=self._resource_spec.positive_category,
             neg_label=self._resource_spec.negative_category,
         )
@@ -56,15 +56,15 @@ class BalancedAccuracyScore(BinaryClassificationScore[NoArtifactHyperparams]):
 
 @BinaryClassificationScoreRegistry.register_artifact(BinaryClassificationScoreType.PRECISION)
 class PrecisionScore(BinaryClassificationScore[NoArtifactHyperparams]):
-    def _evaluate_binary_classification(
+    def _evaluate_classification(
         self,
-        true_category_store: BinaryTrueCategoryStore,
+        true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric=BinaryPredictionMetric.PRECISION,
             true=true_category_store.id_to_category,
-            predicted=classification_results.prediction_store.id_to_category,
+            predicted=classification_results.id_to_predicted_category,
             pos_label=self._resource_spec.positive_category,
             neg_label=self._resource_spec.negative_category,
         )
@@ -73,15 +73,15 @@ class PrecisionScore(BinaryClassificationScore[NoArtifactHyperparams]):
 
 @BinaryClassificationScoreRegistry.register_artifact(BinaryClassificationScoreType.NPV)
 class NPVScore(BinaryClassificationScore[NoArtifactHyperparams]):
-    def _evaluate_binary_classification(
+    def _evaluate_classification(
         self,
-        true_category_store: BinaryTrueCategoryStore,
+        true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric=BinaryPredictionMetric.NPV,
             true=true_category_store.id_to_category,
-            predicted=classification_results.prediction_store.id_to_category,
+            predicted=classification_results.id_to_predicted_category,
             pos_label=self._resource_spec.positive_category,
             neg_label=self._resource_spec.negative_category,
         )
@@ -90,15 +90,15 @@ class NPVScore(BinaryClassificationScore[NoArtifactHyperparams]):
 
 @BinaryClassificationScoreRegistry.register_artifact(BinaryClassificationScoreType.RECALL)
 class RecallScore(BinaryClassificationScore[NoArtifactHyperparams]):
-    def _evaluate_binary_classification(
+    def _evaluate_classification(
         self,
-        true_category_store: BinaryTrueCategoryStore,
+        true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric=BinaryPredictionMetric.RECALL,
             true=true_category_store.id_to_category,
-            predicted=classification_results.prediction_store.id_to_category,
+            predicted=classification_results.id_to_predicted_category,
             pos_label=self._resource_spec.positive_category,
             neg_label=self._resource_spec.negative_category,
         )
@@ -107,15 +107,15 @@ class RecallScore(BinaryClassificationScore[NoArtifactHyperparams]):
 
 @BinaryClassificationScoreRegistry.register_artifact(BinaryClassificationScoreType.TNR)
 class TNRScore(BinaryClassificationScore[NoArtifactHyperparams]):
-    def _evaluate_binary_classification(
+    def _evaluate_classification(
         self,
-        true_category_store: BinaryTrueCategoryStore,
+        true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric=BinaryPredictionMetric.TNR,
             true=true_category_store.id_to_category,
-            predicted=classification_results.prediction_store.id_to_category,
+            predicted=classification_results.id_to_predicted_category,
             pos_label=self._resource_spec.positive_category,
             neg_label=self._resource_spec.negative_category,
         )
@@ -124,15 +124,15 @@ class TNRScore(BinaryClassificationScore[NoArtifactHyperparams]):
 
 @BinaryClassificationScoreRegistry.register_artifact(BinaryClassificationScoreType.FPR)
 class FPRScore(BinaryClassificationScore[NoArtifactHyperparams]):
-    def _evaluate_binary_classification(
+    def _evaluate_classification(
         self,
-        true_category_store: BinaryTrueCategoryStore,
+        true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric=BinaryPredictionMetric.FPR,
             true=true_category_store.id_to_category,
-            predicted=classification_results.prediction_store.id_to_category,
+            predicted=classification_results.id_to_predicted_category,
             pos_label=self._resource_spec.positive_category,
             neg_label=self._resource_spec.negative_category,
         )
@@ -141,15 +141,15 @@ class FPRScore(BinaryClassificationScore[NoArtifactHyperparams]):
 
 @BinaryClassificationScoreRegistry.register_artifact(BinaryClassificationScoreType.FNR)
 class FNRScore(BinaryClassificationScore[NoArtifactHyperparams]):
-    def _evaluate_binary_classification(
+    def _evaluate_classification(
         self,
-        true_category_store: BinaryTrueCategoryStore,
+        true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric=BinaryPredictionMetric.FNR,
             true=true_category_store.id_to_category,
-            predicted=classification_results.prediction_store.id_to_category,
+            predicted=classification_results.id_to_predicted_category,
             pos_label=self._resource_spec.positive_category,
             neg_label=self._resource_spec.negative_category,
         )
@@ -158,15 +158,15 @@ class FNRScore(BinaryClassificationScore[NoArtifactHyperparams]):
 
 @BinaryClassificationScoreRegistry.register_artifact(BinaryClassificationScoreType.F1)
 class F1ScoreScore(BinaryClassificationScore[NoArtifactHyperparams]):
-    def _evaluate_binary_classification(
+    def _evaluate_classification(
         self,
-        true_category_store: BinaryTrueCategoryStore,
+        true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric=BinaryPredictionMetric.F1,
             true=true_category_store.id_to_category,
-            predicted=classification_results.prediction_store.id_to_category,
+            predicted=classification_results.id_to_predicted_category,
             pos_label=self._resource_spec.positive_category,
             neg_label=self._resource_spec.negative_category,
         )
@@ -175,15 +175,15 @@ class F1ScoreScore(BinaryClassificationScore[NoArtifactHyperparams]):
 
 @BinaryClassificationScoreRegistry.register_artifact(BinaryClassificationScoreType.MCC)
 class MCCScore(BinaryClassificationScore[NoArtifactHyperparams]):
-    def _evaluate_binary_classification(
+    def _evaluate_classification(
         self,
-        true_category_store: BinaryTrueCategoryStore,
+        true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric=BinaryPredictionMetric.MCC,
             true=true_category_store.id_to_category,
-            predicted=classification_results.prediction_store.id_to_category,
+            predicted=classification_results.id_to_predicted_category,
             pos_label=self._resource_spec.positive_category,
             neg_label=self._resource_spec.negative_category,
         )

@@ -66,8 +66,8 @@ class BinaryClassifierEvaluationPlan(
         predicted: Dict[IdentifierType, str],
         logits: Optional[Dict[IdentifierType, ndarray]] = None,
     ):
-        callback_resources = BinaryClassificationCallbackResources.build(
-            ls_categories=self._resource_spec.ls_categories,
+        callback_resources = BinaryClassificationCallbackResources.from_spec(
+            class_spec=self._resource_spec,
             true=true,
             predicted=predicted,
             logits=logits,

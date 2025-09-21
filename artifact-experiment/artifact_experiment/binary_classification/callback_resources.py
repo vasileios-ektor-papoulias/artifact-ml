@@ -1,7 +1,70 @@
+from typing import Dict, List, Optional, Type, TypeVar
+
+from artifact_core.binary_classification.artifacts.base import BinaryClassificationArtifactResources
 from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
+from artifact_core.libs.resources.categorical.category_store.binary import BinaryCategoryStore
+from artifact_core.libs.resources.classification.binary_classification_results import (
+    BinaryClassificationResults,
+)
+from artifact_core.libs.types.entity_store import IdentifierType
+from numpy import ndarray
 
 from artifact_experiment.core.classification.callback_resources import (
     ClassificationCallbackResources,
 )
 
-BinaryClassificationCallbackResources = ClassificationCallbackResources[BinaryFeatureSpecProtocol]
+ClassificationCallbackResourcesT = TypeVar(
+    "ClassificationCallbackResourcesT", bound="ClassificationCallbackResources"
+)
+
+
+class BinaryClassificationCallbackResources(
+    ClassificationCallbackResources[BinaryClassificationArtifactResources]
+):
+    @classmethod
+    def build(
+        cls: Type[ClassificationCallbackResourcesT],
+        ls_categories: List[str],
+        positive_category: str,
+        true: Dict[IdentifierType, str],
+        predicted: Dict[IdentifierType, str],
+        logits: Optional[Dict[IdentifierType, ndarray]] = None,
+    ) -> ClassificationCallbackResourcesT:
+        artifact_resources = BinaryClassificationArtifactResources.build(
+            ls_categories=ls_categories,
+            positive_category=positive_category,
+            true=true,
+            predicted=predicted,
+            logits=logits,
+        )
+        callback_resources = cls(artifact_resources=artifact_resources)
+        return callback_resources
+
+    @classmethod
+    def from_spec(
+        cls: Type[ClassificationCallbackResourcesT],
+        class_spec: BinaryFeatureSpecProtocol,
+        true: Dict[IdentifierType, str],
+        predicted: Dict[IdentifierType, str],
+        logits: Optional[Dict[IdentifierType, ndarray]] = None,
+    ) -> ClassificationCallbackResourcesT:
+        artifact_resources = BinaryClassificationArtifactResources.from_spec(
+            class_spec=class_spec,
+            true=true,
+            predicted=predicted,
+            logits=logits,
+        )
+        callback_resources = cls(artifact_resources=artifact_resources)
+        return callback_resources
+
+    @classmethod
+    def from_stores(
+        cls: Type[ClassificationCallbackResourcesT],
+        true_category_store: BinaryCategoryStore,
+        classification_results: BinaryClassificationResults,
+    ) -> ClassificationCallbackResourcesT:
+        artifact_resources = BinaryClassificationArtifactResources(
+            true_category_store=true_category_store, classification_results=classification_results
+        )
+        callback_resources = cls(artifact_resources=artifact_resources)
+        return callback_resources

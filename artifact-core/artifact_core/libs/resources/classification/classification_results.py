@@ -1,66 +1,55 @@
 from typing import (
+    Dict,
     Generic,
     Iterable,
     List,
     Mapping,
     Optional,
-    Type,
     TypeVar,
 )
 
 import numpy as np
 
 from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
-from artifact_core.libs.resource_spec.categorical.spec import CategoricalFeatureSpec
-from artifact_core.libs.resources.categorical.category_store import CategoryStore
-from artifact_core.libs.resources.categorical.distribution_store import (
+from artifact_core.libs.resources.categorical.category_store.category_store import CategoryStore
+from artifact_core.libs.resources.categorical.distribution_store.distribution_store import (
     CategoricalDistributionStore,
-    IdentifierType,
 )
+from artifact_core.libs.types.entity_store import IdentifierType
 
-CategoricalFeatureSpecProtocolT = TypeVar(
-    "CategoricalFeatureSpecProtocolT", bound=CategoricalFeatureSpecProtocol, covariant=True
+CategoricalFeatureSpecProtocolTCov = TypeVar(
+    "CategoricalFeatureSpecProtocolTCov", bound=CategoricalFeatureSpecProtocol, covariant=True
+)
+CategoryStoreTCov = TypeVar("CategoryStoreTCov", bound=CategoryStore, covariant=True)
+CategoricalDistributionStoreTCov = TypeVar(
+    "CategoricalDistributionStoreTCov", bound=CategoricalDistributionStore, covariant=True
 )
 ClassificationResultsT = TypeVar("ClassificationResultsT", bound="ClassificationResults")
 
 
-class ClassificationResults(Generic[CategoricalFeatureSpecProtocolT]):
-    _feature_name = "predicted"
+class ClassificationResults(
+    Generic[CategoricalFeatureSpecProtocolTCov, CategoryStoreTCov, CategoricalDistributionStoreTCov]
+):
+    _feature_name = "predicted_category"
 
     def __init__(
         self,
-        feature_spec: CategoricalFeatureSpecProtocolT,
-        pred_store: CategoryStore[CategoricalFeatureSpecProtocolT],
-        distn_store: CategoricalDistributionStore[CategoricalFeatureSpecProtocolT],
+        class_spec: CategoricalFeatureSpecProtocolTCov,
+        pred_store: CategoryStoreTCov,
+        distn_store: CategoricalDistributionStoreTCov,
     ):
-        self._feature_spec = feature_spec
+        self._feature_spec = class_spec
         self._pred_store = pred_store
         self._distn_store = distn_store
 
-    @classmethod
-    def build(
-        cls: Type[ClassificationResultsT],
-        ls_categories: List[str],
-        id_to_category: Optional[Mapping[IdentifierType, str]] = None,
-        id_to_logits: Optional[Mapping[IdentifierType, np.ndarray]] = None,
-    ) -> ClassificationResultsT:
-        feature_spec = CategoricalFeatureSpec(
-            ls_categories=ls_categories, feature_name=cls._feature_name
+    def __len__(self) -> int:
+        return self.n_items
+
+    def __repr__(self) -> str:
+        return (
+            f"ClassificationResults(feature_name={self.feature_name!r}, "
+            f"n_items={self.n_items}, n_categories={self.n_categories})"
         )
-        pred_store = CategoryStore[CategoricalFeatureSpecProtocolT](feature_spec=feature_spec)
-        distn_store = CategoricalDistributionStore[CategoricalFeatureSpecProtocolT](
-            feature_spec=feature_spec
-        )
-        classification_results = cls(
-            feature_spec=feature_spec,
-            pred_store=pred_store,
-            distn_store=distn_store,
-        )
-        if id_to_category is not None:
-            classification_results.set_results_multiple(
-                id_to_category=id_to_category, id_to_logits=id_to_logits or {}
-            )
-        return classification_results
 
     @property
     def feature_name(self) -> str:
@@ -75,29 +64,28 @@ class ClassificationResults(Generic[CategoricalFeatureSpecProtocolT]):
         return self._feature_spec.n_categories
 
     @property
-    def prediction_store(self) -> CategoryStore:
-        return self._pred_store
-
-    @property
-    def distribution_store(self) -> CategoricalDistributionStore:
-        return self._distn_store
+    def n_items(self) -> int:
+        return len(self._pred_store)
 
     @property
     def ids(self) -> Iterable[IdentifierType]:
         return self._pred_store.ids
 
     @property
-    def n_items(self) -> int:
-        return len(self._pred_store)
+    def id_to_logits(self) -> Dict[IdentifierType, np.ndarray]:
+        return self._distn_store.id_to_logits
 
-    def __len__(self) -> int:
-        return self.n_items
+    @property
+    def id_to_probs(self) -> Dict[IdentifierType, np.ndarray]:
+        return self._distn_store.id_to_probs
 
-    def __repr__(self) -> str:
-        return (
-            f"ClassificationResults(feature_name={self.feature_name!r}, "
-            f"n_items={self.n_items}, n_categories={self.n_categories})"
-        )
+    @property
+    def id_to_predicted_category(self) -> Dict[IdentifierType, str]:
+        return self._pred_store.id_to_category
+
+    @property
+    def id_to_predicted_category_idx(self) -> Dict[IdentifierType, int]:
+        return self._pred_store.id_to_category_idx
 
     def get_predicted_index(self, identifier: IdentifierType) -> int:
         return self._pred_store.get_category_idx(identifier)
