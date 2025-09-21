@@ -3,16 +3,16 @@ from typing import Callable, Hashable, Mapping
 
 import numpy as np
 
-from artifact_core.libs.implementation.classification.binary.confusion.calculator import (
+from artifact_core.libs.implementation.binary_classification.confusion.calculator import (
     ConfusionCalculator,
 )
 
 
 class ConfusionNormalizationStrategy(Enum):
-    NONE = "none"  # raw counts
-    TRUE = "true"  # normalize rows (per actual/true class)
-    PRED = "pred"  # normalize columns (per predicted class)
-    ALL = "all"  # normalize globally (sum = 1.0)
+    NONE = "NONE"  # raw counts
+    TRUE = "TRUE"  # normalize rows (per actual/true class)
+    PRED = "PRED"  # normalize columns (per predicted class)
+    ALL = "ALL"  # normalize globally (sum = 1.0)
 
 
 class NormalizedConfusionCalculator(ConfusionCalculator):

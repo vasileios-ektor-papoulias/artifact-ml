@@ -10,13 +10,13 @@ from sklearn.metrics import (
     recall_score,
 )
 
-from artifact_core.libs.implementation.classification.binary.confusion.calculator import (
+from artifact_core.libs.implementation.binary_classification.confusion.calculator import (
     ConfusionCalculator,
     ConfusionCell,
 )
 
 
-class BinaryClassificationMetric(Enum):
+class BinaryPredictionMetric(Enum):
     ACCURACY = "ACCURACY"
     BALANCED_ACCURACY = "BALANCED_ACCURACY"
     PRECISION = "PRECISION"
@@ -29,46 +29,46 @@ class BinaryClassificationMetric(Enum):
     MCC = "MCC"
 
 
-class BinaryClassificationMetricCalculator:
+class BinaryPredictionMetricCalculator:
     _average: Literal["binary"] = "binary"
     _zero_division: Literal["warn"] = "warn"
 
     @classmethod
     def compute(
         cls,
-        metric: BinaryClassificationMetric,
+        metric: BinaryPredictionMetric,
         true: Mapping[Hashable, str],
         predicted: Mapping[Hashable, str],
         pos_label: str,
         neg_label: str,
     ) -> float:
-        if metric is BinaryClassificationMetric.ACCURACY:
+        if metric is BinaryPredictionMetric.ACCURACY:
             return cls._compute_accuracy(true=true, predicted=predicted)
-        elif metric is BinaryClassificationMetric.BALANCED_ACCURACY:
+        elif metric is BinaryPredictionMetric.BALANCED_ACCURACY:
             return cls._compute_balanced_accuracy(true=true, predicted=predicted)
-        elif metric is BinaryClassificationMetric.PRECISION:
+        elif metric is BinaryPredictionMetric.PRECISION:
             return cls._compute_precision(true=true, predicted=predicted, pos_label=pos_label)
-        elif metric is BinaryClassificationMetric.NPV:
+        elif metric is BinaryPredictionMetric.NPV:
             return cls._compute_npv(
                 true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
             )
-        elif metric is BinaryClassificationMetric.RECALL:
+        elif metric is BinaryPredictionMetric.RECALL:
             return cls._compute_recall(true=true, predicted=predicted, pos_label=pos_label)
-        elif metric is BinaryClassificationMetric.TNR:
+        elif metric is BinaryPredictionMetric.TNR:
             return cls._compute_tnr(
                 true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
             )
-        elif metric is BinaryClassificationMetric.FPR:
+        elif metric is BinaryPredictionMetric.FPR:
             return cls._compute_fpr(
                 true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
             )
-        elif metric is BinaryClassificationMetric.FNR:
+        elif metric is BinaryPredictionMetric.FNR:
             return cls._compute_fnr(
                 true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
             )
-        elif metric is BinaryClassificationMetric.F1:
+        elif metric is BinaryPredictionMetric.F1:
             return cls._compute_f1(true=true, predicted=predicted, pos_label=pos_label)
-        elif metric is BinaryClassificationMetric.MCC:
+        elif metric is BinaryPredictionMetric.MCC:
             return cls._compute_mcc(true=true, predicted=predicted, pos_label=pos_label)
         else:
             raise ValueError(f"Unsupported classification metric: {metric}")
@@ -76,13 +76,13 @@ class BinaryClassificationMetricCalculator:
     @classmethod
     def compute_multiple(
         cls,
-        metrics: Iterable[BinaryClassificationMetric],
+        metrics: Iterable[BinaryPredictionMetric],
         true: Mapping[Hashable, str],
         predicted: Mapping[Hashable, str],
         pos_label: str,
         neg_label: str,
-    ) -> Dict[BinaryClassificationMetric, float]:
-        dict_scores: Dict[BinaryClassificationMetric, float] = {}
+    ) -> Dict[BinaryPredictionMetric, float]:
+        dict_scores: Dict[BinaryPredictionMetric, float] = {}
         for metric in metrics:
             dict_scores[metric] = cls.compute(
                 metric=metric,

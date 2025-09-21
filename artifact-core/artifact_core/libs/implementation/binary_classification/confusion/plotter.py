@@ -6,10 +6,10 @@ import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 
-from artifact_core.libs.implementation.classification.binary.confusion.calculator import (
+from artifact_core.libs.implementation.binary_classification.confusion.calculator import (
     ConfusionCalculator,
 )
-from artifact_core.libs.implementation.classification.binary.confusion.normalized_calculator import (
+from artifact_core.libs.implementation.binary_classification.confusion.normalized_calculator import (
     ConfusionNormalizationStrategy,
     NormalizedConfusionCalculator,
 )
