@@ -61,11 +61,11 @@ class PredictedProbabilityPlotter:
     ) -> Dict[PositiveProbabilitySlice, Figure]:
         y_true, y_prob = cls._align_labels(true, probs)
         dict_figures: Dict[PositiveProbabilitySlice, Figure] = {}
-        for slice in ls_slice_types:
+        for slice_type in ls_slice_types:
             arr = cls._get_prob_slice(
-                y_true=y_true, y_prob=y_prob, pos_label=pos_label, slice_type=slice
+                y_true=y_true, y_prob=y_prob, pos_label=pos_label, slice_type=slice_type
             )
-            col = cls._get_column_name(config=config, slice=slice)
+            col = cls._get_column_name(config=config, slice_type=slice_type)
             df = pd.DataFrame({col: arr})
             fig = PDFPlotter.get_pdf_plot(
                 dataset=df,
@@ -74,7 +74,7 @@ class PredictedProbabilityPlotter:
                 ls_cat_features=[],
                 cat_unique_map={},
             )
-            dict_figures[slice] = fig
+            dict_figures[slice_type] = fig
         return dict_figures
 
     @classmethod
@@ -103,10 +103,10 @@ class PredictedProbabilityPlotter:
 
     @classmethod
     def _get_column_name(
-        cls, config: BinaryProbDensityDelegateConfig, slice: PositiveProbabilitySlice
+        cls, config: BinaryProbDensityDelegateConfig, slice_type: PositiveProbabilitySlice
     ) -> str:
         prefix = (config.single_title_prefix + ": ") if config.single_title_prefix else ""
-        return f"{prefix}{config.prob_col_name} — {slice.value}"
+        return f"{prefix}{config.prob_col_name} — {slice_type.value}"
 
     @classmethod
     def _get_prob_slice(
