@@ -2,14 +2,14 @@ from typing import Dict, TypeVar
 
 from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
 from artifact_core.libs.resources.categorical.category_store import (
-    CategoryStore,
     IdentifierType,
 )
+from artifact_core.libs.resources.classification.true_category_store import TrueCategoryStore
 
-BinaryPredStoreT = TypeVar("BinaryPredStoreT", bound="BinaryPredictedCategoryStore")
+BinaryTrueCategoryStoreT = TypeVar("BinaryTrueCategoryStoreT", bound="BinaryTrueCategoryStore")
 
 
-class BinaryPredictedCategoryStore(CategoryStore[BinaryFeatureSpecProtocol]):
+class BinaryTrueCategoryStore(TrueCategoryStore[BinaryFeatureSpecProtocol]):
     @property
     def id_to_is_positive(self) -> Dict[IdentifierType, bool]:
         return {

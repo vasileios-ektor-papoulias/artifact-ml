@@ -1,6 +1,5 @@
 from typing import List, Mapping, Optional, Type, TypeVar
 
-from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
 from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
 from artifact_core.libs.resources.categorical.category_store import (
     CategoryStore,
@@ -45,6 +44,3 @@ class TrueCategoryStore(CategoryStore[CategoricalFeatureSpecProtocolT]):
             ls_categories=ls_categories,
             id_to_category=id_to_category,
         )
-
-
-BinaryTrueCategoryStore = TrueCategoryStore[BinaryFeatureSpecProtocol]

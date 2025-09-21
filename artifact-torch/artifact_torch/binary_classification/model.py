@@ -3,7 +3,7 @@ from typing import Generic, TypeVar
 
 import pandas as pd
 from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
-from artifact_core.libs.resources.classification.classification_results import (
+from artifact_core.libs.resources.classification.binary_classification_results import (
     BinaryClassificationResults,
 )
 

@@ -60,7 +60,7 @@ class CategoryStore(EntityStore[int], Generic[CategoricalFeatureSpecProtocolT]):
         return self._feature_spec.n_categories
 
     @property
-    def id_to_index(self) -> Dict[IdentifierType, int]:
+    def id_to_category_idx(self) -> Dict[IdentifierType, int]:
         return dict(self._data)
 
     @property
