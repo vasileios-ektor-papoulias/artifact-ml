@@ -1,42 +1,46 @@
 from enum import Enum
-from typing import Dict, Hashable, List, Mapping, Tuple
+from typing import Dict, Hashable, List, Literal, Mapping, Sequence, Tuple
 
 import numpy as np
 from sklearn.metrics import average_precision_score, roc_auc_score
 
+ThresholdVariationMetricLiteral = Literal["ROC_AUC", "PR_AUC"]
 
-class AUCType(Enum):
+
+class ThresholdVariationMetric(Enum):
     ROC_AUC = "ROC_AUC"
     PR_AUC = "PR_AUC"
 
 
-class AUCCalculator:
+class ThresholdVariationMetricCalculator:
     @classmethod
     def compute(
         cls,
-        metric: AUCType,
+        metric_type: ThresholdVariationMetric,
         true: Mapping[Hashable, str],
         probs: Mapping[Hashable, float],
         pos_label: str,
     ) -> float:
-        if metric is AUCType.ROC_AUC:
+        if metric_type is ThresholdVariationMetric.ROC_AUC:
             return cls._compute_roc_auc(true=true, probs=probs, pos_label=pos_label)
-        elif metric is AUCType.PR_AUC:
+        elif metric_type is ThresholdVariationMetric.PR_AUC:
             return cls._compute_pr_auc(true=true, probs=probs, pos_label=pos_label)
         else:
-            raise ValueError(f"Unsupported AUC type: {metric}")
+            raise ValueError(f"Unsupported AUC type: {metric_type}")
 
     @classmethod
     def compute_multiple(
         cls,
-        metrics: List[AUCType],
+        metric_types: Sequence[ThresholdVariationMetric],
         true: Mapping[Hashable, str],
         probs: Mapping[Hashable, float],
         pos_label: str,
-    ) -> Dict[AUCType, float]:
+    ) -> Dict[ThresholdVariationMetric, float]:
         return {
-            metric: cls.compute(metric=metric, true=true, probs=probs, pos_label=pos_label)
-            for metric in metrics
+            metric_type: cls.compute(
+                metric_type=metric_type, true=true, probs=probs, pos_label=pos_label
+            )
+            for metric_type in metric_types
         }
 
     @classmethod

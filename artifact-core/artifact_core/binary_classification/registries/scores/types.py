@@ -12,3 +12,5 @@ class BinaryClassificationScoreType(ArtifactType):
     FNR = "fnr"
     F1 = "f1"
     MCC = "mcc"
+    ROC_AUC = "roc_auc"
+    PR_AUC = "pr_auc"

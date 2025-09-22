@@ -11,10 +11,10 @@ from artifact_core.binary_classification.registries.score_collections.registry i
 from artifact_core.binary_classification.registries.score_collections.types import (
     BinaryClassificationScoreCollectionType,
 )
-from artifact_core.libs.implementation.binary_classification.prediction_metrics.calculator import (
-    BinaryPredictionMetric,
-    BinaryPredictionMetricCalculator,
-    BinaryPredictionMetricLiteral,
+from artifact_core.libs.implementation.binary_classification.threshold_variation.calculator import (
+    ThresholdVariationMetric,
+    ThresholdVariationMetricCalculator,
+    ThresholdVariationMetricLiteral,
 )
 from artifact_core.libs.resources.categorical.category_store.binary import (
     BinaryCategoryStore,
@@ -23,28 +23,28 @@ from artifact_core.libs.resources.classification.binary_classification_results i
     BinaryClassificationResults,
 )
 
-BinaryPredictionScoresHyperparamsT = TypeVar(
-    "BinaryPredictionScoresHyperparamsT",
-    bound="BinaryPredictionScoresHyperparams",
+ThresholdVariationScoresHyperparamsT = TypeVar(
+    "ThresholdVariationScoresHyperparamsT",
+    bound="ThresholdVariationScoresHyperparams",
 )
 
 
 @BinaryClassificationScoreCollectionRegistry.register_artifact_hyperparams(
-    BinaryClassificationScoreCollectionType.BINARY_PREDICTION_SCORES
+    BinaryClassificationScoreCollectionType.THRESHOLD_VARIATION_SCORES
 )
 @dataclass(frozen=True)
-class BinaryPredictionScoresHyperparams(ArtifactHyperparams):
-    metric_types: Sequence[BinaryPredictionMetric]
+class ThresholdVariationScoresHyperparams(ArtifactHyperparams):
+    metric_types: Sequence[ThresholdVariationMetric]
 
     @classmethod
     def build(
-        cls: Type[BinaryPredictionScoresHyperparamsT],
-        metric_types: Sequence[Union[BinaryPredictionMetric, BinaryPredictionMetricLiteral]],
-    ) -> BinaryPredictionScoresHyperparamsT:
+        cls: Type[ThresholdVariationScoresHyperparamsT],
+        metric_types: Sequence[Union[ThresholdVariationMetric, ThresholdVariationMetricLiteral]],
+    ) -> ThresholdVariationScoresHyperparamsT:
         ls_resolved = [
             metric_type
-            if isinstance(metric_type, BinaryPredictionMetric)
-            else BinaryPredictionMetric[metric_type]
+            if isinstance(metric_type, ThresholdVariationMetric)
+            else ThresholdVariationMetric[metric_type]
             for metric_type in metric_types
         ]
         hyperparams = cls(metric_types=ls_resolved)
@@ -52,22 +52,21 @@ class BinaryPredictionScoresHyperparams(ArtifactHyperparams):
 
 
 @BinaryClassificationScoreCollectionRegistry.register_artifact(
-    BinaryClassificationScoreCollectionType.BINARY_PREDICTION_SCORES
+    BinaryClassificationScoreCollectionType.THRESHOLD_VARIATION_SCORES
 )
-class BinaryPredictionScores(
-    BinaryClassificationScoreCollection[BinaryPredictionScoresHyperparams]
+class ThresholdVariationScores(
+    BinaryClassificationScoreCollection[ThresholdVariationScoresHyperparams]
 ):
     def _evaluate_classification(
         self,
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, float]:
-        dict_score_collection = BinaryPredictionMetricCalculator.compute_multiple(
+        dict_score_collection = ThresholdVariationMetricCalculator.compute_multiple(
             metric_types=self._hyperparams.metric_types,
             true=true_category_store.id_to_category,
-            predicted=classification_results.id_to_predicted_category,
+            probs=classification_results.id_to_prob_pos,
             pos_label=self._resource_spec.positive_category,
-            neg_label=self._resource_spec.negative_category,
         )
         result = {
             metric_type.value: metric_value

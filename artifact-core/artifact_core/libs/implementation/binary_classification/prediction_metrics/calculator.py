@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, Hashable, Iterable, List, Literal, Mapping, Tuple
+from typing import Dict, Hashable, List, Literal, Mapping, Sequence, Tuple
 
 from sklearn.metrics import (
     accuracy_score,
@@ -14,6 +14,19 @@ from artifact_core.libs.implementation.binary_classification.confusion.calculato
     ConfusionCalculator,
     ConfusionMatrixCell,
 )
+
+BinaryPredictionMetricLiteral = Literal[
+    "ACCURACY",
+    "BALANCED_ACCURACY",
+    "PRECISION",
+    "NPV",
+    "RECALL",
+    "TNR",
+    "FPR",
+    "FNR",
+    "F1",
+    "MCC",
+]
 
 
 class BinaryPredictionMetric(Enum):
@@ -36,56 +49,56 @@ class BinaryPredictionMetricCalculator:
     @classmethod
     def compute(
         cls,
-        metric: BinaryPredictionMetric,
+        metric_type: BinaryPredictionMetric,
         true: Mapping[Hashable, str],
         predicted: Mapping[Hashable, str],
         pos_label: str,
         neg_label: str,
     ) -> float:
-        if metric is BinaryPredictionMetric.ACCURACY:
+        if metric_type is BinaryPredictionMetric.ACCURACY:
             return cls._compute_accuracy(true=true, predicted=predicted)
-        elif metric is BinaryPredictionMetric.BALANCED_ACCURACY:
+        elif metric_type is BinaryPredictionMetric.BALANCED_ACCURACY:
             return cls._compute_balanced_accuracy(true=true, predicted=predicted)
-        elif metric is BinaryPredictionMetric.PRECISION:
+        elif metric_type is BinaryPredictionMetric.PRECISION:
             return cls._compute_precision(true=true, predicted=predicted, pos_label=pos_label)
-        elif metric is BinaryPredictionMetric.NPV:
+        elif metric_type is BinaryPredictionMetric.NPV:
             return cls._compute_npv(
                 true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
             )
-        elif metric is BinaryPredictionMetric.RECALL:
+        elif metric_type is BinaryPredictionMetric.RECALL:
             return cls._compute_recall(true=true, predicted=predicted, pos_label=pos_label)
-        elif metric is BinaryPredictionMetric.TNR:
+        elif metric_type is BinaryPredictionMetric.TNR:
             return cls._compute_tnr(
                 true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
             )
-        elif metric is BinaryPredictionMetric.FPR:
+        elif metric_type is BinaryPredictionMetric.FPR:
             return cls._compute_fpr(
                 true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
             )
-        elif metric is BinaryPredictionMetric.FNR:
+        elif metric_type is BinaryPredictionMetric.FNR:
             return cls._compute_fnr(
                 true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
             )
-        elif metric is BinaryPredictionMetric.F1:
+        elif metric_type is BinaryPredictionMetric.F1:
             return cls._compute_f1(true=true, predicted=predicted, pos_label=pos_label)
-        elif metric is BinaryPredictionMetric.MCC:
+        elif metric_type is BinaryPredictionMetric.MCC:
             return cls._compute_mcc(true=true, predicted=predicted, pos_label=pos_label)
         else:
-            raise ValueError(f"Unsupported classification metric: {metric}")
+            raise ValueError(f"Unsupported classification metric: {metric_type}")
 
     @classmethod
     def compute_multiple(
         cls,
-        metrics: Iterable[BinaryPredictionMetric],
+        metric_types: Sequence[BinaryPredictionMetric],
         true: Mapping[Hashable, str],
         predicted: Mapping[Hashable, str],
         pos_label: str,
         neg_label: str,
     ) -> Dict[BinaryPredictionMetric, float]:
         dict_scores: Dict[BinaryPredictionMetric, float] = {}
-        for metric in metrics:
-            dict_scores[metric] = cls.compute(
-                metric=metric,
+        for metric_type in metric_types:
+            dict_scores[metric_type] = cls.compute(
+                metric_type=metric_type,
                 true=true,
                 predicted=predicted,
                 pos_label=pos_label,

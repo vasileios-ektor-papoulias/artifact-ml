@@ -17,7 +17,7 @@
       "normalization": "NONE"
     },
     "BINARY_PREDICTION_SCORES": {
-      "ls_metrics": [
+      "metric_types": [
         "ACCURACY",
         "BALANCED_ACCURACY",
         "PRECISION",
@@ -29,6 +29,12 @@
         "F1",
         "MCC"
     ]
+    },
+    "THRESHOLD_VARIATION_SCORES":{
+      "metric_types": [
+        "ROC_AUC",
+        "PR_AUC"
+      ]
     }
   },
   "array_collections": {
