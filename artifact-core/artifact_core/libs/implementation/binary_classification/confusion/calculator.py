@@ -6,10 +6,10 @@ from sklearn.metrics import confusion_matrix
 
 
 class ConfusionCell(Enum):
-    TRUE_POSITIVE = "TRUE_POSITIVE"
-    FALSE_POSITIVE = "FALSE_POSITIVE"
-    TRUE_NEGATIVE = "TRUE_NEGATIVE"
-    FALSE_NEGATIVE = "FALSE_NEGATIVE"
+    TRUE_POSITIVE = "true_positive"
+    FALSE_POSITIVE = "false_positive"
+    TRUE_NEGATIVE = "true_negative"
+    FALSE_NEGATIVE = "false_negative"
 
 
 class ConfusionCalculator:
