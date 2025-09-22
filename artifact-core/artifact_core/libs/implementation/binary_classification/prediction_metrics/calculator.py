@@ -276,5 +276,5 @@ class BinaryPredictionMetricCalculator:
             )
 
     @classmethod
-    def _safe_div(cls, num: int, denom: int) -> float:
+    def _safe_div(cls, num: float, denom: float) -> float:
         return 0.0 if denom == 0 else float(num) / float(denom)
