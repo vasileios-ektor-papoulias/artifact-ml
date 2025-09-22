@@ -52,7 +52,9 @@ class ThresholdVariationMetricCalculator:
     ) -> float:
         y_true, y_prob = cls._align_labels(true=true, probs=probs)
         y_pos = (np.array(y_true) == pos_label).astype(int)
-        cls._assert_has_both_classes(y_pos=y_pos)
+        has_both_classes = cls._has_both_classes(y_pos=y_pos)
+        if not has_both_classes:
+            return np.nan
         arr_prob = np.array(y_prob, dtype=float)
         score = roc_auc_score(y_true=y_pos, y_score=arr_prob)
         return float(score)
@@ -88,9 +90,8 @@ class ThresholdVariationMetricCalculator:
         return y_true, y_prob
 
     @classmethod
-    def _assert_has_both_classes(cls, y_pos: np.ndarray) -> None:
+    def _has_both_classes(cls, y_pos: np.ndarray) -> bool:
         has_pos = np.any(y_pos == 1)
         has_neg = np.any(y_pos == 0)
         has_both = bool(has_pos and has_neg)
-        if not has_both:
-            raise ValueError("True labels contain only one class.")
+        return has_both
