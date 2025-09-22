@@ -4,7 +4,22 @@
   "scores": {},
   "arrays": {},
   "plots": {},
-  "score_collections": {},
+  "score_collections": {
+    "BINARY_PREDICTION_SCORES": {
+      "ls_metrics": [
+        "ACCURACY",
+        "BALANCED_ACCURACY",
+        "PRECISION",
+        "NPV",
+        "RECALL",
+        "TNR",
+        "FPR",
+        "FNR",
+        "F1",
+        "MCC"
+    ]
+    }
+  },
   "array_collections": {},
   "plot_collections": {}
 }

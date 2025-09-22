@@ -2,4 +2,4 @@ from artifact_core.base.registry import ArtifactType
 
 
 class BinaryClassificationScoreCollectionType(ArtifactType):
-    pass
+    BINARY_PREDICTION_SCORES = "binary_prediction_scores"
