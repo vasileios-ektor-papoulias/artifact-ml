@@ -1,16 +1,19 @@
 from dataclasses import dataclass
-from typing import Literal, Type, TypeVar, Union
+from typing import Type, TypeVar, Union
 
 import pandas as pd
 
 from artifact_core.base.artifact_dependencies import ArtifactHyperparams
 from artifact_core.libs.implementation.tabular.correlations.calculator import (
     CategoricalAssociationType,
+    CategoricalAssociationTypeLiteral,
     ContinuousAssociationType,
+    ContinuousAssociationTypeLiteral,
     CorrelationCalculator,
 )
 from artifact_core.libs.utils.vector_distance_calculator import (
     VectorDistanceMetric,
+    VectorDistanceMetricLiteral,
 )
 from artifact_core.table_comparison.artifacts.base import (
     TableComparisonScore,
@@ -38,18 +41,12 @@ class CorrelationDistanceScoreHyperparams(ArtifactHyperparams):
     def build(
         cls: Type[PairwiseCorrelationDistanceHyperparamsT],
         categorical_association_type: Union[
-            CategoricalAssociationType, Literal["THEILS_U"], Literal["CRAMERS_V"]
+            CategoricalAssociationType, CategoricalAssociationTypeLiteral
         ],
         continuous_association_type: Union[
-            ContinuousAssociationType, Literal["PEARSON"], Literal["SPEARMAN"], Literal["KENDALL"]
+            ContinuousAssociationType, ContinuousAssociationTypeLiteral
         ],
-        vector_distance_metric: Union[
-            VectorDistanceMetric,
-            Literal["L2"],
-            Literal["MAE"],
-            Literal["RMSE"],
-            Literal["COSINE_SIMILARITY"],
-        ],
+        vector_distance_metric: Union[VectorDistanceMetric, VectorDistanceMetricLiteral],
     ) -> PairwiseCorrelationDistanceHyperparamsT:
         if isinstance(categorical_association_type, str):
             categorical_association_type = CategoricalAssociationType[categorical_association_type]

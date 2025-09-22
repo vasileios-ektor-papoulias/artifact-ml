@@ -1,6 +1,9 @@
 from enum import Enum
+from typing import Literal
 
 import numpy as np
+
+VectorDistanceMetricLiteral = Literal["L2", "MAE", "RMSE", "COSINE_SIMILARITY"]
 
 
 class VectorDistanceMetric(Enum):

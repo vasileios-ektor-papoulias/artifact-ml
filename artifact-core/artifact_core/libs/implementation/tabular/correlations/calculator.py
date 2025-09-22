@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Union
+from typing import Dict, List, Literal, Union
 
 import pandas as pd
 from dython.nominal import associations
@@ -10,6 +10,9 @@ from artifact_core.libs.utils.vector_distance_calculator import (
     VectorDistanceCalculator,
     VectorDistanceMetric,
 )
+
+CategoricalAssociationTypeLiteral = Literal["THEILS_U", "CRAMERS_V"]
+ContinuousAssociationTypeLiteral = Literal["PEARSON", "SPEARMAN", "KENDALL"]
 
 
 class CategoricalAssociationType(Enum):

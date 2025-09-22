@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Literal, Type, TypeVar, Union
+from typing import Dict, Type, TypeVar, Union
 
 import pandas as pd
 from matplotlib.figure import Figure
@@ -7,7 +7,9 @@ from matplotlib.figure import Figure
 from artifact_core.base.artifact_dependencies import ArtifactHyperparams
 from artifact_core.libs.implementation.tabular.correlations.calculator import (
     CategoricalAssociationType,
+    CategoricalAssociationTypeLiteral,
     ContinuousAssociationType,
+    ContinuousAssociationTypeLiteral,
 )
 from artifact_core.libs.implementation.tabular.correlations.heatmap_plotter import (
     CorrelationHeatmapPlotter,
@@ -36,10 +38,10 @@ class CorrelationHeatmapsHyperparams(ArtifactHyperparams):
     def build(
         cls: Type[CorrelationHeatmapsHyperparamsT],
         categorical_association_type: Union[
-            CategoricalAssociationType, Literal["THEILS_U"], Literal["CRAMERS_V"]
+            CategoricalAssociationType, CategoricalAssociationTypeLiteral
         ],
         continuous_association_type: Union[
-            ContinuousAssociationType, Literal["PEARSON"], Literal["SPEARMAN"], Literal["KENDALL"]
+            ContinuousAssociationType, ContinuousAssociationTypeLiteral
         ],
     ) -> CorrelationHeatmapsHyperparamsT:
         if isinstance(categorical_association_type, str):
