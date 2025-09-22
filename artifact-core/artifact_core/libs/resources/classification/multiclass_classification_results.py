@@ -56,7 +56,7 @@ class MulticlassClassificationResults(
             distn_store=distn_store,
         )
         if id_to_category is not None:
-            classification_results.set_results_multiple(
+            classification_results.set_results(
                 id_to_category=id_to_category, id_to_logits=id_to_logits or {}
             )
         return classification_results

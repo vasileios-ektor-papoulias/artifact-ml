@@ -26,7 +26,7 @@ class CategoricalDistributionStore(
         self._feature_spec = feature_spec
         super().__init__(initial=None)
         if id_to_logits is not None:
-            self.set_multiple_logits(id_to_logits=id_to_logits)
+            self.set_logits_multiple(id_to_logits=id_to_logits)
 
     def __repr__(self) -> str:
         return (
@@ -72,7 +72,7 @@ class CategoricalDistributionStore(
         arr_logits = self.get(identifier=identifier)
         return arr_logits.copy()
 
-    def compute_probs(self, identifier: IdentifierType) -> np.ndarray:
+    def get_probs(self, identifier: IdentifierType) -> np.ndarray:
         return SoftmaxCalculator.compute_probs(self.get_logits(identifier=identifier))
 
     def get_logit(self, category: str, identifier: IdentifierType) -> float:
@@ -83,7 +83,7 @@ class CategoricalDistributionStore(
         return logit
 
     def get_prob(self, category: str, identifier: IdentifierType) -> float:
-        probs = self.compute_probs(identifier=identifier)
+        probs = self.get_probs(identifier=identifier)
         category = self._validate_category(category=category)
         category_idx = self._feature_spec.get_category_idx(category=category)
         prob = float(probs[category_idx])
@@ -117,13 +117,13 @@ class CategoricalDistributionStore(
         category_idx = self._feature_spec.get_category_idx(category=category)
         self.set_concentrated_idx(identifier=identifier, category_idx=category_idx)
 
-    def set_multiple_logits(
+    def set_logits_multiple(
         self, id_to_logits: Mapping[IdentifierType, CategoricalDistribution]
     ) -> None:
         for identifier, logits in id_to_logits.items():
             self.set_logits(identifier=identifier, logits=logits)
 
-    def set_multiple_probs(
+    def set_probs_multiple(
         self, id_to_probs: Mapping[IdentifierType, CategoricalDistribution]
     ) -> None:
         for identifier, probs in id_to_probs.items():

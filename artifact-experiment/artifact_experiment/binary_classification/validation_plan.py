@@ -1,12 +1,11 @@
 from abc import abstractmethod
-from typing import Dict, List, Optional, Type
+from typing import List, Mapping, Optional, Type
 
 from artifact_core.binary_classification.artifacts.base import (
     BinaryClassificationArtifactResources,
     BinaryFeatureSpecProtocol,
 )
 from artifact_core.libs.types.entity_store import IdentifierType
-from numpy import ndarray
 
 from artifact_experiment.base.callback_factory import ArtifactCallbackFactory
 from artifact_experiment.base.validation_plan import ValidationPlan
@@ -62,15 +61,15 @@ class BinaryClassifierEvaluationPlan(
 
     def execute_classifier_evaluation(
         self,
-        true: Dict[IdentifierType, str],
-        predicted: Dict[IdentifierType, str],
-        logits: Optional[Dict[IdentifierType, ndarray]] = None,
+        true: Mapping[IdentifierType, str],
+        predicted: Mapping[IdentifierType, str],
+        positive_probs: Optional[Mapping[IdentifierType, float]] = None,
     ):
         callback_resources = BinaryClassificationCallbackResources.from_spec(
             class_spec=self._resource_spec,
             true=true,
             predicted=predicted,
-            logits=logits,
+            positive_probs=positive_probs,
         )
         super().execute(resources=callback_resources)
 

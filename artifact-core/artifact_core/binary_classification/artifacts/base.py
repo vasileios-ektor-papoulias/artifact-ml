@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Dict, Generic, List, Optional, Type, TypeVar
+from typing import Dict, Generic, List, Mapping, Optional, Type, TypeVar
 
 from matplotlib.figure import Figure
 from numpy import ndarray
@@ -35,15 +35,15 @@ class BinaryClassificationArtifactResources(
         cls: Type[BinaryClassificationArtifactResourcesT],
         ls_categories: List[str],
         positive_category: str,
-        true: Dict[IdentifierType, str],
-        predicted: Dict[IdentifierType, str],
-        logits: Optional[Dict[IdentifierType, ndarray]] = None,
+        true: Mapping[IdentifierType, str],
+        predicted: Mapping[IdentifierType, str],
+        positive_probs: Optional[Mapping[IdentifierType, float]] = None,
     ) -> BinaryClassificationArtifactResourcesT:
         class_spec = BinaryFeatureSpec(
             ls_categories=ls_categories, positive_category=positive_category
         )
         resources = cls.from_spec(
-            class_spec=class_spec, true=true, predicted=predicted, ilogits=logits
+            class_spec=class_spec, true=true, predicted=predicted, positive_probs=positive_probs
         )
         return resources
 
@@ -51,17 +51,15 @@ class BinaryClassificationArtifactResources(
     def from_spec(
         cls: Type[BinaryClassificationArtifactResourcesT],
         class_spec: BinaryFeatureSpecProtocol,
-        true: Dict[IdentifierType, str],
-        predicted: Dict[IdentifierType, str],
-        logits: Optional[Dict[IdentifierType, ndarray]] = None,
+        true: Mapping[IdentifierType, str],
+        predicted: Mapping[IdentifierType, str],
+        positive_probs: Optional[Mapping[IdentifierType, float]] = None,
     ) -> BinaryClassificationArtifactResourcesT:
         true_category_store = BinaryCategoryStore.from_categories_and_spec(
             feature_spec=class_spec, id_to_category=true
         )
         classification_results = BinaryClassificationResults.from_spec(
-            class_spec=class_spec,
-            id_to_category=predicted,
-            id_to_logits=logits,
+            class_spec=class_spec, id_to_category=predicted, id_to_prob_pos=positive_probs
         )
         resources = cls(
             true_category_store=true_category_store, classification_results=classification_results

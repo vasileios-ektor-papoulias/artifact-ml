@@ -88,16 +88,16 @@ class ClassificationResults(
         return self._pred_store.id_to_category_idx
 
     def get_predicted_index(self, identifier: IdentifierType) -> int:
-        return self._pred_store.get_category_idx(identifier)
+        return self._pred_store.get_category_idx(identifier=identifier)
 
     def get_predicted_category(self, identifier: IdentifierType) -> str:
-        return self._pred_store.get_category(identifier)
+        return self._pred_store.get_category(identifier=identifier)
 
     def get_logits(self, identifier: IdentifierType) -> np.ndarray:
-        return self._distn_store.get_logits(identifier)
+        return self._distn_store.get_logits(identifier=identifier)
 
     def get_probs(self, identifier: IdentifierType) -> np.ndarray:
-        return self._distn_store.get_probs(identifier)
+        return self._distn_store.get_probs(identifier=identifier)
 
     def set_result(
         self,
@@ -107,7 +107,7 @@ class ClassificationResults(
     ) -> None:
         self._set_entry(identifier=identifier, category=predicted_category, logits=logits)
 
-    def set_results_multiple(
+    def set_results(
         self,
         id_to_category: Mapping[IdentifierType, str],
         id_to_logits: Optional[Mapping[IdentifierType, np.ndarray]] = None,

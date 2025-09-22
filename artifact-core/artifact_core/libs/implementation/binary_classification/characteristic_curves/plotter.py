@@ -15,16 +15,16 @@ from sklearn.metrics import (
 )
 
 
-class BinaryClassificationCurveType(Enum):
-    ROC = "ROC"  # TPR vs FPR
-    PR = "PR"  # Precision vs Recall
-    DET = "DET"  # FNR vs FPR
-    TPR_THRESHOLD = "TPR_THRESHOLD"  # TPR vs threshold
-    PRECISION_THRESHOLD = "PRECISION_THRESHOLD"  # Precision vs threshold
+class CharacteristicCurveType(Enum):
+    ROC = "roc"  # TPR vs FPR
+    PR = "pr"  # Precision vs Recall
+    DET = "det"  # FNR vs FPR
+    TPR_THRESHOLD = "tpr_threshold"  # TPR vs threshold
+    PRECISION_THRESHOLD = "precision_threshold"  # Precision vs threshold
 
 
 @dataclass(frozen=True)
-class BinaryClassificationCurvePlotConfig:
+class CharacteristicCurvePlotterConfig:
     title: Optional[str] = None
     dpi: int = 120
     figsize: Tuple[float, float] = (6.0, 4.5)
@@ -33,36 +33,40 @@ class BinaryClassificationCurvePlotConfig:
     show_chance: bool = True  # used for ROC (and optionally PR baseline)
 
 
-class BinaryClassificationCurvePlotter:
+class CharacteristicCurvePlotter:
     @classmethod
     def plot(
         cls,
-        plot_type: BinaryClassificationCurveType,
+        plot_type: CharacteristicCurveType,
         true: Mapping[Hashable, str],
         probs: Mapping[Hashable, float],
         pos_label: str,
-        config: BinaryClassificationCurvePlotConfig = BinaryClassificationCurvePlotConfig(),
+        config: CharacteristicCurvePlotterConfig = CharacteristicCurvePlotterConfig(),
     ) -> Figure:
-        y_true, y_score = cls._align_labels(true, probs)
-        y_pos = (np.array(y_true) == pos_label).astype(int)
-        s = np.array(y_score, dtype=float)
-        if BinaryClassificationCurveType is BinaryClassificationCurveType.ROC:
-            return cls._plot_roc(y_pos, s, config)
-        elif BinaryClassificationCurveType is BinaryClassificationCurveType.PR:
-            return cls._plot_pr(y_pos, s, config)
-        elif BinaryClassificationCurveType is BinaryClassificationCurveType.DET:
-            return cls._plot_det(y_pos, s, config)
-        elif BinaryClassificationCurveType is BinaryClassificationCurveType.TPR_THRESHOLD:
-            return cls._plot_tpr_threshold(y_pos, s, config)
-        elif BinaryClassificationCurveType is BinaryClassificationCurveType.PRECISION_THRESHOLD:
-            return cls._plot_precision_threshold(y_pos, s, config)
+        y_true, y_probs = cls._align_labels(true=true, probs=probs)
+        y_true_bin = (np.array(y_true) == pos_label).astype(int)
+        y_probs = np.array(y_probs, dtype=float)
+        if plot_type is CharacteristicCurveType.ROC:
+            fig = cls._plot_roc(y_true_bin=y_true_bin, y_probs=y_probs, config=config)
+        elif plot_type is CharacteristicCurveType.PR:
+            fig = cls._plot_pr(y_true_bin=y_true_bin, y_probs=y_probs, config=config)
+        elif plot_type is CharacteristicCurveType.DET:
+            fig = cls._plot_det(y_true_bin=y_true_bin, y_probs=y_probs, config=config)
+        elif plot_type is CharacteristicCurveType.TPR_THRESHOLD:
+            fig = cls._plot_tpr_threshold(y_true_bin=y_true_bin, y_probs=y_probs, config=config)
+        elif plot_type is CharacteristicCurveType.PRECISION_THRESHOLD:
+            fig = cls._plot_precision_threshold(
+                y_true_bin=y_true_bin, y_probs=y_probs, config=config
+            )
         else:
-            raise ValueError(f"Unsupported curve kind: {plot_type}")
+            raise ValueError(f"Unsupported curve type: {plot_type}")
+        plt.close(fig)
+        return fig
 
     @classmethod
-    def _plot_roc(cls, y_pos, s, config: BinaryClassificationCurvePlotConfig) -> Figure:
-        fpr, tpr, _ = roc_curve(y_pos, s)
-        auc = float(roc_auc_score(y_pos, s))
+    def _plot_roc(cls, y_true_bin, y_probs, config: CharacteristicCurvePlotterConfig) -> Figure:
+        fpr, tpr, _ = roc_curve(y_true=y_true_bin, y_score=y_probs)
+        auc = float(roc_auc_score(y_true=y_true_bin, y_score=y_probs))
         fig, ax = plt.subplots(figsize=config.figsize, dpi=config.dpi)
         if config.show_chance:
             ax.plot([0, 1], [0, 1], linestyle="--", lw=1.0, alpha=0.7, label="chance")
@@ -77,9 +81,9 @@ class BinaryClassificationCurvePlotter:
         return fig
 
     @classmethod
-    def _plot_pr(cls, y_pos, s, config: BinaryClassificationCurvePlotConfig) -> Figure:
-        precision, recall, _ = precision_recall_curve(y_pos, s)
-        ap = float(average_precision_score(y_pos, s))
+    def _plot_pr(cls, y_true_bin, y_probs, config: CharacteristicCurvePlotterConfig) -> Figure:
+        precision, recall, _ = precision_recall_curve(y_true=y_true_bin, probas_pred=y_probs)
+        ap = float(average_precision_score(y_true=y_true_bin, y_score=y_probs))
         fig, ax = plt.subplots(figsize=config.figsize, dpi=config.dpi)
         ax.plot(
             recall, precision, lw=config.linewidth, alpha=config.alpha, label=f"PR (AP={ap:.3f})"
@@ -94,8 +98,8 @@ class BinaryClassificationCurvePlotter:
         return fig
 
     @classmethod
-    def _plot_det(cls, y_pos, s, config: BinaryClassificationCurvePlotConfig) -> Figure:
-        fpr, fnr, _ = det_curve(y_pos, s)
+    def _plot_det(cls, y_true_bin, y_probs, config: CharacteristicCurvePlotterConfig) -> Figure:
+        fpr, fnr, _ = det_curve(y_true=y_true_bin, y_score=y_probs)
         fig, ax = plt.subplots(figsize=config.figsize, dpi=config.dpi)
         ax.plot(fpr, fnr, lw=config.linewidth, alpha=config.alpha, label="DET")
         cls._decorate_axes(
@@ -108,10 +112,14 @@ class BinaryClassificationCurvePlotter:
         return fig
 
     @classmethod
-    def _plot_tpr_threshold(cls, y_pos, s, config: BinaryClassificationCurvePlotConfig) -> Figure:
-        fpr, tpr, thr = roc_curve(y_pos, s)
+    def _plot_tpr_threshold(
+        cls, y_true_bin, y_probs, config: CharacteristicCurvePlotterConfig
+    ) -> Figure:
+        _, tpr, thr = roc_curve(y_true=y_true_bin, y_score=y_probs)
+        thr = thr[1:]
+        tpr = tpr[1:]
         fig, ax = plt.subplots(figsize=config.figsize, dpi=config.dpi)
-        ax.plot(thr, tpr[1:], lw=config.linewidth, alpha=config.alpha, label="TPR vs threshold")
+        ax.plot(thr, tpr, lw=config.linewidth, alpha=config.alpha, label="TPR vs threshold")
         cls._decorate_axes(
             ax,
             title=config.title or "TPR vs Threshold",
@@ -127,9 +135,9 @@ class BinaryClassificationCurvePlotter:
 
     @classmethod
     def _plot_precision_threshold(
-        cls, y_pos, s, config: BinaryClassificationCurvePlotConfig
+        cls, y_true_bin, y_probs, config: CharacteristicCurvePlotterConfig
     ) -> Figure:
-        prec, rec, thr = precision_recall_curve(y_pos, s)
+        prec, _, thr = precision_recall_curve(y_true=y_true_bin, probas_pred=y_probs)
         fig, ax = plt.subplots(figsize=config.figsize, dpi=config.dpi)
         ax.plot(
             thr, prec[1:], lw=config.linewidth, alpha=config.alpha, label="Precision vs threshold"

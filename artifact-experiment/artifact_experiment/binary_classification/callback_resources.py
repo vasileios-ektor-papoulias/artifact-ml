@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Type, TypeVar
+from typing import List, Mapping, Optional, Type, TypeVar
 
 from artifact_core.binary_classification.artifacts.base import BinaryClassificationArtifactResources
 from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
@@ -7,7 +7,6 @@ from artifact_core.libs.resources.classification.binary_classification_results i
     BinaryClassificationResults,
 )
 from artifact_core.libs.types.entity_store import IdentifierType
-from numpy import ndarray
 
 from artifact_experiment.core.classification.callback_resources import (
     ClassificationCallbackResources,
@@ -26,16 +25,16 @@ class BinaryClassificationCallbackResources(
         cls: Type[ClassificationCallbackResourcesT],
         ls_categories: List[str],
         positive_category: str,
-        true: Dict[IdentifierType, str],
-        predicted: Dict[IdentifierType, str],
-        logits: Optional[Dict[IdentifierType, ndarray]] = None,
+        true: Mapping[IdentifierType, str],
+        predicted: Mapping[IdentifierType, str],
+        positive_probs: Optional[Mapping[IdentifierType, float]] = None,
     ) -> ClassificationCallbackResourcesT:
         artifact_resources = BinaryClassificationArtifactResources.build(
             ls_categories=ls_categories,
             positive_category=positive_category,
             true=true,
             predicted=predicted,
-            logits=logits,
+            positive_probs=positive_probs,
         )
         callback_resources = cls(artifact_resources=artifact_resources)
         return callback_resources
@@ -44,15 +43,12 @@ class BinaryClassificationCallbackResources(
     def from_spec(
         cls: Type[ClassificationCallbackResourcesT],
         class_spec: BinaryFeatureSpecProtocol,
-        true: Dict[IdentifierType, str],
-        predicted: Dict[IdentifierType, str],
-        logits: Optional[Dict[IdentifierType, ndarray]] = None,
+        true: Mapping[IdentifierType, str],
+        predicted: Mapping[IdentifierType, str],
+        positive_probs: Optional[Mapping[IdentifierType, float]] = None,
     ) -> ClassificationCallbackResourcesT:
         artifact_resources = BinaryClassificationArtifactResources.from_spec(
-            class_spec=class_spec,
-            true=true,
-            predicted=predicted,
-            logits=logits,
+            class_spec=class_spec, true=true, predicted=predicted, positive_probs=positive_probs
         )
         callback_resources = cls(artifact_resources=artifact_resources)
         return callback_resources

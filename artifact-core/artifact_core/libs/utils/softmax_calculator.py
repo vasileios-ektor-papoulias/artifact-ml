@@ -1,3 +1,5 @@
+from typing import Dict, Hashable
+
 import numpy as np
 from scipy.special import softmax
 
@@ -9,6 +11,15 @@ class SoftmaxCalculator:
             return np.empty_like(logits)
         return softmax(logits, axis=-1)
 
+    @classmethod
+    def compute_probs_multiple(
+        cls, id_to_logits: Dict[Hashable, np.ndarray]
+    ) -> Dict[Hashable, np.ndarray]:
+        return {
+            identifier: cls.compute_probs(logits=logits)
+            for identifier, logits in id_to_logits.items()
+        }
+
     @staticmethod
     def compute_logits(probs: np.ndarray) -> np.ndarray:
         if probs.size == 0:
@@ -17,3 +28,11 @@ class SoftmaxCalculator:
         np.log(probs, out=arr_logits, where=probs > 0.0)
         arr_logits[probs <= 0.0] = -np.inf
         return arr_logits
+
+    @classmethod
+    def compute_logits_multiple(
+        cls, id_to_probs: Dict[Hashable, np.ndarray]
+    ) -> Dict[Hashable, np.ndarray]:
+        return {
+            identifier: cls.compute_logits(probs=probs) for identifier, probs in id_to_probs.items()
+        }
