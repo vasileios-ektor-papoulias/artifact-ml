@@ -31,16 +31,16 @@ class DummyArtifact(
         self._hyperparams = hyperparams
 
 
-@InvalidParamDummyScoreRegistry.register_artifact_config(
+@InvalidParamDummyScoreRegistry.register_artifact_hyperparams(
     artifact_type=DummyScoreType.DUMMY_SCORE_ARTIFACT
 )
-@MissingParamDummyScoreRegistry.register_artifact_config(
+@MissingParamDummyScoreRegistry.register_artifact_hyperparams(
     artifact_type=DummyScoreType.DUMMY_SCORE_ARTIFACT
 )
-@AlternativeDummyScoreRegistry.register_artifact_config(
+@AlternativeDummyScoreRegistry.register_artifact_hyperparams(
     artifact_type=DummyScoreType.DUMMY_SCORE_ARTIFACT
 )
-@DummyScoreRegistry.register_artifact_config(artifact_type=DummyScoreType.DUMMY_SCORE_ARTIFACT)
+@DummyScoreRegistry.register_artifact_hyperparams(artifact_type=DummyScoreType.DUMMY_SCORE_ARTIFACT)
 @dataclass(frozen=True)
 class DummyScoreHyperparams(ArtifactHyperparams):
     adjust_scale: bool
@@ -93,7 +93,7 @@ class AlternativeRegistryArtifact(DummyArtifact[float, NoArtifactHyperparams]):
         return result
 
 
-@DummyScoreRegistry.register_custom_artifact_config(artifact_type="CUSTOM_SCORE_ARTIFACT")
+@DummyScoreRegistry.register_custom_artifact_hyperparams(artifact_type="CUSTOM_SCORE_ARTIFACT")
 @dataclass(frozen=True)
 class CustomScoreHyperparams(ArtifactHyperparams):
     result: float

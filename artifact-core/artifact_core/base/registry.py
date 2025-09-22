@@ -69,11 +69,11 @@ class ArtifactRegistry(
         return cls._register_artifact(artifact_type=str_artifact_type)
 
     @classmethod
-    def register_artifact_config(
+    def register_artifact_hyperparams(
         cls, artifact_type: ArtifactTypeT
     ) -> Callable[[Type[ArtifactHyperparamsT]], Type[ArtifactHyperparamsT]]:
         str_artifact_type = cls._get_artifact_type_string(artifact_type=artifact_type)
-        return cls._register_artifact_config(artifact_type=str_artifact_type)
+        return cls._register_artifact_hyperparams(artifact_type=str_artifact_type)
 
     @classmethod
     def register_custom_artifact(
@@ -82,10 +82,10 @@ class ArtifactRegistry(
         return cls._register_artifact(artifact_type=artifact_type)
 
     @classmethod
-    def register_custom_artifact_config(
+    def register_custom_artifact_hyperparams(
         cls, artifact_type: str
     ) -> Callable[[Type[ArtifactHyperparamsT]], Type[ArtifactHyperparamsT]]:
-        return cls._register_artifact_config(artifact_type=artifact_type)
+        return cls._register_artifact_hyperparams(artifact_type=artifact_type)
 
     @classmethod
     def _register_artifact(cls, artifact_type: str) -> Callable[[Type[ArtifactT]], Type[ArtifactT]]:
@@ -101,19 +101,19 @@ class ArtifactRegistry(
         return artifact_registration_decorator
 
     @classmethod
-    def _register_artifact_config(
+    def _register_artifact_hyperparams(
         cls, artifact_type: str
     ) -> Callable[[Type[ArtifactHyperparamsT]], Type[ArtifactHyperparamsT]]:
         if artifact_type in cls._artifact_config_registry.keys():
             raise ValueError(f"Artifact type {artifact_type} already registered")
 
-        def artifact_config_registration_decorator(
+        def artifact_hyperparams_registration_decorator(
             subclass: Type[ArtifactHyperparamsT],
         ) -> Type[ArtifactHyperparamsT]:
             cls._artifact_config_registry[artifact_type] = subclass
             return subclass
 
-        return artifact_config_registration_decorator
+        return artifact_hyperparams_registration_decorator
 
     @classmethod
     def _get(

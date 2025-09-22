@@ -25,7 +25,7 @@ PairwiseCorrelationDistanceHyperparamsT = TypeVar(
 )
 
 
-@TableComparisonScoreRegistry.register_artifact_config(
+@TableComparisonScoreRegistry.register_artifact_hyperparams(
     TableComparisonScoreType.CORRELATION_DISTANCE
 )
 @dataclass(frozen=True)

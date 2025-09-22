@@ -26,7 +26,7 @@ CorrelationHeatmapJuxtapositionPlotHyperparamsT = TypeVar(
 )
 
 
-@TableComparisonPlotRegistry.register_artifact_config(
+@TableComparisonPlotRegistry.register_artifact_hyperparams(
     TableComparisonPlotType.CORRELATION_HEATMAP_JUXTAPOSITION
 )
 @dataclass(frozen=True)

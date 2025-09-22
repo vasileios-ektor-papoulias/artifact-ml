@@ -546,7 +546,7 @@ class CustomScoreHyperparams(ArtifactHyperparams):
     threshold: float
     use_weights: bool
 
-@TableComparisonScoreRegistry.register_custom_artifact_config("CUSTOM_SCORE")
+@TableComparisonScoreRegistry.register_custom_artifact_hyperparams("CUSTOM_SCORE")
 @dataclass
 class CustomScoreHyperparams(ArtifactHyperparams):
     threshold: float
@@ -623,7 +623,7 @@ from artifact_core.base.artifact_dependencies import ArtifactHyperparams
 from artifact_core.table_comparison.registries.scores.registry import TableComparisonScoreRegistry
 
 
-@TableComparisonScoreRegistry.register_artifact_config(
+@TableComparisonScoreRegistry.register_artifact_hyperparams(
     TableComparisonScoreType.MY_CUSTOM_SCORE
     )
 @dataclass

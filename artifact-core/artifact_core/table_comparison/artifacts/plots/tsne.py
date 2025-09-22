@@ -17,7 +17,9 @@ from artifact_core.table_comparison.registries.plots.registry import (
 )
 
 
-@TableComparisonPlotRegistry.register_artifact_config(TableComparisonPlotType.TSNE_JUXTAPOSITION)
+@TableComparisonPlotRegistry.register_artifact_hyperparams(
+    TableComparisonPlotType.TSNE_JUXTAPOSITION
+)
 @dataclass(frozen=True)
 class TSNEJuxtapositionPlotHyperparams(ArtifactHyperparams):
     use_categorical: bool

@@ -41,7 +41,7 @@ BinaryPredictionScoresHyperparamsT = TypeVar(
 )
 
 
-@BinaryClassificationScoreCollectionRegistry.register_artifact_config(
+@BinaryClassificationScoreCollectionRegistry.register_artifact_hyperparams(
     BinaryClassificationScoreCollectionType.BINARY_PREDICTION_SCORES
 )
 @dataclass(frozen=True)
