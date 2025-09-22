@@ -4,7 +4,9 @@ from typing import Hashable, Mapping, Optional, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
+from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
 from matplotlib.figure import Figure
+from matplotlib.image import AxesImage
 
 from artifact_core.libs.implementation.binary_classification.confusion.calculator import (
     ConfusionCalculator,
@@ -17,9 +19,7 @@ from artifact_core.libs.implementation.binary_classification.confusion.normalize
 
 @dataclass(frozen=True)
 class ConfusionMatrixPlotConfig:
-    normalize: ConfusionNormalizationStrategy = ConfusionNormalizationStrategy.NONE
     title: Optional[str] = "Confusion Matrix"
-    cmap: str = "Blues"
     dpi: int = 120
     show_values: bool = True
     value_fmt: str = ".2f"
@@ -33,6 +33,7 @@ class ConfusionMatrixPlotter:
         predicted: Mapping[Hashable, str],
         pos_label: str,
         neg_label: str,
+        normalization: ConfusionNormalizationStrategy,
         config: ConfusionMatrixPlotConfig = ConfusionMatrixPlotConfig(),
     ) -> Figure:
         arr_cm_raw = ConfusionCalculator.compute_confusion_matrix(
@@ -43,10 +44,10 @@ class ConfusionMatrixPlotter:
             predicted=predicted,
             pos_label=pos_label,
             neg_label=neg_label,
-            normalization=config.normalize,
+            normalization=normalization,
         )
         fig, ax = cls._make_figure(dpi=config.dpi)
-        im = cls._draw_matrix(ax=ax, cm=arr_cm, cmap=config.cmap)
+        im = cls._draw_semantic_matrix(ax=ax, cm=arr_cm)
         cls._decorate_axes(ax=ax, title=config.title, tick_labels=(pos_label, neg_label))
         cls._add_colorbar(fig=fig, ax=ax, im=im)
         if config.show_values:
@@ -54,10 +55,11 @@ class ConfusionMatrixPlotter:
                 ax=ax,
                 cm=arr_cm,
                 raw_cm=arr_cm_raw,
-                normalized=(config.normalize is not ConfusionNormalizationStrategy.NONE),
+                normalized=normalization is not ConfusionNormalizationStrategy.NONE,
                 value_fmt=config.value_fmt,
             )
         fig.tight_layout()
+        plt.close(fig)
         return fig
 
     @staticmethod
@@ -111,3 +113,15 @@ class ConfusionMatrixPlotter:
                     color="white" if cm[i, j] > thresh else "black",
                     fontsize=10,
                 )
+
+    @staticmethod
+    def _draw_semantic_matrix(ax: Axes, cm: np.ndarray) -> AxesImage:
+        sign = np.array([[+1.0, -1.0], [-1.0, +1.0]], dtype=float)
+        signed = cm * sign
+        max_abs = float(np.max(np.abs(signed))) if signed.size else 1.0
+        if max_abs == 0:
+            max_abs = 1.0
+        cmap = LinearSegmentedColormap.from_list("bad_to_good", ["red", "white", "green"], N=256)
+        norm = TwoSlopeNorm(vmin=-max_abs, vcenter=0.0, vmax=max_abs)
+        im = ax.imshow(signed, cmap=cmap, norm=norm, interpolation="nearest")
+        return im
