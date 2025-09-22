@@ -8,9 +8,9 @@ from artifact_core.binary_classification.registries.plots.registry import (
 from artifact_core.binary_classification.registries.plots.types import (
     BinaryClassificationPlotType,
 )
-from artifact_core.libs.implementation.binary_classification.characteristic_curves.plotter import (
-    CharacteristicCurvePlotter,
-    CharacteristicCurveType,
+from artifact_core.libs.implementation.binary_classification.threshold_variation.plotter import (
+    ThresholdVariationCurvePlotter,
+    ThresholdVariationCurveType,
 )
 from artifact_core.libs.resources.categorical.category_store.binary import (
     BinaryCategoryStore,
@@ -27,8 +27,8 @@ class ROCPlot(BinaryClassificationPlot[NoArtifactHyperparams]):
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Figure:
-        return CharacteristicCurvePlotter.plot(
-            plot_type=CharacteristicCurveType.ROC,
+        return ThresholdVariationCurvePlotter.plot(
+            plot_type=ThresholdVariationCurveType.ROC,
             true=true_category_store.id_to_category,
             probs=classification_results.id_to_prob_pos,
             pos_label=self._resource_spec.positive_category,
@@ -42,8 +42,8 @@ class PRPlot(BinaryClassificationPlot[NoArtifactHyperparams]):
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Figure:
-        return CharacteristicCurvePlotter.plot(
-            plot_type=CharacteristicCurveType.PR,
+        return ThresholdVariationCurvePlotter.plot(
+            plot_type=ThresholdVariationCurveType.PR,
             true=true_category_store.id_to_category,
             probs=classification_results.id_to_prob_pos,
             pos_label=self._resource_spec.positive_category,
@@ -57,8 +57,8 @@ class DETPlot(BinaryClassificationPlot[NoArtifactHyperparams]):
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Figure:
-        return CharacteristicCurvePlotter.plot(
-            plot_type=CharacteristicCurveType.DET,
+        return ThresholdVariationCurvePlotter.plot(
+            plot_type=ThresholdVariationCurveType.DET,
             true=true_category_store.id_to_category,
             probs=classification_results.id_to_prob_pos,
             pos_label=self._resource_spec.positive_category,
@@ -72,8 +72,8 @@ class TPRThresholdPlot(BinaryClassificationPlot[NoArtifactHyperparams]):
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Figure:
-        return CharacteristicCurvePlotter.plot(
-            plot_type=CharacteristicCurveType.TPR_THRESHOLD,
+        return ThresholdVariationCurvePlotter.plot(
+            plot_type=ThresholdVariationCurveType.TPR_THRESHOLD,
             true=true_category_store.id_to_category,
             probs=classification_results.id_to_prob_pos,
             pos_label=self._resource_spec.positive_category,
@@ -89,8 +89,8 @@ class PrecisionThresholdPlot(BinaryClassificationPlot[NoArtifactHyperparams]):
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Figure:
-        return CharacteristicCurvePlotter.plot(
-            plot_type=CharacteristicCurveType.PRECISION_THRESHOLD,
+        return ThresholdVariationCurvePlotter.plot(
+            plot_type=ThresholdVariationCurveType.PRECISION_THRESHOLD,
             true=true_category_store.id_to_category,
             probs=classification_results.id_to_prob_pos,
             pos_label=self._resource_spec.positive_category,
