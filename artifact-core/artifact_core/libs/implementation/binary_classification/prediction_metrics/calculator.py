@@ -12,7 +12,7 @@ from sklearn.metrics import (
 
 from artifact_core.libs.implementation.binary_classification.confusion.calculator import (
     ConfusionCalculator,
-    ConfusionCell,
+    ConfusionMatrixCell,
 )
 
 
@@ -137,11 +137,11 @@ class BinaryPredictionMetricCalculator:
         pos_label: str,
         neg_label: str,
     ) -> float:
-        dict_confusion_counts = ConfusionCalculator.compute_confusion_counts(
+        dict_confusion_counts = ConfusionCalculator.compute_dict_confusion_counts(
             true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
         )
-        tn = dict_confusion_counts[ConfusionCell.TRUE_NEGATIVE]
-        fn = dict_confusion_counts[ConfusionCell.FALSE_NEGATIVE]
+        tn = dict_confusion_counts[ConfusionMatrixCell.TRUE_NEGATIVE]
+        fn = dict_confusion_counts[ConfusionMatrixCell.FALSE_NEGATIVE]
         score = cls._safe_div(num=tn, denom=tn + fn)
         return score
 
@@ -171,11 +171,11 @@ class BinaryPredictionMetricCalculator:
         pos_label: str,
         neg_label: str,
     ) -> float:
-        dict_confusion_counts = ConfusionCalculator.compute_confusion_counts(
+        dict_confusion_counts = ConfusionCalculator.compute_dict_confusion_counts(
             true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
         )
-        tn = dict_confusion_counts[ConfusionCell.TRUE_NEGATIVE]
-        fp = dict_confusion_counts[ConfusionCell.FALSE_POSITIVE]
+        tn = dict_confusion_counts[ConfusionMatrixCell.TRUE_NEGATIVE]
+        fp = dict_confusion_counts[ConfusionMatrixCell.FALSE_POSITIVE]
         score = cls._safe_div(num=tn, denom=tn + fp)
         return score
 
@@ -187,11 +187,11 @@ class BinaryPredictionMetricCalculator:
         pos_label: str,
         neg_label: str,
     ) -> float:
-        dict_confusion_counts = ConfusionCalculator.compute_confusion_counts(
+        dict_confusion_counts = ConfusionCalculator.compute_dict_confusion_counts(
             true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
         )
-        fp = dict_confusion_counts[ConfusionCell.FALSE_POSITIVE]
-        tn = dict_confusion_counts[ConfusionCell.TRUE_NEGATIVE]
+        fp = dict_confusion_counts[ConfusionMatrixCell.FALSE_POSITIVE]
+        tn = dict_confusion_counts[ConfusionMatrixCell.TRUE_NEGATIVE]
         score = cls._safe_div(num=fp, denom=fp + tn)
         return score
 
@@ -203,11 +203,11 @@ class BinaryPredictionMetricCalculator:
         pos_label: str,
         neg_label: str,
     ) -> float:
-        dict_confusion_counts = ConfusionCalculator.compute_confusion_counts(
+        dict_confusion_counts = ConfusionCalculator.compute_dict_confusion_counts(
             true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
         )
-        fn = dict_confusion_counts[ConfusionCell.FALSE_NEGATIVE]
-        tp = dict_confusion_counts[ConfusionCell.TRUE_POSITIVE]
+        fn = dict_confusion_counts[ConfusionMatrixCell.FALSE_NEGATIVE]
+        tp = dict_confusion_counts[ConfusionMatrixCell.TRUE_POSITIVE]
         score = cls._safe_div(num=fn, denom=fn + tp)
         return score
 

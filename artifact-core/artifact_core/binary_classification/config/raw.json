@@ -2,9 +2,16 @@
   "native_artifact_path": "binary_classification/artifacts",
   "custom_artifact_path": null,
   "scores": {},
-  "arrays": {},
+  "arrays": {
+    "CONFUSION_MATRIX":{
+      "normalization": "NONE"
+    }
+  },
   "plots": {},
   "score_collections": {
+    "CONFUSION_COUNTS":{
+      "normalization": "NONE"
+    },
     "BINARY_PREDICTION_SCORES": {
       "ls_metrics": [
         "ACCURACY",

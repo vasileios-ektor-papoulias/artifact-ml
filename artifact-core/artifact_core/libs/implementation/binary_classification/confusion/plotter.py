@@ -38,12 +38,12 @@ class ConfusionMatrixPlotter:
         arr_cm_raw = ConfusionCalculator.compute_confusion_matrix(
             true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
         ).astype(float)
-        arr_cm = NormalizedConfusionCalculator.compute_confusion_matrix_normalized(
+        arr_cm = NormalizedConfusionCalculator.compute_normalized_confusion_matrix(
             true=true,
             predicted=predicted,
             pos_label=pos_label,
             neg_label=neg_label,
-            strategy=config.normalize,
+            normalization=config.normalize,
         )
         fig, ax = cls._make_figure(dpi=config.dpi)
         im = cls._draw_matrix(ax=ax, cm=arr_cm, cmap=config.cmap)
