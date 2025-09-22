@@ -12,7 +12,7 @@ from artifact_core.libs.implementation.binary_classification.confusion.calculato
     ConfusionCalculator,
 )
 from artifact_core.libs.implementation.binary_classification.confusion.normalized_calculator import (
-    ConfusionNormalizationStrategy,
+    ConfusionMatrixNormalizationStrategy,
     NormalizedConfusionCalculator,
 )
 
@@ -33,10 +33,10 @@ class ConfusionMatrixPlotter:
         predicted: Mapping[Hashable, str],
         pos_label: str,
         neg_label: str,
-        normalization_types: Sequence[ConfusionNormalizationStrategy],
+        normalization_types: Sequence[ConfusionMatrixNormalizationStrategy],
         config: ConfusionMatrixPlotConfig = ConfusionMatrixPlotConfig(),
-    ) -> Dict[ConfusionNormalizationStrategy, Figure]:
-        plot_collection = {
+    ) -> Dict[ConfusionMatrixNormalizationStrategy, Figure]:
+        dict_plots = {
             normalization: cls.plot(
                 true=true,
                 predicted=predicted,
@@ -47,7 +47,7 @@ class ConfusionMatrixPlotter:
             )
             for normalization in normalization_types
         }
-        return plot_collection
+        return dict_plots
 
     @classmethod
     def plot(
@@ -56,7 +56,7 @@ class ConfusionMatrixPlotter:
         predicted: Mapping[Hashable, str],
         pos_label: str,
         neg_label: str,
-        normalization: ConfusionNormalizationStrategy,
+        normalization: ConfusionMatrixNormalizationStrategy,
         config: ConfusionMatrixPlotConfig = ConfusionMatrixPlotConfig(),
     ) -> Figure:
         arr_cm_raw = ConfusionCalculator.compute_confusion_matrix(
@@ -78,7 +78,7 @@ class ConfusionMatrixPlotter:
                 ax=ax,
                 cm=arr_cm,
                 raw_cm=arr_cm_raw,
-                normalized=normalization is not ConfusionNormalizationStrategy.NONE,
+                normalized=normalization is not ConfusionMatrixNormalizationStrategy.NONE,
                 value_fmt=config.value_fmt,
             )
         fig.tight_layout()

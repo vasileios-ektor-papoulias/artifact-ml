@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Callable, Dict, Hashable, Literal, Mapping
+from typing import Callable, Dict, Hashable, Literal, Mapping, Sequence
 
 import numpy as np
 
@@ -11,7 +11,7 @@ from artifact_core.libs.implementation.binary_classification.confusion.calculato
 ConfusionNormalizationStrategyLiteral = Literal["NONE", "TRUE", "PRED", "ALL"]
 
 
-class ConfusionNormalizationStrategy(Enum):
+class ConfusionMatrixNormalizationStrategy(Enum):
     NONE = "NONE"  # raw counts
     TRUE = "TRUE"  # normalize rows (per actual/true class)
     PRED = "PRED"  # normalize columns (per predicted class)
@@ -26,7 +26,7 @@ class NormalizedConfusionCalculator(ConfusionCalculator):
         predicted: Mapping[Hashable, str],
         pos_label: str,
         neg_label: str,
-        normalization: ConfusionNormalizationStrategy,
+        normalization: ConfusionMatrixNormalizationStrategy,
     ) -> np.ndarray:
         arr_cm = cls._compute_normalized_confusion_matrix(
             true=true,
@@ -38,13 +38,30 @@ class NormalizedConfusionCalculator(ConfusionCalculator):
         return arr_cm
 
     @classmethod
+    def compute_confusion_matrix_multiple_normalizations(
+        cls,
+        true: Mapping[Hashable, str],
+        predicted: Mapping[Hashable, str],
+        pos_label: str,
+        neg_label: str,
+        normalization_types: Sequence[ConfusionMatrixNormalizationStrategy],
+    ) -> Dict[ConfusionMatrixNormalizationStrategy, np.ndarray]:
+        dict_arr_cm = {
+            normalization: cls._compute_confusion_matrix(
+                true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
+            )
+            for normalization in normalization_types
+        }
+        return dict_arr_cm
+
+    @classmethod
     def compute_dict_normalized_confusion_counts(
         cls,
         true: Mapping[Hashable, str],
         predicted: Mapping[Hashable, str],
         pos_label: str,
         neg_label: str,
-        normalization: ConfusionNormalizationStrategy,
+        normalization: ConfusionMatrixNormalizationStrategy,
     ) -> Dict[ConfusionMatrixCell, float]:
         arr_cm = cls._compute_normalized_confusion_matrix(
             true=true,
@@ -65,7 +82,7 @@ class NormalizedConfusionCalculator(ConfusionCalculator):
         predicted: Mapping[Hashable, str],
         pos_label: str,
         neg_label: str,
-        normalization: ConfusionNormalizationStrategy,
+        normalization: ConfusionMatrixNormalizationStrategy,
     ) -> float:
         arr_cm = cls._compute_normalized_confusion_matrix(
             true=true,
@@ -87,7 +104,7 @@ class NormalizedConfusionCalculator(ConfusionCalculator):
         predicted: Mapping[Hashable, str],
         pos_label: str,
         neg_label: str,
-        normalization: ConfusionNormalizationStrategy,
+        normalization: ConfusionMatrixNormalizationStrategy,
     ) -> np.ndarray:
         arr_cm = cls._compute_confusion_matrix(
             true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
@@ -97,13 +114,15 @@ class NormalizedConfusionCalculator(ConfusionCalculator):
 
     @classmethod
     def _normalize_cm(
-        cls, arr_cm: np.ndarray, normalization: ConfusionNormalizationStrategy
+        cls, arr_cm: np.ndarray, normalization: ConfusionMatrixNormalizationStrategy
     ) -> np.ndarray:
-        normalizers: Dict[ConfusionNormalizationStrategy, Callable[[np.ndarray], np.ndarray]] = {
-            ConfusionNormalizationStrategy.NONE: cls._norm_none,
-            ConfusionNormalizationStrategy.TRUE: cls._norm_true,
-            ConfusionNormalizationStrategy.PRED: cls._norm_pred,
-            ConfusionNormalizationStrategy.ALL: cls._norm_all,
+        normalizers: Dict[
+            ConfusionMatrixNormalizationStrategy, Callable[[np.ndarray], np.ndarray]
+        ] = {
+            ConfusionMatrixNormalizationStrategy.NONE: cls._norm_none,
+            ConfusionMatrixNormalizationStrategy.TRUE: cls._norm_true,
+            ConfusionMatrixNormalizationStrategy.PRED: cls._norm_pred,
+            ConfusionMatrixNormalizationStrategy.ALL: cls._norm_all,
         }
         arr_cm = arr_cm.astype(np.float64, copy=True)
         try:

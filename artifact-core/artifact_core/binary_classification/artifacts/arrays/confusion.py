@@ -14,7 +14,7 @@ from artifact_core.binary_classification.registries.arrays.types import (
     BinaryClassificationArrayType,
 )
 from artifact_core.libs.implementation.binary_classification.confusion.normalized_calculator import (
-    ConfusionNormalizationStrategy,
+    ConfusionMatrixNormalizationStrategy,
     ConfusionNormalizationStrategyLiteral,
     NormalizedConfusionCalculator,
 )
@@ -36,17 +36,19 @@ ConfusionMatrixHyperparamsT = TypeVar(
 )
 @dataclass(frozen=True)
 class ConfusionMatrixHyperparams(ArtifactHyperparams):
-    normalization: ConfusionNormalizationStrategy
+    normalization: ConfusionMatrixNormalizationStrategy
 
     @classmethod
     def build(
         cls: Type[ConfusionMatrixHyperparamsT],
-        normalization: Union[ConfusionNormalizationStrategy, ConfusionNormalizationStrategyLiteral],
+        normalization: Union[
+            ConfusionMatrixNormalizationStrategy, ConfusionNormalizationStrategyLiteral
+        ],
     ) -> ConfusionMatrixHyperparamsT:
         normalization = (
             normalization
-            if isinstance(normalization, ConfusionNormalizationStrategy)
-            else ConfusionNormalizationStrategy[normalization]
+            if isinstance(normalization, ConfusionMatrixNormalizationStrategy)
+            else ConfusionMatrixNormalizationStrategy[normalization]
         )
         hyperparams = cls(normalization=normalization)
         return hyperparams

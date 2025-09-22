@@ -14,7 +14,7 @@ from artifact_core.binary_classification.registries.plots.types import (
     BinaryClassificationPlotType,
 )
 from artifact_core.libs.implementation.binary_classification.confusion.normalized_calculator import (
-    ConfusionNormalizationStrategy,
+    ConfusionMatrixNormalizationStrategy,
     ConfusionNormalizationStrategyLiteral,
 )
 from artifact_core.libs.implementation.binary_classification.confusion.plotter import (
@@ -38,17 +38,19 @@ ConfusionMatrixPlotHyperparamsT = TypeVar(
 )
 @dataclass(frozen=True)
 class ConfusionMatrixPlotHyperparams(ArtifactHyperparams):
-    normalization: ConfusionNormalizationStrategy
+    normalization: ConfusionMatrixNormalizationStrategy
 
     @classmethod
     def build(
         cls: Type[ConfusionMatrixPlotHyperparamsT],
-        normalization: Union[ConfusionNormalizationStrategy, ConfusionNormalizationStrategyLiteral],
+        normalization: Union[
+            ConfusionMatrixNormalizationStrategy, ConfusionNormalizationStrategyLiteral
+        ],
     ) -> ConfusionMatrixPlotHyperparamsT:
         normalization = (
             normalization
-            if isinstance(normalization, ConfusionNormalizationStrategy)
-            else ConfusionNormalizationStrategy[normalization]
+            if isinstance(normalization, ConfusionMatrixNormalizationStrategy)
+            else ConfusionMatrixNormalizationStrategy[normalization]
         )
         hyperparams = cls(normalization=normalization)
         return hyperparams
