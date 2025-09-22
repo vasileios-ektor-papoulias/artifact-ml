@@ -17,7 +17,7 @@ class PositiveProbabilitySlice(Enum):
 
 
 @dataclass(frozen=True)
-class BinaryProbDensityDelegateConfig:
+class ScoreDistributrionPlotterConfig:
     prob_col_name: str = "P(y=positive)"
     single_title_prefix: Optional[str] = None
     label_positive: str = "Positive (true)"
@@ -25,7 +25,7 @@ class BinaryProbDensityDelegateConfig:
     label_all: str = "All"
 
 
-class PredictedProbabilityPlotter:
+class ScoreDistributrionPlotter:
     @classmethod
     def plot_density_for(
         cls,
@@ -33,7 +33,7 @@ class PredictedProbabilityPlotter:
         probs: Mapping[Hashable, float],
         pos_label: str,
         slice_type: PositiveProbabilitySlice,
-        config: BinaryProbDensityDelegateConfig = BinaryProbDensityDelegateConfig(),
+        config: ScoreDistributrionPlotterConfig = ScoreDistributrionPlotterConfig(),
     ) -> Figure:
         y_true, y_prob = cls._align_labels(true, probs)
         arr = cls._get_prob_slice(
@@ -57,7 +57,7 @@ class PredictedProbabilityPlotter:
         probs: Mapping[Hashable, float],
         pos_label: str,
         ls_slice_types: Iterable[PositiveProbabilitySlice],
-        config: BinaryProbDensityDelegateConfig = BinaryProbDensityDelegateConfig(),
+        config: ScoreDistributrionPlotterConfig = ScoreDistributrionPlotterConfig(),
     ) -> Dict[PositiveProbabilitySlice, Figure]:
         y_true, y_prob = cls._align_labels(true, probs)
         dict_figures: Dict[PositiveProbabilitySlice, Figure] = {}
@@ -83,7 +83,7 @@ class PredictedProbabilityPlotter:
         true: Mapping[Hashable, str],
         probs: Mapping[Hashable, float],
         pos_label: str,
-        config: BinaryProbDensityDelegateConfig = BinaryProbDensityDelegateConfig(),
+        config: ScoreDistributrionPlotterConfig = ScoreDistributrionPlotterConfig(),
     ) -> Figure:
         y_true, y_prob = cls._align_labels(true, probs)
         pos_arr = cls._get_prob_slice(y_true, y_prob, pos_label, PositiveProbabilitySlice.POSITIVE)
@@ -103,7 +103,7 @@ class PredictedProbabilityPlotter:
 
     @classmethod
     def _get_column_name(
-        cls, config: BinaryProbDensityDelegateConfig, slice_type: PositiveProbabilitySlice
+        cls, config: ScoreDistributrionPlotterConfig, slice_type: PositiveProbabilitySlice
     ) -> str:
         prefix = (config.single_title_prefix + ": ") if config.single_title_prefix else ""
         return f"{prefix}{config.prob_col_name} — {slice_type.value}"
