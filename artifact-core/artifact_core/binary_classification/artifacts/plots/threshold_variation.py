@@ -21,14 +21,14 @@ from artifact_core.libs.resources.classification.binary_classification_results i
 
 
 @BinaryClassificationPlotRegistry.register_artifact(BinaryClassificationPlotType.ROC)
-class ROCPlot(BinaryClassificationPlot[NoArtifactHyperparams]):
+class ROCCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Figure:
         return ThresholdVariationCurvePlotter.plot(
-            plot_type=ThresholdVariationCurveType.ROC,
+            curve_type=ThresholdVariationCurveType.ROC,
             true=true_category_store.id_to_category,
             probs=classification_results.id_to_prob_pos,
             pos_label=self._resource_spec.positive_category,
@@ -36,14 +36,14 @@ class ROCPlot(BinaryClassificationPlot[NoArtifactHyperparams]):
 
 
 @BinaryClassificationPlotRegistry.register_artifact(BinaryClassificationPlotType.PR)
-class PRPlot(BinaryClassificationPlot[NoArtifactHyperparams]):
+class PRCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Figure:
         return ThresholdVariationCurvePlotter.plot(
-            plot_type=ThresholdVariationCurveType.PR,
+            curve_type=ThresholdVariationCurveType.PR,
             true=true_category_store.id_to_category,
             probs=classification_results.id_to_prob_pos,
             pos_label=self._resource_spec.positive_category,
@@ -51,14 +51,14 @@ class PRPlot(BinaryClassificationPlot[NoArtifactHyperparams]):
 
 
 @BinaryClassificationPlotRegistry.register_artifact(BinaryClassificationPlotType.DET)
-class DETPlot(BinaryClassificationPlot[NoArtifactHyperparams]):
+class DETCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Figure:
         return ThresholdVariationCurvePlotter.plot(
-            plot_type=ThresholdVariationCurveType.DET,
+            curve_type=ThresholdVariationCurveType.DET,
             true=true_category_store.id_to_category,
             probs=classification_results.id_to_prob_pos,
             pos_label=self._resource_spec.positive_category,
@@ -66,14 +66,14 @@ class DETPlot(BinaryClassificationPlot[NoArtifactHyperparams]):
 
 
 @BinaryClassificationPlotRegistry.register_artifact(BinaryClassificationPlotType.TPR_THRESHOLD)
-class TPRThresholdPlot(BinaryClassificationPlot[NoArtifactHyperparams]):
+class TPRThresholdCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Figure:
         return ThresholdVariationCurvePlotter.plot(
-            plot_type=ThresholdVariationCurveType.TPR_THRESHOLD,
+            curve_type=ThresholdVariationCurveType.TPR_THRESHOLD,
             true=true_category_store.id_to_category,
             probs=classification_results.id_to_prob_pos,
             pos_label=self._resource_spec.positive_category,
@@ -83,14 +83,14 @@ class TPRThresholdPlot(BinaryClassificationPlot[NoArtifactHyperparams]):
 @BinaryClassificationPlotRegistry.register_artifact(
     BinaryClassificationPlotType.PRECISION_THRESHOLD
 )
-class PrecisionThresholdPlot(BinaryClassificationPlot[NoArtifactHyperparams]):
+class PrecisionThresholdCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Figure:
         return ThresholdVariationCurvePlotter.plot(
-            plot_type=ThresholdVariationCurveType.PRECISION_THRESHOLD,
+            curve_type=ThresholdVariationCurveType.PRECISION_THRESHOLD,
             true=true_category_store.id_to_category,
             probs=classification_results.id_to_prob_pos,
             pos_label=self._resource_spec.positive_category,

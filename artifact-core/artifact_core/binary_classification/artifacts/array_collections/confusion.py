@@ -30,7 +30,7 @@ ConfusionMatrixCollectionHyperparamsT = TypeVar(
 
 
 @BinaryClassificationArrayCollectionRegistry.register_artifact_hyperparams(
-    BinaryClassificationArrayCollectionType.CONFUSION_MATRIX_COLLECTION
+    BinaryClassificationArrayCollectionType.CONFUSION_MATRICES
 )
 @dataclass(frozen=True)
 class ConfusionMatrixCollectionHyperparams(ArtifactHyperparams):
@@ -54,7 +54,7 @@ class ConfusionMatrixCollectionHyperparams(ArtifactHyperparams):
 
 
 @BinaryClassificationArrayCollectionRegistry.register_artifact(
-    BinaryClassificationArrayCollectionType.CONFUSION_MATRIX_COLLECTION
+    BinaryClassificationArrayCollectionType.CONFUSION_MATRICES
 )
 class ConfusionMatrixCollection(
     BinaryClassificationArrayCollection[ConfusionMatrixCollectionHyperparams]

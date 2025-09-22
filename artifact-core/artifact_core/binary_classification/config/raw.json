@@ -32,7 +32,7 @@
     }
   },
   "array_collections": {
-    "CONFUSION_MATRIX_COLLECTION":{
+    "CONFUSION_MATRICES":{
       "normalization_types": [
         "NONE",
         "TRUE",
@@ -42,12 +42,21 @@
     }
   },
   "plot_collections": {
-    "CONFUSION_MATRIX_COLLECTION":{
+    "CONFUSION_MATRIX_PLOTS":{
       "normalization_types": [
         "NONE",
         "TRUE",
         "PRED",
         "ALL"
+      ]
+    },
+    "THRESHOLD_VARIATION_CURVES":{
+      "curve_types": [
+        "ROC",
+        "PR",
+        "DET",
+        "TPR_THRESHOLD",
+        "PRECISION_THRESHOLD"
       ]
     }
   }
