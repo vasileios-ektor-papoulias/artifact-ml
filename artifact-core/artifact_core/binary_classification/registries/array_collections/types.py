@@ -2,4 +2,4 @@ from artifact_core.base.registry import ArtifactType
 
 
 class BinaryClassificationArrayCollectionType(ArtifactType):
-    pass
+    CONFUSION_MATRIX_COLLECTION = "confusion_matrix_collection"
