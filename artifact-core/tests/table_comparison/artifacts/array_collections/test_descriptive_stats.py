@@ -7,7 +7,7 @@ import pytest
 from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
 from artifact_core.libs.implementation.tabular.descriptive_stats.calculator import (
     DescriptiveStatistic,
-    DescriptiveStatsCalculator,
+    TableStatsCalculator,
 )
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.array_collections.descriptive_stats import (
@@ -51,7 +51,7 @@ def test_compute(
 ):
     fake_result = {"f1": np.array([0.1, 0.2]), "f2": np.array([0.3, 0.4])}
     patch_compute = mocker.patch.object(
-        target=DescriptiveStatsCalculator,
+        target=TableStatsCalculator,
         attribute="compute_juxtaposition",
         return_value=fake_result,
     )

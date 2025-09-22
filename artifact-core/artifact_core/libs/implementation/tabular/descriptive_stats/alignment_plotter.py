@@ -8,7 +8,7 @@ from matplotlib.figure import Figure
 
 from artifact_core.libs.implementation.tabular.descriptive_stats.calculator import (
     DescriptiveStatistic,
-    DescriptiveStatsCalculator,
+    TableStatsCalculator,
 )
 from artifact_core.libs.utils.plot_combiner import (
     PlotCombinationConfig,
@@ -65,7 +65,7 @@ class DescriptiveStatsAlignmentPlotter:
         ls_cts_features: List[str],
         stat: DescriptiveStatistic,
     ) -> Figure:
-        dict_stats = DescriptiveStatsCalculator.compute_juxtaposition(
+        dict_stats = TableStatsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
             ls_cts_features=ls_cts_features,
