@@ -105,6 +105,7 @@ class NormalizedConfusionCalculator(ConfusionCalculator):
             ConfusionNormalizationStrategy.PRED: cls._norm_pred,
             ConfusionNormalizationStrategy.ALL: cls._norm_all,
         }
+        arr_cm = arr_cm.astype(np.float64, copy=True)
         try:
             return normalizers[normalization](arr_cm.copy())
         except KeyError as e:

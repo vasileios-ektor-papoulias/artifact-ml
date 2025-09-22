@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Hashable, Mapping, Optional, Tuple
+from typing import Dict, Hashable, Mapping, Optional, Sequence, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -26,6 +26,29 @@ class ConfusionMatrixPlotConfig:
 
 
 class ConfusionMatrixPlotter:
+    @classmethod
+    def plot_multiple(
+        cls,
+        true: Mapping[Hashable, str],
+        predicted: Mapping[Hashable, str],
+        pos_label: str,
+        neg_label: str,
+        normalization_types: Sequence[ConfusionNormalizationStrategy],
+        config: ConfusionMatrixPlotConfig = ConfusionMatrixPlotConfig(),
+    ) -> Dict[ConfusionNormalizationStrategy, Figure]:
+        plot_collection = {
+            normalization: cls.plot(
+                true=true,
+                predicted=predicted,
+                pos_label=pos_label,
+                neg_label=neg_label,
+                normalization=normalization,
+                config=config,
+            )
+            for normalization in normalization_types
+        }
+        return plot_collection
+
     @classmethod
     def plot(
         cls,

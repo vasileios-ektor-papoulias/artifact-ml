@@ -32,5 +32,14 @@
     }
   },
   "array_collections": {},
-  "plot_collections": {}
+  "plot_collections": {
+    "CONFUSION_MATRIX_COLLECTION":{
+      "normalization_types": [
+        "NONE",
+        "TRUE",
+        "PRED",
+        "ALL"
+      ]
+    }
+  }
 }
