@@ -7,7 +7,11 @@
       "normalization": "NONE"
     }
   },
-  "plots": {},
+  "plots": {
+    "CONFUSION_MATRIX":{
+      "normalization": "NONE"
+    }
+  },
   "score_collections": {
     "CONFUSION_COUNTS":{
       "normalization": "NONE"
