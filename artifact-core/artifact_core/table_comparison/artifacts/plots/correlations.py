@@ -20,8 +20,9 @@ from artifact_core.table_comparison.registries.plots.registry import (
     TableComparisonPlotType,
 )
 
-CorrelationHeatmapJuxtapositionT = TypeVar(
-    "CorrelationHeatmapJuxtapositionT", bound="CorrelationHeatmapJuxtapositionPlotHyperparams"
+CorrelationHeatmapJuxtapositionPlotHyperparamsT = TypeVar(
+    "CorrelationHeatmapJuxtapositionPlotHyperparamsT",
+    bound="CorrelationHeatmapJuxtapositionPlotHyperparams",
 )
 
 
@@ -35,14 +36,14 @@ class CorrelationHeatmapJuxtapositionPlotHyperparams(ArtifactHyperparams):
 
     @classmethod
     def build(
-        cls: Type[CorrelationHeatmapJuxtapositionT],
+        cls: Type[CorrelationHeatmapJuxtapositionPlotHyperparamsT],
         categorical_association_type: Union[
             CategoricalAssociationType, Literal["THEILS_U"], Literal["CRAMERS_V"]
         ],
         continuous_association_type: Union[
             ContinuousAssociationType, Literal["PEARSON"], Literal["SPEARMAN"], Literal["KENDALL"]
         ],
-    ) -> CorrelationHeatmapJuxtapositionT:
+    ) -> CorrelationHeatmapJuxtapositionPlotHyperparamsT:
         if isinstance(categorical_association_type, str):
             categorical_association_type = CategoricalAssociationType[categorical_association_type]
         if isinstance(continuous_association_type, str):
