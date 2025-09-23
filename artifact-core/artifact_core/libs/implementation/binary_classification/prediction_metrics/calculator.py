@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, Hashable, List, Literal, Mapping, Sequence, Tuple
+from typing import Dict, Hashable, List, Literal, Mapping, Sequence
 
 from sklearn.metrics import (
     accuracy_score,
@@ -14,6 +14,7 @@ from artifact_core.libs.implementation.binary_classification.confusion.calculato
     ConfusionCalculator,
     ConfusionMatrixCell,
 )
+from artifact_core.libs.utils.dict_aligner import DictAligner
 
 BinaryPredictionMetricLiteral = Literal[
     "ACCURACY",
@@ -112,7 +113,7 @@ class BinaryPredictionMetricCalculator:
         true: Mapping[Hashable, str],
         predicted: Mapping[Hashable, str],
     ) -> float:
-        y_true, y_pred = cls._align_labels(true=true, predicted=predicted)
+        _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
         score = accuracy_score(y_true=y_true, y_pred=y_pred)
         return float(score)
 
@@ -120,7 +121,7 @@ class BinaryPredictionMetricCalculator:
     def _compute_balanced_accuracy(
         cls, true: Mapping[Hashable, str], predicted: Mapping[Hashable, str]
     ) -> float:
-        y_true, y_pred = cls._align_labels(true=true, predicted=predicted)
+        _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
         score = balanced_accuracy_score(y_true=y_true, y_pred=y_pred, adjusted=False)
         return float(score)
 
@@ -131,7 +132,7 @@ class BinaryPredictionMetricCalculator:
         predicted: Mapping[Hashable, str],
         pos_label: str,
     ) -> float:
-        y_true, y_pred = cls._align_labels(true=true, predicted=predicted)
+        _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
         cls._validate_pos_label_present(y_true=y_true, pos_label=pos_label)
         score = precision_score(
             y_true,
@@ -165,7 +166,7 @@ class BinaryPredictionMetricCalculator:
         predicted: Mapping[Hashable, str],
         pos_label: str,
     ) -> float:
-        y_true, y_pred = cls._align_labels(true=true, predicted=predicted)
+        _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
         cls._validate_pos_label_present(y_true=y_true, pos_label=pos_label)
         score = recall_score(
             y_true,
@@ -231,7 +232,7 @@ class BinaryPredictionMetricCalculator:
         predicted: Mapping[Hashable, str],
         pos_label: str,
     ) -> float:
-        y_true, y_pred = cls._align_labels(true=true, predicted=predicted)
+        _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
         cls._validate_pos_label_present(y_true=y_true, pos_label=pos_label)
         score = f1_score(
             y_true,
@@ -246,27 +247,11 @@ class BinaryPredictionMetricCalculator:
     def _compute_mcc(
         cls, true: Mapping[Hashable, str], predicted: Mapping[Hashable, str], pos_label: str
     ) -> float:
-        y_true, y_pred = cls._align_labels(true=true, predicted=predicted)
+        _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
         y_true_bin = [1 if label == pos_label else 0 for label in y_true]
         y_pred_bin = [1 if label == pos_label else 0 for label in y_pred]
         score = matthews_corrcoef(y_true_bin, y_pred_bin)
         return float(score)
-
-    @staticmethod
-    def _align_labels(
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-    ) -> Tuple[List[str], List[str]]:
-        missing = [k for k in true.keys() if k not in predicted]
-        if missing:
-            raise KeyError(
-                f"Predictions missing for {len(missing)} id(s): "
-                f"{missing[:5]}{'...' if len(missing) > 5 else ''}"
-            )
-        keys = list(true.keys())
-        y_true = [true[k] for k in keys]
-        y_pred = [predicted[k] for k in keys]
-        return y_true, y_pred
 
     @staticmethod
     def _validate_pos_label_present(y_true: List[str], pos_label: str) -> None:

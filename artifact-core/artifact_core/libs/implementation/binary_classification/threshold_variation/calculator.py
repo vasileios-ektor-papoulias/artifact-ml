@@ -1,8 +1,10 @@
 from enum import Enum
-from typing import Dict, Hashable, List, Literal, Mapping, Sequence, Tuple
+from typing import Dict, Hashable, Literal, Mapping, Sequence
 
 import numpy as np
 from sklearn.metrics import average_precision_score, roc_auc_score
+
+from artifact_core.libs.utils.dict_aligner import DictAligner
 
 ThresholdVariationMetricLiteral = Literal["ROC_AUC", "PR_AUC"]
 
@@ -50,7 +52,7 @@ class ThresholdVariationMetricCalculator:
         probs: Mapping[Hashable, float],
         pos_label: str,
     ) -> float:
-        y_true, y_prob = cls._align_labels(true=true, probs=probs)
+        _, y_true, y_prob = DictAligner.align(left=true, right=probs)
         y_pos = (np.array(y_true) == pos_label).astype(int)
         has_both_classes = cls._has_both_classes(y_pos=y_pos)
         if not has_both_classes:
@@ -66,28 +68,11 @@ class ThresholdVariationMetricCalculator:
         probs: Mapping[Hashable, float],
         pos_label: str,
     ) -> float:
-        y_true, y_prob = cls._align_labels(true=true, probs=probs)
+        _, y_true, y_prob = DictAligner.align(left=true, right=probs)
         y_pos = (np.array(y_true) == pos_label).astype(int)
         arr_prob = np.array(y_prob, dtype=float)
         score = average_precision_score(y_true=y_pos, y_score=arr_prob)
         return float(score)
-
-    @classmethod
-    def _align_labels(
-        cls,
-        true: Mapping[Hashable, str],
-        probs: Mapping[Hashable, float],
-    ) -> Tuple[List[str], List[float]]:
-        missing = [k for k in true if k not in probs]
-        if missing:
-            raise KeyError(
-                f"Probabilities missing for {len(missing)} id(s): "
-                f"{missing[:5]}{'...' if len(missing) > 5 else ''}"
-            )
-        keys = list(true.keys())
-        y_true = [true[k] for k in keys]
-        y_prob = [float(probs[k]) for k in keys]
-        return y_true, y_prob
 
     @classmethod
     def _has_both_classes(cls, y_pos: np.ndarray) -> bool:

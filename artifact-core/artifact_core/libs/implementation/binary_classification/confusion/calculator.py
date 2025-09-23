@@ -1,8 +1,10 @@
 from enum import Enum
-from typing import Dict, Hashable, Iterable, List, Mapping, Tuple
+from typing import Dict, Hashable, Iterable, Mapping, Tuple
 
 import numpy as np
 from sklearn.metrics import confusion_matrix
+
+from artifact_core.libs.utils.dict_aligner import DictAligner
 
 
 class ConfusionMatrixCell(Enum):
@@ -101,28 +103,12 @@ class ConfusionCalculator:
         pos_label: str,
         neg_label: str,
     ) -> np.ndarray:
-        y_true, y_pred = cls._align_labels(true=true, predicted=predicted)
+        _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
         labels = [pos_label, neg_label]
         cls._assert_known_labels(observed=y_true, known=labels)
         cls._assert_known_labels(observed=y_pred, known=labels)
         arr_cm = confusion_matrix(y_true, y_pred, labels=labels)
         return arr_cm
-
-    @staticmethod
-    def _align_labels(
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-    ) -> Tuple[List[str], List[str]]:
-        missing = [k for k in true.keys() if k not in predicted]
-        if missing:
-            raise KeyError(
-                f"Predictions missing for {len(missing)} id(s): "
-                f"{missing[:5]}{'...' if len(missing) > 5 else ''}"
-            )
-        keys = list(true.keys())
-        y_true = [true[k] for k in keys]
-        y_pred = [predicted[k] for k in keys]
-        return y_true, y_pred
 
     @staticmethod
     def _assert_known_labels(observed: Iterable[str], known: Iterable[str]) -> None:

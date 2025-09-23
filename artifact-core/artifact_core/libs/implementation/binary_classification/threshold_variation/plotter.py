@@ -14,6 +14,8 @@ from sklearn.metrics import (
     roc_curve,
 )
 
+from artifact_core.libs.utils.dict_aligner import DictAligner
+
 ThresholdVariationCurveTypeLiteral = Literal[
     "ROC", "PR", "DET", "TPR_THRESHOLD", "PRECISION_THRESHOLD"
 ]
@@ -64,7 +66,7 @@ class ThresholdVariationCurvePlotter:
         pos_label: str,
         config: ThresholdVariationCurvePlotterConfig = ThresholdVariationCurvePlotterConfig(),
     ) -> Figure:
-        y_true, y_probs = cls._align_labels(true=true, probs=probs)
+        _, y_true, y_probs = DictAligner.align(left=true, right=probs)
         y_true_bin = (np.array(y_true) == pos_label).astype(int)
         if curve_type is ThresholdVariationCurveType.ROC:
             fig = cls._plot_roc(y_true_bin=y_true_bin, y_probs=y_probs, config=config)
@@ -197,17 +199,3 @@ class ThresholdVariationCurvePlotter:
         ax.set_xlabel(x)
         ax.set_ylabel(y)
         ax.grid(True, linestyle="--", linewidth=0.7, alpha=0.6)
-
-    @staticmethod
-    def _align_labels(
-        true: Mapping[Hashable, str],
-        probs: Mapping[Hashable, float],
-    ) -> Tuple[List[str], List[float]]:
-        missing = [k for k in true if k not in probs]
-        if missing:
-            raise KeyError(
-                f"Probabilities missing for {len(missing)} id(s): "
-                f"{missing[:5]}{'...' if len(missing) > 5 else ''}"
-            )
-        keys = list(true.keys())
-        return [true[k] for k in keys], [float(probs[k]) for k in keys]
