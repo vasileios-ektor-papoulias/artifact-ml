@@ -57,7 +57,7 @@ class ClassificationResourcesValidator:
     ) -> None:
         spec_true = true_category_store.ls_categories
         spec_pred = classification_results.ls_categories
-        if len(spec_true) != len(spec_pred) or spec_true != spec_pred:
+        if spec_true != spec_pred:
             raise ValueError(
                 "Feature-spec category mismatch between ground truth and predictions.\n"
                 f"- true  categories: {spec_true}\n"
