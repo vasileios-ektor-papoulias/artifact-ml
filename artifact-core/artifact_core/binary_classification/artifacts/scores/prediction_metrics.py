@@ -27,10 +27,8 @@ class AccuracyScore(BinaryClassificationScore[NoArtifactHyperparams]):
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.ACCURACY,
-            true=true_category_store.id_to_category,
-            predicted=classification_results.id_to_predicted_category,
-            pos_label=self._resource_spec.positive_category,
-            neg_label=self._resource_spec.negative_category,
+            true=true_category_store.id_to_is_positive,
+            predicted=classification_results.id_to_predicted_positive,
         )
         return result
 
@@ -46,10 +44,8 @@ class BalancedAccuracyScore(BinaryClassificationScore[NoArtifactHyperparams]):
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.BALANCED_ACCURACY,
-            true=true_category_store.id_to_category,
-            predicted=classification_results.id_to_predicted_category,
-            pos_label=self._resource_spec.positive_category,
-            neg_label=self._resource_spec.negative_category,
+            true=true_category_store.id_to_is_positive,
+            predicted=classification_results.id_to_predicted_positive,
         )
         return result
 
@@ -63,10 +59,8 @@ class PrecisionScore(BinaryClassificationScore[NoArtifactHyperparams]):
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.PRECISION,
-            true=true_category_store.id_to_category,
-            predicted=classification_results.id_to_predicted_category,
-            pos_label=self._resource_spec.positive_category,
-            neg_label=self._resource_spec.negative_category,
+            true=true_category_store.id_to_is_positive,
+            predicted=classification_results.id_to_predicted_positive,
         )
         return result
 
@@ -80,10 +74,8 @@ class NPVScore(BinaryClassificationScore[NoArtifactHyperparams]):
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.NPV,
-            true=true_category_store.id_to_category,
-            predicted=classification_results.id_to_predicted_category,
-            pos_label=self._resource_spec.positive_category,
-            neg_label=self._resource_spec.negative_category,
+            true=true_category_store.id_to_is_positive,
+            predicted=classification_results.id_to_predicted_positive,
         )
         return result
 
@@ -97,10 +89,8 @@ class RecallScore(BinaryClassificationScore[NoArtifactHyperparams]):
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.RECALL,
-            true=true_category_store.id_to_category,
-            predicted=classification_results.id_to_predicted_category,
-            pos_label=self._resource_spec.positive_category,
-            neg_label=self._resource_spec.negative_category,
+            true=true_category_store.id_to_is_positive,
+            predicted=classification_results.id_to_predicted_positive,
         )
         return result
 
@@ -114,10 +104,8 @@ class TNRScore(BinaryClassificationScore[NoArtifactHyperparams]):
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.TNR,
-            true=true_category_store.id_to_category,
-            predicted=classification_results.id_to_predicted_category,
-            pos_label=self._resource_spec.positive_category,
-            neg_label=self._resource_spec.negative_category,
+            true=true_category_store.id_to_is_positive,
+            predicted=classification_results.id_to_predicted_positive,
         )
         return result
 
@@ -131,10 +119,8 @@ class FPRScore(BinaryClassificationScore[NoArtifactHyperparams]):
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.FPR,
-            true=true_category_store.id_to_category,
-            predicted=classification_results.id_to_predicted_category,
-            pos_label=self._resource_spec.positive_category,
-            neg_label=self._resource_spec.negative_category,
+            true=true_category_store.id_to_is_positive,
+            predicted=classification_results.id_to_predicted_positive,
         )
         return result
 
@@ -148,10 +134,8 @@ class FNRScore(BinaryClassificationScore[NoArtifactHyperparams]):
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.FNR,
-            true=true_category_store.id_to_category,
-            predicted=classification_results.id_to_predicted_category,
-            pos_label=self._resource_spec.positive_category,
-            neg_label=self._resource_spec.negative_category,
+            true=true_category_store.id_to_is_positive,
+            predicted=classification_results.id_to_predicted_positive,
         )
         return result
 
@@ -165,10 +149,8 @@ class F1ScoreScore(BinaryClassificationScore[NoArtifactHyperparams]):
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.F1,
-            true=true_category_store.id_to_category,
-            predicted=classification_results.id_to_predicted_category,
-            pos_label=self._resource_spec.positive_category,
-            neg_label=self._resource_spec.negative_category,
+            true=true_category_store.id_to_is_positive,
+            predicted=classification_results.id_to_predicted_positive,
         )
         return result
 
