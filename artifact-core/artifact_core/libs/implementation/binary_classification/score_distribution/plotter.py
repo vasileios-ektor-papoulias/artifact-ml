@@ -25,7 +25,7 @@ class ScoreDistributionPlotterConfig:
     label_all: str = "All"
 
 
-class ScoreDistributionPlotter:
+class ScorePDFPlotter:
     @classmethod
     def plot(
         cls,
@@ -82,7 +82,7 @@ class ScoreDistributionPlotter:
         col_name = config.prob_col_name
         df_pos = pd.DataFrame({col_name: np.asarray(pos_samples, dtype=float)})
         df_neg = pd.DataFrame({col_name: np.asarray(neg_samples, dtype=float)})
-        fig = PosNegOverlaidPDFPlotter.get_overlaid_pdf_plot(
+        fig = _ScoreOverlaidPDFPlotter.get_overlaid_pdf_plot(
             dataset_real=df_pos,
             dataset_synthetic=df_neg,
             ls_features_order=[col_name],
@@ -96,7 +96,7 @@ class ScoreDistributionPlotter:
     def _sample_to_pdf(sample: Iterable[float], col_name: str) -> Figure:
         arr = np.asarray(list(sample), dtype=float)
         df = pd.DataFrame({col_name: arr})
-        pdf_plot = ScorePDFPlotter.get_pdf_plot(
+        pdf_plot = _ScorePDFPlotter.get_pdf_plot(
             dataset=df,
             ls_features_order=[col_name],
             ls_cts_features=[col_name],
@@ -119,7 +119,7 @@ class ScoreDistributionPlotter:
         return f"{prefix}{config.prob_col_name} — {suffix}"
 
 
-class PosNegOverlaidPDFPlotter(OverlaidPDFPlotter):
+class _ScoreOverlaidPDFPlotter(OverlaidPDFPlotter):
     _label_real = "Positive (true)"
     _label_synthetic = "Negative (true)"
     _plot_color_real = "tab:blue"
@@ -143,7 +143,7 @@ class PosNegOverlaidPDFPlotter(OverlaidPDFPlotter):
     )
 
 
-class ScorePDFPlotter(PDFPlotter):
+class _ScorePDFPlotter(PDFPlotter):
     _plot_color = "tab:blue"
     _gridline_color = "grey"
     _gridline_style = "--"
