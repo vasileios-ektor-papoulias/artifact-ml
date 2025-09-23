@@ -15,7 +15,7 @@ from artifact_core.libs.utils.descriptive_stats_calculator import (
 )
 
 
-class ScoreDistributionStatsCalculator:
+class ScoreStatsCalculator:
     @classmethod
     def compute_as_df(
         cls,

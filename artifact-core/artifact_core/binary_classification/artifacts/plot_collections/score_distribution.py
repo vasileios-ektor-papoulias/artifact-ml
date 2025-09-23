@@ -18,7 +18,7 @@ from artifact_core.libs.implementation.binary_classification.score_distribution.
     BinarySampleSplitLiteral,
 )
 from artifact_core.libs.implementation.binary_classification.score_distribution.plotter import (
-    ScoreDistributionPlotter,
+    ScorePDFPlotter,
 )
 from artifact_core.libs.resources.categorical.category_store.binary import (
     BinaryCategoryStore,
@@ -64,7 +64,7 @@ class ScoreDistributionPlots(BinaryClassificationPlotCollection[ScoreDistributio
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, Figure]:
-        dict_plots = ScoreDistributionPlotter.plot_multiple(
+        dict_plots = ScorePDFPlotter.plot_multiple(
             id_to_is_pos=true_category_store.id_to_is_positive,
             id_to_prob_pos=classification_results.id_to_prob_pos,
             splits=self._hyperparams.split_types,

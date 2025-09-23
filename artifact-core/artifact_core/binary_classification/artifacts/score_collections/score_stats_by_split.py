@@ -12,7 +12,7 @@ from artifact_core.binary_classification.registries.score_collections.types impo
 from artifact_core.libs.implementation.binary_classification.score_distribution.calculator import (
     BinarySampleSplit,
     DescriptiveStatistic,
-    ScoreDistributionStatsCalculator,
+    ScoreStatsCalculator,
 )
 from artifact_core.libs.implementation.binary_classification.score_distribution.partitioner import (
     BinarySampleSplitLiteral,
@@ -81,7 +81,7 @@ class ScoreMeans(BinaryClassificationScoreCollection[ScoreStatsBySplitHyperparam
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, float]:
-        dict_scores = ScoreDistributionStatsCalculator.compute_by_stat(
+        dict_scores = ScoreStatsCalculator.compute_by_stat(
             id_to_is_pos=true_category_store.id_to_is_positive,
             id_to_prob_pos=classification_results.id_to_prob_pos,
             stat=DescriptiveStatistic.MEAN,
@@ -100,7 +100,7 @@ class ScoreStds(BinaryClassificationScoreCollection[ScoreStatsBySplitHyperparams
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, float]:
-        dict_scores = ScoreDistributionStatsCalculator.compute_by_stat(
+        dict_scores = ScoreStatsCalculator.compute_by_stat(
             id_to_is_pos=true_category_store.id_to_is_positive,
             id_to_prob_pos=classification_results.id_to_prob_pos,
             stat=DescriptiveStatistic.STD,
@@ -119,7 +119,7 @@ class ScoreVariances(BinaryClassificationScoreCollection[ScoreStatsBySplitHyperp
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, float]:
-        dict_scores = ScoreDistributionStatsCalculator.compute_by_stat(
+        dict_scores = ScoreStatsCalculator.compute_by_stat(
             id_to_is_pos=true_category_store.id_to_is_positive,
             id_to_prob_pos=classification_results.id_to_prob_pos,
             stat=DescriptiveStatistic.VARIANCE,
@@ -138,7 +138,7 @@ class ScoreMedians(BinaryClassificationScoreCollection[ScoreStatsBySplitHyperpar
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, float]:
-        dict_scores = ScoreDistributionStatsCalculator.compute_by_stat(
+        dict_scores = ScoreStatsCalculator.compute_by_stat(
             id_to_is_pos=true_category_store.id_to_is_positive,
             id_to_prob_pos=classification_results.id_to_prob_pos,
             stat=DescriptiveStatistic.MEDIAN,
@@ -157,7 +157,7 @@ class ScoreFirstQuartiles(BinaryClassificationScoreCollection[ScoreStatsBySplitH
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, float]:
-        dict_scores = ScoreDistributionStatsCalculator.compute_by_stat(
+        dict_scores = ScoreStatsCalculator.compute_by_stat(
             id_to_is_pos=true_category_store.id_to_is_positive,
             id_to_prob_pos=classification_results.id_to_prob_pos,
             stat=DescriptiveStatistic.Q1,
@@ -176,7 +176,7 @@ class ScoreThirdQuartiles(BinaryClassificationScoreCollection[ScoreStatsBySplitH
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, float]:
-        dict_scores = ScoreDistributionStatsCalculator.compute_by_stat(
+        dict_scores = ScoreStatsCalculator.compute_by_stat(
             id_to_is_pos=true_category_store.id_to_is_positive,
             id_to_prob_pos=classification_results.id_to_prob_pos,
             stat=DescriptiveStatistic.Q3,
@@ -195,7 +195,7 @@ class ScoreMinima(BinaryClassificationScoreCollection[ScoreStatsBySplitHyperpara
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, float]:
-        dict_scores = ScoreDistributionStatsCalculator.compute_by_stat(
+        dict_scores = ScoreStatsCalculator.compute_by_stat(
             id_to_is_pos=true_category_store.id_to_is_positive,
             id_to_prob_pos=classification_results.id_to_prob_pos,
             stat=DescriptiveStatistic.MIN,
@@ -214,7 +214,7 @@ class ScoreMaxima(BinaryClassificationScoreCollection[ScoreStatsBySplitHyperpara
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, float]:
-        dict_scores = ScoreDistributionStatsCalculator.compute_by_stat(
+        dict_scores = ScoreStatsCalculator.compute_by_stat(
             id_to_is_pos=true_category_store.id_to_is_positive,
             id_to_prob_pos=classification_results.id_to_prob_pos,
             stat=DescriptiveStatistic.MAX,

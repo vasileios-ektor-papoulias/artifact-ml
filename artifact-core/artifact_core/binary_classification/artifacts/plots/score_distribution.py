@@ -11,7 +11,7 @@ from artifact_core.binary_classification.registries.plots.types import (
     BinaryClassificationPlotType,
 )
 from artifact_core.libs.implementation.binary_classification.score_distribution.plotter import (
-    ScoreDistributionPlotter,
+    ScorePDFPlotter,
 )
 from artifact_core.libs.resources.categorical.category_store.binary import (
     BinaryCategoryStore,
@@ -30,7 +30,7 @@ class ScoreDistributionPlot(BinaryClassificationPlot[NoArtifactHyperparams]):
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Figure:
-        plot_cm = ScoreDistributionPlotter.plot_overlaid(
+        plot_cm = ScorePDFPlotter.plot_overlaid(
             id_to_is_pos=true_category_store.id_to_is_positive,
             id_to_prob_pos=classification_results.id_to_prob_pos,
         )

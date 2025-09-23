@@ -12,7 +12,7 @@ from artifact_core.binary_classification.registries.score_collections.types impo
 from artifact_core.libs.implementation.binary_classification.score_distribution.calculator import (
     BinarySampleSplit,
     DescriptiveStatistic,
-    ScoreDistributionStatsCalculator,
+    ScoreStatsCalculator,
 )
 from artifact_core.libs.resources.categorical.category_store.binary import (
     BinaryCategoryStore,
@@ -64,7 +64,7 @@ class ScoreStats(BinaryClassificationScoreCollection[ScoreStatsByStatHyperparams
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, float]:
-        dict_scores = ScoreDistributionStatsCalculator.compute_by_split(
+        dict_scores = ScoreStatsCalculator.compute_by_split(
             id_to_is_pos=true_category_store.id_to_is_positive,
             id_to_prob_pos=classification_results.id_to_prob_pos,
             stats=self._hyperparams.stat_types,
@@ -83,7 +83,7 @@ class PositiveClassScoreStats(BinaryClassificationScoreCollection[ScoreStatsBySt
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, float]:
-        dict_scores = ScoreDistributionStatsCalculator.compute_by_split(
+        dict_scores = ScoreStatsCalculator.compute_by_split(
             id_to_is_pos=true_category_store.id_to_is_positive,
             id_to_prob_pos=classification_results.id_to_prob_pos,
             stats=self._hyperparams.stat_types,
@@ -102,7 +102,7 @@ class NegativeClassScoreStats(BinaryClassificationScoreCollection[ScoreStatsBySt
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, float]:
-        dict_scores = ScoreDistributionStatsCalculator.compute_by_split(
+        dict_scores = ScoreStatsCalculator.compute_by_split(
             id_to_is_pos=true_category_store.id_to_is_positive,
             id_to_prob_pos=classification_results.id_to_prob_pos,
             stats=self._hyperparams.stat_types,
