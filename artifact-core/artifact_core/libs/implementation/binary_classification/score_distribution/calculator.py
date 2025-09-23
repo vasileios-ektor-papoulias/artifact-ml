@@ -1,6 +1,5 @@
 from typing import Dict, Hashable, List, Mapping, Sequence
 
-import numpy as np
 import pandas as pd
 
 from artifact_core.libs.implementation.binary_classification.score_distribution.partitioner import (
@@ -116,18 +115,7 @@ class ScoreStatsCalculator:
             id_to_is_pos=id_to_is_pos, id_to_prob_pos=id_to_prob_pos, split=split
         )
         sr_probs = pd.Series(samples, name=f"prob_pos[{split.name}]")
-        sr_stats = cls._compute_sr_stats(sr_cts_data=sr_probs, stats=stats)
-        return sr_stats
-
-    @staticmethod
-    def _compute_sr_stats(
-        sr_cts_data: pd.Series, stats: Sequence[DescriptiveStatistic]
-    ) -> pd.Series:
-        dict_stats: Dict[str, float] = {}
-        for stat in stats:
-            value = DescriptiveStatsCalculator.compute_stat(sr_cts_data=sr_cts_data, stat=stat)
-            dict_stats[stat.name] = float(value) if pd.notna(value) else np.nan
-        sr_stats = pd.Series(data=dict_stats)
+        sr_stats = DescriptiveStatsCalculator.compute_sr_stats(sr_cts_data=sr_probs, stats=stats)
         return sr_stats
 
     @staticmethod
