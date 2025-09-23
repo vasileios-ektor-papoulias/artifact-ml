@@ -1,7 +1,7 @@
 from typing import Type
 
 from artifact_core.binary_classification.engine.base import (
-    BinaryClassifierEvaluationEngineBase,
+    BinaryClassificationEngineBase,
 )
 from artifact_core.binary_classification.registries.array_collections.registry import (
     BinaryClassificationArrayCollectionRegistry,
@@ -38,7 +38,7 @@ from artifact_core.binary_classification.registries.scores.registry import (
 
 
 class BinaryClassificationEngine(
-    BinaryClassifierEvaluationEngineBase[
+    BinaryClassificationEngineBase[
         BinaryClassificationScoreType,
         BinaryClassificationArrayType,
         BinaryClassificationPlotType,

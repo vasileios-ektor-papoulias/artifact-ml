@@ -5,7 +5,7 @@ from numpy import ndarray
 
 from artifact_core.base.registry import ArtifactType
 from artifact_core.binary_classification.artifacts.base import BinaryClassificationArtifactResources
-from artifact_core.core.classification.engine import ClassifierEvaluationEngine
+from artifact_core.core.classification.engine import ClassificationEngine
 from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
 from artifact_core.libs.types.entity_store import IdentifierType
 
@@ -17,8 +17,8 @@ ArrayCollectionTypeT = TypeVar("ArrayCollectionTypeT", bound="ArtifactType")
 PlotCollectionTypeT = TypeVar("PlotCollectionTypeT", bound="ArtifactType")
 
 
-class BinaryClassifierEvaluationEngineBase(
-    ClassifierEvaluationEngine[
+class BinaryClassificationEngineBase(
+    ClassificationEngine[
         BinaryClassificationArtifactResources,
         BinaryFeatureSpecProtocol,
         ScoreTypeT,

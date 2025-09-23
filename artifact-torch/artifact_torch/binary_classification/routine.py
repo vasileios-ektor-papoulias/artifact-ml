@@ -7,7 +7,7 @@ from artifact_core.binary_classification.artifacts.base import BinaryClassificat
 from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
 from artifact_core.libs.resources.categorical.category_store.binary import BinaryCategoryStore
 from artifact_experiment.base.tracking.client import TrackingClient
-from artifact_experiment.binary_classification.validation_plan import BinaryClassifierEvaluationPlan
+from artifact_experiment.binary_classification.validation_plan import BinaryClassificationPlan
 
 from artifact_torch.base.components.routines.artifact import (
     ArtifactRoutineData,
@@ -81,7 +81,7 @@ class BinaryClassificationRoutine(
         cls,
         artifact_resource_spec: BinaryFeatureSpecProtocol,
         tracking_client: Optional[TrackingClient],
-    ) -> BinaryClassifierEvaluationPlan: ...
+    ) -> BinaryClassificationPlan: ...
 
     @classmethod
     def _get_hyperparams(cls) -> BinaryClassificationRoutineHyperparams[ClassificationParamsT]:

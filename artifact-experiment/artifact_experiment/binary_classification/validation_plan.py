@@ -23,7 +23,7 @@ from artifact_experiment.binary_classification.callback_resources import (
 )
 
 
-class BinaryClassifierEvaluationPlan(
+class BinaryClassificationPlan(
     ValidationPlan[
         BinaryClassificationScoreType,
         BinaryClassificationArrayType,

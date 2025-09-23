@@ -19,7 +19,7 @@ CategoricalFeatureSpecProtocolT = TypeVar(
 )
 
 
-ClassifierEvaluationEngine = ArtifactEngine[
+ClassificationEngine = ArtifactEngine[
     ClassificationArtifactResourcesT,
     CategoricalFeatureSpecProtocolT,
     ScoreTypeT,
