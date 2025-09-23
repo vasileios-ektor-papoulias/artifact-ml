@@ -127,6 +127,18 @@
         "POSITIVE",
         "NEGATIVE"
       ]
+    },
+    "GROUND_TRUTH_PROB_STATS": {
+      "stat_types": [
+        "MEAN",
+        "STD",
+        "VARIANCE",
+        "MEDIAN",
+        "Q1",
+        "Q3",
+        "MIN",
+        "MAX"
+      ]
     }
 
   },

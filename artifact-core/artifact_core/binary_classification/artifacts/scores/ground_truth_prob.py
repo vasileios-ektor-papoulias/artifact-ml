@@ -8,7 +8,7 @@ from artifact_core.binary_classification.registries.scores.types import (
 )
 from artifact_core.libs.implementation.classification.ground_truth_prob.stats_calculator import (
     DescriptiveStatistic,
-    GroundTruthStatsCalculator,
+    GroundTruthProbStatsCalculator,
 )
 from artifact_core.libs.resources.categorical.category_store.binary import (
     BinaryCategoryStore,
@@ -27,7 +27,7 @@ class GroundTruthProbMean(BinaryClassificationScore[NoArtifactHyperparams]):
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
-        score = GroundTruthStatsCalculator.compute(
+        score = GroundTruthProbStatsCalculator.compute(
             stat=DescriptiveStatistic.MEAN,
             true_category_store=true_category_store,
             classification_results=classification_results,
@@ -44,7 +44,7 @@ class GroundTruthProbSTD(BinaryClassificationScore[NoArtifactHyperparams]):
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
-        score = GroundTruthStatsCalculator.compute(
+        score = GroundTruthProbStatsCalculator.compute(
             stat=DescriptiveStatistic.STD,
             true_category_store=true_category_store,
             classification_results=classification_results,
@@ -61,7 +61,7 @@ class GroundTruthProbVariance(BinaryClassificationScore[NoArtifactHyperparams]):
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
-        score = GroundTruthStatsCalculator.compute(
+        score = GroundTruthProbStatsCalculator.compute(
             stat=DescriptiveStatistic.VARIANCE,
             true_category_store=true_category_store,
             classification_results=classification_results,
@@ -78,7 +78,7 @@ class GroundTruthProbMedian(BinaryClassificationScore[NoArtifactHyperparams]):
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
-        score = GroundTruthStatsCalculator.compute(
+        score = GroundTruthProbStatsCalculator.compute(
             stat=DescriptiveStatistic.MEDIAN,
             true_category_store=true_category_store,
             classification_results=classification_results,
@@ -95,7 +95,7 @@ class GroundTruthProbFirstQuartile(BinaryClassificationScore[NoArtifactHyperpara
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
-        score = GroundTruthStatsCalculator.compute(
+        score = GroundTruthProbStatsCalculator.compute(
             stat=DescriptiveStatistic.Q1,
             true_category_store=true_category_store,
             classification_results=classification_results,
@@ -112,7 +112,7 @@ class GroundTruthProbThirdQuartile(BinaryClassificationScore[NoArtifactHyperpara
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
-        score = GroundTruthStatsCalculator.compute(
+        score = GroundTruthProbStatsCalculator.compute(
             stat=DescriptiveStatistic.Q3,
             true_category_store=true_category_store,
             classification_results=classification_results,
@@ -129,7 +129,7 @@ class GroundTruthProbMin(BinaryClassificationScore[NoArtifactHyperparams]):
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
-        score = GroundTruthStatsCalculator.compute(
+        score = GroundTruthProbStatsCalculator.compute(
             stat=DescriptiveStatistic.MIN,
             true_category_store=true_category_store,
             classification_results=classification_results,
@@ -146,7 +146,7 @@ class GroundTruthProbMax(BinaryClassificationScore[NoArtifactHyperparams]):
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
-        score = GroundTruthStatsCalculator.compute(
+        score = GroundTruthProbStatsCalculator.compute(
             stat=DescriptiveStatistic.MAX,
             true_category_store=true_category_store,
             classification_results=classification_results,

@@ -52,15 +52,16 @@ class GroundTruthProbCalculator:
             CategoricalDistributionStore,
         ],
         true_category_store: CategoryStore,
-        ids: Iterable[IdentifierType] | None = None,
     ) -> Dict[IdentifierType, float]:
-        for_id = cls._iter_common_ids(classification_results, true_category_store, ids)
-        out: Dict[IdentifierType, float] = {}
-        for identifier in for_id:
-            out[identifier] = cls.compute_ground_truth_prob(
-                classification_results, true_category_store, identifier
+        iter_id = cls._iter_common_ids(classification_results, true_category_store)
+        id_to_prob_ground_truth: Dict[IdentifierType, float] = {}
+        for identifier in iter_id:
+            id_to_prob_ground_truth[identifier] = cls.compute_ground_truth_prob(
+                classification_results=classification_results,
+                true_category_store=true_category_store,
+                identifier=identifier,
             )
-        return out
+        return id_to_prob_ground_truth
 
     @classmethod
     def compute_id_to_logit_ground_truth(
@@ -71,15 +72,18 @@ class GroundTruthProbCalculator:
             CategoricalDistributionStore,
         ],
         true_category_store: CategoryStore,
-        ids: Iterable[IdentifierType] | None = None,
     ) -> Dict[IdentifierType, float]:
-        for_id = cls._iter_common_ids(classification_results, true_category_store, ids)
-        out: Dict[IdentifierType, float] = {}
-        for identifier in for_id:
-            out[identifier] = cls.compute_ground_truth_logit(
-                classification_results, true_category_store, identifier
+        iter_ids = cls._iter_common_ids(
+            classification_results=classification_results, true_category_store=true_category_store
+        )
+        id_to_logit_ground_truth: Dict[IdentifierType, float] = {}
+        for identifier in iter_ids:
+            id_to_logit_ground_truth[identifier] = cls.compute_ground_truth_logit(
+                classification_results=classification_results,
+                true_category_store=true_category_store,
+                identifier=identifier,
             )
-        return out
+        return id_to_logit_ground_truth
 
     @staticmethod
     def _get_true_idx(true_category_store: CategoryStore, identifier: IdentifierType) -> int:
@@ -98,25 +102,7 @@ class GroundTruthProbCalculator:
             CategoricalFeatureSpecProtocol, CategoryStore, CategoricalDistributionStore
         ],
         true_category_store: CategoryStore,
-        ids: Iterable[IdentifierType] | None,
     ) -> Iterable[IdentifierType]:
-        if ids is not None:
-            ids_list = list(ids)
-            missing_cr = [i for i in ids_list if i not in set(classification_results.ids)]
-            missing_gt = [
-                i for i in ids_list if i not in set(true_category_store.id_to_category_idx)
-            ]
-            if missing_cr:
-                raise KeyError(
-                    f"IDs not found in classification_results: "
-                    f"{missing_cr[:5]}{'...' if len(missing_cr) > 5 else ''}"
-                )
-            if missing_gt:
-                raise KeyError(
-                    f"IDs not found in true_category_store: "
-                    f"{missing_gt[:5]}{'...' if len(missing_gt) > 5 else ''}"
-                )
-            return ids_list
         cr_ids = set(classification_results.ids)
         gt_ids = set(true_category_store.id_to_category_idx.keys())
         common = cr_ids & gt_ids
