@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Literal
+from typing import Dict, Literal, Sequence
 
 import pandas as pd
 
@@ -38,3 +38,23 @@ class DescriptiveStatsCalculator:
             return sr_cts_data.max()
         else:
             raise ValueError(f"Unsupported statistic: {stat}")
+
+    @classmethod
+    def compute_dict_stats(
+        cls, sr_cts_data: pd.Series, stats: Sequence[DescriptiveStatistic]
+    ) -> Dict[DescriptiveStatistic, float]:
+        dict_stats: Dict[DescriptiveStatistic, float] = {}
+        for stat in stats:
+            val = cls.compute_stat(sr_cts_data=sr_cts_data, stat=stat)
+            dict_stats[stat] = float(val) if pd.notna(val) else float("nan")
+        return dict_stats
+
+    @staticmethod
+    def compute_sr_stats(
+        sr_cts_data: pd.Series, stats: Sequence[DescriptiveStatistic]
+    ) -> pd.Series:
+        dict_stats = DescriptiveStatsCalculator.compute_dict_stats(
+            sr_cts_data=sr_cts_data, stats=stats
+        )
+        sr_stats = pd.Series(data={stat.name: val for stat, val in dict_stats.items()})
+        return sr_stats
