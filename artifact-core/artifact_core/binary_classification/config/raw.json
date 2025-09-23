@@ -158,7 +158,7 @@
         "PRECISION_THRESHOLD"
       ]
     },
-    "SCORE_DISTRIBUTION_PLOTS":{
+    "SCORE_PDF_PLOTS":{
       "split_types": [
         "ALL",
         "POSITIVE",

@@ -8,4 +8,5 @@ class BinaryClassificationPlotType(ArtifactType):
     DET_CURVE = "det_curve"
     TPR_THRESHOLD_CURVE = "tpr_threshold_curve"
     PRECISION_THRESHOLD_CURVE = "precision_threshold_curve"
-    SCORE_DISTRIBUTION_PLOT = "score_distribution_plot"
+    SCORE_PDF = "score_pdf"
+    GROUND_TRUTH_PROB_PDF = "ground_truth_prob_pdf"

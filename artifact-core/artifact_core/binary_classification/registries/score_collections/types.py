@@ -16,3 +16,4 @@ class BinaryClassificationScoreCollectionType(ArtifactType):
     SCORE_THIRD_QUARTILES = "score_third_quartiles"
     SCORE_MINIMA = "score_minima"
     SCORE_MAXIMA = "score_maxima"
+    GROUND_TRUTH_PROB_STATS = "ground_truth_prob_stats"

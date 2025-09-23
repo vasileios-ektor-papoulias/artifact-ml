@@ -1,4 +1,4 @@
-from typing import Dict, Hashable, Iterable, Mapping, Sequence
+from typing import Dict, Iterable, Sequence
 
 import numpy as np
 import pandas as pd
@@ -28,28 +28,57 @@ class GroundTruthStatsCalculator:
             CategoricalDistributionStore,
         ],
         true_category_store: CategoryStore,
-        stats: Sequence[DescriptiveStatistic],
+        stat: DescriptiveStatistic,
         ids: Iterable[IdentifierType] | None = None,
-    ) -> pd.Series:
-        id_to_prob_true: Dict[IdentifierType, float] = (
-            GroundTruthProbCalculator.compute_id_to_prob_ground_truth(
-                classification_results=classification_results,
-                true_category_store=true_category_store,
-                ids=ids,
-            )
+    ) -> float:
+        sr_probs = cls._compute_sr_probs(
+            classification_results=classification_results,
+            true_category_store=true_category_store,
+            ids=ids,
         )
-        return cls._compute_from_probs(
-            id_to_prob_ground_truth=id_to_prob_true,
-            stats=stats,
-        )
+        stat_value = DescriptiveStatsCalculator.compute_stat(sr_cts_data=sr_probs, stat=stat)
+        return float(stat_value) if pd.notna(stat_value) else float("nan")
 
     @classmethod
-    def _compute_from_probs(
+    def compute_multiple(
         cls,
-        id_to_prob_ground_truth: Mapping[Hashable, float],
+        classification_results: ClassificationResults[
+            CategoricalFeatureSpecProtocol,
+            CategoryStore,
+            CategoricalDistributionStore,
+        ],
+        true_category_store: CategoryStore,
         stats: Sequence[DescriptiveStatistic],
+        ids: Iterable[IdentifierType] | None = None,
+    ) -> Dict[DescriptiveStatistic, float]:
+        if not stats:
+            return {}
+        sr_probs = cls._compute_sr_probs(
+            classification_results=classification_results,
+            true_category_store=true_category_store,
+            ids=ids,
+        )
+        dict_stats = DescriptiveStatsCalculator.compute_dict_stats(
+            sr_cts_data=sr_probs, stats=stats
+        )
+        return dict_stats
+
+    @classmethod
+    def _compute_sr_probs(
+        cls,
+        classification_results: ClassificationResults[
+            CategoricalFeatureSpecProtocol,
+            CategoryStore,
+            CategoricalDistributionStore,
+        ],
+        true_category_store: CategoryStore,
+        ids: Iterable[IdentifierType] | None,
     ) -> pd.Series:
-        probs = np.asarray([float(v) for v in id_to_prob_ground_truth.values()], dtype=float)
+        id_to_prob_true = GroundTruthProbCalculator.compute_id_to_prob_ground_truth(
+            classification_results=classification_results,
+            true_category_store=true_category_store,
+            ids=ids,
+        )
+        probs = np.asarray([float(v) for v in id_to_prob_true.values()], dtype=float)
         sr_probs = pd.Series(probs, name="prob_true")
-        sr_stats = DescriptiveStatsCalculator.compute_sr_stats(sr_cts_data=sr_probs, stats=stats)
-        return sr_stats
+        return sr_probs

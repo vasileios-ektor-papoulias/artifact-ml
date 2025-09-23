@@ -34,7 +34,7 @@ ScoreDistributionPlotsHyperparamsT = TypeVar(
 
 
 @BinaryClassificationPlotCollectionRegistry.register_artifact_hyperparams(
-    BinaryClassificationPlotCollectionType.SCORE_DISTRIBUTION_PLOTS
+    BinaryClassificationPlotCollectionType.SCORE_PDF_PLOTS
 )
 @dataclass(frozen=True)
 class ScoreDistributionPlotsHyperparams(ArtifactHyperparams):
@@ -56,7 +56,7 @@ class ScoreDistributionPlotsHyperparams(ArtifactHyperparams):
 
 
 @BinaryClassificationPlotCollectionRegistry.register_artifact(
-    BinaryClassificationPlotCollectionType.SCORE_DISTRIBUTION_PLOTS
+    BinaryClassificationPlotCollectionType.SCORE_PDF_PLOTS
 )
 class ScoreDistributionPlots(BinaryClassificationPlotCollection[ScoreDistributionPlotsHyperparams]):
     def _evaluate_classification(

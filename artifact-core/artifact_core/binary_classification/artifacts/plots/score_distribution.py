@@ -21,9 +21,7 @@ from artifact_core.libs.resources.classification.binary_classification_results i
 )
 
 
-@BinaryClassificationPlotRegistry.register_artifact(
-    BinaryClassificationPlotType.SCORE_DISTRIBUTION_PLOT
-)
+@BinaryClassificationPlotRegistry.register_artifact(BinaryClassificationPlotType.SCORE_PDF)
 class ScoreDistributionPlot(BinaryClassificationPlot[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
