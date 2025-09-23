@@ -66,10 +66,8 @@ class ConfusionMatrixCollection(
     ) -> Dict[str, ndarray]:
         array_collection = (
             NormalizedConfusionCalculator.compute_confusion_matrix_multiple_normalizations(
-                true=true_category_store.id_to_category,
-                predicted=classification_results.id_to_predicted_category,
-                pos_label=self._resource_spec.positive_category,
-                neg_label=self._resource_spec.negative_category,
+                true=true_category_store.id_to_is_positive,
+                predicted=classification_results.id_to_predicted_positive,
                 normalization_types=self._hyperparams.normalization_types,
             )
         )

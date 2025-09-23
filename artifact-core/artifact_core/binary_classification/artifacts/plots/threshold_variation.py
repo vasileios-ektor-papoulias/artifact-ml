@@ -29,9 +29,8 @@ class ROCCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     ) -> Figure:
         return ThresholdVariationCurvePlotter.plot(
             curve_type=ThresholdVariationCurveType.ROC,
-            true=true_category_store.id_to_category,
+            true=true_category_store.id_to_is_positive,
             probs=classification_results.id_to_prob_pos,
-            pos_label=self._resource_spec.positive_category,
         )
 
 
@@ -44,9 +43,8 @@ class PRCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     ) -> Figure:
         return ThresholdVariationCurvePlotter.plot(
             curve_type=ThresholdVariationCurveType.PR,
-            true=true_category_store.id_to_category,
+            true=true_category_store.id_to_is_positive,
             probs=classification_results.id_to_prob_pos,
-            pos_label=self._resource_spec.positive_category,
         )
 
 
@@ -59,9 +57,8 @@ class DETCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     ) -> Figure:
         return ThresholdVariationCurvePlotter.plot(
             curve_type=ThresholdVariationCurveType.DET,
-            true=true_category_store.id_to_category,
+            true=true_category_store.id_to_is_positive,
             probs=classification_results.id_to_prob_pos,
-            pos_label=self._resource_spec.positive_category,
         )
 
 
@@ -74,9 +71,8 @@ class TPRThresholdCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     ) -> Figure:
         return ThresholdVariationCurvePlotter.plot(
             curve_type=ThresholdVariationCurveType.TPR_THRESHOLD,
-            true=true_category_store.id_to_category,
+            true=true_category_store.id_to_is_positive,
             probs=classification_results.id_to_prob_pos,
-            pos_label=self._resource_spec.positive_category,
         )
 
 
@@ -91,7 +87,6 @@ class PrecisionThresholdCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     ) -> Figure:
         return ThresholdVariationCurvePlotter.plot(
             curve_type=ThresholdVariationCurveType.PRECISION_THRESHOLD,
-            true=true_category_store.id_to_category,
+            true=true_category_store.id_to_is_positive,
             probs=classification_results.id_to_prob_pos,
-            pos_label=self._resource_spec.positive_category,
         )

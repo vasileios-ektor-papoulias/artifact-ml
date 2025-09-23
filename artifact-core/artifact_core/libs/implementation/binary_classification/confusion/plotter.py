@@ -23,56 +23,56 @@ class ConfusionMatrixPlotConfig:
     dpi: int = 120
     show_values: bool = True
     value_fmt: str = ".2f"
+    tick_label_true: str = "Positive (true)"
+    tick_label_false: str = "Negative (true)"
 
 
 class ConfusionMatrixPlotter:
     @classmethod
     def plot_multiple(
         cls,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
-        neg_label: str,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
         normalization_types: Sequence[ConfusionMatrixNormalizationStrategy],
         config: ConfusionMatrixPlotConfig = ConfusionMatrixPlotConfig(),
     ) -> Dict[ConfusionMatrixNormalizationStrategy, Figure]:
-        dict_plots = {
+        return {
             normalization: cls.plot(
                 true=true,
                 predicted=predicted,
-                pos_label=pos_label,
-                neg_label=neg_label,
                 normalization=normalization,
                 config=config,
             )
             for normalization in normalization_types
         }
-        return dict_plots
 
     @classmethod
     def plot(
         cls,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
-        neg_label: str,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
         normalization: ConfusionMatrixNormalizationStrategy,
         config: ConfusionMatrixPlotConfig = ConfusionMatrixPlotConfig(),
     ) -> Figure:
         arr_cm_raw = ConfusionCalculator.compute_confusion_matrix(
-            true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
+            true=true, predicted=predicted
         ).astype(float)
         arr_cm = NormalizedConfusionCalculator.compute_normalized_confusion_matrix(
             true=true,
             predicted=predicted,
-            pos_label=pos_label,
-            neg_label=neg_label,
             normalization=normalization,
         )
+
         fig, ax = cls._make_figure(dpi=config.dpi)
         im = cls._draw_semantic_matrix(ax=ax, cm=arr_cm)
-        cls._decorate_axes(ax=ax, title=config.title, tick_labels=(pos_label, neg_label))
+
+        cls._decorate_axes(
+            ax=ax,
+            title=config.title,
+            tick_labels=(config.tick_label_true, config.tick_label_false),
+        )
         cls._add_colorbar(fig=fig, ax=ax, im=im)
+
         if config.show_values:
             cls._annotate_cells(
                 ax=ax,
@@ -81,6 +81,7 @@ class ConfusionMatrixPlotter:
                 normalized=normalization is not ConfusionMatrixNormalizationStrategy.NONE,
                 value_fmt=config.value_fmt,
             )
+
         fig.tight_layout()
         plt.close(fig)
         return fig
@@ -144,7 +145,9 @@ class ConfusionMatrixPlotter:
         max_abs = float(np.max(np.abs(signed))) if signed.size else 1.0
         if max_abs == 0:
             max_abs = 1.0
-        cmap = LinearSegmentedColormap.from_list("bad_to_good", ["red", "white", "green"], N=256)
+        cmap = LinearSegmentedColormap.from_list(
+            name="bad_to_good", colors=["red", "white", "green"], N=256
+        )
         norm = TwoSlopeNorm(vmin=-max_abs, vcenter=0.0, vmax=max_abs)
         im = ax.imshow(signed, cmap=cmap, norm=norm, interpolation="nearest")
         return im

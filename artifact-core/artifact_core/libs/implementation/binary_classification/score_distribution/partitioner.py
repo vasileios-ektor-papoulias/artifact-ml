@@ -21,7 +21,6 @@ class BinarySamplePartitioner:
     ) -> np.ndarray:
         y_true_arr = np.array(y_true_bin, dtype=bool)
         y_prob_arr = np.array(y_prob, dtype=float)
-
         if split is BinarySampleSplit.NONE:
             return y_prob_arr
         elif split is BinarySampleSplit.POSITIVE:

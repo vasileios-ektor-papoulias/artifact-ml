@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, Hashable, Iterable, Mapping, Tuple
+from typing import Dict, Hashable, Mapping, Tuple
 
 import numpy as np
 from sklearn.metrics import confusion_matrix
@@ -18,27 +18,19 @@ class ConfusionCalculator:
     @classmethod
     def compute_confusion_matrix(
         cls,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
-        neg_label: str,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
     ) -> np.ndarray:
-        arr_cm = cls._compute_confusion_matrix(
-            true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
-        )
+        arr_cm = cls._compute_confusion_matrix(true=true, predicted=predicted)
         return arr_cm
 
     @classmethod
     def compute_dict_confusion_counts(
         cls,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
-        neg_label: str,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
     ) -> Dict[ConfusionMatrixCell, float]:
-        arr_cm = cls._compute_confusion_matrix(
-            true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
-        )
+        arr_cm = cls._compute_confusion_matrix(true=true, predicted=predicted)
         tp, fp, tn, fn = cls._get_counts_from_matrix(arr_cm=arr_cm)
         dict_counts = cls._format_dict_counts(tp=tp, fp=fp, tn=tn, fn=fn)
         return dict_counts
@@ -47,14 +39,10 @@ class ConfusionCalculator:
     def compute_confusion_count(
         cls,
         confusion_matrix_cell: ConfusionMatrixCell,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
-        neg_label: str,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
     ) -> float:
-        arr_cm = cls._compute_confusion_matrix(
-            true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
-        )
+        arr_cm = cls._compute_confusion_matrix(true=true, predicted=predicted)
         tp, fp, tn, fn = cls._get_counts_from_matrix(arr_cm=arr_cm)
         count = cls._get_confusion_matrix_cell(
             confusion_matrix_cell=confusion_matrix_cell, tp=tp, fp=fp, tn=tn, fn=fn
@@ -89,6 +77,9 @@ class ConfusionCalculator:
 
     @staticmethod
     def _get_counts_from_matrix(arr_cm: np.ndarray) -> Tuple[int, int, int, int]:
+        # With labels=[True, False], layout is:
+        # [[TP, FN],
+        #  [FP, TN]]
         tp = int(arr_cm[0, 0])
         fn = int(arr_cm[0, 1])
         fp = int(arr_cm[1, 0])
@@ -98,24 +89,9 @@ class ConfusionCalculator:
     @classmethod
     def _compute_confusion_matrix(
         cls,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
-        neg_label: str,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
     ) -> np.ndarray:
         _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
-        labels = [pos_label, neg_label]
-        cls._assert_known_labels(observed=y_true, known=labels)
-        cls._assert_known_labels(observed=y_pred, known=labels)
-        arr_cm = confusion_matrix(y_true, y_pred, labels=labels)
+        arr_cm = confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[True, False])
         return arr_cm
-
-    @staticmethod
-    def _assert_known_labels(observed: Iterable[str], known: Iterable[str]) -> None:
-        known = set(known)
-        unknown = set(observed) - set(known)
-        if unknown:
-            raise ValueError(
-                f"Unexpected labels found in data: {sorted(unknown)}; "
-                f"expected only {sorted(known)}."
-            )

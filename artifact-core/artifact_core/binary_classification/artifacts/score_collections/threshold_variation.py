@@ -64,9 +64,8 @@ class ThresholdVariationScores(
     ) -> Dict[str, float]:
         dict_score_collection = ThresholdVariationMetricCalculator.compute_multiple(
             metric_types=self._hyperparams.metric_types,
-            true=true_category_store.id_to_category,
+            true=true_category_store.id_to_is_positive,
             probs=classification_results.id_to_prob_pos,
-            pos_label=self._resource_spec.positive_category,
         )
         result = {
             metric_type.value: metric_value

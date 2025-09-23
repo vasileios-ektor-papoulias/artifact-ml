@@ -22,17 +22,13 @@ class NormalizedConfusionCalculator(ConfusionCalculator):
     @classmethod
     def compute_normalized_confusion_matrix(
         cls,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
-        neg_label: str,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
         normalization: ConfusionMatrixNormalizationStrategy,
     ) -> np.ndarray:
         arr_cm = cls._compute_normalized_confusion_matrix(
             true=true,
             predicted=predicted,
-            pos_label=pos_label,
-            neg_label=neg_label,
             normalization=normalization,
         )
         return arr_cm
@@ -40,34 +36,28 @@ class NormalizedConfusionCalculator(ConfusionCalculator):
     @classmethod
     def compute_confusion_matrix_multiple_normalizations(
         cls,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
-        neg_label: str,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
         normalization_types: Sequence[ConfusionMatrixNormalizationStrategy],
     ) -> Dict[ConfusionMatrixNormalizationStrategy, np.ndarray]:
         dict_arr_cm = {
-            normalization: cls._compute_confusion_matrix(
-                true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
+            norm: cls._compute_normalized_confusion_matrix(
+                true=true, predicted=predicted, normalization=norm
             )
-            for normalization in normalization_types
+            for norm in normalization_types
         }
         return dict_arr_cm
 
     @classmethod
     def compute_dict_normalized_confusion_counts(
         cls,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
-        neg_label: str,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
         normalization: ConfusionMatrixNormalizationStrategy,
     ) -> Dict[ConfusionMatrixCell, float]:
         arr_cm = cls._compute_normalized_confusion_matrix(
             true=true,
             predicted=predicted,
-            pos_label=pos_label,
-            neg_label=neg_label,
             normalization=normalization,
         )
         tp, fp, tn, fn = cls._get_counts_from_matrix(arr_cm=arr_cm)
@@ -78,17 +68,13 @@ class NormalizedConfusionCalculator(ConfusionCalculator):
     def compute_normalized_confusion_count(
         cls,
         confusion_matrix_cell: ConfusionMatrixCell,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
-        neg_label: str,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
         normalization: ConfusionMatrixNormalizationStrategy,
     ) -> float:
         arr_cm = cls._compute_normalized_confusion_matrix(
             true=true,
             predicted=predicted,
-            pos_label=pos_label,
-            neg_label=neg_label,
             normalization=normalization,
         )
         tp, fp, tn, fn = cls._get_counts_from_matrix(arr_cm=arr_cm)
@@ -100,15 +86,11 @@ class NormalizedConfusionCalculator(ConfusionCalculator):
     @classmethod
     def _compute_normalized_confusion_matrix(
         cls,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
-        neg_label: str,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
         normalization: ConfusionMatrixNormalizationStrategy,
     ) -> np.ndarray:
-        arr_cm = cls._compute_confusion_matrix(
-            true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
-        )
+        arr_cm = cls._compute_confusion_matrix(true=true, predicted=predicted)
         arr_cm_normalized = cls._normalize_cm(arr_cm=arr_cm, normalization=normalization)
         return arr_cm_normalized
 

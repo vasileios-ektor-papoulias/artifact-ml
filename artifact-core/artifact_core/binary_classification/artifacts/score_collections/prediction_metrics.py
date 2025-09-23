@@ -64,10 +64,8 @@ class BinaryPredictionScores(
     ) -> Dict[str, float]:
         dict_score_collection = BinaryPredictionMetricCalculator.compute_multiple(
             metric_types=self._hyperparams.metric_types,
-            true=true_category_store.id_to_category,
-            predicted=classification_results.id_to_predicted_category,
-            pos_label=self._resource_spec.positive_category,
-            neg_label=self._resource_spec.negative_category,
+            true=true_category_store.id_to_is_positive,
+            predicted=classification_results.id_to_predicted_positive,
         )
         result = {
             metric_type.value: metric_value

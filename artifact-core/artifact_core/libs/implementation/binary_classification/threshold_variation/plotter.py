@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, Hashable, List, Literal, Mapping, Optional, Sequence, Tuple
+from typing import Dict, Hashable, Literal, Mapping, Optional, Sequence, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -36,7 +36,7 @@ class ThresholdVariationCurvePlotterConfig:
     figsize: Tuple[float, float] = (6.0, 4.5)
     linewidth: float = 2.0
     alpha: float = 0.9
-    show_chance: bool = True  # used for ROC (and optionally PR baseline)
+    show_chance: bool = True
 
 
 class ThresholdVariationCurvePlotter:
@@ -44,15 +44,12 @@ class ThresholdVariationCurvePlotter:
     def plot_multiple(
         cls,
         curve_types: Sequence[ThresholdVariationCurveType],
-        true: Mapping[Hashable, str],
+        true: Mapping[Hashable, bool],
         probs: Mapping[Hashable, float],
-        pos_label: str,
         config: ThresholdVariationCurvePlotterConfig = ThresholdVariationCurvePlotterConfig(),
     ) -> Dict[ThresholdVariationCurveType, Figure]:
         dict_plots = {
-            curve_type: cls.plot(
-                curve_type=curve_type, true=true, probs=probs, pos_label=pos_label, config=config
-            )
+            curve_type: cls.plot(curve_type=curve_type, true=true, probs=probs, config=config)
             for curve_type in curve_types
         }
         return dict_plots
@@ -61,13 +58,13 @@ class ThresholdVariationCurvePlotter:
     def plot(
         cls,
         curve_type: ThresholdVariationCurveType,
-        true: Mapping[Hashable, str],
+        true: Mapping[Hashable, bool],
         probs: Mapping[Hashable, float],
-        pos_label: str,
         config: ThresholdVariationCurvePlotterConfig = ThresholdVariationCurvePlotterConfig(),
     ) -> Figure:
         _, y_true, y_probs = DictAligner.align(left=true, right=probs)
-        y_true_bin = (np.array(y_true) == pos_label).astype(int)
+        y_true_bin = np.asarray(y_true, dtype=int)
+        y_probs = np.asarray(y_probs, dtype=float)
         if curve_type is ThresholdVariationCurveType.ROC:
             fig = cls._plot_roc(y_true_bin=y_true_bin, y_probs=y_probs, config=config)
         elif curve_type is ThresholdVariationCurveType.PR:
@@ -82,16 +79,19 @@ class ThresholdVariationCurvePlotter:
             )
         else:
             raise ValueError(f"Unsupported curve type: {curve_type}")
+
         plt.close(fig)
         return fig
 
     @classmethod
     def _plot_roc(
         cls,
-        y_true_bin: List[int],
-        y_probs: List[float],
+        y_true_bin: np.ndarray,
+        y_probs: np.ndarray,
         config: ThresholdVariationCurvePlotterConfig,
     ) -> Figure:
+        if not cls._has_both_classes(y_true_bin=y_true_bin):
+            return cls._empty_fig(config=config, note="ROC Curve (needs both classes)")
         fpr, tpr, _ = roc_curve(y_true=y_true_bin, y_score=y_probs)
         auc = float(roc_auc_score(y_true=y_true_bin, y_score=y_probs))
         fig, ax = plt.subplots(figsize=config.figsize, dpi=config.dpi)
@@ -110,15 +110,19 @@ class ThresholdVariationCurvePlotter:
     @classmethod
     def _plot_pr(
         cls,
-        y_true_bin: List[int],
-        y_probs: List[float],
+        y_true_bin: np.ndarray,
+        y_probs: np.ndarray,
         config: ThresholdVariationCurvePlotterConfig,
     ) -> Figure:
         precision, recall, _ = precision_recall_curve(y_true_bin, y_probs)
-        ap = float(average_precision_score(y_true=y_true_bin, y_score=y_probs))
+        pr_auc = float(average_precision_score(y_true=y_true_bin, y_score=y_probs))
         fig, ax = plt.subplots(figsize=config.figsize, dpi=config.dpi)
         ax.plot(
-            recall, precision, lw=config.linewidth, alpha=config.alpha, label=f"PR (AP={ap:.3f})"
+            recall,
+            precision,
+            lw=config.linewidth,
+            alpha=config.alpha,
+            label=f"PR (AP={pr_auc:.3f})",
         )
         cls._decorate_axes(
             ax, title=config.title or "Precision–Recall Curve", x="Recall", y="Precision"
@@ -130,7 +134,14 @@ class ThresholdVariationCurvePlotter:
         return fig
 
     @classmethod
-    def _plot_det(cls, y_true_bin, y_probs, config: ThresholdVariationCurvePlotterConfig) -> Figure:
+    def _plot_det(
+        cls,
+        y_true_bin: np.ndarray,
+        y_probs: np.ndarray,
+        config: ThresholdVariationCurvePlotterConfig,
+    ) -> Figure:
+        if not cls._has_both_classes(y_true_bin=y_true_bin):
+            return cls._empty_fig(config=config, note="ROC Curve (needs both classes)")
         fpr, fnr, _ = det_curve(y_true=y_true_bin, y_score=y_probs)
         fig, ax = plt.subplots(figsize=config.figsize, dpi=config.dpi)
         ax.plot(fpr, fnr, lw=config.linewidth, alpha=config.alpha, label="DET")
@@ -146,10 +157,12 @@ class ThresholdVariationCurvePlotter:
     @classmethod
     def _plot_tpr_threshold(
         cls,
-        y_true_bin: List[int],
-        y_probs: List[float],
+        y_true_bin: np.ndarray,
+        y_probs: np.ndarray,
         config: ThresholdVariationCurvePlotterConfig,
     ) -> Figure:
+        if not cls._has_both_classes(y_true_bin=y_true_bin):
+            return cls._empty_fig(config=config, note="ROC Curve (needs both classes)")
         _, tpr, thr = roc_curve(y_true=y_true_bin, y_score=y_probs)
         thr = thr[1:]
         tpr = tpr[1:]
@@ -171,14 +184,18 @@ class ThresholdVariationCurvePlotter:
     @classmethod
     def _plot_precision_threshold(
         cls,
-        y_true_bin: List[int],
-        y_probs: List[float],
+        y_true_bin: np.ndarray,
+        y_probs: np.ndarray,
         config: ThresholdVariationCurvePlotterConfig,
     ) -> Figure:
-        prec, _, thr = precision_recall_curve(y_true_bin, y_probs)
+        precision, _, thr = precision_recall_curve(y_true_bin, y_probs)
         fig, ax = plt.subplots(figsize=config.figsize, dpi=config.dpi)
         ax.plot(
-            thr, prec[1:], lw=config.linewidth, alpha=config.alpha, label="Precision vs threshold"
+            thr,
+            precision[1:],
+            lw=config.linewidth,
+            alpha=config.alpha,
+            label="Precision vs threshold",
         )
         cls._decorate_axes(
             ax,
@@ -199,3 +216,18 @@ class ThresholdVariationCurvePlotter:
         ax.set_xlabel(x)
         ax.set_ylabel(y)
         ax.grid(True, linestyle="--", linewidth=0.7, alpha=0.6)
+
+    @staticmethod
+    def _has_both_classes(y_true_bin: np.ndarray) -> bool:
+        has_true = np.any(y_true_bin == 1)
+        has_false = np.any(y_true_bin == 0)
+        has_both = bool(has_true and has_false)
+        return has_both
+
+    @staticmethod
+    def _empty_fig(config: ThresholdVariationCurvePlotterConfig, note: str) -> Figure:
+        fig, ax = plt.subplots(figsize=config.figsize, dpi=config.dpi)
+        ax.text(0.5, 0.5, note, ha="center", va="center", fontsize=11, alpha=0.8)
+        ax.axis("off")
+        fig.tight_layout()
+        return fig

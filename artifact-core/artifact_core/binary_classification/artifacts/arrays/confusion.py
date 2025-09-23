@@ -62,10 +62,8 @@ class ConfusionMatrix(BinaryClassificationArray[ConfusionMatrixHyperparams]):
         classification_results: BinaryClassificationResults,
     ) -> np.ndarray:
         arr_cm = NormalizedConfusionCalculator.compute_normalized_confusion_matrix(
-            true=true_category_store.id_to_category,
-            predicted=classification_results.id_to_predicted_category,
-            pos_label=self._resource_spec.positive_category,
-            neg_label=self._resource_spec.negative_category,
+            true=true_category_store.id_to_is_positive,
+            predicted=classification_results.id_to_predicted_positive,
             normalization=self._hyperparams.normalization,
         )
         return arr_cm

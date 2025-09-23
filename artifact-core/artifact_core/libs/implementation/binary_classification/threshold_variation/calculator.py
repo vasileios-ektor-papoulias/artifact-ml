@@ -19,14 +19,13 @@ class ThresholdVariationMetricCalculator:
     def compute(
         cls,
         metric_type: ThresholdVariationMetric,
-        true: Mapping[Hashable, str],
+        true: Mapping[Hashable, bool],
         probs: Mapping[Hashable, float],
-        pos_label: str,
     ) -> float:
         if metric_type is ThresholdVariationMetric.ROC_AUC:
-            return cls._compute_roc_auc(true=true, probs=probs, pos_label=pos_label)
+            return cls._compute_roc_auc(true=true, probs=probs)
         elif metric_type is ThresholdVariationMetric.PR_AUC:
-            return cls._compute_pr_auc(true=true, probs=probs, pos_label=pos_label)
+            return cls._compute_pr_auc(true=true, probs=probs)
         else:
             raise ValueError(f"Unsupported AUC type: {metric_type}")
 
@@ -34,43 +33,39 @@ class ThresholdVariationMetricCalculator:
     def compute_multiple(
         cls,
         metric_types: Sequence[ThresholdVariationMetric],
-        true: Mapping[Hashable, str],
+        true: Mapping[Hashable, bool],
         probs: Mapping[Hashable, float],
-        pos_label: str,
     ) -> Dict[ThresholdVariationMetric, float]:
         return {
-            metric_type: cls.compute(
-                metric_type=metric_type, true=true, probs=probs, pos_label=pos_label
-            )
+            metric_type: cls.compute(metric_type=metric_type, true=true, probs=probs)
             for metric_type in metric_types
         }
 
     @classmethod
     def _compute_roc_auc(
         cls,
-        true: Mapping[Hashable, str],
+        true: Mapping[Hashable, bool],
         probs: Mapping[Hashable, float],
-        pos_label: str,
     ) -> float:
         _, y_true, y_prob = DictAligner.align(left=true, right=probs)
-        y_pos = (np.array(y_true) == pos_label).astype(int)
-        has_both_classes = cls._has_both_classes(y_pos=y_pos)
-        if not has_both_classes:
+        y_pos = np.asarray(y_true, dtype=int)
+        if not cls._has_both_classes(y_pos=y_pos):
             return np.nan
-        arr_prob = np.array(y_prob, dtype=float)
+        arr_prob = np.asarray(y_prob, dtype=float)
         score = roc_auc_score(y_true=y_pos, y_score=arr_prob)
         return float(score)
 
     @classmethod
     def _compute_pr_auc(
         cls,
-        true: Mapping[Hashable, str],
+        true: Mapping[Hashable, bool],
         probs: Mapping[Hashable, float],
-        pos_label: str,
     ) -> float:
         _, y_true, y_prob = DictAligner.align(left=true, right=probs)
-        y_pos = (np.array(y_true) == pos_label).astype(int)
-        arr_prob = np.array(y_prob, dtype=float)
+        y_pos = np.asarray(y_true, dtype=int)
+        if not np.any(y_pos == 1):
+            return np.nan
+        arr_prob = np.asarray(y_prob, dtype=float)
         score = average_precision_score(y_true=y_pos, y_score=arr_prob)
         return float(score)
 

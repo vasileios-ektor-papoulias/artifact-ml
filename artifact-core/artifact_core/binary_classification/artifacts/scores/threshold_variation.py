@@ -27,9 +27,8 @@ class ROCAUCScore(BinaryClassificationScore[NoArtifactHyperparams]):
     ) -> float:
         result = ThresholdVariationMetricCalculator.compute(
             metric_type=ThresholdVariationMetric.ROC_AUC,
-            true=true_category_store.id_to_category,
-            probs=classification_results.id_to_prob_pos,
-            pos_label=self._resource_spec.positive_category,
+            true=true_category_store.id_to_is_positive,
+            probs=classification_results.id_to_predicted_positive,
         )
         return result
 
@@ -43,8 +42,7 @@ class PRAUCScore(BinaryClassificationScore[NoArtifactHyperparams]):
     ) -> float:
         result = ThresholdVariationMetricCalculator.compute(
             metric_type=ThresholdVariationMetric.PR_AUC,
-            true=true_category_store.id_to_category,
-            probs=classification_results.id_to_prob_pos,
-            pos_label=self._resource_spec.positive_category,
+            true=true_category_store.id_to_is_positive,
+            probs=classification_results.id_to_predicted_positive,
         )
         return result

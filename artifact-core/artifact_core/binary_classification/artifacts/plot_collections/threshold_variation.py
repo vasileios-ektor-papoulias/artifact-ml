@@ -66,9 +66,8 @@ class ThresholdVariationCurves(
     ) -> Dict[str, Figure]:
         plot_collection = ThresholdVariationCurvePlotter.plot_multiple(
             curve_types=self._hyperparams.curve_types,
-            true=true_category_store.id_to_category,
+            true=true_category_store.id_to_is_positive,
             probs=classification_results.id_to_prob_pos,
-            pos_label=self._resource_spec.positive_category,
         )
         result = {curve_type.value: plot for curve_type, plot in plot_collection.items()}
         return result

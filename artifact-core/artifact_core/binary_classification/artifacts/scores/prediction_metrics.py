@@ -182,9 +182,7 @@ class MCCScore(BinaryClassificationScore[NoArtifactHyperparams]):
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.MCC,
-            true=true_category_store.id_to_category,
-            predicted=classification_results.id_to_predicted_category,
-            pos_label=self._resource_spec.positive_category,
-            neg_label=self._resource_spec.negative_category,
+            true=true_category_store.id_to_is_positive,
+            predicted=classification_results.id_to_predicted_positive,
         )
         return result

@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, Hashable, List, Literal, Mapping, Sequence
+from typing import Dict, Hashable, Literal, Mapping, Sequence
 
 from sklearn.metrics import (
     accuracy_score,
@@ -15,6 +15,7 @@ from artifact_core.libs.implementation.binary_classification.confusion.calculato
     ConfusionMatrixCell,
 )
 from artifact_core.libs.utils.dict_aligner import DictAligner
+from artifact_core.libs.utils.safe_div import SafeDivide
 
 BinaryPredictionMetricLiteral = Literal[
     "ACCURACY",
@@ -51,39 +52,29 @@ class BinaryPredictionMetricCalculator:
     def compute(
         cls,
         metric_type: BinaryPredictionMetric,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
-        neg_label: str,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
     ) -> float:
         if metric_type is BinaryPredictionMetric.ACCURACY:
             return cls._compute_accuracy(true=true, predicted=predicted)
         elif metric_type is BinaryPredictionMetric.BALANCED_ACCURACY:
             return cls._compute_balanced_accuracy(true=true, predicted=predicted)
         elif metric_type is BinaryPredictionMetric.PRECISION:
-            return cls._compute_precision(true=true, predicted=predicted, pos_label=pos_label)
+            return cls._compute_precision(true=true, predicted=predicted)
         elif metric_type is BinaryPredictionMetric.NPV:
-            return cls._compute_npv(
-                true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
-            )
+            return cls._compute_npv(true=true, predicted=predicted)
         elif metric_type is BinaryPredictionMetric.RECALL:
-            return cls._compute_recall(true=true, predicted=predicted, pos_label=pos_label)
+            return cls._compute_recall(true=true, predicted=predicted)
         elif metric_type is BinaryPredictionMetric.TNR:
-            return cls._compute_tnr(
-                true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
-            )
+            return cls._compute_tnr(true=true, predicted=predicted)
         elif metric_type is BinaryPredictionMetric.FPR:
-            return cls._compute_fpr(
-                true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
-            )
+            return cls._compute_fpr(true=true, predicted=predicted)
         elif metric_type is BinaryPredictionMetric.FNR:
-            return cls._compute_fnr(
-                true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
-            )
+            return cls._compute_fnr(true=true, predicted=predicted)
         elif metric_type is BinaryPredictionMetric.F1:
-            return cls._compute_f1(true=true, predicted=predicted, pos_label=pos_label)
+            return cls._compute_f1(true=true, predicted=predicted)
         elif metric_type is BinaryPredictionMetric.MCC:
-            return cls._compute_mcc(true=true, predicted=predicted, pos_label=pos_label)
+            return cls._compute_mcc(true=true, predicted=predicted)
         else:
             raise ValueError(f"Unsupported classification metric: {metric_type}")
 
@@ -91,27 +82,24 @@ class BinaryPredictionMetricCalculator:
     def compute_multiple(
         cls,
         metric_types: Sequence[BinaryPredictionMetric],
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
-        neg_label: str,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
     ) -> Dict[BinaryPredictionMetric, float]:
-        dict_scores: Dict[BinaryPredictionMetric, float] = {}
-        for metric_type in metric_types:
-            dict_scores[metric_type] = cls.compute(
+        dict_scores = {
+            metric_type: cls.compute(
                 metric_type=metric_type,
                 true=true,
                 predicted=predicted,
-                pos_label=pos_label,
-                neg_label=neg_label,
             )
+            for metric_type in metric_types
+        }
         return dict_scores
 
     @classmethod
     def _compute_accuracy(
         cls,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
     ) -> float:
         _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
         score = accuracy_score(y_true=y_true, y_pred=y_pred)
@@ -119,7 +107,9 @@ class BinaryPredictionMetricCalculator:
 
     @classmethod
     def _compute_balanced_accuracy(
-        cls, true: Mapping[Hashable, str], predicted: Mapping[Hashable, str]
+        cls,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
     ) -> float:
         _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
         score = balanced_accuracy_score(y_true=y_true, y_pred=y_pred, adjusted=False)
@@ -128,116 +118,46 @@ class BinaryPredictionMetricCalculator:
     @classmethod
     def _compute_precision(
         cls,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
     ) -> float:
         _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
-        cls._validate_pos_label_present(y_true=y_true, pos_label=pos_label)
         score = precision_score(
-            y_true,
-            y_pred,
-            pos_label=pos_label,
+            y_true=y_true,
+            y_pred=y_pred,
+            pos_label=True,
             average=cls._average,
             zero_division=cls._zero_division,
         )
         return float(score)
-
-    @classmethod
-    def _compute_npv(
-        cls,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
-        neg_label: str,
-    ) -> float:
-        dict_confusion_counts = ConfusionCalculator.compute_dict_confusion_counts(
-            true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
-        )
-        tn = dict_confusion_counts[ConfusionMatrixCell.TRUE_NEGATIVE]
-        fn = dict_confusion_counts[ConfusionMatrixCell.FALSE_NEGATIVE]
-        score = cls._safe_div(num=tn, denom=tn + fn)
-        return score
 
     @classmethod
     def _compute_recall(
         cls,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
     ) -> float:
         _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
-        cls._validate_pos_label_present(y_true=y_true, pos_label=pos_label)
         score = recall_score(
-            y_true,
-            y_pred,
-            pos_label=pos_label,
+            y_true=y_true,
+            y_pred=y_pred,
+            pos_label=True,
             average=cls._average,
             zero_division=cls._zero_division,
         )
         return float(score)
 
     @classmethod
-    def _compute_tnr(
-        cls,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
-        neg_label: str,
-    ) -> float:
-        dict_confusion_counts = ConfusionCalculator.compute_dict_confusion_counts(
-            true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
-        )
-        tn = dict_confusion_counts[ConfusionMatrixCell.TRUE_NEGATIVE]
-        fp = dict_confusion_counts[ConfusionMatrixCell.FALSE_POSITIVE]
-        score = cls._safe_div(num=tn, denom=tn + fp)
-        return score
-
-    @classmethod
-    def _compute_fpr(
-        cls,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
-        neg_label: str,
-    ) -> float:
-        dict_confusion_counts = ConfusionCalculator.compute_dict_confusion_counts(
-            true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
-        )
-        fp = dict_confusion_counts[ConfusionMatrixCell.FALSE_POSITIVE]
-        tn = dict_confusion_counts[ConfusionMatrixCell.TRUE_NEGATIVE]
-        score = cls._safe_div(num=fp, denom=fp + tn)
-        return score
-
-    @classmethod
-    def _compute_fnr(
-        cls,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
-        neg_label: str,
-    ) -> float:
-        dict_confusion_counts = ConfusionCalculator.compute_dict_confusion_counts(
-            true=true, predicted=predicted, pos_label=pos_label, neg_label=neg_label
-        )
-        fn = dict_confusion_counts[ConfusionMatrixCell.FALSE_NEGATIVE]
-        tp = dict_confusion_counts[ConfusionMatrixCell.TRUE_POSITIVE]
-        score = cls._safe_div(num=fn, denom=fn + tp)
-        return score
-
-    @classmethod
     def _compute_f1(
         cls,
-        true: Mapping[Hashable, str],
-        predicted: Mapping[Hashable, str],
-        pos_label: str,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
     ) -> float:
         _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
-        cls._validate_pos_label_present(y_true=y_true, pos_label=pos_label)
         score = f1_score(
-            y_true,
-            y_pred,
-            pos_label=pos_label,
+            y_true=y_true,
+            y_pred=y_pred,
+            pos_label=True,
             average=cls._average,
             zero_division=cls._zero_division,
         )
@@ -245,21 +165,66 @@ class BinaryPredictionMetricCalculator:
 
     @classmethod
     def _compute_mcc(
-        cls, true: Mapping[Hashable, str], predicted: Mapping[Hashable, str], pos_label: str
+        cls,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
     ) -> float:
         _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
-        y_true_bin = [1 if label == pos_label else 0 for label in y_true]
-        y_pred_bin = [1 if label == pos_label else 0 for label in y_pred]
-        score = matthews_corrcoef(y_true_bin, y_pred_bin)
+        score = matthews_corrcoef(y_true=y_true, y_pred=y_pred)
         return float(score)
 
-    @staticmethod
-    def _validate_pos_label_present(y_true: List[str], pos_label: str) -> None:
-        if pos_label not in set(y_true):
-            raise ValueError(
-                f"pos_label='{pos_label}' not present in y_true; binary metrics may be undefined."
-            )
+    @classmethod
+    def _compute_npv(
+        cls,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
+    ) -> float:
+        dict_conf = ConfusionCalculator.compute_dict_confusion_counts(
+            true=true, predicted=predicted
+        )
+        tn = dict_conf[ConfusionMatrixCell.TRUE_NEGATIVE]
+        fn = dict_conf[ConfusionMatrixCell.FALSE_NEGATIVE]
+        score = SafeDivide.compute(num=tn, denom=tn + fn)
+        return score
 
     @classmethod
-    def _safe_div(cls, num: float, denom: float) -> float:
-        return 0.0 if denom == 0 else float(num) / float(denom)
+    def _compute_tnr(
+        cls,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
+    ) -> float:
+        dict_conf = ConfusionCalculator.compute_dict_confusion_counts(
+            true=true, predicted=predicted
+        )
+        tn = dict_conf[ConfusionMatrixCell.TRUE_NEGATIVE]
+        fp = dict_conf[ConfusionMatrixCell.FALSE_POSITIVE]
+        score = SafeDivide.compute(num=tn, denom=tn + fp)
+        return score
+
+    @classmethod
+    def _compute_fpr(
+        cls,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
+    ) -> float:
+        dict_conf = ConfusionCalculator.compute_dict_confusion_counts(
+            true=true, predicted=predicted
+        )
+        fp = dict_conf[ConfusionMatrixCell.FALSE_POSITIVE]
+        tn = dict_conf[ConfusionMatrixCell.TRUE_NEGATIVE]
+        score = SafeDivide.compute(num=fp, denom=fp + tn)
+        return score
+
+    @classmethod
+    def _compute_fnr(
+        cls,
+        true: Mapping[Hashable, bool],
+        predicted: Mapping[Hashable, bool],
+    ) -> float:
+        dict_conf = ConfusionCalculator.compute_dict_confusion_counts(
+            true=true, predicted=predicted
+        )
+        fn = dict_conf[ConfusionMatrixCell.FALSE_NEGATIVE]
+        tp = dict_conf[ConfusionMatrixCell.TRUE_POSITIVE]
+        score = SafeDivide.compute(num=fn, denom=fn + tp)
+        return score
