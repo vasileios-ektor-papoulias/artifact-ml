@@ -81,7 +81,7 @@ class ScoreDistributionStatsCalculator:
             splits=[split],
         )
         sr_stats = df[split.name].astype(float)
-        dict_stats = {stat: float(sr_stats.loc[stat.name]) for stat in stats}
+        dict_stats = {stat: sr_stats.at[stat.name].item() for stat in stats}
         return dict_stats
 
     @classmethod
@@ -98,10 +98,10 @@ class ScoreDistributionStatsCalculator:
             id_to_is_pos=id_to_is_pos,
             id_to_prob_pos=id_to_prob_pos,
             stats=[stat],
-            splits=list(splits),
+            splits=splits,
         )
         sr_stats = df.loc[stat.name].astype(float)
-        dict_stats = {split: float(sr_stats.loc[split.name]) for split in splits}
+        dict_stats = {split: sr_stats.at[split.name].item() for split in splits}
         return dict_stats
 
     @classmethod
