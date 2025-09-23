@@ -3,10 +3,12 @@ from typing import Dict, Hashable, List, Mapping, Sequence
 import numpy as np
 import pandas as pd
 
+from artifact_core.libs.implementation.binary_classification.score_distribution.partitioner import (
+    BinarySampleSplit,
+)
 from artifact_core.libs.implementation.binary_classification.score_distribution.sampler import (
     ScoreDistributionSampler,
 )
-from artifact_core.libs.utils.binary_sample_partitioner import BinarySampleSplit
 from artifact_core.libs.utils.descriptive_stats_calculator import (
     DescriptiveStatistic,
     DescriptiveStatsCalculator,

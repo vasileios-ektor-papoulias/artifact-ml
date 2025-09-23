@@ -5,12 +5,14 @@ import numpy as np
 import pandas as pd
 from matplotlib.figure import Figure
 
+from artifact_core.libs.implementation.binary_classification.score_distribution.partitioner import (
+    BinarySampleSplit,
+)
 from artifact_core.libs.implementation.binary_classification.score_distribution.sampler import (
     ScoreDistributionSampler,
 )
 from artifact_core.libs.implementation.tabular.pdf.overlaid_plotter import OverlaidPDFPlotter
 from artifact_core.libs.implementation.tabular.pdf.plotter import PDFPlotter
-from artifact_core.libs.utils.binary_sample_partitioner import BinarySampleSplit
 
 
 @dataclass(frozen=True)
