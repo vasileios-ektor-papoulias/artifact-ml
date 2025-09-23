@@ -1,6 +1,6 @@
 from typing import Dict, Hashable, List, Mapping
 
-from artifact_core.libs.utils.binary_sample_partitioner import (
+from artifact_core.libs.implementation.binary_classification.score_distribution.partitioner import (
     BinarySamplePartitioner,
     BinarySampleSplit,
 )
