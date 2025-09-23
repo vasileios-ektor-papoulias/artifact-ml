@@ -100,7 +100,6 @@ class PDFPlotter:
         ax.bar(positions, freq_series.values, color=cls._plot_color, alpha=0.7)
         ax.set_xticks(positions)
         ax.set_xticklabels(freq_series.index.astype(str), rotation="vertical")
-
         ax.set_xlabel(feature_name, fontsize=cls._axis_font_size)
         ax.set_ylabel("Probability", fontsize=cls._axis_font_size)
         fig.suptitle(f"PMF: {feature_name}")
@@ -136,6 +135,5 @@ class PDFPlotter:
             kde=cls._cts_density_enable_kde,
             ax=ax,
         )
-
         fig.suptitle(f"PDF: {feature_name}")
         return fig

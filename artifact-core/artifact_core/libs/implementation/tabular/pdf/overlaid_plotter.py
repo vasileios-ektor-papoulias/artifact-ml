@@ -21,6 +21,9 @@ class OverlaidPDFPlotter:
     _major_ax_grid_linewidth = 1
     _axis_font_size = "14"
 
+    _label_real = "Real"
+    _label_synthetic = "Synthetic"
+
     _cat_densitiy_alpha_real = 0.8
     _cat_densitiy_alpha_synthetic = 0.8
     _cat_pmf_bar_width = 0.4
@@ -123,7 +126,7 @@ class OverlaidPDFPlotter:
             bar_width,
             color=cls._plot_color_real,
             alpha=cls._cat_densitiy_alpha_real,
-            label="Real",
+            label=cls._label_real,
         )
         ax.bar(
             positions + bar_width / 2,
@@ -131,7 +134,7 @@ class OverlaidPDFPlotter:
             bar_width,
             color=cls._plot_color_synthetic,
             alpha=cls._cat_densitiy_alpha_synthetic,
-            label="Synthetic",
+            label=cls._label_synthetic,
         )
         ax.set_xticks(positions)
         ax.set_xticklabels(ls_unique_categories, rotation="vertical")
@@ -172,7 +175,7 @@ class OverlaidPDFPlotter:
             color=cls._plot_color_real,
             alpha=cls._cts_densitiy_alpha_real,
             kde=cls._cts_density_enable_kde,
-            label="Real",
+            label=cls._label_real,
             ax=ax,
         )
         sns.histplot(
@@ -182,7 +185,7 @@ class OverlaidPDFPlotter:
             color=cls._plot_color_synthetic,
             alpha=cls._cts_densitiy_alpha_synthetic,
             kde=cls._cts_density_enable_kde,
-            label="Synthetic",
+            label=cls._label_synthetic,
             ax=ax,
         )
         ax.set_xlabel("Values", fontsize=cls._axis_font_size)

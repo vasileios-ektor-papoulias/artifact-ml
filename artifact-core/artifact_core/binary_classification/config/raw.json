@@ -8,12 +8,12 @@
     }
   },
   "plots": {
-    "CONFUSION_MATRIX":{
+    "CONFUSION_MATRIX_PLOT":{
       "normalization": "NONE"
     }
   },
   "score_collections": {
-    "CONFUSION_COUNTS":{
+    "NORMALIZED_CONFUSION_COUNTS":{
       "normalization": "NONE"
     },
     "BINARY_PREDICTION_SCORES": {
@@ -156,6 +156,13 @@
         "DET",
         "TPR_THRESHOLD",
         "PRECISION_THRESHOLD"
+      ]
+    },
+    "SCORE_DISTRIBUTION_PLOTS":{
+      "split_types": [
+        "ALL",
+        "POSITIVE",
+        "NEGATIVE"
       ]
     }
   }

@@ -25,15 +25,15 @@ from artifact_core.libs.resources.classification.binary_classification_results i
 
 ConfusionCountsHyperparamsT = TypeVar(
     "ConfusionCountsHyperparamsT",
-    bound="ConfusionCountsHyperparams",
+    bound="NormalizedConfusionCountsHyperparams",
 )
 
 
 @BinaryClassificationScoreCollectionRegistry.register_artifact_hyperparams(
-    BinaryClassificationScoreCollectionType.CONFUSION_COUNTS
+    BinaryClassificationScoreCollectionType.NORMALIZED_CONFUSION_COUNTS
 )
 @dataclass(frozen=True)
-class ConfusionCountsHyperparams(ArtifactHyperparams):
+class NormalizedConfusionCountsHyperparams(ArtifactHyperparams):
     normalization: ConfusionMatrixNormalizationStrategy
 
     @classmethod
@@ -53,9 +53,11 @@ class ConfusionCountsHyperparams(ArtifactHyperparams):
 
 
 @BinaryClassificationScoreCollectionRegistry.register_artifact(
-    BinaryClassificationScoreCollectionType.CONFUSION_COUNTS
+    BinaryClassificationScoreCollectionType.NORMALIZED_CONFUSION_COUNTS
 )
-class ConfusionCounts(BinaryClassificationScoreCollection[ConfusionCountsHyperparams]):
+class NormalizedConfusionCounts(
+    BinaryClassificationScoreCollection[NormalizedConfusionCountsHyperparams]
+):
     def _evaluate_classification(
         self,
         true_category_store: BinaryCategoryStore,

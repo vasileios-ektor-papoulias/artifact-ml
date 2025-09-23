@@ -34,7 +34,7 @@ ConfusionMatrixPlotHyperparamsT = TypeVar(
 
 
 @BinaryClassificationPlotRegistry.register_artifact_hyperparams(
-    BinaryClassificationPlotType.CONFUSION_MATRIX
+    BinaryClassificationPlotType.CONFUSION_MATRIX_PLOT
 )
 @dataclass(frozen=True)
 class ConfusionMatrixPlotHyperparams(ArtifactHyperparams):
@@ -56,7 +56,9 @@ class ConfusionMatrixPlotHyperparams(ArtifactHyperparams):
         return hyperparams
 
 
-@BinaryClassificationPlotRegistry.register_artifact(BinaryClassificationPlotType.CONFUSION_MATRIX)
+@BinaryClassificationPlotRegistry.register_artifact(
+    BinaryClassificationPlotType.CONFUSION_MATRIX_PLOT
+)
 class ConfusionMatrixPlot(BinaryClassificationPlot[ConfusionMatrixPlotHyperparams]):
     def _evaluate_classification(
         self,

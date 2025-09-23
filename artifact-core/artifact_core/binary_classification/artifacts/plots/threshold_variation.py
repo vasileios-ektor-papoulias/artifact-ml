@@ -20,7 +20,7 @@ from artifact_core.libs.resources.classification.binary_classification_results i
 )
 
 
-@BinaryClassificationPlotRegistry.register_artifact(BinaryClassificationPlotType.ROC)
+@BinaryClassificationPlotRegistry.register_artifact(BinaryClassificationPlotType.ROC_CURVE)
 class ROCCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
@@ -34,7 +34,7 @@ class ROCCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
         )
 
 
-@BinaryClassificationPlotRegistry.register_artifact(BinaryClassificationPlotType.PR)
+@BinaryClassificationPlotRegistry.register_artifact(BinaryClassificationPlotType.PR_CURVE)
 class PRCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
@@ -48,7 +48,7 @@ class PRCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
         )
 
 
-@BinaryClassificationPlotRegistry.register_artifact(BinaryClassificationPlotType.DET)
+@BinaryClassificationPlotRegistry.register_artifact(BinaryClassificationPlotType.DET_CURVE)
 class DETCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
@@ -62,7 +62,9 @@ class DETCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
         )
 
 
-@BinaryClassificationPlotRegistry.register_artifact(BinaryClassificationPlotType.TPR_THRESHOLD)
+@BinaryClassificationPlotRegistry.register_artifact(
+    BinaryClassificationPlotType.TPR_THRESHOLD_CURVE
+)
 class TPRThresholdCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
@@ -77,7 +79,7 @@ class TPRThresholdCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
 
 
 @BinaryClassificationPlotRegistry.register_artifact(
-    BinaryClassificationPlotType.PRECISION_THRESHOLD
+    BinaryClassificationPlotType.PRECISION_THRESHOLD_CURVE
 )
 class PrecisionThresholdCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     def _evaluate_classification(
