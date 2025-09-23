@@ -52,6 +52,18 @@ class ClassificationResults(
         )
 
     @property
+    def feature_spec(self) -> CategoricalFeatureSpecProtocolTCov:
+        return self._feature_spec
+
+    @property
+    def pred_store(self) -> CategoryStoreTCov:
+        return self._pred_store
+
+    @property
+    def distn_store(self) -> CategoricalDistributionStoreTCov:
+        return self._distn_store
+
+    @property
     def feature_name(self) -> str:
         return self._feature_spec.feature_name
 

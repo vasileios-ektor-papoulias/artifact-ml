@@ -35,6 +35,10 @@ class CategoricalDistributionStore(
         )
 
     @property
+    def feature_spec(self) -> CategoricalFeatureSpecProtocolTCov:
+        return self._feature_spec
+
+    @property
     def feature_name(self) -> str:
         return self._feature_spec.feature_name
 

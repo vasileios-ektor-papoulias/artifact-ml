@@ -2,6 +2,8 @@ from typing import List, Protocol
 
 
 class CategoricalFeatureSpecProtocol(Protocol):
+    def __eq__(self, other: object) -> bool: ...
+
     @property
     def feature_name(self) -> str: ...
 
