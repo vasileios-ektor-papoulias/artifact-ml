@@ -1,8 +1,9 @@
 from enum import Enum
+from typing import Literal
 
 import pandas as pd
 
-DescriptiveStatisticLiteral = ["MEAN", "STD", "VARIANCE", "MEDIAN", "Q1", "Q3", "MIN", "MAX"]
+DescriptiveStatisticLiteral = Literal["MEAN", "STD", "VARIANCE", "MEDIAN", "Q1", "Q3", "MIN", "MAX"]
 
 
 class DescriptiveStatistic(Enum):

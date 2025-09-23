@@ -35,7 +35,100 @@
         "ROC_AUC",
         "PR_AUC"
       ]
+    },
+    "SCORE_STATS": {
+      "stat_types": [
+        "MEAN",
+        "STD",
+        "VARIANCE",
+        "MEDIAN",
+        "Q1",
+        "Q3",
+        "MIN",
+        "MAX"
+      ]
+    },
+    "POSITIVE_CLASS_SCORE_STATS": {
+      "stat_types": [
+        "MEAN",
+        "STD",
+        "VARIANCE",
+        "MEDIAN",
+        "Q1",
+        "Q3",
+        "MIN",
+        "MAX"
+      ]
+    },
+    "NEGATIVE_CLASS_SCORE_STATS": {
+      "stat_types": [
+        "MEAN",
+        "STD",
+        "VARIANCE",
+        "MEDIAN",
+        "Q1",
+        "Q3",
+        "MIN",
+        "MAX"
+      ]
+    },
+    "SCORE_MEANS": {
+      "split_types": [
+        "ALL",
+        "POSITIVE",
+        "NEGATIVE"
+      ]
+    },
+    "SCORE_STDS": {
+      "split_types": [
+        "ALL",
+        "POSITIVE",
+        "NEGATIVE"
+      ]
+    },
+    "SCORE_VARIANCES": {
+      "split_types": [
+        "ALL",
+        "POSITIVE",
+        "NEGATIVE"
+      ]
+    },
+    "SCORE_MEDIANS": {
+      "split_types": [
+        "ALL",
+        "POSITIVE",
+        "NEGATIVE"
+      ]
+    },
+    "SCORE_FIRST_QUARTILES": {
+      "split_types": [
+        "ALL",
+        "POSITIVE",
+        "NEGATIVE"
+      ]
+    },
+    "SCORE_THIRD_QUARTILES": {
+      "split_types": [
+        "ALL",
+        "POSITIVE",
+        "NEGATIVE"
+      ]
+    },
+    "SCORE_MINIMA": {
+      "split_types": [
+        "ALL",
+        "POSITIVE",
+        "NEGATIVE"
+      ]
+    },
+    "SCORE_MAXIMA": {
+      "split_types": [
+        "ALL",
+        "POSITIVE",
+        "NEGATIVE"
+      ]
     }
+
   },
   "array_collections": {
     "CONFUSION_MATRICES":{

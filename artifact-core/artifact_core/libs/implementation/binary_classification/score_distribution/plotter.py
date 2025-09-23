@@ -106,7 +106,7 @@ class ScoreDistributionPlotter:
     @staticmethod
     def _get_col_name(config: ScoreDistributionPlotterConfig, split: BinarySampleSplit) -> str:
         prefix = (config.single_title_prefix + ": ") if config.single_title_prefix else ""
-        if split is BinarySampleSplit.NONE:
+        if split is BinarySampleSplit.ALL:
             suffix = config.label_all
         elif split is BinarySampleSplit.POSITIVE:
             suffix = config.label_positive

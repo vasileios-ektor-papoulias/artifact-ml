@@ -3,11 +3,11 @@ from typing import List, Literal
 
 import numpy as np
 
-BinarySampleSplitLiteral = Literal["NONE", "POSITIVE", "NEGATIVE"]
+BinarySampleSplitLiteral = Literal["ALL", "POSITIVE", "NEGATIVE"]
 
 
 class BinarySampleSplit(Enum):
-    NONE = "NONE"
+    ALL = "ALL"
     POSITIVE = "POSITIVE"
     NEGATIVE = "NEGATIVE"
 
@@ -21,7 +21,7 @@ class BinarySamplePartitioner:
     ) -> np.ndarray:
         y_true_arr = np.array(y_true_bin, dtype=bool)
         y_prob_arr = np.array(y_prob, dtype=float)
-        if split is BinarySampleSplit.NONE:
+        if split is BinarySampleSplit.ALL:
             return y_prob_arr
         elif split is BinarySampleSplit.POSITIVE:
             return y_prob_arr[y_true_arr]
