@@ -13,19 +13,19 @@ class ScoreJuxtapositionCalculator:
     ) -> Dict[str, np.ndarray]:
         if ls_keys is None:
             ls_keys = list(dict_scores_real.keys())
-        result = {
+        dict_arr_juxtaposition = {
             key: cls.juxtapose_scores(
                 score_real=dict_scores_real[key],
                 score_synthetic=dict_scores_synthetic[key],
             )
             for key in ls_keys
         }
-        return result
+        return dict_arr_juxtaposition
 
     @staticmethod
     def juxtapose_scores(
         score_real: float,
         score_synthetic: float,
     ) -> np.ndarray:
-        result = np.array([score_real, score_synthetic])
-        return result
+        arr_juxtaposition = np.array([score_real, score_synthetic])
+        return arr_juxtaposition

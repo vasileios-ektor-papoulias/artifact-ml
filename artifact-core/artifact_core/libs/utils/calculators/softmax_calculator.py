@@ -15,10 +15,11 @@ class SoftmaxCalculator:
     def compute_probs_multiple(
         cls, id_to_logits: Dict[Hashable, np.ndarray]
     ) -> Dict[Hashable, np.ndarray]:
-        return {
+        id_to_probs = {
             identifier: cls.compute_probs(logits=logits)
             for identifier, logits in id_to_logits.items()
         }
+        return id_to_probs
 
     @staticmethod
     def compute_logits(probs: np.ndarray) -> np.ndarray:
@@ -33,6 +34,7 @@ class SoftmaxCalculator:
     def compute_logits_multiple(
         cls, id_to_probs: Dict[Hashable, np.ndarray]
     ) -> Dict[Hashable, np.ndarray]:
-        return {
+        id_to_logits = {
             identifier: cls.compute_logits(probs=probs) for identifier, probs in id_to_probs.items()
         }
+        return id_to_logits
