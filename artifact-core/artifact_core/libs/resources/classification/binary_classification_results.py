@@ -6,7 +6,10 @@ from artifact_core.libs.resources.categorical.category_store.binary import Binar
 from artifact_core.libs.resources.categorical.distribution_store.binary import (
     BinaryDistributionStore,
 )
-from artifact_core.libs.resources.classification.classification_results import ClassificationResults
+from artifact_core.libs.resources.classification.classification_results import (
+    ClassificationResults,
+    DistributionInferenceType,
+)
 from artifact_core.libs.utils.calculators.sigmoid_calculator import SigmoidCalculator
 from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
 
@@ -18,6 +21,9 @@ BinaryClassificationResultsT = TypeVar(
 class BinaryClassificationResults(
     ClassificationResults[BinaryFeatureSpecProtocol, BinaryCategoryStore, BinaryDistributionStore]
 ):
+    _distn_inference_type = DistributionInferenceType.CONCENTRATED
+    _feature_name = "classification_results"
+
     @classmethod
     def build(
         cls: Type[BinaryClassificationResultsT],
@@ -53,7 +59,7 @@ class BinaryClassificationResults(
             distn_store=distn_store,
         )
         if id_to_category is not None:
-            classification_results.set_results_binary(
+            classification_results.set_multiple_binary(
                 id_to_category=id_to_category, id_to_prob_pos=id_to_prob_pos or {}
             )
         return classification_results
@@ -114,7 +120,7 @@ class BinaryClassificationResults(
     def get_logits_pos_neg(self, identifier: IdentifierType) -> Tuple[float, float]:
         return self._distn_store.get_logits_pos_neg(identifier=identifier)
 
-    def set_result_binary(
+    def set_single_binary(
         self,
         identifier: IdentifierType,
         predicted_category: str,
@@ -124,25 +130,31 @@ class BinaryClassificationResults(
             identifier=identifier, category=predicted_category, prob_pos=prob_pos
         )
 
-    def set_results_binary(
+    def set_multiple_binary(
         self,
         id_to_category: Mapping[IdentifierType, str],
         id_to_prob_pos: Optional[Mapping[IdentifierType, float]] = None,
     ) -> None:
         for identifier in id_to_category.keys():
             category = id_to_category[identifier]
-            prob_pos = id_to_prob_pos.get(identifier) if id_to_prob_pos is not None else None
+            prob_pos = id_to_prob_pos.get(identifier, None) if id_to_prob_pos is not None else None
             self._set_entry_binary(identifier=identifier, category=category, prob_pos=prob_pos)
 
     def _set_entry_binary(
-        self,
-        identifier: IdentifierType,
-        category: str,
-        prob_pos: Optional[float],
+        self, identifier: IdentifierType, category: str, prob_pos: Optional[float] = None
     ) -> None:
-        self._pred_store.set_category(identifier=identifier, category=category)
-        if prob_pos is not None:
+        self._set_prediction(identifier=identifier, category=category)
+        self._set_distribution_binary(identifier=identifier, category=category, prob_pos=prob_pos)
+
+    def _set_distribution_binary(
+        self, identifier: IdentifierType, category: str, prob_pos: Optional[float] = None
+    ) -> None:
+        if prob_pos is None:
+            self._set_inferred_distribution(
+                identifier=identifier,
+                category=category,
+                distribution_inference_type=self._distn_inference_type,
+            )
+        else:
             logit_pos = SigmoidCalculator.compute_logit(prob=prob_pos)
             self._distn_store.set_logit_pos(identifier=identifier, logit_pos=logit_pos)
-        else:
-            self._distn_store.set_concentrated(identifier=identifier, category=category)

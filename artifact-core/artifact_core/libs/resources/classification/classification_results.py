@@ -28,8 +28,7 @@ class DistributionInferenceType(Enum):
 class ClassificationResults(
     Generic[CategoricalFeatureSpecProtocolTCov, CategoryStoreTCov, CategoricalDistributionStoreTCov]
 ):
-    _feature_name = "predicted_category"
-    _distn_inference_type = DistributionInferenceType.NAN
+    _distn_inference_type = DistributionInferenceType.CONCENTRATED
 
     def __init__(
         self,
@@ -144,7 +143,11 @@ class ClassificationResults(
         self, identifier: IdentifierType, category: str, logits: Optional[np.ndarray]
     ) -> None:
         if logits is None:
-            self._set_inferred_distribution(identifier=identifier, category=category)
+            self._set_inferred_distribution(
+                identifier=identifier,
+                category=category,
+                distribution_inference_type=self._distn_inference_type,
+            )
         else:
             self._distn_store.set_logits(identifier=identifier, logits=logits)
 

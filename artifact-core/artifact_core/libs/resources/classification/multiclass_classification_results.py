@@ -10,7 +10,10 @@ from artifact_core.libs.resources.categorical.category_store.multiclass import (
 from artifact_core.libs.resources.categorical.distribution_store.multiclass import (
     MulticlassDistributionStore,
 )
-from artifact_core.libs.resources.classification.classification_results import ClassificationResults
+from artifact_core.libs.resources.classification.classification_results import (
+    ClassificationResults,
+    DistributionInferenceType,
+)
 from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
 
 CategoricalFeatureSpecProtocolTCov = TypeVar(
@@ -26,6 +29,9 @@ class MulticlassClassificationResults(
         CategoricalFeatureSpecProtocol, MulticlassCategoryStore, MulticlassDistributionStore
     ]
 ):
+    _distn_inference_type = DistributionInferenceType.CONCENTRATED
+    _feature_name = "classification_results"
+
     @classmethod
     def build(
         cls: Type[MulticlassClassificationResultsT],
@@ -56,7 +62,7 @@ class MulticlassClassificationResults(
             distn_store=distn_store,
         )
         if id_to_category is not None:
-            classification_results.set_results(
+            classification_results.set_multiple(
                 id_to_category=id_to_category, id_to_logits=id_to_logits or {}
             )
         return classification_results
