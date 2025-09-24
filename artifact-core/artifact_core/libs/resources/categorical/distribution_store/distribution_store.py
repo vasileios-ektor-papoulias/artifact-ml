@@ -109,6 +109,10 @@ class CategoricalDistributionStore(
         arr_logits = SoftmaxCalculator.compute_logits(probs=arr_probs)
         self.set_logits(identifier=identifier, logits=arr_logits)
 
+    def set_nan(self, identifier: IdentifierType) -> None:
+        arr_probs = np.full(self._feature_spec.n_categories, np.nan, dtype=float)
+        self.set_probs(identifier=identifier, probs=arr_probs)
+
     def set_concentrated_idx(self, identifier: IdentifierType, category_idx: int) -> None:
         self._require_category_idx(category_idx=category_idx)
         arr_probs = np.zeros(self._feature_spec.n_categories, dtype=float)

@@ -1,12 +1,5 @@
-from typing import (
-    Dict,
-    Generic,
-    Iterable,
-    List,
-    Mapping,
-    Optional,
-    TypeVar,
-)
+from enum import Enum
+from typing import Dict, Generic, Iterable, List, Mapping, Optional, TypeVar
 
 import numpy as np
 
@@ -27,10 +20,16 @@ CategoricalDistributionStoreTCov = TypeVar(
 ClassificationResultsT = TypeVar("ClassificationResultsT", bound="ClassificationResults")
 
 
+class DistributionInferenceType(Enum):
+    NAN = "NAN"
+    CONCENTRATED = "CONCENTRATED"
+
+
 class ClassificationResults(
     Generic[CategoricalFeatureSpecProtocolTCov, CategoryStoreTCov, CategoricalDistributionStoreTCov]
 ):
     _feature_name = "predicted_category"
+    _distn_inference_type = DistributionInferenceType.NAN
 
     def __init__(
         self,
@@ -111,32 +110,55 @@ class ClassificationResults(
     def get_probs(self, identifier: IdentifierType) -> np.ndarray:
         return self._distn_store.get_probs(identifier=identifier)
 
-    def set_result(
+    def set_single(
         self,
         identifier: IdentifierType,
         predicted_category: str,
         logits: Optional[np.ndarray] = None,
     ) -> None:
-        self._set_entry(identifier=identifier, category=predicted_category, logits=logits)
+        self._set_single(identifier=identifier, category=predicted_category, logits=logits)
 
-    def set_results(
+    def set_multiple(
         self,
         id_to_category: Mapping[IdentifierType, str],
         id_to_logits: Optional[Mapping[IdentifierType, np.ndarray]] = None,
     ) -> None:
         for identifier in id_to_category.keys():
             category = id_to_category[identifier]
-            logits = id_to_logits.get(identifier) if id_to_logits is not None else None
-            self._set_entry(identifier=identifier, category=category, logits=logits)
+            logits = id_to_logits.get(identifier, None) if id_to_logits is not None else None
+            self._set_single(identifier=identifier, category=category, logits=logits)
 
-    def _set_entry(
+    def _set_single(
         self,
         identifier: IdentifierType,
         category: str,
         logits: Optional[np.ndarray],
     ) -> None:
+        self._set_prediction(identifier=identifier, category=category)
+        self._set_distribution(identifier=identifier, category=category, logits=logits)
+
+    def _set_prediction(self, identifier: IdentifierType, category: str) -> None:
         self._pred_store.set_category(identifier=identifier, category=category)
+
+    def _set_distribution(
+        self, identifier: IdentifierType, category: str, logits: Optional[np.ndarray]
+    ) -> None:
         if logits is None:
-            self._distn_store.set_concentrated(identifier=identifier, category=category)
+            self._set_inferred_distribution(identifier=identifier, category=category)
         else:
             self._distn_store.set_logits(identifier=identifier, logits=logits)
+
+    def _set_inferred_distribution(
+        self,
+        identifier: IdentifierType,
+        category: str,
+        distribution_inference_type: DistributionInferenceType,
+    ) -> None:
+        if self._distn_inference_type is DistributionInferenceType.NAN:
+            self._distn_store.set_nan(identifier=identifier)
+        elif self._distn_inference_type is DistributionInferenceType.CONCENTRATED:
+            self._distn_store.set_concentrated(identifier=identifier, category=category)
+        else:
+            raise ValueError(
+                f"Unrecoginzed distribution inference type: {distribution_inference_type}"
+            )
