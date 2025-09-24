@@ -6,7 +6,7 @@ import pandas as pd
 from dython.nominal import associations
 from matplotlib.axes import Axes
 
-from artifact_core.libs.utils.vector_distance_calculator import (
+from artifact_core.libs.utils.calculators.vector_distance_calculator import (
     VectorDistanceCalculator,
     VectorDistanceMetric,
 )

@@ -15,7 +15,7 @@ from artifact_core.libs.resources.categorical.category_store.category_store impo
 from artifact_core.libs.resources.categorical.distribution_store.distribution_store import (
     CategoricalDistributionStore,
 )
-from artifact_core.libs.types.entity_store import IdentifierType
+from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
 
 CategoricalFeatureSpecProtocolTCov = TypeVar(
     "CategoricalFeatureSpecProtocolTCov", bound=CategoricalFeatureSpecProtocol, covariant=True

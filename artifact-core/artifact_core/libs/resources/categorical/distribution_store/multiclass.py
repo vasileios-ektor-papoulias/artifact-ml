@@ -13,7 +13,7 @@ from artifact_core.libs.resource_spec.categorical.spec import CategoricalFeature
 from artifact_core.libs.resources.categorical.distribution_store.distribution_store import (
     CategoricalDistributionStore,
 )
-from artifact_core.libs.types.entity_store import IdentifierType
+from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
 
 MulticlassDistributionStoreT = TypeVar(
     "MulticlassDistributionStoreT", bound="MulticlassDistributionStore"

@@ -12,7 +12,7 @@ from artifact_core.libs.implementation.tabular.correlations.calculator import (
     ContinuousAssociationType,
     CorrelationCalculator,
 )
-from artifact_core.libs.utils.plot_combiner import (
+from artifact_core.libs.utils.plotters.plot_combiner import (
     PlotCombinationConfig,
     PlotCombiner,
 )

@@ -13,7 +13,7 @@ from artifact_core.binary_classification.engine.engine import (
     BinaryClassificationScoreType,
 )
 from artifact_core.libs.resource_spec.binary.spec import BinaryFeatureSpec
-from artifact_core.libs.utils.package_importer import PackageImporter
+from artifact_core.libs.utils.system.package_importer import PackageImporter
 
 if NATIVE_ARTIFACT_PATH is None:
     raise ValueError("Null native artifact path: edit the toolkit configuration file.")

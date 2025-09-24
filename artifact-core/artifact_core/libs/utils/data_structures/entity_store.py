@@ -18,7 +18,11 @@ StoreDataT = TypeVar("StoreDataT")
 
 class EntityStore(Generic[StoreDataT]):
     def __init__(self, initial: Optional[Mapping[IdentifierType, StoreDataT]] = None):
-        self._data: Dict[IdentifierType, StoreDataT] = dict(initial) if initial is not None else {}
+        self._data: Dict[IdentifierType, StoreDataT] = (
+            {identifier: value for identifier, value in initial.items()}
+            if initial is not None
+            else {}
+        )
 
     @property
     def keys(self) -> KeysView[IdentifierType]:

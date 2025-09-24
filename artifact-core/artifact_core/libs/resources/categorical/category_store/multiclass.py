@@ -3,7 +3,7 @@ from typing import List, Mapping, Optional, Type, TypeVar
 from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
 from artifact_core.libs.resource_spec.categorical.spec import CategoricalFeatureSpec
 from artifact_core.libs.resources.categorical.category_store.category_store import CategoryStore
-from artifact_core.libs.types.entity_store import IdentifierType
+from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
 
 MulticlassCategoryStoreT = TypeVar("MulticlassCategoryStoreT", bound="MulticlassCategoryStore")
 

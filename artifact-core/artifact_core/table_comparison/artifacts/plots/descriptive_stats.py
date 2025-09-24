@@ -35,7 +35,7 @@ class MeanAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
+        plot = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=self._resource_spec.ls_cts_features,
@@ -49,7 +49,7 @@ class STDAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
+        plot = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=self._resource_spec.ls_cts_features,
@@ -63,7 +63,7 @@ class VarianceAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
+        plot = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=self._resource_spec.ls_cts_features,
@@ -77,7 +77,7 @@ class MedianAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
+        plot = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=self._resource_spec.ls_cts_features,
@@ -91,7 +91,7 @@ class FirstQuartileAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
+        plot = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=self._resource_spec.ls_cts_features,
@@ -105,7 +105,7 @@ class ThirdQuartileAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
+        plot = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=self._resource_spec.ls_cts_features,
@@ -119,7 +119,7 @@ class MaxAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
+        plot = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=self._resource_spec.ls_cts_features,
@@ -133,7 +133,7 @@ class MinAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> Figure:
-        plot = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
+        plot = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
             ls_cts_features=self._resource_spec.ls_cts_features,

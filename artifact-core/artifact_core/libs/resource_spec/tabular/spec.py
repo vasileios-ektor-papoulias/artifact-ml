@@ -11,10 +11,14 @@ from artifact_core.libs.resource_spec.tabular.protocol import (
 from artifact_core.libs.resource_spec.tabular.types import (
     TabularDataDType,
 )
-from artifact_core.libs.types.serializable import Serializable
-from artifact_core.libs.utils.feature_partition.feature_partition import FeaturePartition
-from artifact_core.libs.utils.feature_partition.feature_partitioner import FeaturePartitioner
-from artifact_core.libs.utils.feature_partition.inference_engine import FeaturePartitionStrategy
+from artifact_core.libs.utils.data_tools.feature_partition.feature_partition import FeaturePartition
+from artifact_core.libs.utils.data_tools.feature_partition.feature_partitioner import (
+    FeaturePartitioner,
+)
+from artifact_core.libs.utils.data_tools.feature_partition.inference_engine import (
+    FeaturePartitionStrategy,
+)
+from artifact_core.libs.utils.types.serializable import Serializable
 
 TabularDataSpecT = TypeVar("TabularDataSpecT", bound="TabularDataSpec")
 

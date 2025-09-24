@@ -2,7 +2,7 @@ from typing import Iterable
 
 from artifact_core.libs.resources.categorical.category_store.category_store import CategoryStore
 from artifact_core.libs.resources.classification.classification_results import ClassificationResults
-from artifact_core.libs.types.entity_store import IdentifierType
+from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
 
 
 class ClassificationResourcesValidator:

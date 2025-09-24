@@ -4,7 +4,7 @@ from typing import Dict, Hashable, Mapping, Tuple
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
-from artifact_core.libs.utils.dict_aligner import DictAligner
+from artifact_core.libs.utils.misc.dict_aligner import DictAligner
 
 
 class ConfusionMatrixCell(Enum):

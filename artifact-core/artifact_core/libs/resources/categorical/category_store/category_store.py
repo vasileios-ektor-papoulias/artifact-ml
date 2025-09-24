@@ -1,7 +1,7 @@
 from typing import Dict, Generic, List, Mapping, Optional, TypeVar
 
 from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
-from artifact_core.libs.types.entity_store import EntityStore, IdentifierType
+from artifact_core.libs.utils.data_structures.entity_store import EntityStore, IdentifierType
 
 CategoricalFeatureSpecProtocolTCov = TypeVar(
     "CategoricalFeatureSpecProtocolTCov", bound=CategoricalFeatureSpecProtocol, covariant=True

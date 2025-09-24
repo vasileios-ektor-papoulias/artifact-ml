@@ -5,7 +5,7 @@ from artifact_core.binary_classification.artifacts.base import (
     BinaryClassificationArtifactResources,
     BinaryFeatureSpecProtocol,
 )
-from artifact_core.libs.types.entity_store import IdentifierType
+from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
 
 from artifact_experiment.base.callback_factory import ArtifactCallbackFactory
 from artifact_experiment.base.validation_plan import ValidationPlan
@@ -63,13 +63,13 @@ class BinaryClassificationPlan(
         self,
         true: Mapping[IdentifierType, str],
         predicted: Mapping[IdentifierType, str],
-        positive_probs: Optional[Mapping[IdentifierType, float]] = None,
+        probs_pos: Optional[Mapping[IdentifierType, float]] = None,
     ):
         callback_resources = BinaryClassificationCallbackResources.from_spec(
             class_spec=self._resource_spec,
             true=true,
             predicted=predicted,
-            positive_probs=positive_probs,
+            probs_pos=probs_pos,
         )
         super().execute(resources=callback_resources)
 

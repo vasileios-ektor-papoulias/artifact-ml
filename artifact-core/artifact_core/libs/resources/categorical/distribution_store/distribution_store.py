@@ -3,8 +3,8 @@ from typing import Dict, Generic, List, Mapping, Optional, Sequence, TypeVar, Un
 import numpy as np
 
 from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
-from artifact_core.libs.types.entity_store import EntityStore, IdentifierType
-from artifact_core.libs.utils.softmax_calculator import SoftmaxCalculator
+from artifact_core.libs.utils.calculators.softmax_calculator import SoftmaxCalculator
+from artifact_core.libs.utils.data_structures.entity_store import EntityStore, IdentifierType
 
 CategoricalDistribution = Union[Sequence[float], np.ndarray]
 CategoricalFeatureSpecProtocolTCov = TypeVar(

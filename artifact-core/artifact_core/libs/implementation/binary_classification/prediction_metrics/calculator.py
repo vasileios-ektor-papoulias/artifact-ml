@@ -14,8 +14,8 @@ from artifact_core.libs.implementation.binary_classification.confusion.calculato
     ConfusionCalculator,
     ConfusionMatrixCell,
 )
-from artifact_core.libs.utils.dict_aligner import DictAligner
-from artifact_core.libs.utils.safe_div import SafeDivide
+from artifact_core.libs.utils.calculators.safe_div_calculator import SafeDivCalculator
+from artifact_core.libs.utils.misc.dict_aligner import DictAligner
 
 BinaryPredictionMetricLiteral = Literal[
     "ACCURACY",
@@ -184,7 +184,7 @@ class BinaryPredictionMetricCalculator:
         )
         tn = dict_conf[ConfusionMatrixCell.TRUE_NEGATIVE]
         fn = dict_conf[ConfusionMatrixCell.FALSE_NEGATIVE]
-        score = SafeDivide.compute(num=tn, denom=tn + fn)
+        score = SafeDivCalculator.compute(num=tn, denom=tn + fn)
         return score
 
     @classmethod
@@ -198,7 +198,7 @@ class BinaryPredictionMetricCalculator:
         )
         tn = dict_conf[ConfusionMatrixCell.TRUE_NEGATIVE]
         fp = dict_conf[ConfusionMatrixCell.FALSE_POSITIVE]
-        score = SafeDivide.compute(num=tn, denom=tn + fp)
+        score = SafeDivCalculator.compute(num=tn, denom=tn + fp)
         return score
 
     @classmethod
@@ -212,7 +212,7 @@ class BinaryPredictionMetricCalculator:
         )
         fp = dict_conf[ConfusionMatrixCell.FALSE_POSITIVE]
         tn = dict_conf[ConfusionMatrixCell.TRUE_NEGATIVE]
-        score = SafeDivide.compute(num=fp, denom=fp + tn)
+        score = SafeDivCalculator.compute(num=fp, denom=fp + tn)
         return score
 
     @classmethod
@@ -226,5 +226,5 @@ class BinaryPredictionMetricCalculator:
         )
         fn = dict_conf[ConfusionMatrixCell.FALSE_NEGATIVE]
         tp = dict_conf[ConfusionMatrixCell.TRUE_POSITIVE]
-        score = SafeDivide.compute(num=fn, denom=fn + tp)
+        score = SafeDivCalculator.compute(num=fn, denom=fn + tp)
         return score

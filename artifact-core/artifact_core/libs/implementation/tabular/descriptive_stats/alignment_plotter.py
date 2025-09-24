@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from typing import Dict, List
 
 import numpy as np
@@ -10,13 +11,25 @@ from artifact_core.libs.implementation.tabular.descriptive_stats.calculator impo
     DescriptiveStatistic,
     TableStatsCalculator,
 )
-from artifact_core.libs.utils.plot_combiner import (
+from artifact_core.libs.utils.plotters.plot_combiner import (
     PlotCombinationConfig,
     PlotCombiner,
 )
 
 
+@dataclass(frozen=True)
+class StatsAlignmentPlotterConfig:
+    line_color: str = "olive"
+    line_width: float = 3.0
+    line_alpha: float = 0.5
+    scatter_marker_color: str = "chocolate"
+    scatter_marker_size: float = 40.0
+    scatter_marker_shape: str = "o"
+    scatter_marker_alpha: float = 1.0
+
+
 class DescriptiveStatsAlignmentPlotter:
+    _plot_config = StatsAlignmentPlotterConfig()
     _plot_combiner_config = PlotCombinationConfig(
         n_cols=2,
         dpi=150,
@@ -30,35 +43,10 @@ class DescriptiveStatsAlignmentPlotter:
         include_fig_titles=False,
         combined_title="Descriptive Statistics Comparison",
     )
-    _line_color: str = "olive"
-    _line_width: float = 3.0
-    _line_alpha: float = 0.5
-    _scatter_marker_color: str = "chocolate"
-    _scatter_marker_size: float = 40.0
-    _scatter_marker_shape: str = "o"
-    _scatter_marker_alpha: float = 1.0
     _ls_stats: List[DescriptiveStatistic] = [stat for stat in DescriptiveStatistic]
 
     @classmethod
-    def get_combined_stat_alignment_plot(
-        cls,
-        dataset_real: pd.DataFrame,
-        dataset_synthetic: pd.DataFrame,
-        ls_cts_features: List[str],
-    ) -> Figure:
-        dict_plots = cls._get_stat_alignment_plot_collection(
-            dataset_real=dataset_real,
-            dataset_synthetic=dataset_synthetic,
-            ls_cts_features=ls_cts_features,
-            ls_stats=cls._ls_stats,
-        )
-        combined_plot = PlotCombiner.combine(
-            dict_plots=dict_plots, config=cls._plot_combiner_config
-        )
-        return combined_plot
-
-    @classmethod
-    def get_single_stat_alignment_plot(
+    def get_stat_alignment_plot(
         cls,
         dataset_real: pd.DataFrame,
         dataset_synthetic: pd.DataFrame,
@@ -81,8 +69,27 @@ class DescriptiveStatsAlignmentPlotter:
                 stats_real=stats_real,
                 stats_synthetic=stats_synthetic,
                 stat_name=stat.value,
+                plot_config=cls._plot_config,
             )
         return plot
+
+    @classmethod
+    def get_combined_stat_alignment_plot(
+        cls,
+        dataset_real: pd.DataFrame,
+        dataset_synthetic: pd.DataFrame,
+        ls_cts_features: List[str],
+    ) -> Figure:
+        dict_plots = cls._get_stat_alignment_plot_collection(
+            dataset_real=dataset_real,
+            dataset_synthetic=dataset_synthetic,
+            ls_cts_features=ls_cts_features,
+            ls_stats=cls._ls_stats,
+        )
+        combined_plot = PlotCombiner.combine(
+            dict_plots=dict_plots, config=cls._plot_combiner_config
+        )
+        return combined_plot
 
     @classmethod
     def _get_stat_alignment_plot_collection(
@@ -94,7 +101,7 @@ class DescriptiveStatsAlignmentPlotter:
     ) -> Dict[str, Figure]:
         dict_plots = {}
         for stat in ls_stats:
-            plot = cls.get_single_stat_alignment_plot(
+            plot = cls.get_stat_alignment_plot(
                 dataset_real=dataset_real,
                 dataset_synthetic=dataset_synthetic,
                 ls_cts_features=ls_cts_features,
@@ -109,6 +116,7 @@ class DescriptiveStatsAlignmentPlotter:
         stats_real: np.ndarray,
         stats_synthetic: np.ndarray,
         stat_name: str,
+        plot_config: StatsAlignmentPlotterConfig = StatsAlignmentPlotterConfig(),
     ) -> Figure:
         fig, ax = plt.subplots(1, 1, figsize=(10, 5))
         plt.close(fig)
@@ -126,23 +134,22 @@ class DescriptiveStatsAlignmentPlotter:
             x=line,
             y=line,
             ax=ax,
-            color=cls._line_color,
-            linewidth=cls._line_width,
-            alpha=cls._line_alpha,
+            color=plot_config.line_color,
+            linewidth=plot_config.line_width,
+            alpha=plot_config.line_alpha,
         )
         sns.scatterplot(
             x=stats_real_abs_log,
             y=stats_synthetic_abs_log,
             ax=ax,
-            color=cls._scatter_marker_color,
-            s=cls._scatter_marker_size,
-            marker=cls._scatter_marker_shape,
-            alpha=cls._scatter_marker_alpha,
+            color=plot_config.scatter_marker_color,
+            s=plot_config.scatter_marker_size,
+            marker=plot_config.scatter_marker_shape,
+            alpha=plot_config.scatter_marker_alpha,
         )
-
-        ax.set_title(f"{stat_name} comparison")
-        ax.set_xlabel(f"real data {stat_name} (log-abs)")
-        ax.set_ylabel(f"synthetic data {stat_name} (log-abs)")
+        ax.set_title(label=f"{stat_name} comparison")
+        ax.set_xlabel(xlabel=f"real data {stat_name} (log-abs)")
+        ax.set_ylabel(ylabel=f"synthetic data {stat_name} (log-abs)")
         return fig
 
     @staticmethod

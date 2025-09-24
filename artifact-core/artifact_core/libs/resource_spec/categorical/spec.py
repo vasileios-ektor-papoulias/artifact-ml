@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional, Type, TypeVar
 from artifact_core.libs.resource_spec.categorical.protocol import (
     CategoricalFeatureSpecProtocol,
 )
-from artifact_core.libs.types.serializable import Serializable
+from artifact_core.libs.utils.types.serializable import Serializable
 
 CategoricalFeatureSpecT = TypeVar("CategoricalFeatureSpecT", bound="CategoricalFeatureSpec")
 

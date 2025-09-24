@@ -25,7 +25,7 @@ class DescriptiveStatsCalculator:
         elif stat == DescriptiveStatistic.STD:
             return sr_cts_data.std()
         elif stat == DescriptiveStatistic.VARIANCE:
-            return sr_cts_data.var()
+            return sr_cts_data.var()  # type: ignore
         elif stat == DescriptiveStatistic.MEDIAN:
             return sr_cts_data.median()
         elif stat == DescriptiveStatistic.Q1:

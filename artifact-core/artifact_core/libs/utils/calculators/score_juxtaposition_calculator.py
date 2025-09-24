@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 import numpy as np
 
 
-class JuxtapositionArrayCalculator:
+class ScoreJuxtapositionCalculator:
     @classmethod
     def juxtapose_score_collections(
         cls,

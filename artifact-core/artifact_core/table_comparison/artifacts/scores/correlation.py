@@ -11,7 +11,7 @@ from artifact_core.libs.implementation.tabular.correlations.calculator import (
     ContinuousAssociationTypeLiteral,
     CorrelationCalculator,
 )
-from artifact_core.libs.utils.vector_distance_calculator import (
+from artifact_core.libs.utils.calculators.vector_distance_calculator import (
     VectorDistanceMetric,
     VectorDistanceMetricLiteral,
 )

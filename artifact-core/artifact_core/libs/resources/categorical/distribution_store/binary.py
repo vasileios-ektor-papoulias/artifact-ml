@@ -7,9 +7,11 @@ from artifact_core.libs.resource_spec.binary.spec import BinaryFeatureSpec
 from artifact_core.libs.resources.categorical.distribution_store.distribution_store import (
     CategoricalDistributionStore,
 )
-from artifact_core.libs.types.entity_store import IdentifierType
-from artifact_core.libs.utils.binary_distribution_calculator import BinaryDistributionCalculator
-from artifact_core.libs.utils.sigmoid_calculator import SigmoidCalculator
+from artifact_core.libs.utils.calculators.binary_distribution_calculator import (
+    BinaryDistributionCalculator,
+)
+from artifact_core.libs.utils.calculators.sigmoid_calculator import SigmoidCalculator
+from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
 
 BinaryDistributionStoreT = TypeVar("BinaryDistributionStoreT", bound="BinaryDistributionStore")
 

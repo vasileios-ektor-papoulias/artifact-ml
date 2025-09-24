@@ -12,8 +12,8 @@ from matplotlib.figure import Figure
 class PlotCombinationConfig:
     n_cols: int = 2
     dpi: int = 150
-    figsize_horizontal_multiplier: float = 6
-    figsize_vertical_multiplier: float = 4
+    figsize_horizontal_multiplier: float = 6.0
+    figsize_vertical_multiplier: float = 4.0
     tight_layout_rect: Tuple[float, float, float, float] = field(
         default_factory=lambda: (0, 0, 1, 0.95)
     )
@@ -21,9 +21,9 @@ class PlotCombinationConfig:
     subplots_adjust_hspace: float = 0.1
     subplots_adjust_wspace: float = 0.1
     include_fig_titles: bool = False
-    fig_title_fontsize: float = 5
+    fig_title_fontsize: float = 5.0
     combined_title: Optional[str] = None
-    combined_title_vertical_position: float = 1
+    combined_title_vertical_position: float = 1.0
 
 
 class PlotCombiner:

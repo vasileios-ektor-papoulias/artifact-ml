@@ -24,7 +24,7 @@ class BinaryDistributionCalculator:
     @classmethod
     def compute_id_to_prob_complement(cls, id_to_prob: Dict[Hashable, float], eps: float = 1e-15):
         id_to_probs = {
-            identifier: cls.compute_prob_complement(prob_pos=prob, eps=eps)
+            identifier: cls.compute_prob_complement(prob=prob, eps=eps)
             for identifier, prob in id_to_prob.items()
         }
         return id_to_probs

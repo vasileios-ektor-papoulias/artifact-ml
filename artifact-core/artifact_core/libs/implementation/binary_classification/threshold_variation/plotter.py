@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, Hashable, Literal, Mapping, Optional, Sequence, Tuple
+from typing import Dict, Hashable, Literal, Mapping, Sequence, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,7 +14,7 @@ from sklearn.metrics import (
     roc_curve,
 )
 
-from artifact_core.libs.utils.dict_aligner import DictAligner
+from artifact_core.libs.utils.misc.dict_aligner import DictAligner
 
 ThresholdVariationCurveTypeLiteral = Literal[
     "ROC", "PR", "DET", "TPR_THRESHOLD", "PRECISION_THRESHOLD"
@@ -22,21 +22,25 @@ ThresholdVariationCurveTypeLiteral = Literal[
 
 
 class ThresholdVariationCurveType(Enum):
-    ROC = "roc"  # TPR vs FPR
+    ROC = "roc"  # Receiver Operator Characteristic/ Recall vs FPR
     PR = "pr"  # Precision vs Recall
-    DET = "det"  # FNR vs FPR
-    TPR_THRESHOLD = "tpr_threshold"  # TPR vs threshold
-    PRECISION_THRESHOLD = "precision_threshold"  # Precision vs threshold
+    DET = "det"  # Decision Error Tradeoff/ FNR vs FPR
+    RECALL_THRESHOLD = "recall_threshold"  # Recall vs Decision Threshold
+    PRECISION_THRESHOLD = "precision_threshold"  # Precision vs Decision Threshold
 
 
 @dataclass(frozen=True)
 class ThresholdVariationCurvePlotterConfig:
-    title: Optional[str] = None
     dpi: int = 120
     figsize: Tuple[float, float] = (6.0, 4.5)
     linewidth: float = 2.0
-    alpha: float = 0.9
-    show_chance: bool = True
+    alpha: float = 1.0
+    color: str = "orange"
+    show_baseline: bool = True
+    linestyle_baseline: str = "--"
+    linewidth_baseline: float = 1.0
+    alpha_baseline: float = 0.7
+    color_baseline: str = "blue"
 
 
 class ThresholdVariationCurvePlotter:
@@ -71,8 +75,8 @@ class ThresholdVariationCurvePlotter:
             fig = cls._plot_pr(y_true_bin=y_true_bin, y_probs=y_probs, config=config)
         elif curve_type is ThresholdVariationCurveType.DET:
             fig = cls._plot_det(y_true_bin=y_true_bin, y_probs=y_probs, config=config)
-        elif curve_type is ThresholdVariationCurveType.TPR_THRESHOLD:
-            fig = cls._plot_tpr_threshold(y_true_bin=y_true_bin, y_probs=y_probs, config=config)
+        elif curve_type is ThresholdVariationCurveType.RECALL_THRESHOLD:
+            fig = cls._plot_recall_threshold(y_true_bin=y_true_bin, y_probs=y_probs, config=config)
         elif curve_type is ThresholdVariationCurveType.PRECISION_THRESHOLD:
             fig = cls._plot_precision_threshold(
                 y_true_bin=y_true_bin, y_probs=y_probs, config=config
@@ -91,15 +95,36 @@ class ThresholdVariationCurvePlotter:
         config: ThresholdVariationCurvePlotterConfig,
     ) -> Figure:
         if not cls._has_both_classes(y_true_bin=y_true_bin):
-            return cls._empty_fig(config=config, note="ROC Curve (needs both classes)")
+            return cls._empty_fig(
+                config=config,
+                note="Receiver Operator Characteristic (ROC) Curve (needs both classes)",
+            )
         fpr, tpr, _ = roc_curve(y_true=y_true_bin, y_score=y_probs)
         auc = float(roc_auc_score(y_true=y_true_bin, y_score=y_probs))
         fig, ax = plt.subplots(figsize=config.figsize, dpi=config.dpi)
-        if config.show_chance:
-            ax.plot([0, 1], [0, 1], linestyle="--", lw=1.0, alpha=0.7, label="chance")
-        ax.plot(fpr, tpr, lw=config.linewidth, alpha=config.alpha, label=f"ROC (AUC={auc:.3f})")
+        ax.plot(
+            fpr,
+            tpr,
+            lw=config.linewidth,
+            color=config.color,
+            alpha=config.alpha,
+            label=f"ROC (AUC={auc:.3f})",
+        )
+        if config.show_baseline:
+            ax.plot(
+                [0, 1],
+                [0, 1],
+                linestyle=config.linestyle_baseline,
+                color=config.color_baseline,
+                lw=config.linewidth_baseline,
+                alpha=config.alpha_baseline,
+                label="Baseline",
+            )
         cls._decorate_axes(
-            ax, title=config.title or "ROC Curve", x="False Positive Rate", y="True Positive Rate"
+            ax,
+            title="Receiver Operator Characteristic (ROC) Curve",
+            x="False Positive Rate (FPR)",
+            y="Recall/ True Positive Rate (TPR)",
         )
         ax.set_xlim(0.0, 1.0)
         ax.set_ylim(0.0, 1.05)
@@ -121,12 +146,23 @@ class ThresholdVariationCurvePlotter:
             recall,
             precision,
             lw=config.linewidth,
+            color=config.color,
             alpha=config.alpha,
-            label=f"PR (AP={pr_auc:.3f})",
+            label=f"PR (PR-AUC (AP)={pr_auc:.3f})",
         )
-        cls._decorate_axes(
-            ax, title=config.title or "Precision–Recall Curve", x="Recall", y="Precision"
-        )
+        if config.show_baseline:
+            prevalence = y_true_bin.mean()
+            ax.hlines(
+                prevalence,
+                xmin=0,
+                xmax=1,
+                linestyle=config.linestyle_baseline,
+                colors=config.color_baseline,
+                lw=config.linewidth_baseline,
+                alpha=config.alpha_baseline,
+                label=f"Baseline (π={prevalence:.2f})",
+            )
+        cls._decorate_axes(ax, title="Precision–Recall Curve", x="Recall", y="Precision")
         ax.set_xlim(0.0, 1.0)
         ax.set_ylim(0.0, 1.05)
         ax.legend(loc="lower left")
@@ -141,41 +177,72 @@ class ThresholdVariationCurvePlotter:
         config: ThresholdVariationCurvePlotterConfig,
     ) -> Figure:
         if not cls._has_both_classes(y_true_bin=y_true_bin):
-            return cls._empty_fig(config=config, note="ROC Curve (needs both classes)")
+            return cls._empty_fig(
+                config=config, note="Decision Error Tradeoff (DET) Curve (needs both classes)"
+            )
         fpr, fnr, _ = det_curve(y_true=y_true_bin, y_score=y_probs)
         fig, ax = plt.subplots(figsize=config.figsize, dpi=config.dpi)
-        ax.plot(fpr, fnr, lw=config.linewidth, alpha=config.alpha, label="DET")
+        ax.plot(fpr, fnr, lw=config.linewidth, color=config.color, alpha=config.alpha, label="DET")
+        if config.show_baseline:
+            ax.plot(
+                [0, 1],
+                [1, 0],
+                linestyle=config.linestyle_baseline,
+                color=config.color_baseline,
+                lw=config.linewidth_baseline,
+                alpha=config.alpha_baseline,
+                label="Baseline",
+            )
         cls._decorate_axes(
-            ax, title=config.title or "DET Curve", x="False Positive Rate", y="False Negative Rate"
+            ax,
+            title="Decision Error Tradeoff (DET) Curve",
+            x="False Positive Rate (FPR)",
+            y="False Negative Rate (FNR)",
         )
         ax.set_xlim(0.0, 1.0)
-        ax.set_ylim(0.0, 1.0)
+        ax.set_ylim(0.0, 1.05)
         ax.legend(loc="upper right")
         fig.tight_layout()
         return fig
 
     @classmethod
-    def _plot_tpr_threshold(
+    def _plot_recall_threshold(
         cls,
         y_true_bin: np.ndarray,
         y_probs: np.ndarray,
         config: ThresholdVariationCurvePlotterConfig,
     ) -> Figure:
         if not cls._has_both_classes(y_true_bin=y_true_bin):
-            return cls._empty_fig(config=config, note="ROC Curve (needs both classes)")
+            return cls._empty_fig(config=config, note="Recall-Threshold Curve (needs both classes)")
         _, tpr, thr = roc_curve(y_true=y_true_bin, y_score=y_probs)
         thr = thr[1:]
         tpr = tpr[1:]
         fig, ax = plt.subplots(figsize=config.figsize, dpi=config.dpi)
-        ax.plot(thr, tpr, lw=config.linewidth, alpha=config.alpha, label="TPR vs threshold")
+        ax.plot(
+            thr,
+            tpr,
+            lw=config.linewidth,
+            color=config.color,
+            alpha=config.alpha,
+            label="Recall-Threshold",
+        )
+        if config.show_baseline:
+            ax.plot(
+                [0, 1],
+                [1, 0],
+                linestyle=config.linestyle_baseline,
+                color=config.color_baseline,
+                lw=config.linewidth_baseline,
+                alpha=config.alpha_baseline,
+                label="Baseline",
+            )
         cls._decorate_axes(
             ax,
-            title=config.title or "TPR vs Threshold",
-            x="Decision threshold",
-            y="True Positive Rate",
+            title="Recall-Threshold Curve",
+            x="Decision Threshold",
+            y="Recall",
         )
-        if thr.size:
-            ax.set_xlim(thr.min(), thr.max())
+        ax.set_xlim(0.0, 1.0)
         ax.set_ylim(0.0, 1.05)
         ax.legend(loc="best")
         fig.tight_layout()
@@ -194,17 +261,29 @@ class ThresholdVariationCurvePlotter:
             thr,
             precision[1:],
             lw=config.linewidth,
+            color=config.color,
             alpha=config.alpha,
-            label="Precision vs threshold",
+            label="Precision-Threshold",
         )
+        if config.show_baseline:
+            prevalence = y_true_bin.mean()
+            ax.hlines(
+                prevalence,
+                xmin=0,
+                xmax=1,
+                linestyle=config.linestyle_baseline,
+                colors=config.color_baseline,
+                lw=config.linewidth_baseline,
+                alpha=config.alpha_baseline,
+                label=f"Baseline (π={prevalence:.2f})",
+            )
         cls._decorate_axes(
             ax,
-            title=config.title or "Precision vs Threshold",
-            x="Decision threshold",
+            title="Precision-Threshold Curve",
+            x="Decision Threshold",
             y="Precision",
         )
-        if thr.size:
-            ax.set_xlim(thr.min(), thr.max())
+        ax.set_xlim(0.0, 1.0)
         ax.set_ylim(0.0, 1.05)
         ax.legend(loc="best")
         fig.tight_layout()

@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Any, Dict, Generator, Optional, Tuple
 
 import pytest
-from artifact_core.libs.utils.config_utils import (
+from artifact_core.libs.utils.system.config_utils import (
     ConfigMerger,
     ConfigOverrideLocator,
     DomainToolkitConfigType,

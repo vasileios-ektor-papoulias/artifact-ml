@@ -2,7 +2,7 @@ from typing import List
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.cdf.plotter import CDFPlotter
+from artifact_core.libs.implementation.tabular.cdf.plotter import TabularCDFPlotter
 from matplotlib.figure import Figure
 
 
@@ -28,7 +28,7 @@ def test_get_cdf_plot_collection(
     expected_plot_count: int,
 ):
     df = df_dispatcher
-    result = CDFPlotter.get_cdf_plot_collection(
+    result = TabularCDFPlotter.get_cdf_plot_collection(
         dataset=df,
         ls_cts_features=cts_features,
     )
@@ -69,7 +69,7 @@ def test_get_cdf_plot(
     expected_axes_count: int,
 ):
     df = df_dispatcher
-    result = CDFPlotter.get_cdf_plot(
+    result = TabularCDFPlotter.get_cdf_plot(
         dataset=df,
         ls_cts_features=cts_features,
     )

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, List, Optional, Sequence, Set, Tuple, Type, TypeVar
 
-from artifact_core.libs.utils.deduplicator import Deduplicator
+from artifact_core.libs.utils.misc.deduplicator import Deduplicator
 
 
 class FeatureType(Enum):

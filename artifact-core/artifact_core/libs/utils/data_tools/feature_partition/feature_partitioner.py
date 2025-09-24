@@ -3,10 +3,8 @@ from typing import Optional, Sequence, Set, Tuple
 
 import pandas as pd
 
-from artifact_core.libs.utils.feature_partition.feature_partition import (
-    FeaturePartition,
-)
-from artifact_core.libs.utils.feature_partition.inference_engine import (
+from artifact_core.libs.utils.data_tools.feature_partition.feature_partition import FeaturePartition
+from artifact_core.libs.utils.data_tools.feature_partition.inference_engine import (
     FeaturePartitionInferenceEngine,
     FeaturePartitionStrategy,
 )

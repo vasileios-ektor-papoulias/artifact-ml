@@ -4,7 +4,7 @@ from artifact_core.libs.implementation.binary_classification.score_distribution.
     BinarySamplePartitioner,
     BinarySampleSplit,
 )
-from artifact_core.libs.utils.dict_aligner import DictAligner
+from artifact_core.libs.utils.misc.dict_aligner import DictAligner
 
 
 class ScoreDistributionSampler:
@@ -17,7 +17,7 @@ class ScoreDistributionSampler:
     ) -> List[float]:
         _, y_true_bin, y_prob = DictAligner.align(left=id_to_is_pos, right=id_to_prob_pos)
         arr = BinarySamplePartitioner.partition(y_true_bin=y_true_bin, y_prob=y_prob, split=split)
-        return arr.tolist()
+        return arr.tolist()  # type: ignore
 
     @classmethod
     def get_dict_samples(

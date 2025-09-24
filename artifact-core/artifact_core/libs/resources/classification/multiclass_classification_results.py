@@ -11,7 +11,7 @@ from artifact_core.libs.resources.categorical.distribution_store.multiclass impo
     MulticlassDistributionStore,
 )
 from artifact_core.libs.resources.classification.classification_results import ClassificationResults
-from artifact_core.libs.types.entity_store import IdentifierType
+from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
 
 CategoricalFeatureSpecProtocolTCov = TypeVar(
     "CategoricalFeatureSpecProtocolTCov", bound=CategoricalFeatureSpecProtocol, covariant=True

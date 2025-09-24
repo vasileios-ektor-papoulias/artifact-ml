@@ -166,7 +166,7 @@
         "ROC",
         "PR",
         "DET",
-        "TPR_THRESHOLD",
+        "RECALL_THRESHOLD",
         "PRECISION_THRESHOLD"
       ]
     },

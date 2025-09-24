@@ -63,16 +63,16 @@ class DETCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
 
 
 @BinaryClassificationPlotRegistry.register_artifact(
-    BinaryClassificationPlotType.TPR_THRESHOLD_CURVE
+    BinaryClassificationPlotType.RECALL_THRESHOLD_CURVE
 )
-class TPRThresholdCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
+class RecallThresholdCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
     ) -> Figure:
         return ThresholdVariationCurvePlotter.plot(
-            curve_type=ThresholdVariationCurveType.TPR_THRESHOLD,
+            curve_type=ThresholdVariationCurveType.RECALL_THRESHOLD,
             true=true_category_store.id_to_is_positive,
             probs=classification_results.id_to_prob_pos,
         )

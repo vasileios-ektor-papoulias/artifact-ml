@@ -3,12 +3,12 @@ from typing import Dict, List, Set
 import numpy as np
 import pandas as pd
 
-from artifact_core.libs.utils.descriptive_stats_calculator import (
+from artifact_core.libs.utils.calculators.descriptive_stats_calculator import (
     DescriptiveStatistic,
     DescriptiveStatsCalculator,
 )
-from artifact_core.libs.utils.score_juxtaposition import (
-    JuxtapositionArrayCalculator,
+from artifact_core.libs.utils.calculators.score_juxtaposition_calculator import (
+    ScoreJuxtapositionCalculator,
 )
 
 
@@ -29,7 +29,7 @@ class TableStatsCalculator:
             ls_cts_features=ls_cts_features,
             stat=stat,
         )
-        dict_juxtaposition_arrays = JuxtapositionArrayCalculator.juxtapose_score_collections(
+        dict_juxtaposition_arrays = ScoreJuxtapositionCalculator.juxtapose_score_collections(
             dict_scores_real=dict_stats_real,
             dict_scores_synthetic=dict_stats_synthetic,
             ls_keys=ls_cts_features,
@@ -43,7 +43,9 @@ class TableStatsCalculator:
         ls_cts_features: List[str],
         stat: DescriptiveStatistic,
     ) -> Dict[str, float]:
-        dict_stats = cls._compute_stat_for_cts_features(df, ls_cts_features, stat)
+        dict_stats = cls._compute_stat_for_cts_features(
+            df=df, ls_cts_features=ls_cts_features, stat=stat
+        )
         return dict_stats
 
     @classmethod

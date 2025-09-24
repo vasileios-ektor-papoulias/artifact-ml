@@ -5,7 +5,7 @@ from artifact_core.libs.resource_spec.tabular.types import (
     TabularDataDType,
     TabularDataTypeSerializer,
 )
-from artifact_core.libs.types.serializable import Serializable
+from artifact_core.libs.utils.types.serializable import Serializable
 
 ColumnSpecT = TypeVar("ColumnSpecT", bound="ColumnSpec")
 

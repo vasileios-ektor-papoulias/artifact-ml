@@ -6,7 +6,7 @@ from artifact_core.libs.resources.categorical.category_store.binary import Binar
 from artifact_core.libs.resources.classification.binary_classification_results import (
     BinaryClassificationResults,
 )
-from artifact_core.libs.types.entity_store import IdentifierType
+from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
 
 from artifact_experiment.core.classification.callback_resources import (
     ClassificationCallbackResources,
@@ -27,14 +27,14 @@ class BinaryClassificationCallbackResources(
         positive_category: str,
         true: Mapping[IdentifierType, str],
         predicted: Mapping[IdentifierType, str],
-        positive_probs: Optional[Mapping[IdentifierType, float]] = None,
+        probs_pos: Optional[Mapping[IdentifierType, float]] = None,
     ) -> ClassificationCallbackResourcesT:
         artifact_resources = BinaryClassificationArtifactResources.build(
             ls_categories=ls_categories,
             positive_category=positive_category,
             true=true,
             predicted=predicted,
-            positive_probs=positive_probs,
+            probs_pos=probs_pos,
         )
         callback_resources = cls(artifact_resources=artifact_resources)
         return callback_resources
@@ -45,10 +45,10 @@ class BinaryClassificationCallbackResources(
         class_spec: BinaryFeatureSpecProtocol,
         true: Mapping[IdentifierType, str],
         predicted: Mapping[IdentifierType, str],
-        positive_probs: Optional[Mapping[IdentifierType, float]] = None,
+        probs_pos: Optional[Mapping[IdentifierType, float]] = None,
     ) -> ClassificationCallbackResourcesT:
         artifact_resources = BinaryClassificationArtifactResources.from_spec(
-            class_spec=class_spec, true=true, predicted=predicted, positive_probs=positive_probs
+            class_spec=class_spec, true=true, predicted=predicted, probs_pos=probs_pos
         )
         callback_resources = cls(artifact_resources=artifact_resources)
         return callback_resources

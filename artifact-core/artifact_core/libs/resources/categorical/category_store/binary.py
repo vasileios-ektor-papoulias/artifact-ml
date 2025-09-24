@@ -3,7 +3,7 @@ from typing import Dict, List, Mapping, Optional, Type, TypeVar
 from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
 from artifact_core.libs.resource_spec.binary.spec import BinaryFeatureSpec
 from artifact_core.libs.resources.categorical.category_store.category_store import CategoryStore
-from artifact_core.libs.types.entity_store import IdentifierType
+from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
 
 BinaryCategoryStoreT = TypeVar("BinaryCategoryStoreT", bound="BinaryCategoryStore")
 

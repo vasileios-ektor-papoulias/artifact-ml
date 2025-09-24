@@ -7,7 +7,7 @@ from artifact_core.libs.resources.categorical.distribution_store.distribution_st
     CategoricalDistributionStore,
 )
 from artifact_core.libs.resources.classification.classification_results import ClassificationResults
-from artifact_core.libs.types.entity_store import IdentifierType
+from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
 
 
 class GroundTruthProbCalculator:

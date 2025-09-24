@@ -20,7 +20,9 @@ from artifact_core.libs.resources.categorical.category_store.binary import (
 from artifact_core.libs.resources.classification.binary_classification_results import (
     BinaryClassificationResults,
 )
-from artifact_core.libs.utils.descriptive_stats_calculator import DescriptiveStatisticLiteral
+from artifact_core.libs.utils.calculators.descriptive_stats_calculator import (
+    DescriptiveStatisticLiteral,
+)
 
 ScoreStatsByStatHyperparamsT = TypeVar(
     "ScoreStatsByStatHyperparamsT", bound="ScoreStatsByStatHyperparams"

@@ -1,5 +1,5 @@
 from artifact_core.libs.resource_spec.tabular.spec import TabularDataSpec
-from artifact_core.libs.utils.package_importer import PackageImporter
+from artifact_core.libs.utils.system.package_importer import PackageImporter
 from artifact_core.table_comparison.config.parsed import (
     ARTIFACT_CORE_ROOT,
     CUSTOM_ARTIFACT_PATH,

@@ -4,7 +4,7 @@ from typing import cast
 
 import numpy as np
 import pytest
-from artifact_core.libs.utils.vector_distance_calculator import (
+from artifact_core.libs.utils.calculators.vector_distance_calculator import (
     VectorDistanceCalculator,
     VectorDistanceMetric,
 )

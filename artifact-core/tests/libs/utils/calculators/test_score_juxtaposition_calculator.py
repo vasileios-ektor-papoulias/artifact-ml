@@ -2,8 +2,8 @@ from typing import Dict, List, Optional
 
 import numpy as np
 import pytest
-from artifact_core.libs.utils.score_juxtaposition import (
-    JuxtapositionArrayCalculator,
+from artifact_core.libs.utils.calculators.score_juxtaposition_calculator import (
+    ScoreJuxtapositionCalculator,
 )
 
 
@@ -32,7 +32,7 @@ def test_juxtaposition_array(
     ls_keys: Optional[List[str]],
     expected: Dict[str, np.ndarray],
 ):
-    result = JuxtapositionArrayCalculator.juxtapose_score_collections(
+    result = ScoreJuxtapositionCalculator.juxtapose_score_collections(
         dict_scores_real=dict_scores_real,
         dict_scores_synthetic=dict_scores_synthetic,
         ls_keys=ls_keys,
@@ -52,5 +52,5 @@ def test_juxtaposition_array(
     ],
 )
 def test_juxtapose_scores(score_real: float, score_synthetic: float, expected: np.ndarray):
-    result = JuxtapositionArrayCalculator.juxtapose_scores(score_real, score_synthetic)
+    result = ScoreJuxtapositionCalculator.juxtapose_scores(score_real, score_synthetic)
     assert np.allclose(result, expected), f"Expected {expected}, got {result}"

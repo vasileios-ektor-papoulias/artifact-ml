@@ -4,7 +4,7 @@ from typing import Dict, Hashable, Literal, Mapping, Sequence
 import numpy as np
 from sklearn.metrics import average_precision_score, roc_auc_score
 
-from artifact_core.libs.utils.dict_aligner import DictAligner
+from artifact_core.libs.utils.misc.dict_aligner import DictAligner
 
 ThresholdVariationMetricLiteral = Literal["ROC_AUC", "PR_AUC"]
 

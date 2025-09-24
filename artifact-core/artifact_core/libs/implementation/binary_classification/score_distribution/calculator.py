@@ -8,7 +8,7 @@ from artifact_core.libs.implementation.binary_classification.score_distribution.
 from artifact_core.libs.implementation.binary_classification.score_distribution.sampler import (
     ScoreDistributionSampler,
 )
-from artifact_core.libs.utils.descriptive_stats_calculator import (
+from artifact_core.libs.utils.calculators.descriptive_stats_calculator import (
     DescriptiveStatistic,
     DescriptiveStatsCalculator,
 )

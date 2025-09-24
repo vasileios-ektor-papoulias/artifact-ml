@@ -9,7 +9,7 @@ from artifact_core.libs.implementation.tabular.correlations.calculator import (
 from artifact_core.libs.implementation.tabular.correlations.heatmap_plotter import (
     CorrelationHeatmapPlotter,
 )
-from artifact_core.libs.utils.plot_combiner import PlotCombinationConfig
+from artifact_core.libs.utils.plotters.plot_combiner import PlotCombinationConfig
 from matplotlib.figure import Figure
 
 
