@@ -17,7 +17,7 @@ from matplotlib.figure import Figure
 class GroundTruthProbPDFPlotter:
     _prob_col_name: str = "P(y=ground_truth)"
     _pdf_config = PDFConfig(
-        plot_color="tab:olive",
+        plot_color="green",
         gridline_color="grey",
         gridline_style="--",
         axis_font_size="12",

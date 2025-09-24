@@ -35,12 +35,12 @@ class ThresholdVariationCurvePlotterConfig:
     figsize: Tuple[float, float] = (6.0, 4.5)
     linewidth: float = 2.0
     alpha: float = 1.0
-    color: str = "orange"
+    color: str = "blue"
     show_baseline: bool = True
     linestyle_baseline: str = "--"
     linewidth_baseline: float = 1.0
-    alpha_baseline: float = 0.7
-    color_baseline: str = "blue"
+    alpha_baseline: float = 1.0
+    color_baseline: str = "black"
 
 
 class ThresholdVariationCurvePlotter:

@@ -28,7 +28,7 @@ class ScoreDistributionPlotterConfig:
 
 class ScorePDFPlotter:
     _pdf_config = PDFConfig(
-        plot_color="tab:olive",
+        plot_color="blue",
         gridline_color="grey",
         gridline_style="--",
         axis_font_size="12",
@@ -41,8 +41,8 @@ class ScorePDFPlotter:
     _overlaid_pdf_config = OverlaidPDFConfig(
         label_a="Positive (true)",
         label_b="Negative (true)",
-        plot_color_a="olive",
-        plot_color_b="crimson",
+        plot_color_a="green",
+        plot_color_b="red",
         cts_densitiy_alpha_a=0.8,
         cts_densitiy_alpha_b=0.5,
         cts_density_n_bins=70,
