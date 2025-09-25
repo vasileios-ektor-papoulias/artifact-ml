@@ -1,0 +1,35 @@
+{
+    "data": {
+        "training_dataset_path": "assets/binary_classification.csv",
+        "ls_features": ["weight", "height", "age", "bmi"],
+        "label_feature": "arthritis_true",
+        "ls_categories": ["0", "1"],
+        "positive_category": "1"
+    },
+    "architecture": {
+        "ls_hidden_sizes": [
+            512,
+            256
+        ],
+        "latent_dim": 128,
+        "leaky_relu_slope": 0.1,
+        "bn_momentum": 0.1,
+        "bn_epsilon": 1e-5,
+        "dropout_rate": 0
+    },
+    "training": {
+        "device": "cpu",
+        "max_n_epochs": 200,
+        "learning_rate": 0.001,
+        "batch_size": 512,
+        "drop_last": false,
+        "shuffle": true,
+        "checkpoint_period": 5,
+        "batch_loss_period": 1
+    },
+    "validation": {
+        "train_loader_callback_period": 1,
+        "validation_plan_callback_period": 5,
+        "classification_threshold": 0.5
+    }
+}

@@ -27,6 +27,14 @@ class BinaryFeatureSpec(CategoricalFeatureSpec):
     def negative_category(self) -> str:
         return self._negative_category
 
+    @property
+    def positive_category_idx(self) -> int:
+        return self.get_category_idx(category=self._positive_category)
+
+    @property
+    def negative_category_idx(self) -> int:
+        return self.get_category_idx(category=self._negative_category)
+
     def __repr__(self) -> str:
         return (
             "BinaryFeatureSpec("
