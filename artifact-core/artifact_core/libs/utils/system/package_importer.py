@@ -13,8 +13,8 @@ class PackageImporter:
     ):
         path = cls._normalize_path(path=path)
         root = cls._normalize_path(path=root)
-        package_name = cls._get_package_name(path, root)
-        parent_dir = cls._get_parent_directory(path, root)
+        package_name = cls._get_package_name(path=path, root=root)
+        parent_dir = cls._get_parent_directory(path=path, root=root)
         if parent_dir not in sys.path:
             sys.path.insert(0, parent_dir)
         for _, module_name, _ in pkgutil.walk_packages([path], prefix=package_name + "."):
