@@ -18,7 +18,7 @@ class PackageImporter:
         if parent_dir not in sys.path:
             sys.path.insert(0, parent_dir)
         for _, module_name, _ in pkgutil.walk_packages([path], prefix=package_name + "."):
-            importlib.import_module(module_name)
+            importlib.import_module(name=module_name)
 
     @staticmethod
     def _get_package_name(path: str, root: Optional[Union[Path, str]] = None) -> str:
