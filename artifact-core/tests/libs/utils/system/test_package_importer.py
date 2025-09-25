@@ -97,4 +97,4 @@ def test_import_all_from_package_path(
     ]
     assert mock_import_module.call_count == len(expected_imports)
     for expected_import in expected_imports:
-        mock_import_module.assert_any_call(expected_import)
+        mock_import_module.assert_any_call(name=expected_import)

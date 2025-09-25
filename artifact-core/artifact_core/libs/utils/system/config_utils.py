@@ -13,6 +13,12 @@ class ConfigOverrideLocator:
     _config_dir_name = ".artifact-ml"
 
     @classmethod
+    def get_config_override_dir(cls) -> Optional[Path]:
+        user_config_dir = cls._ascend_to_marker(marker=cls._config_dir_name)
+        if user_config_dir is not None:
+            return user_config_dir
+
+    @classmethod
     def get_config_override(
         cls, domain_toolkit_config_type: DomainToolkitConfigType
     ) -> Optional[Dict[str, Any]]:

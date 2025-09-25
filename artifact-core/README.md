@@ -492,13 +492,13 @@ Your configuration will be merged with the default one automatically, with your 
 
 `artifact-core` supports project-specific custom artifacts, enabling users to extend domain toolkits with specialized validation logic tailored to their unique requirements.
 
-Custom artifacts integrate seamlessly with the existing framework infrastructure while providing complete flexibility for domain-specific validation needs.
+Custom artifacts integrate seamlessly with the existing framework infrastructure while providing complete flexibility.
 
 #### Creating Custom Artifacts
 
 **A. Configure Custom Artifact Path**
 
-Update the relevant domain toolkit configuration file (see the relevant section above) to point to your custom artifacts directory.
+Update the relevant domain toolkit configuration file (see the relevant section above) to point to your custom artifacts directory. Note that the required path is to be specified relative to the parent of the .artifact-ml folder hosting the relevant config file---typically your project root. The setup is clarified in the artifact-core demo.
 
 ```json
 {
@@ -572,7 +572,7 @@ class CustomScore(TableComparisonScore[CustomScoreHyperparams]):
 
 #### Using Custom Artifacts
 
-Once configured, custom artifacts can be used exactly like built-in artifacts:
+Once configured, custom artifacts can be used exactly like built-in ones:
 
 ```python
 # Use custom artifact with string identifier
@@ -585,7 +585,7 @@ custom_score = engine.produce_dataset_comparison_score(
 
 #### Contributing Custom Artifacts
 
-If you develop a custom artifact that could benefit the broader community, consider contributing it to the framework as a built-in artifact. Well-designed validation metrics that address common use cases are valuable additions to the artifact ecosystem.
+If you develop a custom artifact that could benefit the broader community, consider contributing it. Well-designed validation artifacts that address common use cases are valuable additions to the ecosystem.
 
 To contribute a custom artifact, submit a pull request following the [contribution guidelines](https://github.com/vasileios-ektor-papoulias/artifact-ml/blob/main/README.md).
 
