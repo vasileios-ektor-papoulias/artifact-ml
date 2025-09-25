@@ -17,7 +17,7 @@ with CONFIG_FILE.open() as f:
     _dict_artifact_configs: Dict[str, Any] = json.load(f)
 
 _user_override = ConfigOverrideLocator.get_config_override(
-    domain_toolkit_config_type=DomainToolkitConfigType.TABLE_COMPARISON
+    domain_toolkit_config_type=DomainToolkitConfigType.BINARY_CLASSIFICATION
 )
 
 _merged_artifact_configs = ConfigMerger.merge(
