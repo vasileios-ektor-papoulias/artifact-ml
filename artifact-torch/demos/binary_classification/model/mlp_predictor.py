@@ -2,6 +2,7 @@ from typing import Type, TypeVar
 
 import torch
 import torch.nn as nn
+
 from demos.binary_classification.model.mlp_encoder import MLPEncoder, MLPEncoderConfig
 
 MLPPredictorT = TypeVar("MLPPredictorT", bound="MLPPredictor")
