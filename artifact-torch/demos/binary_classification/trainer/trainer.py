@@ -15,6 +15,8 @@ from artifact_torch.base.trainer.custom import CustomTrainer
 from artifact_torch.binary_classification.model import BinaryClassifier
 from artifact_torch.libs.components.callbacks.checkpoint.standard import StandardCheckpointCallback
 from artifact_torch.libs.components.early_stopping.epoch_bound import EpochBoundStopper
+from torch import optim
+
 from demos.binary_classification.components.routines.batch import DemoBatchRoutine
 from demos.binary_classification.components.routines.loader import DemoLoaderRoutine
 from demos.binary_classification.config.constants import (
@@ -24,7 +26,6 @@ from demos.binary_classification.config.constants import (
     MAX_N_EPOCHS,
 )
 from demos.binary_classification.model.io import MLPClassifierInput, MLPClassifierOutput
-from torch import optim
 
 
 class MLPClassifierTrainer(

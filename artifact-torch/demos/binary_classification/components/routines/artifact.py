@@ -12,6 +12,7 @@ from artifact_experiment.binary_classification.validation_plan import (
     BinaryClassificationScoreType,
 )
 from artifact_torch.binary_classification.routine import BinaryClassificationRoutine
+
 from demos.binary_classification.config.constants import (
     ARTIFACT_VALIDATION_PERIOD,
     CLASSIFICATION_THRESHOLD,
@@ -66,7 +67,7 @@ class DemoBinaryClassificationRoutine(BinaryClassificationRoutine[MLPClassificat
         return ARTIFACT_VALIDATION_PERIOD
 
     @classmethod
-    def _get_generation_params(cls) -> MLPClassificationParams:
+    def _get_classification_params(cls) -> MLPClassificationParams:
         return MLPClassificationParams(threshold=CLASSIFICATION_THRESHOLD)
 
     @classmethod

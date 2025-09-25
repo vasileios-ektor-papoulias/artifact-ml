@@ -7,6 +7,7 @@ from artifact_torch.base.model.base import Model
 from artifact_torch.libs.components.callbacks.batch.loss import (
     BatchLossCallback,
 )
+
 from demos.binary_classification.config.constants import BATCH_LOSS_PERIOD
 from demos.binary_classification.model.io import MLPClassifierInput, MLPClassifierOutput
 

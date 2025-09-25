@@ -9,4 +9,5 @@ class EpochBoundStopper(EarlyStopper[StopperUpdateData]):
         super().__init__(max_n_epochs=max_n_epochs)
 
     def stopping_condition_met(self) -> bool:
-        return self._max_epochs_exceeded()
+        max_epochs_exceeded = self._max_epochs_exceeded()
+        return max_epochs_exceeded

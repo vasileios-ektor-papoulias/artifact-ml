@@ -47,7 +47,7 @@ class BinaryClassificationRoutine(
     ],
     Generic[ClassificationParamsT],
 ):
-    _resource_export_prefix = "synthetic"
+    _resource_export_prefix = "classification"
 
     @classmethod
     def build(
@@ -118,15 +118,15 @@ class BinaryClassificationRoutine(
         true = {str(identifier): category for identifier, category in true.items()}
         predicted = artifact_resources.classification_results.id_to_predicted_category
         predicted = {str(identifier): category for identifier, category in predicted.items()}
-        probs = artifact_resources.classification_results.id_to_probs
-        probs = {str(identifier): arr_probs.tolist() for identifier, arr_probs in probs.items()}
+        probs = artifact_resources.classification_results.id_to_prob_pos
+        probs = {str(identifier): prob for identifier, prob in probs.items()}
         dict_resources = {
             identifier: {
                 "true": true.get(identifier),
                 "predicted": predicted.get(identifier),
-                "probs": probs.get(identifier),
+                "prob_pos": probs.get(identifier),
             }
-            for identifier in set(true) | set(predicted) | set(probs)
+            for identifier in sorted(set(true) | set(predicted) | set(probs), key=int)
         }
         MetadataExporter.export(
             data=dict_resources,
