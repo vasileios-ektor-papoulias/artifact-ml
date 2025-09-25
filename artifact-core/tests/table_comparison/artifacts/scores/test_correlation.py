@@ -8,7 +8,7 @@ from artifact_core.libs.implementation.tabular.correlations.calculator import (
     CorrelationCalculator,
 )
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.libs.utils.vector_distance_calculator import VectorDistanceMetric
+from artifact_core.libs.utils.calculators.vector_distance_calculator import VectorDistanceMetric
 from artifact_core.table_comparison.artifacts.base import DatasetComparisonArtifactResources
 from artifact_core.table_comparison.artifacts.scores.correlation import (
     CorrelationDistanceScore,

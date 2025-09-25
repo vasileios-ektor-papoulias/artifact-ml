@@ -1,27 +1,7 @@
-import datetime
-from typing import Dict, List, Protocol, Type, Union
-
-import numpy as np
-import pandas as pd
+from typing import Dict, List, Protocol
 
 from artifact_core.base.artifact_dependencies import ResourceSpecProtocol
-
-TabularDataDType = Union[
-    Type[int],
-    Type[float],
-    Type[str],
-    Type[bool],
-    Type[object],
-    Type[np.generic],
-    Type[np.dtype],
-    Type[pd.api.extensions.ExtensionDtype],
-    Type[datetime.date],
-    Type[datetime.datetime],
-    Type[pd.Timestamp],
-    Type[pd.DatetimeIndex],
-    Type[pd.Timedelta],
-    Type[pd.TimedeltaIndex],
-]
+from artifact_core.libs.resource_spec.tabular.types import TabularDataDType
 
 
 class TabularDataSpecProtocol(ResourceSpecProtocol, Protocol):

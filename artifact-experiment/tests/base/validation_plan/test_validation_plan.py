@@ -95,6 +95,7 @@ def test_artifact_result_accessors(
     for handler in mock_callback_handlers.values():
         handler.tracking_client = None
     plan = DummyValidationPlan(
+        resource_spec=DummyResourceSpec(),
         score_handler=mock_callback_handlers["scores"],
         array_handler=mock_callback_handlers["arrays"],
         plot_handler=mock_callback_handlers["plots"],
@@ -115,6 +116,7 @@ def test_execute(
 ):
     callback_resources, _, _ = resources_factory()
     plan = DummyValidationPlan(
+        resource_spec=DummyResourceSpec(),
         score_handler=mock_callback_handlers["scores"],
         array_handler=mock_callback_handlers["arrays"],
         plot_handler=mock_callback_handlers["plots"],
@@ -165,6 +167,7 @@ def test_clear_cache(
     for handler in mock_callback_handlers.values():
         handler.tracking_client = None
     plan = DummyValidationPlan(
+        resource_spec=DummyResourceSpec(),
         score_handler=mock_callback_handlers["scores"],
         array_handler=mock_callback_handlers["arrays"],
         plot_handler=mock_callback_handlers["plots"],

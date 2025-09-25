@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Literal, Type, TypeVar, Union
+from typing import Type, TypeVar, Union
 
 import pandas as pd
 from matplotlib.figure import Figure
@@ -7,7 +7,9 @@ from matplotlib.figure import Figure
 from artifact_core.base.artifact_dependencies import ArtifactHyperparams
 from artifact_core.libs.implementation.tabular.correlations.calculator import (
     CategoricalAssociationType,
+    CategoricalAssociationTypeLiteral,
     ContinuousAssociationType,
+    ContinuousAssociationTypeLiteral,
 )
 from artifact_core.libs.implementation.tabular.correlations.heatmap_plotter import (
     CorrelationHeatmapPlotter,
@@ -20,12 +22,13 @@ from artifact_core.table_comparison.registries.plots.registry import (
     TableComparisonPlotType,
 )
 
-CorrelationHeatmapJuxtapositionT = TypeVar(
-    "CorrelationHeatmapJuxtapositionT", bound="CorrelationHeatmapJuxtapositionPlotHyperparams"
+CorrelationHeatmapJuxtapositionPlotHyperparamsT = TypeVar(
+    "CorrelationHeatmapJuxtapositionPlotHyperparamsT",
+    bound="CorrelationHeatmapJuxtapositionPlotHyperparams",
 )
 
 
-@TableComparisonPlotRegistry.register_artifact_config(
+@TableComparisonPlotRegistry.register_artifact_hyperparams(
     TableComparisonPlotType.CORRELATION_HEATMAP_JUXTAPOSITION
 )
 @dataclass(frozen=True)
@@ -35,14 +38,14 @@ class CorrelationHeatmapJuxtapositionPlotHyperparams(ArtifactHyperparams):
 
     @classmethod
     def build(
-        cls: Type[CorrelationHeatmapJuxtapositionT],
+        cls: Type[CorrelationHeatmapJuxtapositionPlotHyperparamsT],
         categorical_association_type: Union[
-            CategoricalAssociationType, Literal["THEILS_U"], Literal["CRAMERS_V"]
+            CategoricalAssociationType, CategoricalAssociationTypeLiteral
         ],
         continuous_association_type: Union[
-            ContinuousAssociationType, Literal["PEARSON"], Literal["SPEARMAN"], Literal["KENDALL"]
+            ContinuousAssociationType, ContinuousAssociationTypeLiteral
         ],
-    ) -> CorrelationHeatmapJuxtapositionT:
+    ) -> CorrelationHeatmapJuxtapositionPlotHyperparamsT:
         if isinstance(categorical_association_type, str):
             categorical_association_type = CategoricalAssociationType[categorical_association_type]
         if isinstance(continuous_association_type, str):

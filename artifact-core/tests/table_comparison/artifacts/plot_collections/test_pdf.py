@@ -3,7 +3,7 @@ from unittest.mock import ANY
 
 import pandas as pd
 from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
-from artifact_core.libs.implementation.tabular.pdf.overlaid_plotter import OverlaidPDFPlotter
+from artifact_core.libs.implementation.tabular.pdf.overlaid_plotter import TabularOverlaidPDFPlotter
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.base import (
     DatasetComparisonArtifactResources,
@@ -28,7 +28,7 @@ def test_compute(
         "cat_2": Figure(),
     }
     patch_get_overlaid_pdf_plot_collection = mocker.patch.object(
-        target=OverlaidPDFPlotter,
+        target=TabularOverlaidPDFPlotter,
         attribute="get_overlaid_pdf_plot_collection",
         return_value=fake_plots,
     )

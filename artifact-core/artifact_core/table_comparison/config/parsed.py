@@ -3,10 +3,10 @@ import os
 from pathlib import Path
 from typing import Any, Dict
 
-from artifact_core.libs.utils.config_utils import (
+from artifact_core.libs.utils.system.config_utils import (
     ConfigMerger,
     ConfigOverrideLocator,
-    EngineConfigType,
+    DomainToolkitConfigType,
 )
 
 ARTIFACT_CORE_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -16,19 +16,19 @@ CONFIG_FILE = CONFIG_DIR / "raw.json"
 with CONFIG_FILE.open() as f:
     _dict_artifact_configs: Dict[str, Any] = json.load(f)
 
+_user_override_dir = ConfigOverrideLocator.get_config_override_dir()
 _user_override = ConfigOverrideLocator.get_config_override(
-    engine_config_type=EngineConfigType.TABLE_COMPARISON
+    domain_toolkit_config_type=DomainToolkitConfigType.TABLE_COMPARISON
 )
-
 _merged_artifact_configs = ConfigMerger.merge(
     base_config=_dict_artifact_configs, override=_user_override
 )
 
-
-NATIVE_ARTIFACT_PATH = os.path.join(
-    ARTIFACT_CORE_ROOT, _merged_artifact_configs.get("native_artifact_path")
-)
-CUSTOM_ARTIFACT_PATH = _merged_artifact_configs.get("custom_artifact_path")
+NATIVE_ARTIFACT_PATH = _merged_artifact_configs.get("native_artifact_path", "")
+NATIVE_ARTIFACT_PATH = os.path.join(ARTIFACT_CORE_ROOT, NATIVE_ARTIFACT_PATH)
+CUSTOM_ARTIFACT_PATH = _merged_artifact_configs.get("custom_artifact_path", None)
+if _user_override_dir is not None and CUSTOM_ARTIFACT_PATH is not None:
+    CUSTOM_ARTIFACT_PATH = os.path.join(_user_override_dir.parent, CUSTOM_ARTIFACT_PATH)
 DICT_SCORES_CONFIG = _merged_artifact_configs.get("scores", {})
 DICT_ARRAYS_CONFIG = _merged_artifact_configs.get("arrays", {})
 DICT_PLOTS_CONFIG = _merged_artifact_configs.get("plots", {})

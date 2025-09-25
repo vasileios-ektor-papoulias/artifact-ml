@@ -204,13 +204,13 @@ registreeT = TypeVar("registreeT")
             "Artifact type CUSTOM_SCORE_ARTIFACT already registered",
         ),
         (
-            DummyScoreRegistry.register_artifact_config,
+            DummyScoreRegistry.register_artifact_hyperparams,
             DummyScoreType.DUMMY_SCORE_ARTIFACT,
             UnregisteredArtifactHyperparams,
             "Artifact type DUMMY_SCORE_ARTIFACT already registered",
         ),
         (
-            DummyScoreRegistry.register_custom_artifact_config,
+            DummyScoreRegistry.register_custom_artifact_hyperparams,
             "CUSTOM_SCORE_ARTIFACT",
             UnregisteredArtifactHyperparams,
             "Artifact type CUSTOM_SCORE_ARTIFACT already registered",

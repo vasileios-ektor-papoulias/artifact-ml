@@ -14,7 +14,7 @@ from artifact_core.table_comparison.registries.score_collections.registry import
 )
 
 
-@TableComparisonScoreCollectionRegistry.register_artifact_config(
+@TableComparisonScoreCollectionRegistry.register_artifact_hyperparams(
     TableComparisonScoreCollectionType.JS_DISTANCE
 )
 @dataclass(frozen=True)

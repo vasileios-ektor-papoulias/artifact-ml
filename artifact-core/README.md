@@ -435,25 +435,25 @@ When using `artifact-core` as a package in your own project, you can override th
 
 #### How Configuration Override Works
 
-1. Create a `.artifact` directory in your project root
-2. Create a configuration file named after the engine type (e.g., `table_comparison.json`)
+1. Create a `.artifact-ml` directory in your project root
+2. Create a configuration file named after the domain toolkit of interest (e.g., `table_comparison.json`)
 3. Define your custom configuration in JSON format
 4. Your configuration override will be automatically detected and merged with the default one
 
 #### Example: Overriding Table Comparison Configuration
 
-Create a file at `.artifact/table_comparison.json` in your project root:
+Create a file at `.artifact-ml/table_comparison.json` in your project root:
 
 ```json
 {
   "scores": {
-    "mean_js_distance": {
+    "MEAN_JS_DISTANCE": {
       "n_bins_cts_histogram": 200,
       "categorical_only": true
     }
   },
   "plots": {
-    "tsne_projection_plot": {
+    "TSNE_JUXTAPOSITION": {
       "perplexity": 50,
       "learning_rate": 200,
       "max_iter": 2000
@@ -462,7 +462,7 @@ Create a file at `.artifact/table_comparison.json` in your project root:
 }
 ```
 
-This configuration will override the default settings for the `mean_js_distance` score and the `tsne_projection_plot` plot, while keeping the default settings for all other artifacts.
+This configuration will override the default settings for the `MEAN_JS_DISTANCE` score and the `TSNE_JUXTAPOSITION` plot, while keeping the default settings for all other artifacts.
 
 #### Configuration Structure
 
@@ -492,13 +492,13 @@ Your configuration will be merged with the default one automatically, with your 
 
 `artifact-core` supports project-specific custom artifacts, enabling users to extend domain toolkits with specialized validation logic tailored to their unique requirements.
 
-Custom artifacts integrate seamlessly with the existing framework infrastructure while providing complete flexibility for domain-specific validation needs.
+Custom artifacts integrate seamlessly with the existing framework infrastructure while providing complete flexibility.
 
 #### Creating Custom Artifacts
 
 **A. Configure Custom Artifact Path**
 
-Update the relevant domain toolkit configuration file (see the relevant section above) to point to your custom artifacts directory.
+Update the relevant domain toolkit configuration file (see the relevant section above) to point to your custom artifacts directory. Note that the required path is to be specified relative to the parent of the .artifact-ml folder hosting the relevant config file---typically your project root. The setup is clarified in the artifact-core demo.
 
 ```json
 {
@@ -546,7 +546,7 @@ class CustomScoreHyperparams(ArtifactHyperparams):
     threshold: float
     use_weights: bool
 
-@TableComparisonScoreRegistry.register_custom_artifact_config("CUSTOM_SCORE")
+@TableComparisonScoreRegistry.register_custom_artifact_hyperparams("CUSTOM_SCORE")
 @dataclass
 class CustomScoreHyperparams(ArtifactHyperparams):
     threshold: float
@@ -572,7 +572,7 @@ class CustomScore(TableComparisonScore[CustomScoreHyperparams]):
 
 #### Using Custom Artifacts
 
-Once configured, custom artifacts can be used exactly like built-in artifacts:
+Once configured, custom artifacts can be used exactly like built-in ones:
 
 ```python
 # Use custom artifact with string identifier
@@ -585,7 +585,7 @@ custom_score = engine.produce_dataset_comparison_score(
 
 #### Contributing Custom Artifacts
 
-If you develop a custom artifact that could benefit the broader community, consider contributing it to the framework as a built-in artifact. Well-designed validation metrics that address common use cases are valuable additions to the artifact ecosystem.
+If you develop a custom artifact that could benefit the broader community, consider contributing it. Well-designed validation artifacts that address common use cases are valuable additions to the ecosystem.
 
 To contribute a custom artifact, submit a pull request following the [contribution guidelines](https://github.com/vasileios-ektor-papoulias/artifact-ml/blob/main/README.md).
 
@@ -623,7 +623,7 @@ from artifact_core.base.artifact_dependencies import ArtifactHyperparams
 from artifact_core.table_comparison.registries.scores.registry import TableComparisonScoreRegistry
 
 
-@TableComparisonScoreRegistry.register_artifact_config(
+@TableComparisonScoreRegistry.register_artifact_hyperparams(
     TableComparisonScoreType.MY_CUSTOM_SCORE
     )
 @dataclass

@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.cdf.overlaid_plotter import OverlaidCDFPlotter
+from artifact_core.libs.implementation.tabular.cdf.overlaid_plotter import TabularOverlaidCDFPlotter
 from matplotlib.figure import Figure
 
 
@@ -24,7 +24,7 @@ def test_get_overlaid_cdf_plot_collection(
     expected_plot_count: int,
 ):
     df_real, df_synthetic = df_pair_dispatcher
-    result = OverlaidCDFPlotter.get_overlaid_cdf_plot_collection(
+    result = TabularOverlaidCDFPlotter.get_overlaid_cdf_plot_collection(
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
         ls_cts_features=cts_features,
@@ -66,7 +66,7 @@ def test_get_overlaid_cdf_plot(
     expected_axes_count: int,
 ):
     df_real, df_synthetic = df_pair_dispatcher
-    result = OverlaidCDFPlotter.get_overlaid_cdf_plot(
+    result = TabularOverlaidCDFPlotter.get_overlaid_cdf_plot(
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
         ls_cts_features=cts_features,

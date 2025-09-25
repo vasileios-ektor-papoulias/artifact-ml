@@ -2,7 +2,7 @@ from typing import Dict, List
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.pdf.plotter import PDFPlotter
+from artifact_core.libs.implementation.tabular.pdf.plotter import TabularPDFPlotter
 from matplotlib.figure import Figure
 
 
@@ -99,7 +99,7 @@ def test_get_pdf_plot_collection(
     expected_plot_count: int,
 ):
     df = df_dispatcher
-    result = PDFPlotter.get_pdf_plot_collection(
+    result = TabularPDFPlotter.get_pdf_plot_collection(
         dataset=df,
         ls_features_order=features_order,
         ls_cts_features=cts_features,
@@ -214,7 +214,7 @@ def test_get_pdf_plot(
     expected_axes_count: int,
 ):
     df = df_dispatcher
-    result = PDFPlotter.get_pdf_plot(
+    result = TabularPDFPlotter.get_pdf_plot(
         dataset=df,
         ls_features_order=features_order,
         ls_cts_features=cts_features,

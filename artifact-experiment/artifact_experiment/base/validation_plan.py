@@ -58,6 +58,7 @@ class ValidationPlan(
 ):
     def __init__(
         self,
+        resource_spec: ResourceSpecProtocolT,
         score_handler: ScoreCallbackHandler[
             ArtifactScoreCallback[ArtifactResourcesT, ResourceSpecProtocolT],
             ArtifactCallbackResources[ArtifactResourcesT],
@@ -83,6 +84,7 @@ class ValidationPlan(
             ArtifactCallbackResources[ArtifactResourcesT],
         ],
     ):
+        self._resource_spec = resource_spec
         self._score_handler = score_handler
         self._array_handler = array_handler
         self._plot_handler = plot_handler
@@ -115,6 +117,7 @@ class ValidationPlan(
             resource_spec=resource_spec, tracking_client=tracking_client
         )
         validation_plan = cls(
+            resource_spec=resource_spec,
             score_handler=score_handler,
             array_handler=array_handler,
             plot_handler=plot_handler,

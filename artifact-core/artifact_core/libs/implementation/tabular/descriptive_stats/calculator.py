@@ -1,26 +1,18 @@
-from enum import Enum
 from typing import Dict, List, Set
 
 import numpy as np
 import pandas as pd
 
-from artifact_core.libs.utils.score_juxtaposition import (
-    JuxtapositionArrayCalculator,
+from artifact_core.libs.utils.calculators.descriptive_stats_calculator import (
+    DescriptiveStatistic,
+    DescriptiveStatsCalculator,
+)
+from artifact_core.libs.utils.calculators.score_juxtaposition_calculator import (
+    ScoreJuxtapositionCalculator,
 )
 
 
-class DescriptiveStatistic(Enum):
-    MEAN = "mean"
-    STD = "std"
-    VARIANCE = "variance"
-    MEDIAN = "median"
-    Q1 = "q1"
-    Q3 = "q3"
-    MIN = "min"
-    MAX = "max"
-
-
-class DescriptiveStatsCalculator:
+class TableStatsCalculator:
     @classmethod
     def compute_juxtaposition(
         cls,
@@ -37,7 +29,7 @@ class DescriptiveStatsCalculator:
             ls_cts_features=ls_cts_features,
             stat=stat,
         )
-        dict_juxtaposition_arrays = JuxtapositionArrayCalculator.juxtapose_score_collections(
+        dict_juxtaposition_arrays = ScoreJuxtapositionCalculator.juxtapose_score_collections(
             dict_scores_real=dict_stats_real,
             dict_scores_synthetic=dict_stats_synthetic,
             ls_keys=ls_cts_features,
@@ -51,7 +43,9 @@ class DescriptiveStatsCalculator:
         ls_cts_features: List[str],
         stat: DescriptiveStatistic,
     ) -> Dict[str, float]:
-        dict_stats = cls._compute_stat_for_cts_features(df, ls_cts_features, stat)
+        dict_stats = cls._compute_stat_for_cts_features(
+            df=df, ls_cts_features=ls_cts_features, stat=stat
+        )
         return dict_stats
 
     @classmethod
@@ -66,29 +60,10 @@ class DescriptiveStatsCalculator:
         )
         dict_stats = {}
         for feature in ls_cts_features:
-            dict_stats[feature] = DescriptiveStatsCalculator._compute_stat(df[feature], stat)
+            dict_stats[feature] = DescriptiveStatsCalculator.compute_stat(
+                sr_cts_data=df[feature], stat=stat
+            )
         return dict_stats
-
-    @staticmethod
-    def _compute_stat(sr_cts_data: pd.Series, stat: DescriptiveStatistic) -> float:
-        if stat == DescriptiveStatistic.MEAN:
-            return sr_cts_data.mean()
-        elif stat == DescriptiveStatistic.STD:
-            return sr_cts_data.std()
-        elif stat == DescriptiveStatistic.VARIANCE:
-            return sr_cts_data.var()
-        elif stat == DescriptiveStatistic.MEDIAN:
-            return sr_cts_data.median()
-        elif stat == DescriptiveStatistic.Q1:
-            return sr_cts_data.quantile(0.25)
-        elif stat == DescriptiveStatistic.Q3:
-            return sr_cts_data.quantile(0.75)
-        elif stat == DescriptiveStatistic.MIN:
-            return sr_cts_data.min()
-        elif stat == DescriptiveStatistic.MAX:
-            return sr_cts_data.max()
-        else:
-            raise ValueError(f"Unsupported statistic: {stat}")
 
     @staticmethod
     def _validate_no_missing_cols(

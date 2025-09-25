@@ -8,7 +8,7 @@ from artifact_core.libs.implementation.tabular.projections.base.plotter import (
     ProjectionPlotter,
     ProjectionPlotterConfig,
 )
-from artifact_core.libs.utils.plot_combiner import PlotCombinationConfig
+from artifact_core.libs.utils.plotters.plot_combiner import PlotCombinationConfig
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 

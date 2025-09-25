@@ -23,7 +23,7 @@ from artifact_experiment.base.callbacks.tracking import (
     ScoreCollectionCallbackHandler,
 )
 from artifact_experiment.table_comparison.callback_factory import TableComparisonCallbackFactory
-from artifact_experiment.table_comparison.resources import TableComparisonCallbackResources
+from artifact_experiment.table_comparison.callback_resources import TableComparisonCallbackResources
 from pytest_mock import MockerFixture
 
 from tests.table_comparison.validation_plan.dummy.validation_plan import DummyTableComparisonPlan
@@ -132,6 +132,7 @@ def test_execute(
 )
 def test_execute_runs_all_handlers(
     mocker: MockerFixture,
+    tabular_data_spec: TabularDataSpec,
     handlers_factory: Callable[
         [],
         Tuple[
@@ -147,7 +148,7 @@ def test_execute_runs_all_handlers(
     dataset_synthetic_dispatcher: pd.DataFrame,
 ):
     tup_handlers = handlers_factory()
-    plan = DummyTableComparisonPlan(*tup_handlers)
+    plan = DummyTableComparisonPlan(tabular_data_spec, *tup_handlers)
     df_real = dataset_real_dispatcher
     df_synthetic = dataset_synthetic_dispatcher
     expected_callback_resources = TableComparisonCallbackResources.build(

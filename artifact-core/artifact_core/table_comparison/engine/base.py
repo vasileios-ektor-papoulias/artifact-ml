@@ -10,21 +10,21 @@ from artifact_core.libs.resource_spec.tabular.protocol import (
     TabularDataSpecProtocol,
 )
 
-scoreTypeT = TypeVar("scoreTypeT", bound="ArtifactType")
-arrayTypeT = TypeVar("arrayTypeT", bound="ArtifactType")
-plotTypeT = TypeVar("plotTypeT", bound="ArtifactType")
-scoreCollectionTypeT = TypeVar("scoreCollectionTypeT", bound="ArtifactType")
-arrayCollectionTypeT = TypeVar("arrayCollectionTypeT", bound="ArtifactType")
-plotCollectionTypeT = TypeVar("plotCollectionTypeT", bound="ArtifactType")
+ScoreTypeT = TypeVar("ScoreTypeT", bound=ArtifactType)
+ArrayTypeT = TypeVar("ArrayTypeT", bound=ArtifactType)
+PlotTypeT = TypeVar("PlotTypeT", bound=ArtifactType)
+ScoreCollectionTypeT = TypeVar("ScoreCollectionTypeT", bound=ArtifactType)
+ArrayCollectionTypeT = TypeVar("ArrayCollectionTypeT", bound=ArtifactType)
+PlotCollectionTypeT = TypeVar("PlotCollectionTypeT", bound=ArtifactType)
 
 
 TableComparisonEngineBase = DatasetComparisonEngine[
     pd.DataFrame,
     TabularDataSpecProtocol,
-    scoreTypeT,
-    arrayTypeT,
-    plotTypeT,
-    scoreCollectionTypeT,
-    arrayCollectionTypeT,
-    plotCollectionTypeT,
+    ScoreTypeT,
+    ArrayTypeT,
+    PlotTypeT,
+    ScoreCollectionTypeT,
+    ArrayCollectionTypeT,
+    PlotCollectionTypeT,
 ]

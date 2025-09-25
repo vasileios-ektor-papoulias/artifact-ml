@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from artifact_core.libs.utils.package_importer import PackageImporter
+from artifact_core.libs.utils.system.package_importer import PackageImporter
 
 from tests.base.dummy_artifact_toolkit.artifact_dependencies import (
     DummyArtifactResources,
@@ -22,4 +22,3 @@ from tests.base.dummy_artifact_toolkit.registries import (
 )
 
 PackageImporter.import_all_from_package_path(path=Path(__file__).resolve().parent)
-print("banlet")

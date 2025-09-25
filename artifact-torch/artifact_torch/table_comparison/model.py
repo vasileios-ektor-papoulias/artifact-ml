@@ -9,8 +9,8 @@ from artifact_torch.base.model.io import (
 )
 from artifact_torch.core.model.generative import GenerationParams, GenerativeModel
 
-ModelInputTContr = TypeVar("ModelInputTContr", bound="ModelInput", contravariant=True)
-ModelOutputTCov = TypeVar("ModelOutputTCov", bound="ModelOutput", covariant=True)
+ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
+ModelOutputTCov = TypeVar("ModelOutputTCov", bound=ModelOutput, covariant=True)
 GenerationParamsT = TypeVar("GenerationParamsT", bound=GenerationParams)
 
 

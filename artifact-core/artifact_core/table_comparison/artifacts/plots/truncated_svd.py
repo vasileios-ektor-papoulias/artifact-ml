@@ -17,7 +17,7 @@ from artifact_core.table_comparison.registries.plots.registry import (
 )
 
 
-@TableComparisonPlotRegistry.register_artifact_config(
+@TableComparisonPlotRegistry.register_artifact_hyperparams(
     TableComparisonPlotType.TRUNCATED_SVD_JUXTAPOSITION
 )
 @dataclass(frozen=True)

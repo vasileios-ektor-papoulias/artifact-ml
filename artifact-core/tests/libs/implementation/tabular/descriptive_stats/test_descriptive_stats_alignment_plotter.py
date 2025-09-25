@@ -155,7 +155,7 @@ def test_get_stat_comparison_plot(
     expected_ylabel: str,
 ):
     df_real, df_synthetic = df_pair_dispatcher
-    result = DescriptiveStatsAlignmentPlotter.get_single_stat_alignment_plot(
+    result = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
         ls_cts_features=ls_cts_features,

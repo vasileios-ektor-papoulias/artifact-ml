@@ -1,12 +1,12 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from matplotlib.figure import Figure
 
-from artifact_core.libs.utils.plot_combiner import (
+from artifact_core.libs.utils.plotters.plot_combiner import (
     PlotCombinationConfig,
     PlotCombiner,
 )
@@ -16,7 +16,7 @@ from artifact_core.libs.utils.plot_combiner import (
 class ProjectionPlotterConfig:
     scatter_color: str = "olive"
     failed_suffix: str = "Projection failed (rank or numeric issues)."
-    figsize: tuple[int, int] = (6, 6)
+    figsize: Tuple[int, int] = (6, 6)
     title_prefix: str = "2D Projection"
     combined_config: PlotCombinationConfig = PlotCombinationConfig(
         n_cols=2,

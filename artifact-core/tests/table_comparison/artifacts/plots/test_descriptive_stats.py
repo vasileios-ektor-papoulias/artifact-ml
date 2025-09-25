@@ -85,7 +85,7 @@ def test_stat_comparison_plots(
     fake_plot = Figure()
     mock_get_stat_comparison_plot = mocker.patch.object(
         DescriptiveStatsAlignmentPlotter,
-        "get_single_stat_alignment_plot",
+        "get_stat_alignment_plot",
         return_value=fake_plot,
     )
     artifact = artifact_class(resource_spec=resource_spec, hyperparams=NO_ARTIFACT_HYPERPARAMS)

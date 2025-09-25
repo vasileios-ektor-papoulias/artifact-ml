@@ -2,7 +2,9 @@ from typing import Dict, List, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.pdf.overlaid_plotter import OverlaidPDFPlotter
+from artifact_core.libs.implementation.tabular.pdf.overlaid_plotter import (
+    TabularOverlaidPDFPlotter,
+)
 from matplotlib.figure import Figure
 
 
@@ -62,7 +64,7 @@ def test_get_overlaid_pdf_plot_collection(
     expected_plot_count: int,
 ):
     df_real, df_synthetic = df_pair_dispatcher
-    result = OverlaidPDFPlotter.get_overlaid_pdf_plot_collection(
+    result = TabularOverlaidPDFPlotter.get_overlaid_pdf_plot_collection(
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
         ls_features_order=features_order,
@@ -145,7 +147,7 @@ def test_get_overlaid_pdf_plot(
     expected_axes_count: int,
 ):
     df_real, df_synthetic = df_pair_dispatcher
-    result = OverlaidPDFPlotter.get_overlaid_pdf_plot(
+    result = TabularOverlaidPDFPlotter.get_overlaid_pdf_plot(
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
         ls_features_order=features_order,

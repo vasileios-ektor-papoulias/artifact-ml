@@ -13,7 +13,9 @@ from artifact_core.table_comparison.registries.scores.registry import (
 )
 
 
-@TableComparisonScoreRegistry.register_artifact_config(TableComparisonScoreType.MEAN_JS_DISTANCE)
+@TableComparisonScoreRegistry.register_artifact_hyperparams(
+    TableComparisonScoreType.MEAN_JS_DISTANCE
+)
 @dataclass(frozen=True)
 class MeanJSDistanceScoreHyperparams(ArtifactHyperparams):
     n_bins_cts_histogram: int
