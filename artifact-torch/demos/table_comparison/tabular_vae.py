@@ -6,6 +6,7 @@ from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecPro
 from artifact_core.libs.resource_spec.tabular.spec import TabularDataSpec
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_torch.base.data.data_loader import DataLoader
+
 from demos.table_comparison.components.routines.artifact import DemoTableComparisonRoutine
 from demos.table_comparison.config.constants import (
     BATCH_SIZE,
