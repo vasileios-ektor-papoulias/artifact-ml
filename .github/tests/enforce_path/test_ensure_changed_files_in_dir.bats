@@ -14,15 +14,30 @@ setup() {
   mkdir -p "$FAKE_BIN_DIR"
   cp -r "$REPO_ROOT/.github" "$FAKE_BIN_DIR/"
 
-  cat << EOF > "$FAKE_BIN_DIR/git"
+  cat << 'EOF' > "$FAKE_BIN_DIR/git"
 #!/bin/bash
 # Fake git command for testing ensure_changed_files_in_dir.sh.
-# It handles: git diff --name-only origin/<base_ref> origin/<head_ref>
-if [[ "\$@" == *"diff"* && "\$@" == *"--name-only"* ]]; then
-  echo "\$FAKE_DIFF_OUTPUT"
+
+set -euo pipefail
+
+# Simulate: git fetch --no-tags --prune --depth=2 origin <base_ref>
+if [[ "$1" == "fetch" ]]; then
   exit 0
 fi
-echo "Fake git: unhandled args: \$@" >&2
+
+# Simulate: git merge-base origin/<base_ref> HEAD
+if [[ "$1" == "merge-base" ]]; then
+  echo "BASECOMMIT123"
+  exit 0
+fi
+
+# Simulate: git diff --name-only <MB> HEAD
+if [[ "$1" == "diff" && " $* " == *" --name-only "* ]]; then
+  printf '%s\n' "${FAKE_DIFF_OUTPUT:-}"
+  exit 0
+fi
+
+echo "Fake git: unhandled args: $*" >&2
 exit 1
 EOF
   chmod +x "$FAKE_BIN_DIR/git"
@@ -53,18 +68,18 @@ teardown() {
 
 @test "returns 0 when all changed files are within the allowed component directory" {
   export FAKE_DIFF_OUTPUT=$'subrepo/file1.txt\nsubrepo/subdir/file2.txt'
-  run "scripts/enforce_path/ensure_changed_files_in_dir.sh" "subrepo" "base" "head"
+  run "scripts/enforce_path/ensure_changed_files_in_dir.sh" "subrepo" "base"
   [ "$status" -eq 0 ]
   combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
   echo "DEBUG: combined=[$combined]" >&2
-  [[ "$combined" == *"All changes are within the allowed cicd_sandbox/subrepo/"* ]]
+  [[ "$combined" == *"All changes are within the allowed subrepo/ directory."* ]]
 }
 
 @test "exits with error when there are changed files outside the allowed directory" {
   export FAKE_DIFF_OUTPUT=$'subrepo/file1.txt\nother/file2.txt'
-  run "scripts/enforce_path/ensure_changed_files_in_dir.sh" "subrepo" "base" "head"
+  run "scripts/enforce_path/ensure_changed_files_in_dir.sh" "subrepo" "base"
   [ "$status" -ne 0 ]
   combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
   echo "DEBUG: combined=[$combined]" >&2
-  [[ "$combined" == *"The following files are outside the allowed ./"* ]]
+  [[ "$combined" == *"The following files are outside the allowed ./subrepo/ directory:"* ]]
 }

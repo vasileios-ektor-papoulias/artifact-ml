@@ -8,6 +8,7 @@ from artifact_core.libs.resources.classification.binary_classification_results i
 )
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_torch.base.data.data_loader import DataLoader
+
 from demos.binary_classification.components.routines.artifact import DemoBinaryClassificationRoutine
 from demos.binary_classification.config.constants import (
     BATCH_SIZE,

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Usage: .github/scripts/linting/check_is_merge_commit.sh
 # Returns: 0 if the last commit is a merge commit, 1 otherwise

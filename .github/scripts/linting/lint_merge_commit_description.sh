@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Usage: .github/scripts/linting/lint_merge_commit_description.sh
 # Returns: 0 if the commit is not a merge commit or if it's a merge commit with a valid description

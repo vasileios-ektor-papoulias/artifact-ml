@@ -1,53 +1,76 @@
 # Artifact-ML CI/CD
 
-## Overview
+The present constitues a detailed exposition to the project's dev-ops processes and CI/CD pipelines.
 
-CI/CD for Artifact-ML relies on GitHub workflows.
+<p align="center">
+  <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
+</p>
 
-The present details:
 
-- the rules and conventions enforced by these workflows,
-- the standard process for contributing to the project,
-- CI/CD pipeline implementation details.
+## Dev-Ops Processes
 
-### Branch Naming Conventions
+### Repository Structure and Project Components
+Artifact-ML is comprised of three single-purpose subrepos---with independent versioning and release cycles---gathered under a single monorepo. These are:
+- `artifact-core`,
+- `artifact-experiment`,
+- `artifact-torch`.
+
+The project is correspondingly partitioned in the following *components* (providing a way to refer to designated project subdirectories):
+- `root` (files in the monorepo root, outside of all subrepo directories),
+- `core` (files in the `artifact-core` subrepo),
+- `experiment` (files in the `artifact-experiment` subrepo),
+- `torch` (files in the `artifact-torch` subrepo).
+
+- The `root` component can only be modified by merging `setup-root/*`/ `hotfix-root/*` directly into main (via PR).
+- The subrepo (`core`, `experiment`, `torch`) components can be modified by:
+   - merging `setup-<component_name>/*`/ `hotfix-<component_name>/*` directly into main (via PR),
+   - merging feautre/ fix branches into `dev-<component_name>` (via PR) and awaiting its periodic merge into main. 
+
+### Branches
+
+- **main**: `dev-<component_name>`
+   - Role: The most recent stable release of Artifact-ML.
+   - Update:
+      - Updated by periodically merging in `dev` branches---resulting in new version releases.
+      - Updated by merging in hotfix branches through pull request---resulting in new version releases.
+      - Updated by merging in setup branches through pull request---not resulting in new version releases.
 
 - **Development Branches**: `dev-<component_name>`
-  - Examples: `dev-core`, `dev-experiment`, `dev-torch`
-  - These are the component-specific development branches
-  - Feature and bug fix branches are merged into these branches
+   - Role: Component-specific development branches used as buffers for recent changes.
+   - Update: Updated by merging in feature/ fix branches through pull request. 
+   - Examples: `dev-core`, `dev-experiment`, `dev-torch`.
 
 - **Feature/Bug Fix Branches**: `feature/<some_name>` or similar
-  - Example: `feature/add-login`
-  - Used for regular development work
-  - Should only modify files in one component directory
-  - PRs from these branches target the corresponding `dev-<component_name>` branch
+   - Role: Used for regular development work.
+   - Update: Updated by direct pushes.
+   - Restrictions: Should only modify files in one component directory (enforced when opening a PR to a given `dev` branch).
+   - Example: `feature/add-login`
 
 - **Hotfix Branches**: `hotfix-<component_name>/<some_other_name>`
-  - Examples: `hotfix-core/fix-critical-bug`, `hotfix-experiment/fix-validation-issue`, `hotfix-torch/fix-model-loading`
-  - Used for urgent fixes that need to be applied directly to main
-  - Should only modify files in the specified component directory
-  - PRs from these branches target the main branch
+   - Role: Used for urgent fixes that need to be applied directly to main.
+   - Update: Updated by direct pushes.
+   - Restrictions: Should only modify files in one component directory (enforced when opening a PR to main).
+   - Examples: `hotfix-core/fix-critical-bug`, `hotfix-experiment/fix-validation-issue`, `hotfix-torch/fix-model-loading`
 
 - **Setup Branches**: `setup-<component_name>/<some_other_name>`
-  - Examples: `setup-core/initial-config`, `setup-experiment/update-docs`, `setup-torch/add-examples`
-  - Used for initial setup or configuration changes
-  - Should only modify files in the specified component directory
-  - PRs from these branches target the main branch
-  - Always use with "no-bump:" prefix as setup changes should not trigger version bumps
+   - Role: Used for initial setup or configuration changes
+   - Update: Updated by direct pushes.
+   - Restrictions: 
+      - Always use with "no-bump:" prefix as setup changes should not trigger version bumps.
+      - Should only modify files in the specified component directory (enforced when opening a PR to main).
+   - Examples: `setup-core/initial-config`, `setup-experiment/update-docs`, `setup-torch/add-examples`
 
-> **Note**: If your component name is "root" (changes affecting the monorepo root), you **must** use "no-bump:" prefix regardless of branch type. This is enforced by the PR title linting workflow. The 'root' component refers to the monorepo root and can only be modified by setup-root/* and hotfix-root/* branches. When working with the 'root' component, you cannot edit files in the component directories (artifact-core, artifact-experiment, artifact-torch) - changes must be made only to files outside of these directories.
+### Versioning and PRs to `main`
+In line with semantic versioniing, we adopt the following version bump types (bump types for short):
 
-### PR Title Conventions
+- `patch`: For backwards-compatible bug fixes (including hotfixes)
+- `minor`: For backwards-compatible feature additions
+- `major`: For backwards-incompatible changes
+- `no-bump`: For changes that don't require a version bump
 
-**Only PRs to main** must follow semantic versioning conventions:
+Version bumps occur automatically (via desginated github workflows). To achieve this, PRs targetting `main` must follow a naming convention:
 
-- `patch:` - For backwards-compatible bug fixes (including hotfixes)
-- `minor:` - For backwards-compatible feature additions
-- `major:` - For backwards-incompatible changes
-- `no-bump:` - For changes that don't require a version bump
-
-**Special rule for root component PRs**: Pull requests from branches with the "root" component (e.g., `hotfix-root/*` or `setup-root/*`) **must** use the "no-bump:" prefix. This is automatically enforced by the PR title linting workflow, which will reject any root component PR that doesn't use this prefix.
+their titles should be prefixed via `<bump_type>:`, (or `<bump_type>(scope):`).
 
 Examples of PR titles to main:
 - `patch: fix login validation bug`
@@ -61,203 +84,218 @@ You can also use scoped versions:
 - `patch(security): fix critical vulnerability` (for hotfixes)
 - `no-bump(docs): update README`
 
-PRs to development branches (e.g., dev-core, dev-experiment, dev-torch) do not need to follow these conventions and can have any descriptive title.
+Pull requests related to the `root` component (e.g. from `hotfix-root/*` or `setup-root/*`) **must** use the `no-bump` prefix (this is enforced by the relevant workflows).
 
-### CI/CD Pipeline Flow
+Periodically, designated contributors open PRs from component `dev` branches to `main`---resulting in associatd version bumps according to the above.
 
-1. **PR Creation and Validation**:
-   - PR titles are validated against the convention (enforced by `lint_pr_title_main.yml`)
-     - Must start with "patch:", "minor:", "major:", or "no-bump:"
-     - PRs from root component branches must use "no-bump:" prefix
-   - Branch names for PRs to main are validated to ensure they follow the naming convention (enforced by `enforce_branch_naming.yml`)
-   - For PRs to dev-core, only changes to files in the artifact-core directory are allowed
-   - For PRs to dev-experiment, only changes to files in the artifact-experiment directory are allowed
-   - For PRs to dev-torch, only changes to files in the artifact-torch directory are allowed
-   - For PRs from dev-core to main, only changes to files in the artifact-core directory are allowed
-   - For PRs from dev-experiment to main, only changes to files in the artifact-experiment directory are allowed
-   - For PRs from dev-torch to main, only changes to files in the artifact-torch directory are allowed
-   - For PRs from hotfix-core/* branches to main, only changes to files in the artifact-core directory are allowed
-   - For PRs from hotfix-experiment/* branches to main, only changes to files in the artifact-experiment directory are allowed
-   - For PRs from hotfix-torch/* branches to main, only changes to files in the artifact-torch directory are allowed
-   - For PRs from hotfix-root/* or setup-root/* branches to main, only changes to files outside of the component directories are allowed
-
-2. **Merge to Main**:
-   - Merge commits must follow specific conventions (enforced by lint workflows)
-   - PRs must come from branches named "dev-<component_name>", "hotfix-<component_name>/<some_other_name>", or "setup-<component_name>/<some_other_name>"
-   - Merge commits must include a description that starts with "patch:", "minor:", "major:", or "no-bump:"
-   - For hotfixes, use "patch:" in the commit description
-   - Non-merge commits are skipped by the linting workflows
-
-3. **Automated Version Bumping**:
-   - After a successful merge to main, CI workflows run to verify the code
-   - If all checks pass and the bump type is not "no-bump", the component version is automatically bumped based on:
-     - Component name (extracted from branch name)
-     - Bump type (extracted from commit description)
-   - A new git tag is created and pushed
-   - If the bump type is "no-bump", the version bump process is skipped
-
-### Contributing to the Project
+### Contribution Guidelines
 
 To contribute to Artifact-ML, follow these steps:
 
 1. **For Regular Development**:
-   - Create a feature branch (e.g., `feature/add-login`) from the appropriate dev branch (dev-core, dev-experiment, or dev-torch)
-   - Make your changes (only modify files within one component directory)
-   - Create a PR to the corresponding `dev-<component_name>` branch
-   - Designated reviewers will create a PR from the dev branch to main when features are ready
-   - The PR to main should have a title that starts with "patch:", "minor:", "major:", or "no-bump:"
-   - Use "no-bump:" for changes that don't require a version bump (e.g., documentation updates)
-   - Ensure the PR passes all CI checks
-   - When merged to main, the version will be automatically bumped based on the PR title (except for "no-bump:")
+   - select a component to work on (`core`, `experiment`, `torch`),
+   - create a feature branch (e.g., `feature/add-login`) from the appropriate `dev-<component_name>` branch (i.e. `dev-core`, `dev-experiment`, or `dev-torch`),
+   - implement your changes (only modify files within the selected component directory),
+   - ensure the PR passes all CI checks
+   - create a PR to `dev-<component_name>`,
+   - designated reviewers will periodically create a PR from `dev-<component_name>` to `main`.
 
 2. **For Urgent Hotfixes**:
-   - Create a branch named `hotfix-<component_name>/<descriptive-name>` from main (e.g., hotfix-core/fix-critical-bug)
-   - Make your changes (only modify files within the specified component directory)
-   - Create a PR directly to main with a title that starts with "patch:" or "no-bump:"
-   - Use "patch:" for fixes that require a version bump
-   - Use "no-bump:" for fixes that don't require a version bump
-   - Ensure the PR passes all CI checks
-   - When merged with "patch:", the version will be automatically bumped as a patch
-   - When merged with "no-bump:", no version bump will occur
+   - select a component to work on (`root`, `core`, `experiment`, `torch`),
+   - create a branch named `hotfix-<component_name>/<descriptive-name>` from main (e.g., hotfix-core/fix-critical-bug),
+   - implement your changes (only modify files within the selected component directory),
+   - create a PR directly to main with bump type `patch` or `no-bump` (see the aforementioned PR title convention)
+   - ensure the PR passes all CI checks.
 
 3. **For Setup and Configuration**:
-   - Create a branch named `setup-<component_name>/<descriptive-name>` from main (e.g., setup-experiment/update-docs)
-   - Make your changes (only modify files within the specified component directory)
-   - Create a PR directly to main with a title that starts with "no-bump:"
-   - Setup branches should always use "no-bump:" as they should not trigger version bumps
-   - Ensure the PR passes all CI checks
-   - When merged, no version bump will occur
+   - select a component to work on (`root`, `core`, `experiment`, `torch`),
+   - create a branch named `setup-<component_name>/<descriptive-name>` from main (e.g., setup-experiment/update-docs),
+   - implement your changes (only modify files within the selected component directory),
+   - create a PR directly to main with bump type `no-bump` (see the aforementioned PR title convention),
+   - ensure the PR passes all CI checks.
 
-4. **For Monorepo Root Changes**:
-   - Create a branch named `hotfix-root/<descriptive-name>` or `setup-root/<descriptive-name>` from main
-   - Make your changes (only modify files outside of the artifact-core, artifact-experiment, and artifact-torch directories)
-   - Create a PR directly to main with a title that starts with "no-bump:"
-   - Root component changes should always use "no-bump:" as they should not trigger version bumps
-   - Ensure the PR passes all CI checks
-   - When merged, no version bump will occur
+## CI/CD Pipeline
 
-## Implementation
+<p align="center">
+  <img src="./assets/github_actions.png" width="500" alt="GitHub Actions Logo">
+</p>
 
-The workflows enforcing our CI/CD conventions are powered by shell scripts. These are organized under the `.github/scripts` directory.
+CI/CD for Artifact-ML relies on GitHub actions.
+
+The github actions workflows powering our CI/CD pipeline delegate to shell scripts.
+
+The latter are organized under the `.github/scripts` directory.
 
 All scripts are unit-tested using the [Bats](https://github.com/bats-core/bats-core) framework.
 
 Tests are organized in `.github/tests`. Their directory structure mirrors that of `.github/scripts`.
 
-### GitHub Workflows
+### GitHub Actions Workflows
 
 Our CI/CD pipeline utilizes the following workflows:
 
-- `ci_core.yml` (workflow name: CI_CORE_ON_PUSH), `ci_experiment.yml` (workflow name: CI_EXPERIMENT_ON_PUSH), `ci_torch.yml` (workflow name: CI_TORCH_ON_PUSH) - Runs CI checks when changes are made to files in the respective component directories (artifact-core, artifact-experiment, artifact-torch) on branches other than main and their dev branches
-- `ci_dev_core.yml` (workflow name: CI_DEV_CORE), `ci_dev_experiment.yml` (workflow name: CI_DEV_EXPERIMENT), `ci_dev_torch.yml` (workflow name: CI_DEV_TORCH) - Runs CI checks when changes are made to the dev-core, dev-experiment, or dev-torch branches respectively
-- `ci_main.yml` (workflow name: CI_MAIN) - Runs CI checks when changes are made to the main branch
-- `lint_pr_title_main.yml` (workflow name: LINT_PR_TITLE) - Ensures PR titles to main follow the convention (patch:, minor:, major:, no-bump:) and enforces that PRs from root component branches must use "no-bump:" prefix
-- `lint_merge_commit_message.yml` (workflow name: LINT_MERGE_COMMIT_MESSAGE) - Verifies merge commits follow the branch naming convention (dev-<component_name>, hotfix-<component_name>/<some_other_name>, or setup-<component_name>/<some_other_name>)
-- `lint_merge_commit_description.yml` (workflow name: LINT_MERGE_COMMIT_DESCRIPTION) - Checks merge commit descriptions for version bump type
-- `bump_component_version.yml` (workflow name: BUMP_COMPONENT_VERSION) - Automatically bumps component versions based on commit descriptions (skips for no-bump)
-- `enforce_change_dirs_dev_core.yml`, `enforce_change_dirs_dev_experiment.yml`, `enforce_change_dirs_dev_torch.yml` (workflow name: ENFORCE_CHANGE_DIRS) - Ensures PRs to the respective dev branches only modify files in their corresponding directories
+- `ci_core.yml` (workflow name: CI_CORE_ON_PUSH): runs CI checks when changes are made to files in the `core` component directories on branches other than `main` and `dev-core`,
+- `ci_experiment.yml` (workflow name: CI_EXPERIMENT_ON_PUSH): runs CI checks when changes are made to files in the `experiment` component directories on branches other than `main` and `dev-experiment`,
+- `ci_torch.yml` (workflow name: CI_TORCH_ON_PUSH): runs CI checks when changes are made to files in the `torch` component directories on branches other than `main` and `dev-torch`,
+- `ci_dev_core.yml` (workflow name: CI_DEV_CORE): runs CI checks when changes are made to `dev-core`,
+- `ci_dev_experiment.yml` (workflow name: CI_DEV_EXPERIMENT): runs CI checks when changes are made to `dev-experiment`,
+ - `ci_dev_torch.yml` (workflow name: CI_DEV_TORCH): runs CI checks when changes are made to `dev-torch`,
+- `ci_main.yml` (workflow name: CI_MAIN): runs CI checks when changes are made to `main`,
+- `lint_pr_title_main.yml` (workflow name: LINT_PR_TITLE): ensures PR titles to `main` follow the convention aforementioned semantic versioning prefix convention and enforces that PRs from root component branches must use the `no-bump` bump type,
+- `lint_merge_commit_message.yml` (workflow name: LINT_MERGE_COMMIT_MESSAGE): validates the message carried by a merge commit on `main`---asserts that the message is of the form "Merge pull request #<`PR_number`> from <`username`>/<`branch-name`>" where `<branch_name>` is one of the appropriate source branches i.e. `dev-<component_name>`, `hotfix-<component_name>`/`<some_other_name>`, or `setup-<component_name>/<some_other_name>`.
+- `lint_merge_commit_description.yml` (workflow name: LINT_MERGE_COMMIT_DESCRIPTION): validates the description carried by a merge commit on `main`---asserts that the description is a valid PR title according to the aforementioned semantic versioning prefix convention.
+- `bump_component_version.yml` (workflow name: BUMP_COMPONENT_VERSION): automatically bumps component versions based on commit descriptions (skips for `no-bump`)---the version bump flow involves updating the relevant pyproject.toml file and pushing with a git tag annotating the version change.
+- `enforce_change_dirs_dev_core.yml` (workflow name: ENFORCE_CHANGE_DIRS): ensures PRs to `dev-core` only modify files in their corresponding directories,,
+``enforce_change_dirs_dev_experiment.yml` (workflow name: ENFORCE_CHANGE_DIRS): ensures PRs to `dev-experiment` only modify files in their corresponding directories,,
+- `enforce_change_dirs_dev_torch.yml` (workflow name: ENFORCE_CHANGE_DIRS): ensures PRs to `dev-torch` only modify files in their corresponding directories,
 - `enforce_change_dirs_main.yml` (workflow name: ENFORCE_CHANGE_DIRS) - Ensures:
-  - PRs from dev-core to main only modify files in the artifact-core directory
-  - PRs from dev-experiment to main only modify files in the artifact-experiment directory
-  - PRs from dev-torch to main only modify files in the artifact-torch directory
-  - PRs from hotfix-core/* branches to main only modify files in the artifact-core directory
-  - PRs from hotfix-experiment/* branches to main only modify files in the artifact-experiment directory
-  - PRs from hotfix-torch/* branches to main only modify files in the artifact-torch directory
-  - PRs from hotfix-root/* or setup-root/* branches to main only modify files outside of the component directories
-- `enforce_branch_naming.yml` (workflow name: ENFORCE_BRANCH_NAMING) - Ensures that branches being PR'd to main follow the naming convention: `dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`
+  - PRs from `dev-core` to `main` only modify files in the `artifact-core` directory
+  - PRs from `dev-experiment` to `main` only modify files in the `artifact-experiment` directory
+  - PRs from `dev-torch` to `main`only modify files in the `artifact-torch` directory
+  - PRs from `hotfix-core/*` branches to `main` only modify files in the `artifact-core` directory
+  - PRs from `hotfix-experiment/*` branches to `main` only modify files in the `artifact-experiment` directory
+  - PRs from `hotfix-torch/*` branches to `main` only modify files in the `artifact-torch` directory
+  - PRs from `hotfix-root/*` or `setup-root/*` branches to `main` only modify files outside of the subrepo component directories
+- `enforce_branch_naming.yml` (workflow name: ENFORCE_BRANCH_NAMING): ensures that branches being PR'd to `main` follow the naming convention: `dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`
 
 ### Scripts
 
+#### Execution Context
+
+All scripts are designed to run from the repository root.
+
+This means:
+
+- Workflow files (`.github/workflows/*.yml`) execute scripts using paths relative to the repository root (e.g., `.github/scripts/linting/check_is_merge_commit.sh`)
+- Scripts reference other scripts using paths relative to the repository root (e.g., `.github/scripts/linting/lint_commit_description.sh`)
+- Test files run scripts from the repository root context
+
+This approach follows GitHub Actions' standard execution context, where workflows run from the repository root. It makes the paths more intuitive and consistent, eliminating confusing double references to `.github` in paths.
+
 #### Linting Scripts (`.github/scripts/linting/`)
 
-- `check_is_merge_commit.sh` - Checks if a commit is a merge commit
-- `detect_bump_pattern.sh` - Detects version bump patterns in text
-- `extract_branch_info.sh` - Extracts branch type and component name from a branch name, returning a JSON-formatted string
-- `lint_branch_name.sh` - Checks if a branch name follows the required naming convention
-- `lint_commit_description.sh` - Lints commit descriptions
-- `lint_commit_message.sh` - Lints commit messages for branch naming convention
-- `lint_pr_title.sh` - Lints PR titles and enforces that PRs from root component branches must use "no-bump:" prefix
-- `lint_merge_commit_description.sh` - Higher-level script that only lints merge commit descriptions
-- `lint_merge_commit_message.sh` - Higher-level script that only lints merge commit messages
+- `check_is_merge_commit.sh`:
+  - **Given:** the currently checked-out commit (typically `$GITHUB_SHA`/`HEAD`).
+  - **Does:** counts parent commits; if >1, it’s a merge commit. Prints the parent count to stdout.
+  - **Outcome:** exits `0` for merge commits (multi-parent), `1` otherwise.
+
+- `detect_bump_pattern.sh`:
+  - **Given:** a text string (e.g., PR title or commit body).
+  - **Does:** lowercases the text and checks if it **starts with** a `bump_type` prefix i.e. `patch:`, `minor:`, `major:`, `no-bump:` or their scoped counterparts e.g. `patch(scope):`.
+  - **Outcome:** prints the bump type (`patch` | `minor` | `major` | `no-bump`) to stdout; exits `1` if no valid prefix.
+
+- `extract_branch_info.sh`:
+  - **Given:** a branch name like `dev-core`, `hotfix-core/fix-ci`, or `setup-core/seed`.
+  - **Does:** parses the branch to identify `branch_type` (`dev` | `hotfix` | `setup`) and `component_name`.
+  - **Outcome:** prints JSON `{"branch_type":"…","component_name":"…"}` to stdout; exits `1` if it doesn’t match the convention.
+
+- `lint_branch_name.sh`:
+  - **Given:** `<branch_name>` and a space-separated list of `<allowed_components>` (e.g., `"artifact-core artifact-experiment"`).
+  - **Does:** uses `extract_branch_info.sh` to parse the branch, then checks that `component_name` is in the allowed list and the shape matches: `dev-<component>` (no slash), `hotfix-<component>/<desc>`, or `setup-<component>/<desc>`.
+  - **Outcome:** exits `0` if valid; otherwise prints guidance with valid patterns and exits `1`.
+
+- `lint_pr_title.sh`:
+   - **Given:** `"PR Title"` and optionally `[branch_name]`.
+   - **Does:** enforces that the title starts with a `bump_type` prefix (`patch:`, `minor:`, `major:`, `no-bump:` or their scoped counterparts e.g. `patch(scope):`). If a `branch_name` is provided and its component parses to `root`, then only `no-bump:` is allowed.
+   - **Outcome:** prints the `bump_type` to stdout on success; exits `1` with a clear message if the prefix is missing/invalid or the root rule is violated.
+
+- `lint_commit_description.sh`:
+  - **Given:** the **body/description** of the last commit (merge commit in typical PR merges).
+  - **Does:** ensures the description begins with a semantic prefix by passing it to `detect_bump_pattern.sh`.
+  - **Outcome:** prints the resolved bump type to stdout (`patch` | `minor` | `major` | `no-bump`) and exits `0`; if empty or missing the prefix, prints errors and exits `1`.
+
+- `lint_commit_message.sh`:
+  - **Given:** the **subject** of the last commit (expected GitHub merge subject like `Merge pull request #123 from user/branch` or `user:branch`).
+  - **Does:** extracts the `branch` from the subject and validates its naming via `extract_branch_info.sh`.
+  - **Outcome:** prints the `component_name` to stdout on success; exits `1` if the subject isn’t a merge format or the branch naming is invalid.
+
+- `lint_merge_commit_description.sh`:
+  - **Given:** current commit context (CI).
+  - **Does:** confirms the commit is a **merge commit** (`check_is_merge_commit.sh`), then validates the **merge commit description** by invoking `lint_commit_description.sh`.
+  - **Outcome:** prints `bump_type` to stdout on success; exits `1` if not a merge commit or the description/prefix validation fails.
+
+- `lint_merge_commit_message.sh`:
+  - **Given:** current commit context (CI).
+  - **Does:** verifies that the current commit **is a merge commit** (`check_is_merge_commit.sh`), then validates the **merge commit subject** by invoking `lint_commit_message.sh`.
+  - **Outcome:** prints the parsed **component_name** to stdout on success; exits `1` if the commit isn’t a merge or if the subject validation fails.
+
+
 
 #### Path Enforcement Scripts (`.github/scripts/enforce_path/`)
 
-- `ensure_changed_files_in_dir.sh` - Ensures all changed files are within a specified directory
-- `ensure_changed_files_outside_dirs.sh` - Ensures all changed files are outside specified directories
+- `ensure_changed_files_in_dir.sh`:
+  - **Given:** `<component_dir>` (repo-root prefix, e.g., `artifact-core`) and `<base_ref>` (e.g., `main`).
+  - **Does:** fetches `origin/<base_ref>`, computes `merge-base(origin/<base_ref>, HEAD)`, and diffs `MB..HEAD`; then verifies every changed path **starts with** `<component_dir>/`.
+  - **Outcome:** exits `0` if all changed files are under `<component_dir>/`; otherwise exits `1` and lists the offending paths.
 
-### Version Bumping Scripts (`.github/scripts/version_bump/`)
+- `ensure_changed_files_outside_dirs.sh`:
+  - **Given:** `<base_ref>` and one or more `<dir>` prefixes (repo-root, e.g., `docs`, `packages/app`).
+  - **Does:** fetches `origin/<base_ref>`, computes `merge-base(origin/<base_ref>, HEAD)`, diffs `MB..HEAD`; then checks that **no** changed path starts with any forbidden `<dir>/` (regex-escaped, trailing slash normalized).
+  - **Outcome:** exits `0` if all changes are **outside** the listed directories; otherwise exits `1` and prints the paths that violate the rule.
 
-- `job.sh` - Main orchestration script that requires no input parameters
-- `get_bump_type.sh` - Extracts the bump type from commit description
-- `get_component_name.sh` - Extracts component name from merge commit message
-- `get_pyproject_path.sh` - Determines the appropriate pyproject.toml path (exits with error if the required pyproject.toml doesn't exist)
-- `bump_component_version.sh` - Updates version and generates tag
-- `get_component_tag.sh` - Generates a tag name from version and component name
-- `identify_new_version.sh` - Calculates the new version number based on semantic versioning rules
-- `update_pyproject.sh` - Updates version in pyproject.toml
-- `push_version_update.sh` - Handles git operations (commit, tag, push)
 
-#### Version Bump Flow
+#### Version Bumping Scripts (`.github/scripts/version_bump/`)
 
-The version bump process follows this flow:
 
-1. **job.sh** (Main orchestration script):
-   - Gets the bump type from commit description using get_bump_type.sh
-   - Checks if the bump type is "no-bump" and exits early if it is
-   - Gets the component name from the merge commit message using get_component_name.sh
-   - Checks if the component is "root" and exits early if it is (root component changes should not trigger version bumps)
-   - Gets the appropriate pyproject.toml path using get_pyproject_path.sh
-     - If the component's pyproject.toml doesn't exist, the script exits with an error
-   - Calls bump_component_version.sh with these parameters
+- `get_bump_type.sh`:
+  - **Given:** the current commit context (typically the PR merge commit).
+  - **Does:** reads the **commit description/body** of the current commit, passes it to `detect_bump_pattern.sh`, and validates that it starts with `patch:` / `minor:` / `major:` / `no-bump:` (or their scoped counterparts e.g. `patch(scope):`).
+  - **Outcome:** prints the resolved bump type (`patch` | `minor` | `major` | `no-bump`) to stdout; exits `1` if the description is empty or lacks a valid prefix.
 
-2. **bump_component_version.sh**:
-   - Updates the pyproject.toml file with the new version using update_pyproject.sh
-   - Gets the full tag name from component name and version using get_component_tag.sh
-   - Calls push_version_update.sh to handle git operations
+- `get_component_name.sh`:
+  - **Given:** the current commit context (expected to be a GitHub **merge commit**).
+  - **Does:** parses the **commit subject** (e.g., `Merge pull request #123 from user/branch` or ``Merge pull request #123 from user:branch`), extracts the `branch` portion, then runs `extract_branch_info.sh` to validate branch naming and access the component name (`dev|hotfix|setup`).
+  - **Outcome:** prints the **component name** (e.g., `artifact-core`) to stdout; exits `1` if the commit isn’t a merge or the branch naming is invalid.
 
-3. **push_version_update.sh**:
-   - Adds the file to the staging area
-   - Commits the changes with a message
-   - Creates a git tag
-   - Pushes the changes and tags to the remote repository
+- `identify_new_version.sh`:
+  - **Given:** `<current_version>` (e.g., `1.2.3`) and `<bump_type>` (`patch|minor|major`).
+  - **Does:** validates `X.Y.Z` format, splits into `MAJOR.MINOR.PATCH`, and increments per the bump:  
+    `patch` → `PATCH+1`; `minor` → `MINOR+1` & `PATCH=0`; `major` → `MAJOR+1` & `MINOR=0` & `PATCH=0`.
+  - **Outcome:** prints the **new version** (e.g., `1.3.0`) to stdout; exits `1` on invalid inputs.
+
+- `get_pyproject_path.sh`:
+  - **Given:** a **component name** (e.g., `artifact-core`).
+  - **Does:** resolves the expected `pyproject.toml` location for that component (e.g., `artifact-core/pyproject.toml`); verifies the file exists.
+  - **Outcome:** prints the absolute or repo-relative path to `pyproject.toml` to stdout; exits `1` with an error if it cannot find the required file.
+
+- `update_pyproject.sh`:
+  - **Given:** `<pyproject_path>` and `<new_version>`.
+  - **Does:** updates the `version = "X.Y.Z"` field inside the given `pyproject.toml` (using a safe in-place edit), preserving file structure and other metadata.
+  - **Outcome:** prints the **new version** to stdout (confirmation value) and exits `0`; exits `1` if the file is missing or the version field cannot be updated.
+
+- `get_component_tag.sh`:
+  - **Given:** `<component_name>` and `<version>` (e.g., `artifact-core` and `1.3.0`).
+  - **Does:** formats a tag string according to your convention (e.g., `artifact-core-v1.3.0`).
+  - **Outcome:** prints the **tag name** to stdout; exits `1` if inputs are empty or malformed.
+
+- `push_version_update.sh`:
+  - **Given:** the modified repo state, `<tag_name>`, and commit message context.
+  - **Does:** stages changes (e.g., `pyproject.toml`), creates a commit, creates/updates the Git tag, and pushes commit + tag to the remote (typically `origin`). Can be gated by CI permissions on forks.
+  - **Outcome:** prints a short summary (commit and tag) to stderr/stdout and exits `0`; exits `1` on any git error (e.g., auth, non-fast-forward, missing remote).
+
+- `bump_component_version.sh`:
+  - **Given:** `<bump_type>`, `<component_name>`, and optionally an explicit `<pyproject_path>`.
+  - **Does:** resolves the `pyproject.toml` (via `get_pyproject_path.sh` if needed), reads the **current version**, computes the **new version** (`identify_new_version.sh`), updates the file (`update_pyproject.sh`), computes the **tag** (`get_component_tag.sh`), and pushes (`push_version_update.sh`).
+  - **Outcome:** prints the **new version** and **tag** to stdout (or logs), exits `0` on success; exits `1` if any step fails (resolve, update, tag, or push).
+
+- `job.sh`:
+  - **Given:** CI context on a PR merge (or equivalent), with all helper scripts available.
+  - **Does:** extracts **bump type** from the merge **description** (`get_bump_type.sh`), extracts **component name** from the merge **subject** (`get_component_name.sh`), derives/locates the component’s `pyproject.toml` (`get_pyproject_path.sh`), and invokes `bump_component_version.sh` to perform the version bump and push a version tag.
+  - **Outcome:** performs an end-to-end automated version bump for the component implicated by the PR; exits `0` on success and `1` with actionable errors if inputs or validations fail.
+
 
 ### Tests
 
-#### Linting Tests (`.github/tests/linting/`)
-
-- `test_extract_branch_info.bats` - Tests for the branch info extraction script
-- `test_lint_branch_name.bats` - Tests for the branch name linting script
-- `test_detect_bump_pattern.bats` - Tests for the bump pattern detection script
-- `test_is_merge_commit.bats` - Tests for the merge commit check script
-- `test_lint_commit_description.bats` - Tests for commit description linting
-- `test_lint_commit_message.bats` - Tests for commit message linting
-- `test_lint_merge_commit_description.bats` - Tests for the higher-level merge commit description linting
-- `test_lint_merge_commit_message.bats` - Tests for the higher-level merge commit message linting
-- `test_lint_pr_title.bats` - Tests for PR title linting
-
-#### Version Bump Tests (`.github/tests/version_bump/`)
-
-- `test_get_bump_type.bats` - Tests for extracting bump type from commit descriptions
-- `test_get_component_name.bats` - Tests for extracting component name from merge commit messages
-- `test_get_component_tag.bats` - Tests for generating tag names
-- `test_get_pyproject_path.bats` - Tests for determining pyproject.toml paths
-- `test_identify_new_version.bats` - Tests for calculating new version numbers based on semantic versioning
-- `test_update_pyproject.bats` - Tests for updating version in pyproject.toml
-- `test_push_version_update.bats` - Tests for git operations
-- `test_bump_component_version.bats` - Tests for the version bumping process
-- `test_job.bats` - Tests for the main orchestration script
-
-#### Test Structure
 Unit-tests for the CI/CD scripts follow the pattern:
 
-1. Sets up a fake environment with mocked dependencies.
-2. Run the script under test.
-3. Verify the script's behavior through assertions.
-4. Clean up the test environment.
+1. set up a fake environment with mocked dependencies,
+2. run the script under consideration,
+3. assert correctness,
+4. clean up the test environment.
 
-#### Running the Tests
+#### Test Execution
 
-To run the tests, use the following command (from the monorepo root):
+To execute the tests, use the following command (from the monorepo root):
 
 ```bash
 # Run all tests
@@ -270,15 +308,3 @@ bats -r .github/tests/version_bump
 # Run a specific test file
 bats .github/tests/linting/test_lint_pr_title.bats
 ```
-
-### A Note on Execution Context
-
-All scripts and workflows are designed to run from the repository root.
-
-This means:
-
-- Workflow files (`.github/workflows/*.yml`) execute scripts using paths relative to the repository root (e.g., `.github/scripts/linting/check_is_merge_commit.sh`)
-- Scripts reference other scripts using paths relative to the repository root (e.g., `.github/scripts/linting/lint_commit_description.sh`)
-- Test files run scripts from the repository root context
-
-This approach follows GitHub Actions' standard execution context, where workflows run from the repository root. It makes the paths more intuitive and consistent, eliminating confusing double references to `.github` in paths.

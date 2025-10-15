@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Usage: .github/scripts/linting/lint_commit_message.sh
 # Returns: 0 if the commit message follows the branch naming convention, 1 otherwise
@@ -10,15 +10,17 @@ chmod +x .github/scripts/linting/extract_branch_info.sh
 LAST_COMMIT_MESSAGE=$(git log -1 --pretty=format:%s)
 echo "Last commit message: $LAST_COMMIT_MESSAGE" >&2
 
-BRANCH_NAME=""
-if [[ "$LAST_COMMIT_MESSAGE" =~ Merge\ pull\ request\ .*\ from\ ([^/]+)\/([a-zA-Z0-9_/-]+) ]]; then
-  USERNAME="${BASH_REMATCH[1]}"
-  BRANCH_NAME="${BASH_REMATCH[2]}"
+RANCH_NAME=""
+if [[ "$LAST_COMMIT_MESSAGE" =~ ^Merge\ pull\ request\ #[0-9]+(\ .*)?\ from\ ([^:/[:space:]]+)[/:]([A-Za-z0-9._/-]+)$ ]]; then
+  USERNAME="${BASH_REMATCH[2]}"
+  BRANCH_NAME="${BASH_REMATCH[3]}"
   echo "Extracted username: $USERNAME" >&2
   echo "Extracted branch name: $BRANCH_NAME" >&2
 else
-  echo "::error::Merge commit message does not follow the expected format!" >&2
-  echo "::error::Expected format: 'Merge pull request #123 from username/branch-name'" >&2
+  echo "::error::Merge commit subject didn’t match expected formats." >&2
+  echo "::error::Examples:" >&2
+  echo "::error::  'Merge pull request #123 from username/feature/foo-bar'" >&2
+  echo "::error::  'Merge pull request #123 from username:feature/foo-bar'" >&2
   exit 1
 fi
 

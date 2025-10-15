@@ -1,10 +1,10 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Usage: .github/scripts/version_bump/update_pyproject.sh <pyproject_path> <bump_type>
 # Returns: The new version number
-PYPROJECT_PATH=$1
-BUMP_TYPE=$2
+PYPROJECT_PATH="${1-}"
+BUMP_TYPE="${2-}"
 
 if [[ -z "$PYPROJECT_PATH" || -z "$BUMP_TYPE" ]]; then
     echo "Usage: $0 <pyproject_path> {patch|minor|major}" >&2

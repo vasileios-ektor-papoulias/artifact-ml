@@ -21,7 +21,7 @@ jobs:
           echo "Head ref: ${{ github.head_ref }}"
           echo "Event name: ${{ github.event_name }}"
           echo "Repository: ${{ github.repository }}"
-          echo "This job should run for PRs targeting dev-core"
+          echo "This job should run for PRs from dev-core to main"
       
       - name: Checkout code
         uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
         run: |
           echo "Enforcing changes only in ${{ env.DIRECTORY }} directory for ${{ env.COMPONENT }} component"
           # Check if all changed files are within the component directory
-          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}" "${{ github.head_ref }}"
+          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}"
     
   enforce-change-dirs-from-dev-experiment-to-main:
     if: github.head_ref == 'dev-experiment' && github.base_ref == 'main'
@@ -50,7 +50,7 @@ jobs:
           echo "Head ref: ${{ github.head_ref }}"
           echo "Event name: ${{ github.event_name }}"
           echo "Repository: ${{ github.repository }}"
-          echo "This job should run for PRs targeting dev-experiment"
+          echo "This job should run for PRs from dev-experiment to main"
       
       - name: Checkout code
         uses: actions/checkout@v4
@@ -64,7 +64,7 @@ jobs:
         run: |
           echo "Enforcing changes only in ${{ env.DIRECTORY }} directory for ${{ env.COMPONENT }} component"
           # Check if all changed files are within the component directory
-          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}" "${{ github.head_ref }}"
+          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}"
   
   enforce-change-dirs-from-dev-torch-to-main:
     if: github.head_ref == 'dev-torch' && github.base_ref == 'main'
@@ -79,7 +79,7 @@ jobs:
           echo "Head ref: ${{ github.head_ref }}"
           echo "Event name: ${{ github.event_name }}"
           echo "Repository: ${{ github.repository }}"
-          echo "This job should run for PRs targeting dev-torch"
+          echo "This job should run for PRs from dev-torch to main"
       
       - name: Checkout code
         uses: actions/checkout@v4
@@ -93,7 +93,7 @@ jobs:
         run: |
           echo "Enforcing changes only in ${{ env.DIRECTORY }} directory for ${{ env.COMPONENT }} component"
           # Check if all changed files are within the component directory
-          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}" "${{ github.head_ref }}"
+          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}"
 
   enforce-change-dirs-from-hotfix-core-to-main:
     if: startsWith(github.head_ref, 'hotfix-core/') && github.base_ref == 'main'
@@ -114,7 +114,7 @@ jobs:
         run: |
           echo "Enforcing changes only in ${{ env.DIRECTORY }} directory for ${{ env.COMPONENT }} component"
           # Check if all changed files are within the component directory
-          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}" "${{ github.head_ref }}"
+          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}"
   
   enforce-change-dirs-from-hotfix-experiment-to-main:
     if: startsWith(github.head_ref, 'hotfix-experiment/') && github.base_ref == 'main'
@@ -135,7 +135,7 @@ jobs:
         run: |
           echo "Enforcing changes only in ${{ env.DIRECTORY }} directory for ${{ env.COMPONENT }} component"
           # Check if all changed files are within the component directory
-          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}" "${{ github.head_ref }}"
+          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}"
   
   enforce-change-dirs-from-hotfix-torch-to-main:
     if: startsWith(github.head_ref, 'hotfix-torch/') && github.base_ref == 'main'
@@ -156,7 +156,7 @@ jobs:
         run: |
           echo "Enforcing changes only in ${{ env.DIRECTORY }} directory for ${{ env.COMPONENT }} component"
           # Check if all changed files are within the component directory
-          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}" "${{ github.head_ref }}"
+          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}"
 
   enforce-change-dirs-root-to-main:
     if: contains(github.head_ref, '-root/') && github.base_ref == 'main'
@@ -179,5 +179,5 @@ jobs:
         run: |
           echo "Enforcing changes outside of directory: ${{ matrix.directory }} for ${{ env.COMPONENT }} component"
           # Check if all changed files are outside the specified directory
-          .github/scripts/enforce_path/ensure_changed_files_outside_dirs.sh "${{ github.base_ref }}" "${{ github.head_ref }}" "${{ matrix.directory }}"
+          .github/scripts/enforce_path/ensure_changed_files_outside_dirs.sh "${{ github.base_ref }}" "${{ matrix.directory }}"
 

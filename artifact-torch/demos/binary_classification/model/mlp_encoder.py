@@ -3,6 +3,7 @@ from typing import List, Type, TypeVar
 
 import torch
 import torch.nn as nn
+
 from demos.binary_classification.config.constants import (
     BN_EPSILON,
     BN_MOMENTUM,
