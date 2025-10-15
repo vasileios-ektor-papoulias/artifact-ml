@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Usage: .github/scripts/version_bump/job.sh
 # This script bumps the version based on the merge commit message or branch name

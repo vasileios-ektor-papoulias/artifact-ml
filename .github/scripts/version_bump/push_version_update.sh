@@ -1,10 +1,10 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Usage: .github/scripts/version_bump/push_version_update.sh <tag_name> <file_path>
 # This script handles git operations: commit version-bump changes, tag and push
-TAG_NAME=$1
-FILE_PATH=$2
+TAG_NAME="${1-}"
+FILE_PATH="${2-}"
 
 if [[ -z "$TAG_NAME" || -z "$FILE_PATH" ]]; then
     echo "Usage: $0 <tag_name> <file_path>" >&2

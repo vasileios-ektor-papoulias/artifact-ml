@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Usage: .github/scripts/version_bump/get_bump_type.sh
 # Returns: The version bump type extracted from commit description

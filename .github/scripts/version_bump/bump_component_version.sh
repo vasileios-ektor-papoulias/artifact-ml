@@ -1,14 +1,14 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Usage: .github/scripts/version_bump/bump_component_version.sh <bump_type> <component_name> <pyproject_path>
 # Returns: 
 # Bumps the version of the specified component (subrepo) by editing the relevant pyproject.toml file and pusing a corresponding tag.
 # The new version is determined by incrementing the old version by bump_type (patch, minor, major).
 
-BUMP_TYPE=$1
-COMPONENT_NAME=$2
-PYPROJECT_PATH=$3
+BUMP_TYPE="${1:-}"
+COMPONENT_NAME="${2:-}"
+PYPROJECT_PATH="${3:-}"
 
 NEW_VERSION=$(.github/scripts/version_bump/update_pyproject.sh "$3" "$1")
 

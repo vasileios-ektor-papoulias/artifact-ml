@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Usage: .github/scripts/linting/lint_branch_name.sh <branch_name> <allowed_components>
 # Returns: 0 if the branch name follows the convention, 1 otherwise
@@ -7,8 +7,8 @@ set -e
 
 chmod +x .github/scripts/linting/extract_branch_info.sh
 
-BRANCH_NAME="$1"
-ALLOWED_COMPONENTS="$2"
+BRANCH_NAME="${1-}"
+ALLOWED_COMPONENTS="${2-}"
 
 if [ -z "$BRANCH_NAME" ] || [ -z "$ALLOWED_COMPONENTS" ]; then
   echo "::error::Missing required parameters!" >&2

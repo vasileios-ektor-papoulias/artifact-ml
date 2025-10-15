@@ -1,12 +1,12 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Usage: .github/scripts/linting/extract_branch_info.sh <branch_name>
 # Returns: JSON-formatted string with branch_type and component_name
 # Example output: {"branch_type":"dev","component_name":"mycomponent"}
 # Exits with error if the branch name doesn't follow the convention
 
-BRANCH_NAME="$1"
+BRANCH_NAME="${1-}"
 
 if [ -z "$BRANCH_NAME" ]; then
   echo "::error::No branch name provided!" >&2
