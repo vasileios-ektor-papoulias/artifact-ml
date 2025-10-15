@@ -1,11 +1,11 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Usage: .github/scripts/linting/detect_bump_pattern.sh "text to check"
 # Returns: 0 if the text follows the bump pattern, 1 otherwise
 # Outputs: The bump type (patch, minor, major) to stdout if successful
 
-TEXT_TO_CHECK="$1"
+TEXT_TO_CHECK="${1-}"
 
 if [ -z "$TEXT_TO_CHECK" ]; then
   echo "::error::No text provided to check!" >&2

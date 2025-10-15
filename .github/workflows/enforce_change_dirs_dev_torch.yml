@@ -35,5 +35,5 @@ jobs:
         run: |
           echo "Enforcing changes only in ${{ env.DIRECTORY }} directory for ${{ env.COMPONENT }} component"
           # Check if all changed files are within the component directory
-          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}" "${{ github.head_ref }}"
+          .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}"
 

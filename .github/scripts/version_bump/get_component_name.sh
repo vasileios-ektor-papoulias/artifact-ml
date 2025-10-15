@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Usage: .github/scripts/version_bump/get_component_name.sh
 # Returns: The component name extracted from the merge commit message

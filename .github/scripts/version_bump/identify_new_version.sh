@@ -1,12 +1,12 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Usage: .github/scripts/version_bump/identify_new_version.sh <current_version> <bump_type>
 # Returns: The new version number after applying the bump type to the current version
 # Example: .github/scripts/version_bump/identify_new_version.sh "1.2.3" "minor" -> "1.3.0"
 
-CURRENT_VERSION=$1
-BUMP_TYPE=$2
+CURRENT_VERSION="${1-}"
+BUMP_TYPE="${2-}"
 
 if [[ -z "$CURRENT_VERSION" || -z "$BUMP_TYPE" ]]; then
     echo "Usage: $0 <current_version> {patch|minor|major}" >&2

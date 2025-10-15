@@ -9,6 +9,7 @@ from artifact_core.libs.resources.classification.binary_classification_results i
 )
 from artifact_torch.binary_classification.model import BinaryClassifier
 from artifact_torch.core.model.classifier import ClassificationParams
+
 from demos.binary_classification.model.io import MLPClassifierInput, MLPClassifierOutput
 from demos.binary_classification.model.mlp_encoder import MLPEncoderConfig
 from demos.binary_classification.model.mlp_predictor import MLPPredictor
@@ -68,9 +69,11 @@ class MLPClassifierModel(
     def classify(
         self, data: pd.DataFrame, params: MLPClassificationParams
     ) -> BinaryClassificationResults:
-        t_features = self._to_t_features(data)  # (B, in_dim)
-        t_prob_pos = self._infer_prob_pos(t_features)  # (B,)
-        t_preds_bin = self._apply_threshold(t_prob_pos, threshold=params.threshold)  # (B,)
+        t_features = self._to_t_features(df=data)  # (B, in_dim)
+        t_prob_pos = self._infer_prob_pos(t_features=t_features)  # (B,)
+        t_preds_bin = self._apply_threshold(
+            t_prob_pos=t_prob_pos, threshold=params.threshold
+        )  # (B,)
         id_to_category, id_to_prob_pos = self._build_classification_result_maps(
             data_index=data.index.tolist(),
             t_preds_bin=t_preds_bin,

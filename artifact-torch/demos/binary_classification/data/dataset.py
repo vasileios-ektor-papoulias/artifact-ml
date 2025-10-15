@@ -3,6 +3,7 @@ from typing import List, Type, TypeVar
 import pandas as pd
 import torch
 from artifact_torch.base.data.dataset import Dataset
+
 from demos.binary_classification.model.io import MLPClassifierInput
 
 TabularVAEDatasetT = TypeVar("TabularVAEDatasetT", bound="MLPClassifierDataset")

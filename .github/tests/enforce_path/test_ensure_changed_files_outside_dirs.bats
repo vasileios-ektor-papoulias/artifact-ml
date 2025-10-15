@@ -14,13 +14,29 @@ setup() {
   mkdir -p "$FAKE_BIN_DIR"
   cp -r "$REPO_ROOT/.github" "$FAKE_BIN_DIR/"
 
-  cat << EOF > "$FAKE_BIN_DIR/git"
+  # Fake git to satisfy the script's fetch/merge-base/diff calls
+  cat << 'EOF' > "$FAKE_BIN_DIR/git"
 #!/bin/bash
-if [[ "\$@" == *"diff"* && "\$@" == *"--name-only"* ]]; then
-  echo "\$FAKE_DIFF_OUTPUT"
+set -euo pipefail
+
+# Simulate: git fetch --no-tags --prune --depth=2 origin <base_ref>
+if [[ "${1-}" == "fetch" ]]; then
   exit 0
 fi
-echo "Fake git: unhandled args: \$@" >&2
+
+# Simulate: git merge-base origin/<base_ref> HEAD
+if [[ "${1-}" == "merge-base" ]]; then
+  echo "BASECOMMIT123"
+  exit 0
+fi
+
+# Simulate: git diff --name-only <MB> HEAD
+if [[ "${1-}" == "diff" && " $* " == *" --name-only "* ]]; then
+  printf '%s\n' "${FAKE_DIFF_OUTPUT:-}"
+  exit 0
+fi
+
+echo "Fake git: unhandled args: $*" >&2
 exit 1
 EOF
   chmod +x "$FAKE_BIN_DIR/git"
@@ -49,17 +65,9 @@ teardown() {
   [[ "$combined" == *"Missing required parameters!"* ]]
 }
 
-@test "exits with error when some required parameters are missing (base_ref and head_ref only)" {
-  run "scripts/enforce_path/ensure_changed_files_outside_dirs.sh" "main" "feature-branch"
-  [ "$status" -ne 0 ]
-  combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
-  echo "DEBUG: combined=[$combined]" >&2
-  [[ "$combined" == *"Missing required parameters!"* ]]
-}
-
 @test "returns 0 when all changed files are outside the forbidden directories" {
   export FAKE_DIFF_OUTPUT=$'other/file1.txt\nanother/file2.txt'
-  run "scripts/enforce_path/ensure_changed_files_outside_dirs.sh" "main" "feature-branch" "dir1" "dir2"
+  run "scripts/enforce_path/ensure_changed_files_outside_dirs.sh" "main" "dir1" "dir2"
   [ "$status" -eq 0 ]
   combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
   echo "DEBUG: combined=[$combined]" >&2
@@ -68,9 +76,9 @@ teardown() {
 
 @test "exits with error when some changed files are inside the forbidden directories" {
   export FAKE_DIFF_OUTPUT=$'dir1/file1.txt\nother/file2.txt'
-  run "scripts/enforce_path/ensure_changed_files_outside_dirs.sh" "main" "feature-branch" "dir1" "dir2" "dir3"
+  run "scripts/enforce_path/ensure_changed_files_outside_dirs.sh" "main" "dir1" "dir2" "dir3"
   [ "$status" -ne 0 ]
   combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
   echo "DEBUG: combined=[$combined]" >&2
-  [[ "$combined" == *"The following files are inside the forbidden directories:"* ]]
+  [[ "$combined" == *"The following files are inside forbidden directories:"* ]]
 }
