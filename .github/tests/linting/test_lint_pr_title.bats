@@ -23,7 +23,8 @@ setup() {
   cp "$SCRIPT_SRC" "$FAKE_BIN_DIR/.github/scripts/linting/"
   chmod +x "$FAKE_BIN_DIR/.github/scripts/linting/lint_pr_title.sh"
 
- cat << 'EOF' > "$FAKE_BIN_DIR/.github/scripts/linting/detect_bump_pattern.sh"
+  # --- Stub: detect_bump_pattern.sh ---
+  cat << 'EOF' > "$FAKE_BIN_DIR/.github/scripts/linting/detect_bump_pattern.sh"
 #!/bin/bash
 # Intentionally keep this stub super simple & portable: no bash regex.
 INPUT="${1-}"
@@ -50,41 +51,47 @@ esac
 EOF
   chmod +x "$FAKE_BIN_DIR/.github/scripts/linting/detect_bump_pattern.sh"
 
-  # --- Stub: lint_branch_name.sh ---
-  # Contract: success -> print JSON; failure -> exit 1
-  cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/linting/lint_branch_name.sh"
+  # --- Stub: extract_branch_info.sh (shape-only parser) ---
+  # Contract: success -> print JSON {"branch_type":"...","component_name":"..."}; failure -> exit 1
+  cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/linting/extract_branch_info.sh"
 #!/bin/bash
 set -euo pipefail
 BRANCH_NAME="${1-}"
 
 if [ -z "${BRANCH_NAME}" ]; then
-  echo "::error::Missing required parameter: <branch_name>." >&2
+  echo "::error::No branch name provided!" >&2
   exit 1
 fi
 
-# Accept the full matrix:
+# Accept the full matrix (shape-only, no policy):
 # dev-{core,experiment,torch}
 # hotfix-{root,core,experiment,torch}/...
 # setup-{root,core,experiment,torch}/...
 case "$BRANCH_NAME" in
+  # dev (no slash)
   dev-core)         echo '{"branch_type":"dev","component_name":"core"}'; exit 0 ;;
   dev-experiment)   echo '{"branch_type":"dev","component_name":"experiment"}'; exit 0 ;;
   dev-torch)        echo '{"branch_type":"dev","component_name":"torch"}'; exit 0 ;;
 
+  # hotfix (must have slash after component)
   hotfix-root/*)        echo '{"branch_type":"hotfix","component_name":"root"}'; exit 0 ;;
   hotfix-core/*)        echo '{"branch_type":"hotfix","component_name":"core"}'; exit 0 ;;
   hotfix-experiment/*)  echo '{"branch_type":"hotfix","component_name":"experiment"}'; exit 0 ;;
   hotfix-torch/*)       echo '{"branch_type":"hotfix","component_name":"torch"}'; exit 0 ;;
 
+  # setup (must have slash after component)
   setup-root/*)         echo '{"branch_type":"setup","component_name":"root"}'; exit 0 ;;
   setup-core/*)         echo '{"branch_type":"setup","component_name":"core"}'; exit 0 ;;
   setup-experiment/*)   echo '{"branch_type":"setup","component_name":"experiment"}'; exit 0 ;;
   setup-torch/*)        echo '{"branch_type":"setup","component_name":"torch"}'; exit 0 ;;
 
-  *) echo "::error::Branch name does not follow the required naming convention or is not allowed!" >&2; exit 1 ;;
+  *)
+    echo "::error::Branch name does not follow the required naming convention!" >&2
+    exit 1
+    ;;
 esac
 EOF
-  chmod +x "$FAKE_BIN_DIR/.github/scripts/linting/lint_branch_name.sh"
+  chmod +x "$FAKE_BIN_DIR/.github/scripts/linting/extract_branch_info.sh"
 
   # Fake git (not used by lint_pr_title.sh)
   cat << "EOF" > "$FAKE_BIN_DIR/git"
@@ -313,7 +320,6 @@ teardown() {
   [ "$status" -ne 0 ]
   [[ "$(printf "%s%s" "$output" "$stderr")" == *"must use 'no-bump:' prefix"* ]]
 }
-
 
 # ======================================================================
 # C) BADLY FORMATTED PR TITLES (explicit)

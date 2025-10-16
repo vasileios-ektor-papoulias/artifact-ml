@@ -2,20 +2,18 @@
 set -euo pipefail
 
 # Purpose:
-#   Validate that a given PR title adheres to the repository's semantic versioning convention and emit the parsed bump type. If an
-#   optional source branch name is provided, also enforce that PRs targeting the
-#   **root** component must use the **no-bump** bump type.
+#   Validate that a given PR title adheres to the repository’s semantic versioning
+#   convention and emit the parsed bump type. If an optional source branch name
+#   is provided, parse it and enforce that PRs targeting the **root** component
+#   must use the **no-bump** bump type.
 #
 # Usage:
 #   .github/scripts/linting/lint_pr_title.sh "PR Title" [branch_name]
 #
 # Accepts:
-#   "PR Title"   (required)  The PR title to validate, e.g. "minor: add feature".
-#   [branch_name] (optional)  A source branch to parse for component/type policy checks
-#                             (e.g., "dev-core", "hotfix-root/fix-ci").
-#   Environment (optional):
-#     ALLOWED_COMPONENTS     space-separated list (default: "root core experiment torch")
-#     ALLOWED_BRANCH_TYPES   space-separated list (default: "dev hotfix setup feature fix")
+#   "PR Title"    (required)  The PR title to validate, e.g., "minor: add feature".
+#   [branch_name] (optional)  Source branch to parse for the component, e.g., "dev-core",
+#                             "hotfix-root/fix-ci". Parsed strictly by extract_branch_info.sh.
 #
 # Stdout on success:
 #   One of: patch | minor | major | no-bump
@@ -24,13 +22,13 @@ set -euo pipefail
 #   ::error::-prefixed diagnostics indicating:
 #     - missing PR title, or
 #     - invalid/unsupported title prefix, or
-#     - invalid branch name/policy (when branch_name is provided), or
+#     - invalid branch name (when branch_name is provided), or
 #     - root component PR missing required "no-bump" bump type.
 #
 # Exit codes:
 #   0 — title prefix is valid (bump type printed to stdout) and, if a branch_name
-#       is provided, it parses/validates successfully; root rule (no-bump) honored.
-#   1 — any error: missing title, invalid prefix, branch parsing/policy failure,
+#       is provided, it parses successfully; root rule (no-bump) honored.
+#   1 — any error: missing title, invalid prefix, branch parsing failure,
 #       or root component PR without "no-bump:".
 #
 # Behaviour:
@@ -38,15 +36,12 @@ set -euo pipefail
 #       • "patch:" | "minor:" | "major:" | "no-bump:"
 #       • Scoped variants allowed: "<type>(scope): ..."
 #   - If [branch_name] is supplied:
-#       • Delegates to lint_branch_name.sh using ALLOWED_* policy sets to parse
-#         and validate the branch (extracts component_name).
+#       • Delegates to extract_branch_info.sh to parse the branch shape and extract component_name.
 #       • If component_name == "root", require the title to start with "no-bump:"
 #         (or scoped "no-bump(scope):").
-#   - On success, prints only the bump type to stdout.
+#   - On success, prints only the bump type to STDOUT.
 #
 # Notes:
-#   - Branch policy (components/types) is enforced only when a branch_name is passed.
-#   - Type/Component allowances can be tightened per workflow via ALLOWED_* env vars.
 #   - Title matching is case-insensitive; only the leading token is validated.
 #
 # Examples:
@@ -65,17 +60,8 @@ set -euo pipefail
 #   .github/scripts/linting/lint_pr_title.sh "patch: fix" hotfix-root/fix-ci
 #     --> (stderr explains root requires "no-bump:")   # exit 1
 
-
 chmod +x .github/scripts/linting/detect_bump_pattern.sh
-chmod +x .github/scripts/linting/lint_branch_name.sh
-
-# ---- Policy (declare allowed sets here; env can override) ----
-ALLOWED_COMPONENTS_DEFAULT="root core experiment torch"
-ALLOWED_BRANCH_TYPES_DEFAULT="dev hotfix setup feature fix"
-
-ALLOWED_COMPONENTS="${ALLOWED_COMPONENTS:-$ALLOWED_COMPONENTS_DEFAULT}"
-ALLOWED_BRANCH_TYPES="${ALLOWED_BRANCH_TYPES:-$ALLOWED_BRANCH_TYPES_DEFAULT}"
-# --------------------------------------------------------------
+chmod +x .github/scripts/linting/extract_branch_info.sh
 
 PR_TITLE="${1-}"
 BRANCH_NAME="${2-}"
@@ -88,15 +74,11 @@ fi
 
 echo "PR Title: $PR_TITLE" >&2
 
-COMPONENT=""
+# If a branch is provided, parse its shape and enforce the root rule.
 if [ -n "$BRANCH_NAME" ]; then
   echo "Branch name: $BRANCH_NAME" >&2
 
-  # Validate/parse branch via linter using declared allowed sets
-  if ! BRANCH_INFO_JSON=$(.github/scripts/linting/lint_branch_name.sh \
-        "$BRANCH_NAME" \
-        "$ALLOWED_COMPONENTS" \
-        "$ALLOWED_BRANCH_TYPES" 2>&1); then
+  if ! BRANCH_INFO_JSON=$(.github/scripts/linting/extract_branch_info.sh "$BRANCH_NAME" 2>&1); then
     echo "$BRANCH_INFO_JSON" >&2
     echo "::error::Failed to validate/parse branch name for PR title checks." >&2
     exit 1
@@ -124,4 +106,3 @@ BUMP_TYPE=$(.github/scripts/linting/detect_bump_pattern.sh "$PR_TITLE")
 # Success: print bump type to stdout
 echo "$BUMP_TYPE"
 exit 0
-
