@@ -1,0 +1,29 @@
+name: ENFORCE_SOURCE_BRANCH_NAMING
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+    branches:
+      - dev-core
+
+jobs:
+  check-branch-naming:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      ALLOWED_COMPONENTS: "core"
+      ALLOWED_BRANCH_TYPES: "feature fix"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Ensure scripts are executable
+        run: chmod +x .github/scripts/linting/*.sh
+
+      - name: Check branch naming convention
+        run: |
+          .github/scripts/linting/lint_branch_name.sh \
+            "${{ github.head_ref }}" \
+            "${{ env.ALLOWED_COMPONENTS }}" \
+            "${{ env.ALLOWED_BRANCH_TYPES }}"
