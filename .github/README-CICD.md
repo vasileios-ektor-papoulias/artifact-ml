@@ -26,6 +26,11 @@ The project is correspondingly partitioned in the following *components* (provid
    - merging `setup-<component_name>/*`/ `hotfix-<component_name>/*` directly into main (via PR),
    - merging feautre/ fix branches into `dev-<component_name>` (via PR) and awaiting its periodic merge into main. 
 
+
+<p align="center">
+  <img src="./assets/repo_structure.svg" width="1500" alt="Repo Structure">
+</p>
+
 ### Branches
 
 - **main**: `dev-<component_name>`
@@ -40,25 +45,29 @@ The project is correspondingly partitioned in the following *components* (provid
    - Update: Updated by merging in feature/ fix branches through pull request. 
    - Examples: `dev-core`, `dev-experiment`, `dev-torch`.
 
-- **Feature/Bug Fix Branches**: `feature/<some_name>` or similar
+- **Feature/Bug Fix Branches**: `feature-<component_name>/<descriptive_name>`, `fix-<component_name>/<descriptive_name>`
    - Role: Used for regular development work.
    - Update: Updated by direct pushes.
    - Restrictions: Should only modify files in one component directory (enforced when opening a PR to a given `dev` branch).
-   - Example: `feature/add-login`
+   - Example: `feature-<experiment>/add-login`
 
-- **Hotfix Branches**: `hotfix-<component_name>/<some_other_name>`
+- **Hotfix Branches**: `hotfix-<component_name>/<descriptive_name>`
    - Role: Used for urgent fixes that need to be applied directly to `main`.
    - Update: Updated by direct pushes.
    - Restrictions: Should only modify files in one component directory (enforced when opening a PR to main).
    - Examples: `hotfix-core/fix-critical-bug`, `hotfix-experiment/fix-validation-issue`, `hotfix-torch/fix-model-loading`
 
-- **Setup Branches**: `setup-<component_name>/<some_other_name>`
+- **Setup Branches**: `setup-<component_name>/<descriptive_name>`
    - Role: Used for initial setup or configuration changes
    - Update: Updated by direct pushes.
    - Restrictions: 
       - Always use with `no-bump` bump type (as setup changes should not trigger version bumps).
       - Should only modify files in the specified component directory (enforced when opening a PR to main).
    - Examples: `setup-core/initial-config`, `setup-experiment/update-docs`, `setup-torch/add-examples`
+  
+<p align="center">
+  <img src="./assets/branch_taxonomy.svg" width="1500" alt="Branch Taxonomy">
+</p>
 
 ### Versioning and PRs to `main`
 In line with semantic versioniing, we adopt the following version bump types (bump types for short):
@@ -94,7 +103,7 @@ To contribute to Artifact-ML, follow these steps:
 
 1. **For Regular Development**:
    - select a component to work on (`core`, `experiment`, `torch`),
-   - create a feature branch (e.g., `feature/add-login`) from the appropriate `dev-<component_name>` branch (i.e. `dev-core`, `dev-experiment`, or `dev-torch`),
+   - create a feature branch (e.g., `feature-<component_name>/add-login`) from the appropriate `dev-<component_name>` branch (i.e. `dev-core`, `dev-experiment`, or `dev-torch`),
    - implement your changes (only modify files within the selected component directory),
    - ensure the PR passes all CI checks
    - create a PR to `dev-<component_name>`,
@@ -114,11 +123,17 @@ To contribute to Artifact-ML, follow these steps:
    - create a PR directly to main with bump type `no-bump` (see the aforementioned PR title convention),
    - ensure the PR passes all CI checks.
 
-## CI/CD Pipeline
 
 <p align="center">
-  <img src="./assets/github_actions.png" width="500" alt="GitHub Actions Logo">
+  <img src="./assets/release_flow.svg" width="1500" alt="Release Flow">
 </p>
+
+## CI/CD Pipeline
+
+<div align="center" style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+  <img src="./assets/github_actions.png" alt="GitHub Actions Logo" style="max-width:25%; height:auto;">
+  <img src="./assets/shell.png" alt="Shell Logo" style="max-width:25%; height:auto;">
+</div>
 
 CI/CD for Artifact-ML relies on GitHub actions.
 
@@ -163,7 +178,7 @@ Our CI/CD pipeline utilizes the following workflows:
 - `enforce_change_dirs_dev_torch.yml` (workflow name: ENFORCE_CHANGE_DIRS): ensures PRs to `dev-torch` only modify files in their corresponding directories,
 
 #### Automatic Version Management (on merge commit push to `main`)
-- `lint_merge_commit_message.yml` (workflow name: LINT_MERGE_COMMIT_MESSAGE): validates the message carried by a merge commit pushed to `main`---asserts that the message is of the form "Merge pull request #<`PR_number`> from <`username`>/<`branch-name`>" (or "...<`username`>:<`branch-name`>") where `<branch_name>` is one of the appropriate source branches i.e. `dev-<component_name>`, `hotfix-<component_name>`/`<some_other_name>`, or `setup-<component_name>/<some_other_name>`.
+- `lint_merge_commit_message.yml` (workflow name: LINT_MERGE_COMMIT_MESSAGE): validates the message carried by a merge commit pushed to `main`---asserts that the message is of the form "Merge pull request #<`PR_number`> from <`username`>/<`branch-name`>" (or "...<`username`>:<`branch-name`>") where `<branch_name>` is one of the appropriate source branches i.e. `dev-<component_name>`, `hotfix-<component_name>`/`<descriptive_name>`, or `setup-<component_name>/<descriptive_name>`.
 - `lint_merge_commit_description.yml` (workflow name: LINT_MERGE_COMMIT_DESCRIPTION): validates the description carried by a merge commit pushed to `main`---asserts that the description is a valid PR title according to the appropriate semantic versioning prefix convention (see *Versioning and PRs to `main`*),
 - `bump_component_version.yml` (workflow name: BUMP_COMPONENT_VERSION): bumps the relevant component version when a merge commit is pushed to `main`---the commit description and message are parsed to identify the relevant component and bump type, the relevant pyproject.toml file is updated and this change is pushed along with a git tag annotating the version change.
 

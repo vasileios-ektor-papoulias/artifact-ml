@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="880" viewBox="0 0 1300 880">
+  <title>Artifact-ML Release Flow</title>
+  <style>
+    .title { font: 700 24px system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .label { font: 600 16px system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .small { font: 13px system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .bg    { fill: #ffffff; stroke: #e5e7eb; stroke-width: 2; }
+
+    .main  { fill: #eef2ff; stroke: #6366f1; stroke-width: 2; }
+    .dev   { fill: #ecfeff; stroke: #06b6d4; stroke-width: 2; }
+    .ff    { fill: #f0fdf4; stroke: #22c55e; stroke-width: 2; }
+    .hot   { fill: #fef2f2; stroke: #ef4444; stroke-width: 2; }
+    .setup { fill: #fffbeb; stroke: #f59e0b; stroke-width: 2; }
+
+    .arrow { fill: none; stroke: #0f172a; stroke-width: 2.5; marker-end: url(#arrowhead); }
+    .dashed { stroke-dasharray: 8 8; }
+  </style>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#0f172a"/>
+    </marker>
+  </defs>
+
+  <!-- Background (white for dark-mode readability) -->
+  <rect x="10" y="10" width="1500" height="860" rx="16" class="bg"/>
+
+  <text x="40" y="60" class="title">Artifact-ML Release Flow</text>
+
+  <!-- Legend (wider chips, longer arrows) -->
+  <rect x="40" y="100" width="280" height="36" rx="10" fill="#ffffff" stroke="#e5e7eb"/>
+  <line x1="60" y1="118" x2="220" y2="118" class="arrow"/>
+  <text x="230" y="122" class="small">PR</text>
+
+  <rect x="340" y="100" width="340" height="36" rx="10" fill="#ffffff" stroke="#e5e7eb"/>
+  <path class="arrow dashed" d="M360 118 L540 118"/>
+  <text x="550" y="122" class="small">periodic merge</text>
+
+  <!-- MAIN -->
+  <rect x="520" y="180" width="260" height="80" rx="12" class="main"/>
+  <text x="540" y="213" class="label">main</text>
+  <text x="540" y="238" class="small">stable</text>
+
+  <!-- DEV row -->
+  <rect x="190" y="360" width="260" height="80" rx="12" class="dev"/>
+  <text x="210" y="393" class="label">dev-core</text>
+
+  <rect x="520" y="360" width="260" height="80" rx="12" class="dev"/>
+  <text x="540" y="393" class="label">dev-experiment</text>
+
+  <rect x="850" y="360" width="260" height="80" rx="12" class="dev"/>
+  <text x="870" y="393" class="label">dev-torch</text>
+
+  <!-- FEATURE/FIX row (vertical to dev) -->
+  <rect x="190" y="560" width="260" height="78" rx="12" class="ff"/>
+  <text x="210" y="590" class="label">feature-/fix-core/&lt;name&gt;</text>
+  <text x="210" y="613" class="small">direct pushes; PR to dev-core</text>
+
+  <rect x="520" y="560" width="265" height="78" rx="12" class="ff"/>
+  <text x="540" y="590" class="label">feature-/fix-experiment/&lt;name&gt;</text>
+  <text x="540" y="613" class="small">direct pushes; PR to dev-experiment</text>
+
+  <rect x="850" y="560" width="260" height="78" rx="12" class="ff"/>
+  <text x="870" y="590" class="label">feature-/fix-torch/&lt;name&gt;</text>
+  <text x="870" y="613" class="small">direct pushes; PR to dev-torch</text>
+
+  <!-- HOTFIX / SETUP (right column, clear of dev-torch) -->
+  <rect x="1160" y="110" width="260" height="68" rx="12" class="hot"/>
+  <text x="1170" y="141" class="label">hotfix-&lt;component&gt;/&lt;name&gt;</text>
+
+  <rect x="1160" y="195" width="260" height="68" rx="12" class="setup"/>
+  <text x="1170" y="226" class="label">setup-&lt;component&gt;/&lt;name&gt;</text>
+  <text x="1170" y="248" class="small">no-bump</text>
+
+  <!-- FLOWS -->
+
+  <!-- feature-/fix- → dev (straight up) -->
+  <path class="arrow" d="M320 560 L320 440"/><text x="328" y="510" class="small">PR (no version bump)</text>
+  <path class="arrow" d="M650 560 L650 440"/><text x="658" y="510" class="small">PR (no version bump)</text>
+  <path class="arrow" d="M980 560 L980 440"/><text x="988" y="510" class="small">PR (no version bump)</text>
+
+  <!-- dev → main (curved dashed to top edge of main) -->
+  <path class="arrow dashed" d="M320 360 C 320 300, 520 280, 650 260"/>
+  <path class="arrow dashed" d="M650 360 C 650 300, 650 280, 650 260"/>
+  <path class="arrow dashed" d="M980 360 C 980 300, 780 280, 650 260"/>
+  <text x="660" y="310" class="small">periodic merge via PR</text>
+  <text x="660" y="330" class="small">(optional version bump)</text>
+
+  <!-- hotfix/setup → main (from left edges of boxes to top edge of main) -->
+  <!-- hotfix start at (1160, 144) to near (650, 180) -->
+  <path class="arrow" d="M1160 144 C 1100 144, 980 130, 860 125 C 770 122, 700 150, 650 180"/>
+  <!-- setup start at (1160, 229) to near (650, 180) with slightly lower curve -->
+  <path class="arrow" d="M1160 229 C 1080 226, 960 210, 840 170 C 760 160, 700 165, 650 180"/>
+
+  <!-- labels for right-side flows -->
+  <text x="1000" y="125" class="small">PR (optional version bump)</text>
+  <text x="1000" y="200" class="small">PR (no version bump)</text>
+
+</svg>

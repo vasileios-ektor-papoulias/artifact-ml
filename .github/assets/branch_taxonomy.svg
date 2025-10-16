@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1300" height="900" viewBox="0 0 1300 900">
+  <title>Artifact-ML Branch Taxonomy (Sectioned, No Arrows)</title>
+  <style>
+    .title { font: 700 24px system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .label { font: 600 16px system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .small { font: 13px system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+
+    /* Containers */
+    .bg      { fill: #ffffff; stroke: #e5e7eb; stroke-width: 2; }
+    .subbox  { fill: #ffffff; stroke: #e5e7eb; stroke-width: 2; }
+
+    /* Nodes */
+    .node-main  { fill: #eef2ff; stroke: #6366f1; stroke-width: 2; rx: 12; }
+    .node-dev   { fill: #ecfeff; stroke: #06b6d4; stroke-width: 2; rx: 12; }
+    .node-ff    { fill: #f0fdf4; stroke: #22c55e; stroke-width: 2; rx: 12; }  /* feature/fix */
+    .node-hot   { fill: #fef2f2; stroke: #ef4444; stroke-width: 2; rx: 12; }  /* hotfix */
+    .node-setup { fill: #fffbeb; stroke: #f59e0b; stroke-width: 2; rx: 12; }  /* setup */
+  </style>
+
+  <!-- Overall white background (for dark mode) -->
+  <rect x="10" y="10" width="1280" height="880" rx="16" class="bg"/>
+
+  <!-- Title -->
+  <text x="40" y="60" class="title">Branch Taxonomy</text>
+  <text x="40" y="86" class="small">Layout only — no flow arrows.</text>
+
+  <!-- ===== Top: MAIN sub-box ===== -->
+  <rect x="80" y="160" width="240" height="60" class="node-main"/>
+  <text x="100" y="195" class="label">main</text>
+
+  <!-- ===== Middle row: DEV sub-box (left) & HOTFIX/SETUP sub-box (right) ===== -->
+  <!-- Dev sub-box -->
+  <rect x="60" y="270" width="780" height="260" rx="14" class="subbox"/>
+  <text x="80" y="305" class="label">Development Branches</text>
+  <text x="80" y="327" class="small">dev-&lt;component_name&gt;</text>
+
+  <rect x="80" y="350" width="220" height="60" class="node-dev"/>
+  <text x="100" y="385" class="label">dev-core</text>
+
+  <rect x="330" y="350" width="240" height="60" class="node-dev"/>
+  <text x="350" y="385" class="label">dev-experiment</text>
+
+  <rect x="600" y="350" width="220" height="60" class="node-dev"/>
+  <text x="620" y="385" class="label">dev-torch</text>
+
+  <!-- Hotfix/Setup sub-box -->
+  <rect x="860" y="270" width="420" height="260" rx="14" class="subbox"/>
+  <text x="880" y="305" class="label">Hotfix &amp; Setup Branches</text>
+
+  <rect x="880" y="340" width="380" height="60" class="node-hot"/>
+  <text x="900" y="375" class="label">hotfix-&lt;component_name&gt;/&lt;descriptive_name&gt;</text>
+
+  <rect x="880" y="420" width="380" height="60" class="node-setup"/>
+  <text x="900" y="455" class="label">setup-&lt;component_name&gt;/&lt;descriptive_name&gt;</text>
+
+  <!-- ===== Bottom: FEATURE/FIX sub-box ===== -->
+  <rect x="60" y="550" width="780" height="300" rx="14" class="subbox"/>
+  <text x="80" y="585" class="label">Feature / Fix Branches</text>
+  <text x="80" y="607" class="small">feature- or fix- branches (direct pushes)</text>
+
+  <rect x="80"  y="630" width="420" height="70" class="node-ff"/>
+  <text x="100" y="666" class="label">feature-&lt;component_name&gt;/&lt;descriptive_name&gt;</text>
+
+  <rect x="80" y="760" width="420" height="70" class="node-ff"/>
+  <text x="100" y="796" class="label">fix-&lt;component_name&gt;/&lt;descriptive_name&gt;</text>
+</svg>

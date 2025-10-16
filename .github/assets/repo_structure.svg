@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1300" height="360"
+     viewBox="0 0 1300 360">
+  <style>
+    .title { font: 700 24px sans-serif; }
+    .label { font: 600 16px sans-serif; }
+    .small { font: 13px sans-serif; }
+    .box { fill: #f5f7ff; stroke: #3b82f6; stroke-width: 2; }
+    .subbox { fill: #fefce8; stroke: #f59e0b; stroke-width: 2; }
+    .comp { fill: #ecfdf5; stroke: #10b981; stroke-width: 2; }
+    .arrow { stroke: #111827; stroke-width: 2; marker-end: url(#arrowhead); }
+    .dashed { stroke-dasharray: 6 6; }
+  </style>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#111827"/>
+    </marker>
+  </defs>
+
+  <!-- Monorepo box -->
+  <rect x="20" y="60" width="1260" height="260" rx="12" class="box"/>
+  <text x="40" y="90" class="label">Component: <tspan fill="#065f46">root</tspan></text>
+  <text x="40" y="115" class="small">Content: Monorepo-wide config, assets, docs and workflows</text>
+
+  <!-- Subrepos -->
+  <rect x="40" y="140" width="380" height="160" rx="10" class="subbox"/>
+  <text x="60" y="165" class="label">Component: <tspan fill="#065f46">core</tspan></text>
+  <text x="60" y="188" class="small"><tspan font-weight="700">Directory</tspan>: ./artifact-core</text>
+   <text x="60" y="211" class="small"><tspan font-weight="700">Role</tspan>: Core logic and abstractions</text>
+  
+
+  <rect x="460" y="140" width="380" height="160" rx="10" class="subbox"/>
+  <text x="480" y="165" class="label">Component: <tspan fill="#065f46">experiment</tspan></text>
+  <text x="480" y="188" class="small"><tspan font-weight="700">Directory</tspan>: ./artifact-experiment</text>
+  <text x="480" y="211" class="small"><tspan font-weight="700">Role</tspan>: Experiment tracking and artifact logging</text>
+  
+
+  <rect x="880" y="140" width="380" height="160" rx="10" class="subbox"/>
+  <text x="900" y="165" class="label">Component: <tspan fill="#065f46">torch</tspan></text>
+  <text x="900" y="188" class="small"><tspan font-weight="700">Directory</tspan>: ./artifact-torch</text>
+  <text x="900" y="211" class="small"><tspan font-weight="700">Role</tspan>: Low-code torch integration</text>
+
+</svg>
