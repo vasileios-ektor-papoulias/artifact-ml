@@ -1,7 +1,8 @@
 #!/usr/bin/env bats
 # .github/tests/linting/test_lint_commit_message.bats
+# Tests lint_commit_message.sh.
 
-# Helper function: Extract the final (last non-empty) line from a string.
+# Helper: last non-empty line
 get_final_line() {
   echo "$1" | sed '/^[[:space:]]*$/d' | tail -n 1 | tr -d '\r\n'
 }
@@ -10,67 +11,87 @@ setup() {
   TEST_DIR="$(dirname "$BATS_TEST_FILENAME")"
   REPO_ROOT="$(cd "$TEST_DIR/../../.." && pwd)"
   echo "Repository root is: $REPO_ROOT" >&2
+
   FAKE_BIN_DIR="$BATS_TMPDIR/fakebin"
-  mkdir -p "$FAKE_BIN_DIR"
-  cp -r "$REPO_ROOT/.github" "$FAKE_BIN_DIR/"
   mkdir -p "$FAKE_BIN_DIR/.github/scripts/linting"
 
-  SCRIPT="$REPO_ROOT/.github/scripts/linting/lint_commit_message.sh"
-  echo "Using script path to copy: $SCRIPT" >&2
-  if [ ! -f "$SCRIPT" ]; then
-    echo "ERROR: Cannot find the script at: $SCRIPT" >&2
+  # --- Script under test ---
+  SCRIPT_SRC="$REPO_ROOT/.github/scripts/linting/lint_commit_message.sh"
+  if [ ! -f "$SCRIPT_SRC" ]; then
+    echo "ERROR: Cannot find the script at: $SCRIPT_SRC" >&2
     exit 1
   fi
-  cp "$SCRIPT" "$FAKE_BIN_DIR/.github/scripts/linting/"
+  cp "$SCRIPT_SRC" "$FAKE_BIN_DIR/.github/scripts/linting/"
   chmod +x "$FAKE_BIN_DIR/.github/scripts/linting/lint_commit_message.sh"
 
-  cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/linting/extract_branch_info.sh"
+  # --- Stub: lint_branch_name.sh (explicit examples only) ---
+  cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/linting/lint_branch_name.sh"
 #!/bin/bash
-# Fake extract_branch_info.sh for testing lint_commit_message.sh.
-BRANCH_NAME="$1"
-if [ -z "$BRANCH_NAME" ]; then
-  echo "::error::No branch name provided!" >&2
+set -euo pipefail
+# Contract: on success, print JSON with branch_type & component_name; otherwise exit 1.
+
+BRANCH_NAME="${1-}"
+
+if [ -z "${BRANCH_NAME}" ]; then
+  echo "::error::Missing required parameter: <branch_name>." >&2
   exit 1
 fi
 
-# Debug output to help diagnose issues
-echo "DEBUG: Processing branch name: $BRANCH_NAME" >&2
+# Allowed defaults in the real script:
+#   components: root core experiment torch
+#   types:      dev hotfix setup
 
-if [[ "$BRANCH_NAME" == "dev-mycomponent" ]]; then
-  echo '{"branch_type":"dev","component_name":"mycomponent"}'
-  exit 0
-elif [[ "$BRANCH_NAME" == "hotfix-mycomponent/fix-critical-bug" ]]; then
-  echo '{"branch_type":"hotfix","component_name":"mycomponent"}'
-  exit 0
-elif [[ "$BRANCH_NAME" == "setup-mycomponent/initial-config" ]]; then
-  echo '{"branch_type":"setup","component_name":"mycomponent"}'
-  exit 0
-elif [[ "$BRANCH_NAME" == "feature-newcomponent" ]]; then
-  echo "::error::Branch name does not follow the convention!" >&2
-  exit 1
+# Explicit acceptance table (success cases print JSON and exit 0):
+if   [ "$BRANCH_NAME" = "dev-core" ]; then
+  echo '{"branch_type":"dev","component_name":"core"}'; exit 0
+elif [ "$BRANCH_NAME" = "dev-experiment" ]; then
+  echo '{"branch_type":"dev","component_name":"experiment"}'; exit 0
+elif [ "$BRANCH_NAME" = "dev-torch" ]; then
+  echo '{"branch_type":"dev","component_name":"torch"}'; exit 0
+
+elif [ "$BRANCH_NAME" = "hotfix-core/fix-1" ]; then
+  echo '{"branch_type":"hotfix","component_name":"core"}'; exit 0
+elif [ "$BRANCH_NAME" = "hotfix-experiment/urgent" ]; then
+  echo '{"branch_type":"hotfix","component_name":"experiment"}'; exit 0
+elif [ "$BRANCH_NAME" = "hotfix-root/update-ci" ]; then
+  echo '{"branch_type":"hotfix","component_name":"root"}'; exit 0
+
+elif [ "$BRANCH_NAME" = "setup-core/init" ]; then
+  echo '{"branch_type":"setup","component_name":"core"}'; exit 0
+elif [ "$BRANCH_NAME" = "setup-experiment/seed" ]; then
+  echo '{"branch_type":"setup","component_name":"experiment"}'; exit 0
+elif [ "$BRANCH_NAME" = "setup-root/bootstrap" ]; then
+  echo '{"branch_type":"setup","component_name":"root"}'; exit 0
+
+# A couple from earlier tests:
+elif [ "$BRANCH_NAME" = "dev-mycomponent" ]; then
+  echo '{"branch_type":"dev","component_name":"mycomponent"}'; exit 0
+elif [ "$BRANCH_NAME" = "hotfix-mycomponent/fix-critical-bug" ]; then
+  echo '{"branch_type":"hotfix","component_name":"mycomponent"}'; exit 0
+elif [ "$BRANCH_NAME" = "setup-mycomponent/initial-config" ]; then
+  echo '{"branch_type":"setup","component_name":"mycomponent"}'; exit 0
+
+# Everything else fails
 else
-  # For testing, we'll handle any other branch name as an error
-  echo "::error::Branch name does not follow the convention!" >&2
-  echo "DEBUG: Branch name '$BRANCH_NAME' did not match any patterns" >&2
+  echo "::error::Branch name does not follow the required naming convention or is not allowed!" >&2
   exit 1
 fi
 EOF
-  chmod +x "$FAKE_BIN_DIR/.github/scripts/linting/extract_branch_info.sh"
+  chmod +x "$FAKE_BIN_DIR/.github/scripts/linting/lint_branch_name.sh"
 
+  # --- Fake git: emit FAKE_COMMIT_MSG for "git log -1 --pretty=format:%s" ---
   cat << "EOF" > "$FAKE_BIN_DIR/git"
 #!/bin/bash
-# Fake git command for testing lint_commit_message.sh.
-# It handles: git log -1 --pretty=format:%s
-if [[ "$@" == *"--pretty=format:%s"* ]]; then
-  echo "$FAKE_COMMIT_MSG"
+if [[ "$@" == *"log -1"* && "$@" == *"--pretty=format:%s"* ]]; then
+  echo "${FAKE_COMMIT_MSG}"
   exit 0
 fi
 echo "Fake git: unhandled args: $@" >&2
 exit 1
 EOF
   chmod +x "$FAKE_BIN_DIR/git"
-  export PATH="$FAKE_BIN_DIR:$PATH"
 
+  export PATH="$FAKE_BIN_DIR:$PATH"
   cd "$FAKE_BIN_DIR"
 }
 
@@ -79,44 +100,124 @@ teardown() {
   rm -rf "$BATS_TMPDIR/fakebin" || echo "Warning: Failed to remove fake bin" >&2
 }
 
-@test "exits with error when commit message does not follow convention" {
+# ----------------------------
+# Invalid branch: rejected by stub
+# ----------------------------
+
+@test "fails for invalid feature branch (feature not in defaults)" {
   export FAKE_COMMIT_MSG="Merge pull request #123 from username/feature-newcomponent"
   run ".github/scripts/linting/lint_commit_message.sh"
   [ "$status" -ne 0 ]
-  combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
-  echo "DEBUG: combined=[$combined]" >&2
+  combined="$(printf "%s%s" "$output" "$stderr")"
   [[ "$combined" == *"Extracted branch name: feature-newcomponent"* ]]
+  [[ "$combined" == *"does not follow the required branch naming convention"* ]]
 }
 
-@test "returns component name for a valid dev branch merge commit message" {
-  export FAKE_COMMIT_MSG="Merge pull request #123 from username/dev-mycomponent"
+@test "fails for malformed branch segment" {
+  export FAKE_COMMIT_MSG="Merge pull request #77 from username/not-a-valid"
   run ".github/scripts/linting/lint_commit_message.sh"
-  [ "$status" -eq 0 ]
-  final_line="$(get_final_line "$output")"
-  echo "DEBUG: final_line=[$final_line]" >&2
-  [ "$final_line" = "mycomponent" ]
+  [ "$status" -ne 0 ]
+  combined="$(printf "%s%s" "$output" "$stderr")"
+  [[ "$combined" == *"Extracted branch name: not-a-valid"* ]]
+  [[ "$combined" == *"does not follow the required branch naming convention"* ]]
 }
 
-@test "returns component name for a valid hotfix branch merge commit message" {
-  export FAKE_COMMIT_MSG="Merge pull request #123 from username/hotfix-mycomponent/fix-critical-bug"
+# ----------------------------
+# Valid dev branches
+# ----------------------------
+
+@test "returns component for dev-core" {
+  export FAKE_COMMIT_MSG="Merge pull request #1 from user/dev-core"
   run ".github/scripts/linting/lint_commit_message.sh"
-  echo "DEBUG: status=[$status]" >&2
-  echo "DEBUG: output=[$output]" >&2
-  echo "DEBUG: stderr=[$stderr]" >&2
   [ "$status" -eq 0 ]
-  final_line="$(get_final_line "$output")"
-  echo "DEBUG: final_line=[$final_line]" >&2
-  [ "$final_line" = "mycomponent" ]
+  [ "$(get_final_line "$output")" = "core" ]
 }
 
-@test "returns component name for a valid setup branch merge commit message" {
-  export FAKE_COMMIT_MSG="Merge pull request #123 from username/setup-mycomponent/initial-config"
+@test "returns component for dev-experiment" {
+  export FAKE_COMMIT_MSG="Merge pull request #2 from user/dev-experiment"
   run ".github/scripts/linting/lint_commit_message.sh"
-  echo "DEBUG: status=[$status]" >&2
-  echo "DEBUG: output=[$output]" >&2
-  echo "DEBUG: stderr=[$stderr]" >&2
   [ "$status" -eq 0 ]
-  final_line="$(get_final_line "$output")"
-  echo "DEBUG: final_line=[$final_line]" >&2
-  [ "$final_line" = "mycomponent" ]
+  [ "$(get_final_line "$output")" = "experiment" ]
+}
+
+@test "returns component for dev-torch (username:branch form)" {
+  export FAKE_COMMIT_MSG="Merge pull request #3 from user:dev-torch"
+  run ".github/scripts/linting/lint_commit_message.sh"
+  [ "$status" -eq 0 ]
+  [ "$(get_final_line "$output")" = "torch" ]
+}
+
+# ----------------------------
+# Valid hotfix branches
+# ----------------------------
+
+@test "returns component for hotfix-core/fix-1" {
+  export FAKE_COMMIT_MSG="Merge pull request #10 from user/hotfix-core/fix-1"
+  run ".github/scripts/linting/lint_commit_message.sh"
+  [ "$status" -eq 0 ]
+  [ "$(get_final_line "$output")" = "core" ]
+}
+
+@test "returns component for hotfix-experiment/urgent" {
+  export FAKE_COMMIT_MSG="Merge pull request #11 from user/hotfix-experiment/urgent"
+  run ".github/scripts/linting/lint_commit_message.sh"
+  [ "$status" -eq 0 ]
+  [ "$(get_final_line "$output")" = "experiment" ]
+}
+
+@test "returns component for hotfix-root/update-ci" {
+  export FAKE_COMMIT_MSG="Merge pull request #12 from user/hotfix-root/update-ci"
+  run ".github/scripts/linting/lint_commit_message.sh"
+  [ "$status" -eq 0 ]
+  [ "$(get_final_line "$output")" = "root" ]
+}
+
+# ----------------------------
+# Valid setup branches
+# ----------------------------
+
+@test "returns component for setup-core/init" {
+  export FAKE_COMMIT_MSG="Merge pull request #20 from user/setup-core/init"
+  run ".github/scripts/linting/lint_commit_message.sh"
+  [ "$status" -eq 0 ]
+  [ "$(get_final_line "$output")" = "core" ]
+}
+
+@test "returns component for setup-experiment/seed" {
+  export FAKE_COMMIT_MSG="Merge pull request #21 from user/setup-experiment/seed"
+  run ".github/scripts/linting/lint_commit_message.sh"
+  [ "$status" -eq 0 ]
+  [ "$(get_final_line "$output")" = "experiment" ]
+}
+
+@test "returns component for setup-root/bootstrap" {
+  export FAKE_COMMIT_MSG="Merge pull request #22 from user/setup-root/bootstrap"
+  run ".github/scripts/linting/lint_commit_message.sh"
+  [ "$status" -eq 0 ]
+  [ "$(get_final_line "$output")" = "root" ]
+}
+
+# ----------------------------
+# Backward-compatible examples from earlier tests
+# ----------------------------
+
+@test "returns component for dev-mycomponent" {
+  export FAKE_COMMIT_MSG="Merge pull request #101 from username/dev-mycomponent"
+  run ".github/scripts/linting/lint_commit_message.sh"
+  [ "$status" -eq 0 ]
+  [ "$(get_final_line "$output")" = "mycomponent" ]
+}
+
+@test "returns component for hotfix-mycomponent/fix-critical-bug" {
+  export FAKE_COMMIT_MSG="Merge pull request #102 from username/hotfix-mycomponent/fix-critical-bug"
+  run ".github/scripts/linting/lint_commit_message.sh"
+  [ "$status" -eq 0 ]
+  [ "$(get_final_line "$output")" = "mycomponent" ]
+}
+
+@test "returns component for setup-mycomponent/initial-config" {
+  export FAKE_COMMIT_MSG="Merge pull request #103 from username/setup-mycomponent/initial-config"
+  run ".github/scripts/linting/lint_commit_message.sh"
+  [ "$status" -eq 0 ]
+  [ "$(get_final_line "$output")" = "mycomponent" ]
 }
