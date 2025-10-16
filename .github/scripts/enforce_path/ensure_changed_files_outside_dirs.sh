@@ -1,8 +1,48 @@
 #!/bin/bash
 set -euo pipefail
 
-# Usage: .github/scripts/enforce_path/ensure_changed_files_outside_dirs.sh <base_ref> <dir1> [<dir2> ...]
-# Returns: 0 if all changed files are outside the specified directories, 1 otherwise
+# Purpose:
+#   Enforce that a PR does NOT change files under one or more forbidden directories (denylist).
+#
+# Usage:
+#   .github/scripts/enforce_path/ensure_changed_files_outside_dirs.sh <base_ref> <dir1> [<dir2> ...]
+#
+# Accepts:
+#   <base_ref>   Git ref representing the PR base (e.g., "main"); used to compute the diff range.
+#   <dirN>...    One or more repo-relative directory prefixes that must NOT be modified (e.g., "docs", "scripts").
+#
+# Stdout on success:
+#   (none) — informational messages are written to STDERR for Actions logs.
+#
+# Stderr:
+#   - On success: "All changes are outside the specified directories: <dir1> <dir2> ..."
+#   - On failure: ::error::-prefixed diagnostics listing offending paths and the forbidden directories.
+#
+# Exit codes:
+#   0  success — all changed files are OUTSIDE every listed directory
+#   1  validation/policy failure (missing args, or at least one change is inside a forbidden dir)
+#
+# Behaviour:
+#   - Fetches the remote <base_ref> (shallow) and computes merge-base with HEAD.
+#   - Lists changed paths (names only) from <merge-base>..HEAD; empty diff counts as success.
+#   - Checks that no path starts with any "<dirN>/" (simple repo-relative prefix test).
+#
+# Notes:
+#   - Intended for PR validation jobs; <base_ref> should be the PR’s base branch.
+#   - Ensure sufficient history for <base_ref> exists locally
+#     (e.g., actions/checkout@v4 with `fetch-depth: 0`, or enough to reach the merge-base).
+#   - Pass directory names without leading "./".
+#
+# Examples:
+#   # Disallow changes under docs/ and scripts/ when comparing to main
+#   .github/scripts/enforce_path/ensure_changed_files_outside_dirs.sh main docs scripts
+#
+#   # In a GitHub Actions step:
+#   - name: Forbid touching third_party/ and tooling/
+#     run: |
+#       .github/scripts/enforce_path/ensure_changed_files_outside_dirs.sh \
+#         "${{ github.base_ref }}" third_party tooling
+
 
 
 

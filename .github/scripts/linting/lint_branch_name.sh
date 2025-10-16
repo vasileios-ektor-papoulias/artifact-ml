@@ -1,9 +1,36 @@
 #!/bin/bash
 set -euo pipefail
 
-# Usage: .github/scripts/linting/lint_branch_name.sh <branch_name> ["<allowed_components>"] ["<allowed_branch_types>"]
-# Returns: 0 if the branch name follows the convention AND is allowed, 1 otherwise.
-# Stdout on success: JSON from extract_branch_info.sh, e.g. {"branch_type":"dev","component_name":"core"}
+# Usage:
+#   .github/scripts/linting/lint_branch_name.sh <branch_name> ["<allowed_components>"] ["<allowed_branch_types>"]
+#
+# Purpose:
+#   Validate that a branch name BOTH:
+#     1) matches the repository’s branch-naming SHAPE (via extract_branch_info.sh), and
+#     2) belongs to an ALLOWED component/branch_type policy.
+#
+# Inputs:
+#   <branch_name>            (required)  e.g., dev-core, hotfix-core/fix-ci, setup-experiment/init
+#   "<allowed_components>"   (optional)  space-separated list; defaults to: "root core experiment torch"
+#   "<allowed_branch_types>" (optional)  space-separated list; defaults to: "dev hotfix setup"
+#
+# Valid shapes (enforced by extractor):
+#   - dev-<component>                       (no trailing "/…")
+#   - <branch_type>-<component>/<desc>      (required for non-dev, e.g., hotfix/setup/feature/fix/…)
+#
+# Stdout on success:
+#   JSON returned from extract_branch_info.sh, e.g.:
+#     {"branch_type":"dev","component_name":"core"}
+#
+# Exit codes:
+#   0 — branch matches a valid shape AND passes allowed components/types policy
+#   1 — missing/invalid <branch_name>, invalid shape, or disallowed component/type
+#
+# Notes:
+#   - This script delegates SHAPE parsing to extract_branch_info.sh.
+#   - It then checks the parsed branch_type/component_name against the allowed lists.
+#   - Branch types comparison is case-insensitive (normalized to lowercase).
+#
 # Examples:
 #   .github/scripts/linting/lint_branch_name.sh "dev-core"
 #   .github/scripts/linting/lint_branch_name.sh "hotfix-core/fix" "root core experiment torch" "hotfix"

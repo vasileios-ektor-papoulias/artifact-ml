@@ -1,10 +1,70 @@
 #!/bin/bash
 set -euo pipefail
 
-# Usage: .github/scripts/linting/lint_pr_title.sh "PR Title" [branch_name]
-# Returns: 0 if the PR title follows the convention, 1 otherwise
-# Stdout on success: bump type (patch|minor|major|no-bump)
-# If branch_name is provided and it resolves to the 'root' component, PR title must use 'no-bump:'.
+# Purpose:
+#   Validate that a given PR title adheres to the repository's semantic versioning convention and emit the parsed bump type. If an
+#   optional source branch name is provided, also enforce that PRs targeting the
+#   **root** component must use the **no-bump** bump type.
+#
+# Usage:
+#   .github/scripts/linting/lint_pr_title.sh "PR Title" [branch_name]
+#
+# Accepts:
+#   "PR Title"   (required)  The PR title to validate, e.g. "minor: add feature".
+#   [branch_name] (optional)  A source branch to parse for component/type policy checks
+#                             (e.g., "dev-core", "hotfix-root/fix-ci").
+#   Environment (optional):
+#     ALLOWED_COMPONENTS     space-separated list (default: "root core experiment torch")
+#     ALLOWED_BRANCH_TYPES   space-separated list (default: "dev hotfix setup feature fix")
+#
+# Stdout on success:
+#   One of: patch | minor | major | no-bump
+#
+# Stderr on failure:
+#   ::error::-prefixed diagnostics indicating:
+#     - missing PR title, or
+#     - invalid/unsupported title prefix, or
+#     - invalid branch name/policy (when branch_name is provided), or
+#     - root component PR missing required "no-bump" bump type.
+#
+# Exit codes:
+#   0 — title prefix is valid (bump type printed to stdout) and, if a branch_name
+#       is provided, it parses/validates successfully; root rule (no-bump) honored.
+#   1 — any error: missing title, invalid prefix, branch parsing/policy failure,
+#       or root component PR without "no-bump:".
+#
+# Behaviour:
+#   - Validates the PR title’s leading token (case-insensitive):
+#       • "patch:" | "minor:" | "major:" | "no-bump:"
+#       • Scoped variants allowed: "<type>(scope): ..."
+#   - If [branch_name] is supplied:
+#       • Delegates to lint_branch_name.sh using ALLOWED_* policy sets to parse
+#         and validate the branch (extracts component_name).
+#       • If component_name == "root", require the title to start with "no-bump:"
+#         (or scoped "no-bump(scope):").
+#   - On success, prints only the bump type to stdout.
+#
+# Notes:
+#   - Branch policy (components/types) is enforced only when a branch_name is passed.
+#   - Type/Component allowances can be tightened per workflow via ALLOWED_* env vars.
+#   - Title matching is case-insensitive; only the leading token is validated.
+#
+# Examples:
+#   .github/scripts/linting/lint_pr_title.sh "patch: fix login bug"
+#     --> patch        # exit 0
+#
+#   .github/scripts/linting/lint_pr_title.sh "minor(ui): add tabs"
+#     --> minor        # exit 0
+#
+#   .github/scripts/linting/lint_pr_title.sh "no-bump: docs" dev-core
+#     --> no-bump      # exit 0 (non-root branch; any valid bump allowed)
+#
+#   .github/scripts/linting/lint_pr_title.sh "no-bump(docs): housekeeping" hotfix-root/fix-ci
+#     --> no-bump      # exit 0 (root branch requires no-bump)
+#
+#   .github/scripts/linting/lint_pr_title.sh "patch: fix" hotfix-root/fix-ci
+#     --> (stderr explains root requires "no-bump:")   # exit 1
+
 
 chmod +x .github/scripts/linting/detect_bump_pattern.sh
 chmod +x .github/scripts/linting/lint_branch_name.sh

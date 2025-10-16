@@ -1,10 +1,54 @@
 #!/bin/bash
 set -euo pipefail
 
-# Usage: .github/scripts/version_bump/bump_component_version.sh <bump_type> <component_name> <pyproject_path>
-# Returns: 
-# Bumps the version of the specified component (subrepo) by editing the relevant pyproject.toml file and pusing a corresponding tag.
-# The new version is determined by incrementing the old version by bump_type (patch, minor, major).
+# Purpose:
+#   Bump a component’s version by updating its pyproject.toml, then create/push
+#   a corresponding Git tag for that new version.
+#
+# Usage:
+#   .github/scripts/version_bump/bump_component_version.sh <bump_type> <component_name> <pyproject_path>
+#
+# Accepts:
+#   <bump_type>        One of: patch | minor | major
+#   <component_name>   Logical component/subrepo name (e.g., core, experiment, torch, root)
+#   <pyproject_path>   Path to the component’s pyproject.toml (repo-relative)
+#
+# Stdout on success:
+#   - The generated tag name line, e.g.:
+#       "Generated tag name: <tag>"
+#   - Any informational output emitted by the helper scripts.
+#
+# Stderr on failure:
+#   ::error::-prefixed diagnostics from this script or its helpers explaining
+#   missing/invalid arguments, version parsing failures, or Git/tag push errors.
+#
+# Exit codes:
+#   0 — version successfully bumped and tag push attempted/completed
+#   1 — validation or operational failure (e.g., bad args, pyproject update failed,
+#       tag formatting failed, or push failed)
+#
+# Behaviour:
+#   - Delegates the version computation + in-file update to:
+#       .github/scripts/version_bump/update_pyproject.sh <pyproject_path> <bump_type>
+#     (returns the NEW version string on stdout).
+#   - Formats a component-scoped tag via:
+#       .github/scripts/version_bump/get_component_tag.sh <new_version> <component_name>
+#   - Commits, tags, and pushes the version change via:
+#       .github/scripts/version_bump/push_version_update.sh <tag_name> <pyproject_path>
+#
+# Notes:
+#   - Assumes the helper scripts exist and are executable.
+#   - Requires Git to be configured with push permissions for the current repo/branch.
+#   - Expects pyproject.toml to contain a parseable version field the helper can update.
+#
+# Examples:
+#   # Bump core’s version (minor) and push a tag for it
+#   .github/scripts/version_bump/bump_component_version.sh minor core artifact-core/pyproject.toml
+#     --> Generated tag name: core-v1.3.0
+#
+#   # Patch bump for torch
+#   .github/scripts/version_bump/bump_component_version.sh patch torch artifact-torch/pyproject.toml
+#     --> Generated tag name: torch-v0.4.6
 
 BUMP_TYPE="${1:-}"
 COMPONENT_NAME="${2:-}"

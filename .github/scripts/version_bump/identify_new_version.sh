@@ -1,9 +1,50 @@
 #!/bin/bash
 set -euo pipefail
 
-# Usage: .github/scripts/version_bump/identify_new_version.sh <current_version> <bump_type>
-# Returns: The new version number after applying the bump type to the current version
-# Example: .github/scripts/version_bump/identify_new_version.sh "1.2.3" "minor" -> "1.3.0"
+# Purpose:
+#   Compute the next semantic version by applying a bump type (patch|minor|major)
+#   to a given current version string (X.Y.Z).
+#
+# Usage:
+#   .github/scripts/version_bump/identify_new_version.sh <current_version> <bump_type>
+#
+# Accepts:
+#   <current_version>  required  SemVer in the form X.Y.Z (e.g., 1.2.3)
+#   <bump_type>        required  One of: patch | minor | major
+#
+# Stdout on success:
+#   The new version string (e.g., "1.3.0")
+#
+# Stderr on failure:
+#   ::error::-style (or plain "Error: ...") diagnostics describing invalid input
+#   or unknown bump types.
+#
+# Exit codes:
+#   0 — success; new version printed to stdout
+#   1 — validation failure (missing args, bad version format, or unknown bump type)
+#
+# Behaviour:
+#   - Validates that <current_version> matches X.Y.Z (digits only).
+#   - Parses X, Y, Z as decimal numbers (defensive against leading zeros).
+#   - Applies bump rules:
+#       • patch → (X, Y, Z+1)
+#       • minor → (X, Y+1, 0)
+#       • major → (X+1, 0, 0)
+#   - Prints the new version to STDOUT and a brief “Bumping version …” message to STDERR.
+#
+# Notes:
+#   - This script performs purely mechanical SemVer increments; it does not read files,
+#     tags, or commit history.
+#   - Leading zeros are not preserved; components are treated as decimal integers.
+#
+# Examples:
+#   .github/scripts/version_bump/identify_new_version.sh 1.2.3 patch
+#     --> 1.2.4
+#   .github/scripts/version_bump/identify_new_version.sh 1.2.3 minor
+#     --> 1.3.0
+#   .github/scripts/version_bump/identify_new_version.sh 1.2.3 major
+#     --> 2.0.0
+
 
 CURRENT_VERSION="${1-}"
 BUMP_TYPE="${2-}"

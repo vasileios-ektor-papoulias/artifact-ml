@@ -1,10 +1,65 @@
 #!/bin/bash
 set -euo pipefail
 
-# Usage: .github/scripts/version_bump/job.sh
-# This script bumps the version based on the merge commit message or branch name
-# It's designed to run on main after a PR merge from a dev-<component_name> branch
-# It requires no input parameters as it gets all needed information from other scripts
+# Purpose:
+#   Orchestrate a version-bump job after changes land (typically on `main`).
+#   Determines the bump type and target component, resolves the correct
+#   pyproject.toml, and performs the bump+tag step — or skips when policy says so.
+#
+# Usage:
+#   .github/scripts/version_bump/job.sh
+#
+# Accepts:
+#   (no CLI args) — this script delegates to helper scripts to discover:
+#     • bump type (from the commit description)
+#     • component name (from the commit message / branch naming)
+#     • pyproject.toml path (from repo layout and component)
+#
+# Stdout on success:
+#   (none) — this script logs progress to STDERR; no structured STDOUT output.
+#
+# Stderr on failure:
+#   ::error::-style diagnostics from this script or its delegates explaining
+#   why the bump could not proceed (e.g., missing pyproject.toml).
+#
+# Exit codes:
+#   0 — success (version bumped) or intentional skip (no-bump, or component==root)
+#   1 — failure in any delegated step or required file missing
+#
+# Behaviour:
+#   - Calls:
+#       • .github/scripts/version_bump/get_bump_type.sh
+#         → expects: patch | minor | major | no-bump
+#       • .github/scripts/version_bump/get_component_name.sh
+#         → may return empty (root-level)
+#       • .github/scripts/version_bump/get_pyproject_path.sh <component?>
+#         → resolves the pyproject.toml to edit
+#       • .github/scripts/version_bump/bump_component_version.sh <bump> <component> <path>
+#         → edits version and pushes an annotated tag
+#   - Skips with exit 0 when:
+#       • bump type == no-bump
+#       • component == root (root changes do not bump versions)
+#   - Fails with exit 1 when:
+#       • pyproject.toml cannot be found
+#       • any delegated script exits non-zero (due to `set -euo pipefail`)
+#
+# Notes:
+#   - Designed to run on merges to `main` after PRs from component branches.
+#   - All user-visible progress is printed to STDERR for clean CI logs.
+#
+# Examples:
+#   # PR marked no-bump → job exits 0 without changing versions
+#   .github/scripts/version_bump/job.sh
+#     --> (stderr) "Bump type is 'no-bump', skipping version bump"       # exit 0
+#
+#   # Component 'core', bump type 'minor' → version updated + tag pushed
+#   .github/scripts/version_bump/job.sh
+#     --> (stderr) "Using pyproject.toml at: artifact-core/pyproject.toml"  # exit 0
+#
+#   # Missing pyproject.toml for component → error
+#   .github/scripts/version_bump/job.sh
+#     --> (stderr) "::error::Failed to find a valid pyproject.toml ..."   # exit 1
+
 
 BUMP_TYPE=$(.github/scripts/version_bump/get_bump_type.sh)
 echo "Using bump type: $BUMP_TYPE"

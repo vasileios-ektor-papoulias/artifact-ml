@@ -1,12 +1,47 @@
 #!/bin/bash
 set -euo pipefail
 
-# Usage: .github/scripts/linting/extract_branch_info.sh <branch_name>
-# Returns: JSON with branch_type and component_name
-#   e.g. {"branch_type":"dev","component_name":"mycomponent"}
-# Valid shapes:
-#   - dev-<component>                            (NO slash after component)
-#   - <branch_type>-<component>/<descriptive>    (slash + name required for non-dev types)
+# Purpose:
+#   Validate a branch name against the repository’s branch-naming convention and
+#   emit its parsed parts (branch_type and component_name).
+#
+# Usage:
+#   .github/scripts/linting/extract_branch_info.sh <branch_name>
+#
+# Accepts:
+#   <branch_name>  A single branch name string to validate and parse.
+#
+# Stdout on success:
+#   JSON object with the parsed fields, e.g.
+#     {"branch_type":"dev","component_name":"core"}
+#
+# Stderr on failure:
+#   ::error::-prefixed diagnostics explaining the required shapes and showing examples.
+#
+# Exit codes:
+#   0  — branch matches one of the valid shapes (JSON printed to stdout)
+#   1  — branch missing or does not match the required shapes
+#
+# Behaviour:
+#   - Supports two shape classes:
+#       • dev-<component>                          (NO trailing "/<descriptive-name>")
+#       • <branch_type>-<component>/<descriptive-name>  (required for non-dev types: hotfix, setup, feature, fix, …)
+#   - Parses and emits:
+#       • branch_type     → "dev" or the non-dev type prefix
+#       • component_name  → the <component> segment
+#   - Comparison is purely syntactic; no policy (allowed types/components) is enforced here.
+#
+# Notes:
+#   - <component> may include letters, digits, dot, underscore, or hyphen.
+#   - This script only validates shape and extracts parts; use higher-level linters to enforce policy.
+#
+# Examples:
+#   dev-core                          --> {"branch_type":"dev","component_name":"core"}
+#   hotfix-core/fix-ci                --> {"branch_type":"hotfix","component_name":"core"}
+#   setup-experiment/init-config      --> {"branch_type":"setup","component_name":"experiment"}
+#   feature-torch/add-dataloader      --> {"branch_type":"feature","component_name":"torch"}
+#   fix-core/harden-ci                --> {"branch_type":"fix","component_name":"core"}
+
 
 BRANCH_NAME="${1-}"
 

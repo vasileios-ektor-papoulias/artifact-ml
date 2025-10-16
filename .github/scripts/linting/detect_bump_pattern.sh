@@ -1,9 +1,41 @@
 #!/bin/bash
 set -euo pipefail
 
-# Usage: .github/scripts/linting/detect_bump_pattern.sh "text to check"
-# Returns: 0 if the text follows the bump pattern, 1 otherwise
-# Outputs: The bump type (patch, minor, major) to stdout if successful
+# Purpose:
+#   Validate a text string for a semantic bump prefix and emit the parsed bump type.
+#
+# Usage:
+#   .github/scripts/linting/detect_bump_pattern.sh "text to check"
+#
+# Accepts (case-insensitive):
+#   - "patch: …"
+#   - "minor: …"
+#   - "major: …"
+#   - "no-bump: …"
+#   - Scoped variants: "patch(scope): …", "minor(scope): …", "major(scope): …", "no-bump(scope): …"
+#
+# Stdout on success:
+#   One of: patch | minor | major | no-bump
+#
+# Stderr on failure:
+#   ::error::-prefixed diagnostics explaining the required format and showing examples.
+#
+# Exit codes:
+#   0  — input matches one of the accepted patterns (type printed to stdout)
+#   1  — input missing or does not match the required pattern
+#
+# Behaviour:
+#   - Converts the entire input to lowercase before matching.
+#   - Validates only the leading token; the remainder of the text is not parsed.
+#   - Accepts both unscoped ("type: …") and scoped ("type(scope): …") forms.
+#
+# Examples:
+#   patch: fix login validation bug      --> patch
+#   minor: add user profile page         --> minor
+#   major: remove deprecated API         --> major
+#   no-bump: update documentation        --> no-bump
+#   patch(auth): refine password checker --> patch
+
 
 TEXT_TO_CHECK="${1-}"
 

@@ -1,9 +1,59 @@
 #!/bin/bash
 set -euo pipefail
 
-# Usage: .github/scripts/linting/lint_commit_message.sh
-# Returns: 0 if the commit message follows the branch naming convention, 1 otherwise
-# Stdout (on success): the component name
+# Purpose:
+#   Validate a commit’s *subject line* that encodes a source branch name, ensuring the
+#   branch both (1) matches the repository’s branch-naming SHAPE and (2) conforms to
+#   allowed component/type policy. On success, print the parsed component name.
+#
+# Usage:
+#   .github/scripts/linting/lint_commit_message.sh
+#
+# Accepts:
+#   (no positional args; reads from the local Git repo)
+#   Environment (optional overrides):
+#     ALLOWED_COMPONENTS    space-separated list; default: "root core experiment torch"
+#     ALLOWED_BRANCH_TYPES  space-separated list; default: "dev hotfix setup"
+#
+# Stdout on success:
+#   <component_name>
+#     e.g. core
+#
+# Stderr on failure:
+#   ::error::-prefixed diagnostics explaining either:
+#     - subject could not be parsed to extract a branch name, or
+#     - extracted branch failed SHAPE validation, or
+#     - extracted branch failed allowed component/type policy (with guidance).
+#
+# Exit codes:
+#   0 — subject parsed; source branch SHAPE valid and allowed; component printed to STDOUT
+#   1 — subject not parseable to a branch, or SHAPE invalid, or policy disallowed
+#
+# Behaviour:
+#   - Reads the last commit’s subject:  git log -1 --pretty=format:%s
+#   - Extracts a branch name from the subject (supports "<user>/<branch>" and "<user>:<branch>" forms).
+#   - Delegates SHAPE + policy validation to:
+#       .github/scripts/linting/lint_branch_name.sh "<branch>" "$ALLOWED_COMPONENTS" "$ALLOWED_BRANCH_TYPES"
+#   - On success, parses the returned JSON and prints only component_name to STDOUT.
+#
+# Notes:
+#   - Common usage is on merge commits created by GitHub PRs; those subjects include the
+#     source branch name, which this script validates against the repo’s branch rules.
+#   - SHAPE rules (dev-<component> vs <type>-<component>/<desc>) are enforced by
+#     lint_branch_name.sh (which uses extract_branch_info.sh).
+#
+# Examples:
+#   # Defaults allow dev + core
+#   # Subject encodes: dev-core
+#   ALLOWED_COMPONENTS="root core experiment torch" ALLOWED_BRANCH_TYPES="dev hotfix setup" \
+#   .github/scripts/linting/lint_commit_message.sh
+#   --> core    # exit 0
+#
+#   # Policy allow-list narrowed to hotfix only (setup disallowed)
+#   # Subject encodes: setup-core/init
+#   ALLOWED_COMPONENTS="root core" ALLOWED_BRANCH_TYPES="dev hotfix" \
+#   .github/scripts/linting/lint_commit_message.sh
+#   --> (stderr explains disallowed type 'setup')  # exit 1
 
 chmod +x .github/scripts/linting/lint_branch_name.sh
 

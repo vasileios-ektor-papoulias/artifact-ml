@@ -1,8 +1,47 @@
 #!/bin/bash
 set -euo pipefail
 
-# Usage: .github/scripts/enforce_path/ensure_changed_files_in_dir.sh <component_dir> <base_ref>
-# Returns: 0 if all changed files are within the component directory, 1 otherwise
+# Purpose:
+#   Enforce that a PR only changes files under a single component directory (e.g., "artifact-core/").
+#
+# Usage:
+#   .github/scripts/enforce_path/ensure_changed_files_in_dir.sh <component_dir> <base_ref>
+#
+# Accepts:
+#   <component_dir>  Repo-relative directory that ALL changed files must be under (e.g., "artifact-core").
+#   <base_ref>       Git ref representing the PR base (e.g., "main", "dev-core") used to compute the diff.
+#
+# Stdout on success:
+#   (none) — informational messages are written to STDERR for Actions logs.
+#
+# Stderr:
+#   - On success: "All changes are within the allowed <component_dir>/ directory."
+#   - On failure: ::error::-prefixed diagnostics listing offending paths and guidance.
+#
+# Exit codes:
+#   0  success — all changed files are under <component_dir>/
+#   1  validation/policy failure (missing args, unable to diff, or at least one change outside <component_dir>/)
+#
+# Behaviour:
+#   - Fetches the remote <base_ref> (shallow) and computes merge-base with HEAD.
+#   - Lists changed paths (names only) from <merge-base>..HEAD.
+#   - Verifies each path begins with "<component_dir>/" (simple repo-relative prefix check).
+#   - Fails if any path lies outside "<component_dir>/".
+#
+# Notes:
+#   - Intended for PR validation; set <base_ref> to the PR’s base branch.
+#   - Ensure sufficient history for <base_ref> exists locally
+#     (e.g., actions/checkout@v4 with `fetch-depth: 0`, or enough to reach the merge-base).
+#   - Pass <component_dir> without leading "./".
+#
+# Examples:
+#   # Enforce that a PR to main only touches artifact-core/
+#   .github/scripts/enforce_path/ensure_changed_files_in_dir.sh artifact-core main
+#
+#   # Enforce that a PR into dev-experiment only touches artifact-experiment/
+#   .github/scripts/enforce_path/ensure_changed_files_in_dir.sh artifact-experiment dev-experiment
+
+
 
 
 COMPONENT_DIR="${1:-}"
