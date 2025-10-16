@@ -7,7 +7,6 @@ set -euo pipefail
 # Valid shapes:
 #   - dev-<component>                            (NO slash after component)
 #   - <branch_type>-<component>/<descriptive>    (slash + name required for non-dev types)
-# This script only validates the shape and extracts fields. Allowed values are checked elsewhere.
 
 BRANCH_NAME="${1-}"
 
