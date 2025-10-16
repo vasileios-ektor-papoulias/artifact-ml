@@ -2,9 +2,12 @@
 set -euo pipefail
 
 # Usage: .github/scripts/linting/extract_branch_info.sh <branch_name>
-# Returns: JSON-formatted string with branch_type and component_name
-# Example output: {"branch_type":"dev","component_name":"mycomponent"}
-# Exits with error if the branch name doesn't follow the convention
+# Returns: JSON with branch_type and component_name
+#   e.g. {"branch_type":"dev","component_name":"mycomponent"}
+# Valid shapes:
+#   - dev-<component>                            (NO slash after component)
+#   - <branch_type>-<component>/<descriptive>    (slash + name required for non-dev types)
+# This script only validates the shape and extracts fields. Allowed values are checked elsewhere.
 
 BRANCH_NAME="${1-}"
 
@@ -19,22 +22,34 @@ echo "Branch name: $BRANCH_NAME" >&2
 BRANCH_TYPE=""
 COMPONENT_NAME=""
 
-if [[ "$BRANCH_NAME" =~ ^dev-([^/]+) ]]; then
+# 1) Special case: dev-<component> with NO trailing slash part
+if [[ "$BRANCH_NAME" =~ ^dev-([A-Za-z0-9._-]+)$ ]]; then
   BRANCH_TYPE="dev"
   COMPONENT_NAME="${BASH_REMATCH[1]}"
-elif [[ "$BRANCH_NAME" =~ ^hotfix-([^/]+)/ ]]; then
-  BRANCH_TYPE="hotfix"
-  COMPONENT_NAME="${BASH_REMATCH[1]}"
-elif [[ "$BRANCH_NAME" =~ ^setup-([^/]+)/ ]]; then
-  BRANCH_TYPE="setup"
-  COMPONENT_NAME="${BASH_REMATCH[1]}"
+
+# 2) Explicitly fail dev-<component>/<anything> (dev must not have slash)
+elif [[ "$BRANCH_NAME" =~ ^dev-([A-Za-z0-9._-]+)/ ]]; then
+  echo "::error::Invalid 'dev' branch shape: 'dev-<component>' must NOT contain '/<descriptive-name>'." >&2
+  echo "::error::Example: 'dev-core' (not 'dev-core/add-thing')." >&2
+  exit 1
+
+# 3) Generic shape for all other types: <branch_type>-<component>/<descriptive>
+elif [[ "$BRANCH_NAME" =~ ^([A-Za-z0-9._-]+)-([A-Za-z0-9._-]+)/.+$ ]]; then
+  BRANCH_TYPE="${BASH_REMATCH[1]}"
+  COMPONENT_NAME="${BASH_REMATCH[2]}"
+
+# 4) Everything else: invalid
 else
-  echo "::error::Branch name does not follow the convention!" >&2
-  echo "::error::Branch name should be 'dev-<component_name>', 'hotfix-<component_name>/<some_other_name>', or 'setup-<component_name>/<some_other_name>'." >&2
+  echo "::error::Branch name does not follow the required convention!" >&2
+  echo "::error::Valid shapes:" >&2
+  echo "::error::  - dev-<component>" >&2
+  echo "::error::  - <branch_type>-<component>/<descriptive-name>  (for non-dev types)" >&2
   echo "::error::Examples:" >&2
-  echo "::error::  'dev-mycomponent'" >&2
-  echo "::error::  'hotfix-mycomponent/fix-critical-bug'" >&2
-  echo "::error::  'setup-mycomponent/initial-config'" >&2
+  echo "::error::  - dev-core" >&2
+  echo "::error::  - hotfix-core/fix-critical-bug" >&2
+  echo "::error::  - setup-experiment/initial-config" >&2
+  echo "::error::  - feature-torch/add-dataloader" >&2
+  echo "::error::  - fix-core/harden-ci" >&2
   exit 1
 fi
 
