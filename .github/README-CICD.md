@@ -7,7 +7,7 @@ The present constitues a detailed exposition to the project's dev-ops processes 
 </p>
 
 
-## Dev-Ops Processes
+## Dev-Ops and Release Flow
 
 ### Repository Structure and Project Components
 Artifact-ML is comprised of three single-purpose subrepos---with independent versioning and release cycles---gathered under a single monorepo. These are:
