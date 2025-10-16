@@ -25,59 +25,77 @@ setup() {
   chmod +x "$FAKE_BIN_DIR/.github/scripts/linting/lint_commit_message.sh"
 
   # --- Stub: lint_branch_name.sh (explicit examples only) ---
-  cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/linting/lint_branch_name.sh"
+  cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/linting/extract_branch_info.sh"
 #!/bin/bash
 set -euo pipefail
 # Contract: on success, print JSON with branch_type & component_name; otherwise exit 1.
+# This stub validates SHAPE only (no policy): 
+#   - dev-<component>                  (NO trailing "/…")
+#   - <type>-<component>/<desc>        (required for non-dev)
 
 BRANCH_NAME="${1-}"
 
 if [ -z "${BRANCH_NAME}" ]; then
-  echo "::error::Missing required parameter: <branch_name>." >&2
+  echo "::error::No branch name provided!" >&2
   exit 1
 fi
 
-# Allowed defaults in the real script:
-#   components: root core experiment torch
-#   types:      dev hotfix setup
-
-# Explicit acceptance table (success cases print JSON and exit 0):
+# -----------------------------
+# Explicit acceptance table
+# -----------------------------
+# dev (no slash)
 if   [ "$BRANCH_NAME" = "dev-core" ]; then
   echo '{"branch_type":"dev","component_name":"core"}'; exit 0
 elif [ "$BRANCH_NAME" = "dev-experiment" ]; then
   echo '{"branch_type":"dev","component_name":"experiment"}'; exit 0
 elif [ "$BRANCH_NAME" = "dev-torch" ]; then
   echo '{"branch_type":"dev","component_name":"torch"}'; exit 0
+elif [ "$BRANCH_NAME" = "dev-mycomponent" ]; then
+  echo '{"branch_type":"dev","component_name":"mycomponent"}'; exit 0
 
+# hotfix (requires "/desc")
 elif [ "$BRANCH_NAME" = "hotfix-core/fix-1" ]; then
   echo '{"branch_type":"hotfix","component_name":"core"}'; exit 0
 elif [ "$BRANCH_NAME" = "hotfix-experiment/urgent" ]; then
   echo '{"branch_type":"hotfix","component_name":"experiment"}'; exit 0
 elif [ "$BRANCH_NAME" = "hotfix-root/update-ci" ]; then
   echo '{"branch_type":"hotfix","component_name":"root"}'; exit 0
+elif [ "$BRANCH_NAME" = "hotfix-mycomponent/fix-critical-bug" ]; then
+  echo '{"branch_type":"hotfix","component_name":"mycomponent"}'; exit 0
 
+# setup (requires "/desc")
 elif [ "$BRANCH_NAME" = "setup-core/init" ]; then
   echo '{"branch_type":"setup","component_name":"core"}'; exit 0
 elif [ "$BRANCH_NAME" = "setup-experiment/seed" ]; then
   echo '{"branch_type":"setup","component_name":"experiment"}'; exit 0
 elif [ "$BRANCH_NAME" = "setup-root/bootstrap" ]; then
   echo '{"branch_type":"setup","component_name":"root"}'; exit 0
-
-# A couple from earlier tests:
-elif [ "$BRANCH_NAME" = "dev-mycomponent" ]; then
-  echo '{"branch_type":"dev","component_name":"mycomponent"}'; exit 0
-elif [ "$BRANCH_NAME" = "hotfix-mycomponent/fix-critical-bug" ]; then
-  echo '{"branch_type":"hotfix","component_name":"mycomponent"}'; exit 0
 elif [ "$BRANCH_NAME" = "setup-mycomponent/initial-config" ]; then
   echo '{"branch_type":"setup","component_name":"mycomponent"}'; exit 0
 
+# -----------------------------
+# Known invalid shapes (helpful errors)
+# -----------------------------
+elif [[ "$BRANCH_NAME" == dev-*/?* ]]; then
+  echo "::error::Invalid 'dev' branch shape: 'dev-<component>' must NOT contain '/<descriptive-name>'." >&2
+  exit 1
+elif [[ "$BRANCH_NAME" == feature-* && "$BRANCH_NAME" != */* ]]; then
+  # Non-dev types must include '/desc'
+  echo "::error::Branch name does not follow the required convention! Expected '<type>-<component>/<desc>' for non-dev types." >&2
+  exit 1
+elif [[ "$BRANCH_NAME" == fix-* && "$BRANCH_NAME" != */* ]]; then
+  echo "::error::Branch name does not follow the required convention! Expected '<type>-<component>/<desc>' for non-dev types." >&2
+  exit 1
+
+# -----------------------------
 # Everything else fails
+# -----------------------------
 else
-  echo "::error::Branch name does not follow the required naming convention or is not allowed!" >&2
+  echo "::error::Branch name does not follow the required convention!" >&2
   exit 1
 fi
 EOF
-  chmod +x "$FAKE_BIN_DIR/.github/scripts/linting/lint_branch_name.sh"
+  chmod +x "$FAKE_BIN_DIR/.github/scripts/linting/extract_branch_info.sh"
 
   # --- Fake git: emit FAKE_COMMIT_MSG for "git log -1 --pretty=format:%s" ---
   cat << "EOF" > "$FAKE_BIN_DIR/git"
@@ -109,8 +127,11 @@ teardown() {
   run ".github/scripts/linting/lint_commit_message.sh"
   [ "$status" -ne 0 ]
   combined="$(printf "%s%s" "$output" "$stderr")"
+  # New extractor/wrapper messages
   [[ "$combined" == *"Extracted branch name: feature-newcomponent"* ]]
-  [[ "$combined" == *"does not follow the required branch naming convention"* ]]
+  [[ "$combined" == *"Failed to validate/parse branch name from commit subject."* \
+     || "$combined" == *"Branch name does not follow the required convention!"* \
+     || "$combined" == *"Expected '<type>-<component>/<desc>' for non-dev types."* ]]
 }
 
 @test "fails for malformed branch segment" {
@@ -119,7 +140,8 @@ teardown() {
   [ "$status" -ne 0 ]
   combined="$(printf "%s%s" "$output" "$stderr")"
   [[ "$combined" == *"Extracted branch name: not-a-valid"* ]]
-  [[ "$combined" == *"does not follow the required branch naming convention"* ]]
+  [[ "$combined" == *"Failed to validate/parse branch name from commit subject."* \
+     || "$combined" == *"Branch name does not follow the required convention!"* ]]
 }
 
 # ----------------------------
@@ -195,29 +217,4 @@ teardown() {
   run ".github/scripts/linting/lint_commit_message.sh"
   [ "$status" -eq 0 ]
   [ "$(get_final_line "$output")" = "root" ]
-}
-
-# ----------------------------
-# Backward-compatible examples from earlier tests
-# ----------------------------
-
-@test "returns component for dev-mycomponent" {
-  export FAKE_COMMIT_MSG="Merge pull request #101 from username/dev-mycomponent"
-  run ".github/scripts/linting/lint_commit_message.sh"
-  [ "$status" -eq 0 ]
-  [ "$(get_final_line "$output")" = "mycomponent" ]
-}
-
-@test "returns component for hotfix-mycomponent/fix-critical-bug" {
-  export FAKE_COMMIT_MSG="Merge pull request #102 from username/hotfix-mycomponent/fix-critical-bug"
-  run ".github/scripts/linting/lint_commit_message.sh"
-  [ "$status" -eq 0 ]
-  [ "$(get_final_line "$output")" = "mycomponent" ]
-}
-
-@test "returns component for setup-mycomponent/initial-config" {
-  export FAKE_COMMIT_MSG="Merge pull request #103 from username/setup-mycomponent/initial-config"
-  run ".github/scripts/linting/lint_commit_message.sh"
-  [ "$status" -eq 0 ]
-  [ "$(get_final_line "$output")" = "mycomponent" ]
 }

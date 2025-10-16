@@ -2,60 +2,50 @@
 set -euo pipefail
 
 # Purpose:
-#   Validate a commit’s *subject line* that encodes a source branch name, ensuring the
-#   branch both (1) matches the repository’s branch-naming SHAPE and (2) conforms to
-#   allowed component/type policy. On success, print the parsed component name.
+#   Parse the last commit’s *subject line*, ensuring it encodes a valid branch
+#   name as per the repository's conventions. On success, print the parsed
+#   component name.
 #
 # Usage:
 #   .github/scripts/linting/lint_commit_message.sh
 #
 # Accepts:
 #   (no positional args; reads from the local Git repo)
-#   Environment (optional overrides):
-#     ALLOWED_COMPONENTS    space-separated list; default: "root core experiment torch"
-#     ALLOWED_BRANCH_TYPES  space-separated list; default: "dev hotfix setup"
 #
 # Stdout on success:
 #   <component_name>
 #     e.g. core
 #
 # Stderr on failure:
-#   ::error::-prefixed diagnostics explaining either:
+#   ::error::-prefixed diagnostics explaining:
 #     - subject could not be parsed to extract a branch name, or
-#     - extracted branch failed SHAPE validation, or
-#     - extracted branch failed allowed component/type policy (with guidance).
+#     - extracted branch failed SHAPE validation (per extract_branch_info.sh).
 #
 # Exit codes:
-#   0 — subject parsed; source branch SHAPE valid and allowed; component printed to STDOUT
-#   1 — subject not parseable to a branch, or SHAPE invalid, or policy disallowed
+#   0 — subject parsed; source branch SHAPE valid; component printed to STDOUT
+#   1 — subject not parseable to a branch or SHAPE invalid
 #
 # Behaviour:
 #   - Reads the last commit’s subject:  git log -1 --pretty=format:%s
 #   - Extracts a branch name from the subject (supports "<user>/<branch>" and "<user>:<branch>" forms).
-#   - Delegates SHAPE + policy validation to:
-#       .github/scripts/linting/lint_branch_name.sh "<branch>" "$ALLOWED_COMPONENTS" "$ALLOWED_BRANCH_TYPES"
+#   - Delegates SHAPE parsing ONLY to:
+#       .github/scripts/linting/extract_branch_info.sh "<branch>"
 #   - On success, parses the returned JSON and prints only component_name to STDOUT.
 #
 # Notes:
 #   - Common usage is on merge commits created by GitHub PRs; those subjects include the
-#     source branch name, which this script validates against the repo’s branch rules.
-#   - SHAPE rules (dev-<component> vs <type>-<component>/<desc>) are enforced by
-#     lint_branch_name.sh (which uses extract_branch_info.sh).
+#     source branch name, which this script validates against the repo’s branch SHAPE rules.
+#   - SHAPE rules (dev-<component> vs <type>-<component>/<desc>) are enforced solely by
+#     extract_branch_info.sh; this script does not apply any allowed-type/component policy.
 #
 # Examples:
-#   # Defaults allow dev + core
-#   # Subject encodes: dev-core
-#   ALLOWED_COMPONENTS="root core experiment torch" ALLOWED_BRANCH_TYPES="dev hotfix setup" \
+#   # Subject encodes: dev-core  → prints "core"
 #   .github/scripts/linting/lint_commit_message.sh
-#   --> core    # exit 0
 #
-#   # Policy allow-list narrowed to hotfix only (setup disallowed)
-#   # Subject encodes: setup-core/init
-#   ALLOWED_COMPONENTS="root core" ALLOWED_BRANCH_TYPES="dev hotfix" \
+#   # Subject encodes: hotfix-core/fix-ci  → prints "core"
 #   .github/scripts/linting/lint_commit_message.sh
-#   --> (stderr explains disallowed type 'setup')  # exit 1
 
-chmod +x .github/scripts/linting/lint_branch_name.sh
+chmod +x .github/scripts/linting/extract_branch_info.sh
 
 # ---- Policy (declare allowed sets here; env can override) ----
 ALLOWED_COMPONENTS_DEFAULT="root core experiment torch"
@@ -75,21 +65,17 @@ if [[ "$LAST_COMMIT_MESSAGE" =~ ^Merge\ pull\ request\ #[0-9]+(\ .*)?\ from\ ([^
   echo "Extracted username: $USERNAME" >&2
   echo "Extracted branch name: $BRANCH_NAME" >&2
 else
-  echo "::error::Merge commit subject didn’t match expected formats." >&2
+  echo "::error::Commit subject didn’t match expected formats to extract a branch." >&2
   echo "::error::Examples:" >&2
   echo "::error::  'Merge pull request #123 from username/feature/foo-bar'" >&2
   echo "::error::  'Merge pull request #123 from username:feature/foo-bar'" >&2
   exit 1
 fi
 
-# Call the branch linter (use declared allowed sets)
-if ! BRANCH_INFO_JSON=$(.github/scripts/linting/lint_branch_name.sh \
-      "$BRANCH_NAME" \
-      "$ALLOWED_COMPONENTS" \
-      "$ALLOWED_BRANCH_TYPES" 2>&1); then
-  # The linter writes diagnostics to stderr; we captured both, so echo them and fail
+# Validate SHAPE & parse via extractor
+if ! BRANCH_INFO_JSON=$(.github/scripts/linting/extract_branch_info.sh "$BRANCH_NAME" 2>&1); then
   echo "$BRANCH_INFO_JSON" >&2
-  echo "::error::Merge commit message does not follow the required branch naming convention (type-component[/desc])." >&2
+  echo "::error::Source branch does not follow the required naming convention (type-component[/desc])." >&2
   exit 1
 fi
 
@@ -98,14 +84,42 @@ COMPONENT_NAME=$(echo "$BRANCH_INFO_JSON" | grep -o '"component_name":"[^"]*"' |
 BRANCH_TYPE=$(echo "$BRANCH_INFO_JSON" | grep -o '"branch_type":"[^"]*"' | cut -d'"' -f4 || true)
 
 if [ -z "${COMPONENT_NAME}" ] || [ -z "${BRANCH_TYPE}" ]; then
-  echo "::error::Failed to parse component/type from linter output." >&2
+  echo "::error::Failed to parse component/type from extractor output." >&2
   echo "::error::Output was: $BRANCH_INFO_JSON" >&2
   exit 1
 fi
 
-echo "Merge commit message follows the branch naming convention ($BRANCH_TYPE branch)." >&2
-echo "Extracted component name: $COMPONENT_NAME" >&2
+# Normalize type allow-list to lowercase for comparison
+IFS=' ' read -r -a _types_raw <<< "$ALLOWED_BRANCH_TYPES"
+ALLOWED_TYPES_LC=()
+for t in "${_types_raw[@]}"; do ALLOWED_TYPES_LC+=("${t,,}"); done
 
-# Print component to stdout (contract preserved)
+# Policy checks
+type_ok=false
+comp_ok=false
+
+for t in "${ALLOWED_TYPES_LC[@]}"; do
+  if [ "${BRANCH_TYPE,,}" = "$t" ]; then
+    type_ok=true; break
+  fi
+done
+
+IFS=' ' read -r -a _components <<< "$ALLOWED_COMPONENTS"
+for c in "${_components[@]}"; do
+  if [ "$COMPONENT_NAME" = "$c" ]; then
+    comp_ok=true; break
+  fi
+done
+
+if [ "$type_ok" != true ] || [ "$comp_ok" != true ]; then
+  echo "::error::Branch is syntactically valid, but fails policy checks." >&2
+  echo "::error::Allowed branch types: $ALLOWED_BRANCH_TYPES" >&2
+  echo "::error::Allowed components: $ALLOWED_COMPONENTS" >&2
+  exit 1
+fi
+
+echo "Commit subject encodes a valid and allowed branch ($BRANCH_TYPE-$COMPONENT_NAME)." >&2
+
+# Print component to stdout (contract)
 echo "$COMPONENT_NAME"
 exit 0
