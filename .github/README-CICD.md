@@ -47,7 +47,7 @@ The project is correspondingly partitioned in the following *components* (provid
    - Example: `feature/add-login`
 
 - **Hotfix Branches**: `hotfix-<component_name>/<some_other_name>`
-   - Role: Used for urgent fixes that need to be applied directly to main.
+   - Role: Used for urgent fixes that need to be applied directly to `main`.
    - Update: Updated by direct pushes.
    - Restrictions: Should only modify files in one component directory (enforced when opening a PR to main).
    - Examples: `hotfix-core/fix-critical-bug`, `hotfix-experiment/fix-validation-issue`, `hotfix-torch/fix-model-loading`
@@ -56,7 +56,7 @@ The project is correspondingly partitioned in the following *components* (provid
    - Role: Used for initial setup or configuration changes
    - Update: Updated by direct pushes.
    - Restrictions: 
-      - Always use with "no-bump:" prefix as setup changes should not trigger version bumps.
+      - Always use with `no-bump` bump type (as setup changes should not trigger version bumps).
       - Should only modify files in the specified component directory (enforced when opening a PR to main).
    - Examples: `setup-core/initial-config`, `setup-experiment/update-docs`, `setup-torch/add-examples`
 
@@ -134,20 +134,22 @@ Tests are organized in `.github/tests`. Their directory structure mirrors that o
 
 Our CI/CD pipeline utilizes the following workflows:
 
-- `ci_core.yml` (workflow name: CI_CORE_ON_PUSH): runs CI checks when changes are made to files in the `core` component directories on branches other than `main` and `dev-core`,
-- `ci_experiment.yml` (workflow name: CI_EXPERIMENT_ON_PUSH): runs CI checks when changes are made to files in the `experiment` component directories on branches other than `main` and `dev-experiment`,
-- `ci_torch.yml` (workflow name: CI_TORCH_ON_PUSH): runs CI checks when changes are made to files in the `torch` component directories on branches other than `main` and `dev-torch`,
-- `ci_dev_core.yml` (workflow name: CI_DEV_CORE): runs CI checks when changes are made to `dev-core`,
-- `ci_dev_experiment.yml` (workflow name: CI_DEV_EXPERIMENT): runs CI checks when changes are made to `dev-experiment`,
- - `ci_dev_torch.yml` (workflow name: CI_DEV_TORCH): runs CI checks when changes are made to `dev-torch`,
-- `ci_main.yml` (workflow name: CI_MAIN): runs CI checks when changes are made to `main`,
-- `lint_pr_title_main.yml` (workflow name: LINT_PR_TITLE): ensures PR titles to `main` follow the convention aforementioned semantic versioning prefix convention and enforces that PRs from root component branches must use the `no-bump` bump type,
-- `lint_merge_commit_message.yml` (workflow name: LINT_MERGE_COMMIT_MESSAGE): validates the message carried by a merge commit on `main`---asserts that the message is of the form "Merge pull request #<`PR_number`> from <`username`>/<`branch-name`>" where `<branch_name>` is one of the appropriate source branches i.e. `dev-<component_name>`, `hotfix-<component_name>`/`<some_other_name>`, or `setup-<component_name>/<some_other_name>`.
-- `lint_merge_commit_description.yml` (workflow name: LINT_MERGE_COMMIT_DESCRIPTION): validates the description carried by a merge commit on `main`---asserts that the description is a valid PR title according to the aforementioned semantic versioning prefix convention.
-- `bump_component_version.yml` (workflow name: BUMP_COMPONENT_VERSION): automatically bumps component versions based on commit descriptions (skips for `no-bump`)---the version bump flow involves updating the relevant pyproject.toml file and pushing with a git tag annotating the version change.
-- `enforce_change_dirs_dev_core.yml` (workflow name: ENFORCE_CHANGE_DIRS): ensures PRs to `dev-core` only modify files in their corresponding directories,,
-``enforce_change_dirs_dev_experiment.yml` (workflow name: ENFORCE_CHANGE_DIRS): ensures PRs to `dev-experiment` only modify files in their corresponding directories,,
-- `enforce_change_dirs_dev_torch.yml` (workflow name: ENFORCE_CHANGE_DIRS): ensures PRs to `dev-torch` only modify files in their corresponding directories,
+#### CI Checks (on push)
+
+- `ci_core.yml` (workflow name: CI_CORE_ON_PUSH): runs CI checks when changes are pushed to branches other than `main` and `dev-core` involving files in the `core` component directories,
+- `ci_experiment.yml` (workflow name: CI_EXPERIMENT_ON_PUSH): runs CI checks when changes are pushed to branches other than `main` and `dev-experiment` involving files in the `experiment` component directories,
+- `ci_torch.yml` (workflow name: CI_TORCH_ON_PUSH): runs CI checks when changes are pushed to branches other than `main` and `dev-torch` involving files in the `torch` component directories,
+- `ci_dev_core.yml` (workflow name: CI_DEV_CORE): runs CI checks when changes are pushed to `dev-core` (always merges of `feature`/ `fix` branches through pull request),
+- `ci_dev_experiment.yml` (workflow name: CI_DEV_EXPERIMENT): runs CI checks when changes are pushed to `dev-experiment` (always merges of `feature`/ `fix` branches through pull request),
+ - `ci_dev_torch.yml` (workflow name: CI_DEV_TORCH): runs CI checks when changes are pushed to `dev-torch` (always merges of `feature`/ `fix` branches through pull request),
+- `ci_main.yml` (workflow name: CI_MAIN): runs CI checks when changes are pushed to `main` (always merges of `dev`/ `hotfix`/ `setup` branches through pull request).
+
+#### PR Metadata Validation
+- `enforce_source_branch_naming_main.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING): ensures that branches being PR'd to `main` follow the naming convention: `dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`
+- `enforce_source_branch_naming_dev_core.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING): ensures that branches being PR'd to `dev-core` follow the naming convention: `feature-core/<descriptive_name>`, `fix-core/<descriptive_name>`,
+- `enforce_source_branch_naming_dev_experiment.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING): ensures that branches being PR'd to `dev-experiment` follow the naming convention: `feature-experiment/<descriptive_name>`, `fix-experiment/<descriptive_name>`,
+- `enforce_source_branch_naming_dev_torch.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING): ensures that branches being PR'd to `dev-torch` follow the naming convention: `feature-torch/<descriptive_name>`, `fix-torch/<descriptive_name>`,
+- `lint_pr_title_main.yml` (workflow name: LINT_PR_TITLE): ensures PR titles to `main` follow the appropriate semantic versioning prefix convention (see *Versioning and PRs to `main`*),
 - `enforce_change_dirs_main.yml` (workflow name: ENFORCE_CHANGE_DIRS) - Ensures:
   - PRs from `dev-core` to `main` only modify files in the `artifact-core` directory
   - PRs from `dev-experiment` to `main` only modify files in the `artifact-experiment` directory
@@ -156,7 +158,14 @@ Our CI/CD pipeline utilizes the following workflows:
   - PRs from `hotfix-experiment/*` branches to `main` only modify files in the `artifact-experiment` directory
   - PRs from `hotfix-torch/*` branches to `main` only modify files in the `artifact-torch` directory
   - PRs from `hotfix-root/*` or `setup-root/*` branches to `main` only modify files outside of the subrepo component directories
-- `enforce_branch_naming.yml` (workflow name: ENFORCE_BRANCH_NAMING): ensures that branches being PR'd to `main` follow the naming convention: `dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`
+- `enforce_change_dirs_dev_core.yml` (workflow name: ENFORCE_CHANGE_DIRS): ensures PRs to `dev-core` only modify files in their corresponding directories,
+`enforce_change_dirs_dev_experiment.yml` (workflow name: ENFORCE_CHANGE_DIRS): ensures PRs to `dev-experiment` only modify files in their corresponding directories,,
+- `enforce_change_dirs_dev_torch.yml` (workflow name: ENFORCE_CHANGE_DIRS): ensures PRs to `dev-torch` only modify files in their corresponding directories,
+
+#### Automatic Version Management (on merge commit push to `main`)
+- `lint_merge_commit_message.yml` (workflow name: LINT_MERGE_COMMIT_MESSAGE): validates the message carried by a merge commit pushed to `main`---asserts that the message is of the form "Merge pull request #<`PR_number`> from <`username`>/<`branch-name`>" (or "...<`username`>:<`branch-name`>") where `<branch_name>` is one of the appropriate source branches i.e. `dev-<component_name>`, `hotfix-<component_name>`/`<some_other_name>`, or `setup-<component_name>/<some_other_name>`.
+- `lint_merge_commit_description.yml` (workflow name: LINT_MERGE_COMMIT_DESCRIPTION): validates the description carried by a merge commit pushed to `main`---asserts that the description is a valid PR title according to the appropriate semantic versioning prefix convention (see *Versioning and PRs to `main`*),
+- `bump_component_version.yml` (workflow name: BUMP_COMPONENT_VERSION): bumps the relevant component version when a merge commit is pushed to `main`---the commit description and message are parsed to identify the relevant component and bump type, the relevant pyproject.toml file is updated and this change is pushed along with a git tag annotating the version change.
 
 ### Scripts
 
@@ -185,14 +194,36 @@ This approach follows GitHub Actions' standard execution context, where workflow
   - **Outcome:** prints the bump type (`patch` | `minor` | `major` | `no-bump`) to stdout; exits `1` if no valid prefix.
 
 - `extract_branch_info.sh`:
-  - **Given:** a branch name like `dev-core`, `hotfix-core/fix-ci`, or `setup-core/seed`.
-  - **Does:** parses the branch to identify `branch_type` (`dev` | `hotfix` | `setup`) and `component_name`.
-  - **Outcome:** prints JSON `{"branch_type":"…","component_name":"…"}` to stdout; exits `1` if it doesn’t match the convention.
+  - **Given:** a branch name following the repository’s branch-naming convention.
+  - **Does:** validates the **shape** and parses `branch_type` and `component_name`. Rules:
+    - `dev-<component>` *(no trailing `/…` allowed)*
+    - `<branch_type>-<component>/<descriptive-name>` for **non-dev** types
+  - **Outcome:** prints JSON `{"branch_type":"…","component_name":"…"}` to stdout on success; exits `1` if the branch name doesn’t follow one of the valid shapes.
+  - **Examples:**
+    - `dev-core` --> `{"branch_type":"dev","component_name":"core"}`
+    - `dev-experiment` --> `{"branch_type":"dev","component_name":"experiment"}`
+    - `dev-torch` --> `{"branch_type":"dev","component_name":"torch"}`
+    - `hotfix-core/fix-ci` --> `{"branch_type":"hotfix","component_name":"core"}`
+    - `hotfix-torch/patch-loader-crash` --> `{"branch_type":"hotfix","component_name":"torch"}`
+    - `setup-core/seed` --> `{"branch_type":"setup","component_name":"core"}`
+    - `setup-experiment/init-config` --> `{"branch_type":"setup","component_name":"experiment"}`
+    - `feature-torch/add-dataloader` --> `{"branch_type":"feature","component_name":"torch"}`
+    - `feature-core/improve-logging` --> `{"branch_type":"feature","component_name":"core"}`
+    - `fix-core/harden-ci` --> `{"branch_type":"fix","component_name":"core"}`
+    - `fix-experiment/typo-in-docs` --> `{"branch_type":"fix","component_name":"experiment"}`
 
 - `lint_branch_name.sh`:
-  - **Given:** `<branch_name>` and a space-separated list of `<allowed_components>` (e.g., `"artifact-core artifact-experiment"`).
-  - **Does:** uses `extract_branch_info.sh` to parse the branch, then checks that `component_name` is in the allowed list and the shape matches: `dev-<component>` (no slash), `hotfix-<component>/<desc>`, or `setup-<component>/<desc>`.
-  - **Outcome:** exits `0` if valid; otherwise prints guidance with valid patterns and exits `1`.
+  - **Given:** `<branch_name>` and optional space-separated lists:
+    - **`<ALLOWED_COMPONENTS>`** (default: `root core experiment torch`)
+    - **`<ALLOWED_BRANCH_TYPES>`** (default: `dev hotfix setup`)
+  - **Does:**
+    1) Calls `extract_branch_info.sh` to **validate the branch shape** and parse `branch_type` + `component_name`. Shape rules:
+       - `dev-<component>` *(no trailing `/…` allowed)*
+       - `<branch_type>-<component>/<descriptive-name>` for **non-dev** types (e.g., `hotfix`, `setup`; plus any others your extractor supports)
+    2) Verifies **`branch_type ∈ ALLOWED_BRANCH_TYPES`** and **`component_name ∈ ALLOWED_COMPONENTS`**.
+  - **Outcome:**
+    - **Success (`exit 0`)** → prints the parsed JSON to **stdout** (e.g. `{"branch_type":"dev","component_name":"core"}`)
+    - **Failure (`exit 1`)** → prints guidance (allowed components/types and example shapes) to **stderr**.
 
 - `lint_pr_title.sh`:
    - **Given:** `"PR Title"` and optionally `[branch_name]`.
@@ -205,7 +236,7 @@ This approach follows GitHub Actions' standard execution context, where workflow
   - **Outcome:** prints the resolved bump type to stdout (`patch` | `minor` | `major` | `no-bump`) and exits `0`; if empty or missing the prefix, prints errors and exits `1`.
 
 - `lint_commit_message.sh`:
-  - **Given:** the **subject** of the last commit (expected GitHub merge subject like `Merge pull request #123 from user/branch` or `user:branch`).
+  - **Given:** the **subject** of the last commit (expected GitHub merge subject like `Merge pull request #123 from user/branch` or `... user:branch`).
   - **Does:** extracts the `branch` from the subject and validates its naming via `extract_branch_info.sh`.
   - **Outcome:** prints the `component_name` to stdout on success; exits `1` if the subject isn’t a merge format or the branch naming is invalid.
 
