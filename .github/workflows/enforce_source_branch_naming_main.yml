@@ -1,4 +1,4 @@
-name: ENFORCE_BRANCH_NAMING
+name: ENFORCE_SOURCE_BRANCH_NAMING
 
 on:
   pull_request:
@@ -9,16 +9,21 @@ on:
 jobs:
   check-branch-naming:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     env:
       ALLOWED_COMPONENTS: "root core experiment torch"
+      ALLOWED_BRANCH_TYPES: "dev hotfix setup"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Ensure scripts are executable
         run: chmod +x .github/scripts/linting/*.sh
-        
+
       - name: Check branch naming convention
         run: |
-          # Run the branch naming check script
-          .github/scripts/linting/lint_branch_name.sh "${{ github.head_ref }}" "${{ env.ALLOWED_COMPONENTS }}"
+          .github/scripts/linting/lint_branch_name.sh \
+            "${{ github.head_ref }}" \
+            "${{ env.ALLOWED_COMPONENTS }}" \
+            "${{ env.ALLOWED_BRANCH_TYPES }}"
