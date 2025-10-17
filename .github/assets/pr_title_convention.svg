@@ -30,7 +30,7 @@
   <rect x="10" y="10" width="880" height="440" class="bg"/>
 
   <!-- Header -->
-  <text x="450" y="48" class="title" text-anchor="middle">PR Titles to Main</text>
+  <text x="450" y="48" class="title" text-anchor="middle">PRs to Main: Title Convention</text>
 
   <!-- ================== CENTERED PATTERN ================== -->
   <!-- We position tokens separately for precise arrow targets, but keep the line visually centered -->
