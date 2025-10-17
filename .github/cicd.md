@@ -2,7 +2,7 @@
 
 The present constitues a detailed exposition to Artifact-ML's **CI/CD pipelines**.
 
-For a specification of the project's **DevOps pipelines** please consult the relevant [docs](../.github/devops.md).
+For a specification of the project's **DevOps pipelines** please consult the relevant [docs](devops.md).
 
 <p align="center">
   <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">

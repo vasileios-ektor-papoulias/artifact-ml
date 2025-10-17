@@ -3,7 +3,7 @@
 > A comprehensive demonstration of the artifact-torch framework showcasing tabular data synthesis using a Variational Autoencoder.
 
 <p align="center">
-  <img src="../assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
+  <img src="../../assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
 </p>
 
 ---

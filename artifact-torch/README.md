@@ -16,8 +16,8 @@
 `artifact-torch` provides PyTorch integration for the Artifact framework.
 
 It stands alongside:
-- [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core): Framework foundation providing a flexible minimal interface for the computation of validation artifacts.
-- [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment): The framework's experiment tracking extension, providing **executable validation plan abstractions** exporting results to popular tracking backends (e.g. Mlflow).
+- [`artifact-core`](../artifact-core/README.md): Framework foundation providing a flexible minimal interface for the computation of validation artifacts.
+- [`artifact-experiment`](../artifact-experiment/README.md): The framework's experiment tracking extension, providing **executable validation plan abstractions** exporting results to popular tracking backends (e.g. Mlflow).
 
 `artifact-torch` abstracts common deep learning engineering patterns—training loops, device management, callback systems, and validation orchestration—allowing researchers to focus on architectural innovation over infrastructure development.
 
@@ -56,7 +56,7 @@ trainer = MyTrainer.build(
 training_metrics = trainer.train()
 ```
 **For a conceptual illustration of `artifact-torch` entities and abstractions refer to the `Architecture` section below.**
-**For comprehensive usage examples and detailed implementation patterns, refer to the demo project in [`./demo`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch/demo) as well as its documentation in `./demo/README.md`.**
+**For comprehensive usage examples and detailed implementation patterns, refer to the [synthetic tabular data demo project](demos/table_comparison/README.md)**
 
 ## 🏗️ Architecture
 
@@ -314,7 +314,7 @@ project_root/
 5. **Configure Training**: Configure CustomTrainer by implementing subclass hooks
 6. **Orchestration**: Create a high-level API for simplified usage (optional)
 
-**Detailed Implementation Example**: See the comprehensive tabular VAE demo in `demo/` which demonstrates the complete implementation pattern for tabular data synthesis.
+**Detailed Implementation Example**: For a complete implementation example, consult the [synthetic tabular data demo project](demos/table_comparison/README.md)**.
 
 ## 🎯 Domain-Specific Toolkits
 
@@ -382,7 +382,7 @@ poetry install
 
 ## 🤝 Contributing
 
-Contributions are welcome. Please refer to the [central Artifact-ML contribution guidelines](https://github.com/vasileios-ektor-papoulias/artifact-ml/blob/main/README.md) for development standards and submission procedures.
+Contributions are welcome. Please refer to the [central Artifact-ML contribution guidelines](../docs/contributing.md) for development standards and submission procedures.
 
 ## 📄 License
 

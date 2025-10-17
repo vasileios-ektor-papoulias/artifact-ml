@@ -18,8 +18,8 @@
 This repository serves as the foundation of the **Artifact** framework.
 
 It stands alongside:
-- [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment): The framework's experiment tracking extension, providing **executable validation plan abstractions** exporting results to popular tracking backends (e.g. Mlflow).
-- [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch): PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
+- [`artifact-experiment`](../artifact-experiment.README.md): The framework's experiment tracking extension, providing **executable validation plan abstractions** exporting results to popular tracking backends (e.g. Mlflow).
+- [`artifact-torch`](../artifact-torch.README.MD): PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
 
 `artifact-core` provides a **flexible minimal interface** for the computation of heterogeneous validation artifacts in machine learning experiments.
 
@@ -585,9 +585,7 @@ custom_score = engine.produce_dataset_comparison_score(
 
 #### Contributing Custom Artifacts
 
-If you develop a custom artifact that could benefit the broader community, consider contributing it. Well-designed validation artifacts that address common use cases are valuable additions to the ecosystem.
-
-To contribute a custom artifact, submit a pull request following the [contribution guidelines](https://github.com/vasileios-ektor-papoulias/artifact-ml/blob/main/README.md).
+If you develop a custom artifact that could benefit the broader community, consider contributing it.
 
 Custom artifacts that demonstrate broad applicability, statistical rigor, and clean implementation are excellent candidates for inclusion in the core framework.
 
@@ -741,7 +739,7 @@ poetry install
 
 ## 🤝 Contributing
 
-Contributions are welcome. Please refer to the [central Artifact-ML contribution guidelines](https://github.com/vasileios-ektor-papoulias/artifact-ml/blob/main/README.md) for development standards and submission procedures.
+Contributions are welcome. Please refer to the [central Artifact-ML contribution guidelines](../docs/contributing.md) for development standards and submission procedures.
 
 ## 📄 License
 

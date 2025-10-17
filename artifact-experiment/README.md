@@ -18,8 +18,8 @@
 It bridges the gap between validation computation and experiment tracking through a core **validation plan** abstraction responsible for the execution and tracking of artifact collections.
 
 It stands alongside:
-- [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core): Framework foundation providing a flexible minimal interface for the computation of validation artifacts.
-- [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch): PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
+- [`artifact-core`](../artifact-core.README.md): Framework foundation providing a flexible minimal interface for the computation of validation artifacts.
+- [`artifact-torch`](../artifact-torch.README.md): PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
 
 ## 🎯 Key Value Propositions
 
@@ -396,7 +396,7 @@ poetry install
 
 ## 🤝 Contributing
 
-Contributions are welcome. Please refer to the [central Artifact-ML contribution guidelines](https://github.com/vasileios-ektor-papoulias/artifact-ml/blob/main/README.md) for development standards and submission procedures.
+Contributions are welcome. Please refer to the [central Artifact-ML contribution guidelines](../docs/contributing.md) for development standards and submission procedures.
 
 ## 📄 License
 
