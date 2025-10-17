@@ -23,9 +23,9 @@ Tests are organized in `.github/tests`. Their directory structure mirrors that o
 
 ## GitHub Actions Workflows
 
-<div align="center" style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
-  <img src="./assets/github_actions.png" alt="GitHub Actions Logo" style="max-width:25%; height:auto;">
-</div>
+<p align="center">
+  <img src="./assets/github_actions_logo.png" width="400" alt="Github Actions Logo">
+</p>
 
 ### GitHub Actions Workflow Registry
 
@@ -68,9 +68,9 @@ The github actions workflows powering our CI/CD pipeline delegate to shell scrip
 
 The latter are organized under the `.github/scripts` directory.
 
-<div align="center" style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
-  <img src="./assets/shell.png" alt="Shell Logo" style="max-width:25%; height:auto;">
-</div>
+<p align="center">
+  <img src="./assets/shell_logo.png" width="400" alt="Shell Logo">
+</p>
 
 ### Execution Context
 
