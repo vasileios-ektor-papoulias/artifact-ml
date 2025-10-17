@@ -1,4 +1,4 @@
-# Artifact-ML: DevOps
+# Artifact-ML DevOps Processes
 
 The present provides a specification of Artifact-ML's **DevOps** processes.
 
