@@ -1,143 +1,14 @@
-# Artifact-ML CI/CD
+# Artifact-ML CI/CD Pipeline
 
-The present constitues a detailed exposition to the project's dev-ops processes and CI/CD pipelines.
+The present constitues a detailed exposition to Artifact-ML's **CI/CD pipelines**.
+
+For a specification of the project's **DevOps pipelines** please consult the relevant [docs](../.github/devops.md).
 
 <p align="center">
   <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
 </p>
 
-
-## Dev-Ops and Release Flow
-
-### Repository Structure and Project Components
-Artifact-ML is comprised of three single-purpose subrepos---with independent versioning and release cycles---gathered under a single monorepo. These are:
-- `artifact-core`,
-- `artifact-experiment`,
-- `artifact-torch`.
-
-The project is correspondingly partitioned in the following *components* (providing a way to refer to designated project subdirectories):
-- `root` (files in the monorepo root, outside of all subrepo directories),
-- `core` (files in the `artifact-core` subrepo),
-- `experiment` (files in the `artifact-experiment` subrepo),
-- `torch` (files in the `artifact-torch` subrepo).
-
-- The `root` component can only be modified by merging `setup-root/*`/ `hotfix-root/*` directly into main (via PR).
-- The subrepo (`core`, `experiment`, `torch`) components can be modified by:
-   - merging `setup-<component_name>/*`/ `hotfix-<component_name>/*` directly into main (via PR),
-   - merging feautre/ fix branches into `dev-<component_name>` (via PR) and awaiting its periodic merge into main. 
-
-
-<p align="center">
-  <img src="./assets/repo_structure.svg" width="1500" alt="Repo Structure">
-</p>
-
-### Branches
-
-- **main**: `dev-<component_name>`
-   - Role: The most recent stable release of Artifact-ML.
-   - Update:
-      - Updated by periodically merging in `dev` branches---resulting in new version releases.
-      - Updated by merging in hotfix branches through pull request---resulting in new version releases.
-      - Updated by merging in setup branches through pull request---not resulting in new version releases.
-
-- **Development Branches**: `dev-<component_name>`
-   - Role: Component-specific development branches used as buffers for recent changes.
-   - Update: Updated by merging in feature/ fix branches through pull request. 
-   - Examples: `dev-core`, `dev-experiment`, `dev-torch`.
-
-- **Feature/Bug Fix Branches**: `feature-<component_name>/<descriptive_name>`, `fix-<component_name>/<descriptive_name>`
-   - Role: Used for regular development work.
-   - Update: Updated by direct pushes.
-   - Restrictions: Should only modify files in one component directory (enforced when opening a PR to a given `dev` branch).
-   - Example: `feature-<experiment>/add-login`
-
-- **Hotfix Branches**: `hotfix-<component_name>/<descriptive_name>`
-   - Role: Used for urgent fixes that need to be applied directly to `main`.
-   - Update: Updated by direct pushes.
-   - Restrictions: Should only modify files in one component directory (enforced when opening a PR to main).
-   - Examples: `hotfix-core/fix-critical-bug`, `hotfix-experiment/fix-validation-issue`, `hotfix-torch/fix-model-loading`
-
-- **Setup Branches**: `setup-<component_name>/<descriptive_name>`
-   - Role: Used for initial setup or configuration changes
-   - Update: Updated by direct pushes.
-   - Restrictions: 
-      - Always use with `no-bump` bump type (as setup changes should not trigger version bumps).
-      - Should only modify files in the specified component directory (enforced when opening a PR to main).
-   - Examples: `setup-core/initial-config`, `setup-experiment/update-docs`, `setup-torch/add-examples`
-  
-<p align="center">
-  <img src="./assets/branch_taxonomy.svg" width="1500" alt="Branch Taxonomy">
-</p>
-
-### Versioning and PRs to `main`
-In line with semantic versioniing, we adopt the following version bump types (bump types for short):
-
-- `patch`: For backwards-compatible bug fixes (including hotfixes)
-- `minor`: For backwards-compatible feature additions
-- `major`: For backwards-incompatible changes
-- `no-bump`: For changes that don't require a version bump
-
-Version bumps occur automatically (via desginated github workflows). To achieve this, PRs targetting `main` must follow a naming convention:
-
-their titles should be prefixed via `<bump_type>:`, (or `<bump_type>(scope):`).
-
-Examples of PR titles to main:
-- `patch: fix login validation bug`
-- `patch: fix critical security vulnerability` (for hotfixes)
-- `minor: add user profile page`
-- `major: redesign authentication system`
-- `no-bump: update documentation`
-
-You can also use scoped versions:
-- `patch(experiment/neptune): fix neptune client login bug`
-- `no-bump(torch/docs): update artifact-torch README`
-
-Pull requests related to the `root` component (e.g. from `hotfix-root/*` or `setup-root/*`) **must** use the `no-bump` prefix (this is enforced by the relevant workflows).
-
-Periodically, designated contributors open PRs from component `dev` branches to `main`---resulting in associatd version bumps according to the above.
-
-<p align="center">
-  <img src="./assets/pr_title_convention.svg" width="1500" alt="PR Ttile Convention">
-</p>
-
-
-### Contribution Guidelines
-
-To contribute to Artifact-ML, follow these steps:
-
-1. **For Regular Development**:
-   - select a component to work on (`core`, `experiment`, `torch`),
-   - create a feature branch (e.g., `feature-<component_name>/add-login`) from the appropriate `dev-<component_name>` branch (i.e. `dev-core`, `dev-experiment`, or `dev-torch`),
-   - implement your changes (only modify files within the selected component directory),
-   - ensure the PR passes all CI checks
-   - create a PR to `dev-<component_name>`,
-   - designated reviewers will periodically create a PR from `dev-<component_name>` to `main`.
-
-2. **For Urgent Hotfixes**:
-   - select a component to work on (`root`, `core`, `experiment`, `torch`),
-   - create a branch named `hotfix-<component_name>/<descriptive-name>` from main (e.g., hotfix-core/fix-critical-bug),
-   - implement your changes (only modify files within the selected component directory),
-   - create a PR directly to main with bump type `patch` or `no-bump` (see the aforementioned PR title convention)
-   - ensure the PR passes all CI checks.
-
-3. **For Setup and Configuration**:
-   - select a component to work on (`root`, `core`, `experiment`, `torch`),
-   - create a branch named `setup-<component_name>/<descriptive-name>` from main (e.g., setup-experiment/update-docs),
-   - implement your changes (only modify files within the selected component directory),
-   - create a PR directly to main with bump type `no-bump` (see the aforementioned PR title convention),
-   - ensure the PR passes all CI checks.
-
-
-<p align="center">
-  <img src="./assets/release_flow.svg" width="1500" alt="Release Flow">
-</p>
-
-## CI/CD Pipeline
-
-<div align="center" style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
-  <img src="./assets/github_actions.png" alt="GitHub Actions Logo" style="max-width:25%; height:auto;">
-  <img src="./assets/shell.png" alt="Shell Logo" style="max-width:25%; height:auto;">
-</div>
+## Overview
 
 CI/CD for Artifact-ML relies on GitHub actions.
 
@@ -149,9 +20,14 @@ All scripts are unit-tested using the [Bats](https://github.com/bats-core/bats-c
 
 Tests are organized in `.github/tests`. Their directory structure mirrors that of `.github/scripts`.
 
-### GitHub Actions Workflows
 
-Our CI/CD pipeline utilizes the following workflows:
+## GitHub Actions Workflows
+
+<div align="center" style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+  <img src="./assets/github_actions.png" alt="GitHub Actions Logo" style="max-width:25%; height:auto;">
+</div>
+
+### GitHub Actions Workflow Registry
 
 #### CI Checks (on push)
 
@@ -186,19 +62,29 @@ Our CI/CD pipeline utilizes the following workflows:
 - `lint_merge_commit_description.yml` (workflow name: LINT_MERGE_COMMIT_DESCRIPTION): validates the description carried by a merge commit pushed to `main`---asserts that the description is a valid PR title according to the appropriate semantic versioning prefix convention (see *Versioning and PRs to `main`*),
 - `bump_component_version.yml` (workflow name: BUMP_COMPONENT_VERSION): bumps the relevant component version when a merge commit is pushed to `main`---the commit description and message are parsed to identify the relevant component and bump type, the relevant pyproject.toml file is updated and this change is pushed along with a git tag annotating the version change.
 
-### Scripts
+## CICD Scripts
 
-#### Execution Context
+The github actions workflows powering our CI/CD pipeline delegate to shell scripts.
+
+The latter are organized under the `.github/scripts` directory.
+
+<div align="center" style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+  <img src="./assets/shell.png" alt="Shell Logo" style="max-width:25%; height:auto;">
+</div>
+
+### Execution Context
 
 All scripts are designed to run from the repository root.
 
 This means:
 
-- Workflow files (`.github/workflows/*.yml`) execute scripts using paths relative to the repository root (e.g., `.github/scripts/linting/check_is_merge_commit.sh`)
-- Scripts reference other scripts using paths relative to the repository root (e.g., `.github/scripts/linting/lint_commit_description.sh`)
-- Test files run scripts from the repository root context
+- Workflow files (`.github/workflows/*.yml`) execute scripts using paths relative to the repository root (e.g., `.github/scripts/linting/check_is_merge_commit.sh`),
+- Scripts reference other scripts using paths relative to the repository root (e.g., `.github/scripts/linting/lint_commit_description.sh`),
+- CICD script functional tests run scripts from the repository root context.
 
-This approach follows GitHub Actions' standard execution context, where workflows run from the repository root. It makes the paths more intuitive and consistent, eliminating confusing double references to `.github` in paths.
+This approach aligns with GitHub Actions' standard execution context, where workflows run from the repository root.
+
+### Script Registry
 
 #### Linting Scripts (`.github/scripts/linting/`)
 
@@ -284,7 +170,7 @@ This approach follows GitHub Actions' standard execution context, where workflow
   - **Outcome:** exits `0` if all changes are **outside** the listed directories; otherwise exits `1` and prints the paths that violate the rule.
 
 
-#### Version Bumping Scripts (`.github/scripts/version_bump/`)
+#### Version Bump Scripts (`.github/scripts/version_bump/`)
 
 
 - `get_bump_type.sh`:
@@ -334,16 +220,22 @@ This approach follows GitHub Actions' standard execution context, where workflow
   - **Outcome:** performs an end-to-end automated version bump for the component implicated by the PR; exits `0` on success and `1` with actionable errors if inputs or validations fail.
 
 
-### Tests
+## CICD Script Functional Tests
 
-Unit-tests for the CI/CD scripts follow the pattern:
+### Implementation Pattern
+
+Unit-tests for the CI/CD scripts are implemented using the [Bats](https://github.com/bats-core/bats-core) framework.
+
+They reside in the `.github/tests` directory. Their organization mirrors that of `.github/scripts`.
+
+Their implementation typically adheres to the following pattern:
 
 1. set up a fake environment with mocked dependencies,
 2. run the script under consideration,
 3. assert correctness,
 4. clean up the test environment.
 
-#### Test Execution
+### Execution
 
 To execute the tests, use the following command (from the monorepo root):
 
@@ -358,3 +250,5 @@ bats -r .github/tests/version_bump
 # Run a specific test file
 bats .github/tests/linting/test_lint_pr_title.bats
 ```
+
+

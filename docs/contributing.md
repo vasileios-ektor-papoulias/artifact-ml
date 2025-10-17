@@ -1,28 +1,34 @@
-Contributions are welcome!
+# Contribution Guidelines
 
-### For Regular Development
+**Contributions are welcome!**
 
-1. Create a feature branch (e.g., `feature/add-login`) from the appropriate dev branch (`dev-core`, `dev-experiment`, or `dev-torch`).
-2. Make your changes (only modify files within one component directory).
-3. Create a PR to the corresponding dev branch.
-4. Designated reviewers will handle merging dev branches to main with appropriate version bump prefixes.
+To contribute, please consult the guide below.
 
-### For Urgent Hotfixes
+For a detailed specification of Artifact's **DevOps processes** please consult the relevant [docs](.github/devops.md).
 
-1. Create a branch named `hotfix-<component_name>/<descriptive-name>` from main (e.g., `hotfix-core/fix-critical-bug`).
-2. Make your changes (only modify files within the specified component directory).
-3. Create a PR directly to main with a title that starts with "patch:" or "no-bump:".
+For a detailed specification of Artifact's **CI/CD pipelines** please consult the relevant [docs](.github/cicd.md).
 
-### For Setup and Configuration
+<p align="center">
+  <img src="../assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
+</p>
 
-1. Create a branch named `setup-<component_name>/<descriptive-name>` from main (e.g., `setup-experiment/update-docs`).
-2. Make your changes (only modify files within the specified component directory).
-3. Create a PR directly to main with a title that starts with "no-bump:".
 
-### For Monorepo Root Changes
+1. **For Regular Development**:
+   - select a component to work on (`core`, `experiment`, `torch`),
+   - create a feature branch (e.g., `feature-<component_name>/add-login`) based on the appropriate `dev-<component_name>` branch (i.e. `dev-core`, `dev-experiment`, or `dev-torch`),
+   - implement your changes (only modify files within the selected component directory),
+   - ensure the PR passes all CI checks
+   - create a PR to `dev-<component_name>`,
+   - designated reviewers will periodically open a PR from `dev-<component_name>` to `main`.
 
-1. Create a branch named `hotfix-root/<descriptive-name>` or `setup-root/<descriptive-name>` from main.
-2. Make your changes (only modify files outside of the artifact-core, artifact-experiment, and artifact-torch directories).
-3. Create a PR directly to main with a title that starts with "no-bump:".
+2. **For Urgent Hotfixes**:
+   - select a component to work on (`root`, `core`, `experiment`, `torch`),
+   - create a branch named `hotfix-<component_name>/<descriptive-name>` based on main (e.g., hotfix-core/fix-critical-bug),
+   - implement your changes (only modify files within the selected component directory),
+   - open a PR directly to main with bump type `patch` or `no-bump` (see the aforementioned PR title convention).
 
-For more detailed information about our CI/CD pipeline and contribution guidelines, please consult the relevant [docs](.github/README-CICD.md).
+3. **For Setup and Configuration**:
+   - select a component to work on (`root`, `core`, `experiment`, `torch`),
+   - create a branch named `setup-<component_name>/<descriptive-name>` based on main (e.g., setup-experiment/update-docs),
+   - implement your changes (only modify files within the selected component directory),
+   - open a PR directly to main with bump type `no-bump` (see the aforementioned PR title convention).
