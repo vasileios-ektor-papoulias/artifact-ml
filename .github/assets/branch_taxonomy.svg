@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1300" height="900" viewBox="0 0 1300 900">
-  <title>Artifact-ML Branch Taxonomy (Sectioned, No Arrows)</title>
+  <title>Artifact-ML Branch Taxonomy</title>
   <style>
     .title { font: 700 24px system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
     .label { font: 600 16px system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
@@ -22,8 +22,7 @@
   <rect x="10" y="10" width="1280" height="880" rx="16" class="bg"/>
 
   <!-- Title -->
-  <text x="40" y="60" class="title">Branch Taxonomy</text>
-  <text x="40" y="86" class="small">Layout only — no flow arrows.</text>
+  <text x="40" y="60" class="title">Artifact-ML Branch Taxonomy</text>
 
   <!-- ===== Top: MAIN sub-box ===== -->
   <rect x="80" y="160" width="240" height="60" class="node-main"/>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="460" viewBox="0 0 900 460">
+  <title>PR Title Convention</title>
+  <style>
+    .title { font: 700 18px system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .label { font: 600 14px system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .small { font: 13px system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .mono  { font: 600 14px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+    .bg     { fill: #ffffff; stroke: #e5e7eb; stroke-width: 2; rx: 14; }
+    .subbox { fill: #ffffff; stroke: #e5e7eb; stroke-width: 2; rx: 12; }
+
+    .patch  { fill: #ecfdf5; stroke: #10b981; }
+    .minor  { fill: #f0f9ff; stroke: #0ea5e9; }
+    .major  { fill: #fef2f2; stroke: #ef4444; }
+    .nobump { fill: #fffbeb; stroke: #f59e0b; }
+
+    .scope-chip { fill: #f8fafc; stroke: #cbd5e1; }
+
+    .arrow { fill: none; stroke: #111827; stroke-width: 2; marker-end: url(#arrowhead); }
+  </style>
+
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#111827"/>
+    </marker>
+  </defs>
+
+  <!-- White background (for dark-mode readability) -->
+  <rect x="10" y="10" width="880" height="440" class="bg"/>
+
+  <!-- Header -->
+  <text x="450" y="48" class="title" text-anchor="middle">PR Titles to Main</text>
+
+  <!-- ================== CENTERED PATTERN ================== -->
+  <!-- We position tokens separately for precise arrow targets, but keep the line visually centered -->
+  <!-- Choose a visual center at x=390 -->
+  <g id="pattern">
+    <!-- bump_type -->
+    <text id="bumpToken" x="300" y="230" class="mono">&lt;bump_type&gt;</text>
+    <!-- ( -->
+    <text x="398" y="230" class="mono">(</text>
+    <!-- scope -->
+    <text id="scopeToken" x="418" y="230" class="mono">&lt;scope&gt;</text>
+    <!-- ): <description> -->
+    <text x="480" y="230" class="mono">): &lt;description&gt;</text>
+  </g>
+
+  <!-- ================== BUMP TYPES BOX (TOP) ================== -->
+    <rect x="190" y="63" width="300" height="110" class="subbox"/>
+    <text x="210" y="88" class="label">Bump Types</text>
+
+    <rect x="210" y="104" width="120" height="24" rx="6" class="patch"/>
+    <text x="240" y="121" class="small">patch</text>
+
+    <rect x="350" y="104" width="120" height="24" rx="6" class="minor"/>
+    <text x="360" y="121" class="small">minor</text>
+
+    <rect x="210" y="134" width="120" height="24" rx="6" class="major"/>
+    <text x="220" y="151" class="small">major</text>
+
+    <rect x="350" y="134" width="120" height="24" rx="6" class="nobump"/>
+    <text x="360" y="151" class="small">no-bump</text>
+
+  <!-- ================== SCOPES BOX (BOTTOM) ================== -->
+    <rect x="260" y="280" width="360" height="120" class="subbox"/>
+    <text x="280" y="305" class="label">Scopes (Optional)</text>
+
+    <!-- Neutral “chips” for scopes -->
+    <rect x="280" y="318" width="160" height="24" rx="6" class="scope-chip"/>
+    <text x="288" y="335" class="small">core/table_comparison</text>
+
+    <rect x="450" y="318" width="160" height="24" rx="6" class="scope-chip"/>
+    <text x="458" y="335" class="small">experiment/clear_ml</text>
+
+    <rect x="280" y="350" width="160" height="24" rx="6" class="scope-chip"/>
+    <text x="288" y="367" class="small">torch/binary_classification</text>
+
+    <rect x="450" y="350" width="160" height="24" rx="6" class="scope-chip"/>
+    <text x="458" y="367" class="small">root/cicd_pipeline</text>
+
+  <!-- ================== ARROWS ================== -->
+  <!-- Up: from bump_type token to Bump types box -->
+  <!-- Start at just above the bump token baseline (360, 226) and go up to box bottom edge (approx y=205) -->
+  <path class="arrow" d="M342 220 L342 181"/>
+
+  <!-- Down: from scope token to Scopes box -->
+  <!-- Start at just below scope token baseline (445, 236) and go down to box top edge (y=275) -->
+  <path class="arrow" d="M445 236 L445 275"/>
+</svg>

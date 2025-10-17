@@ -89,13 +89,17 @@ Examples of PR titles to main:
 - `no-bump: update documentation`
 
 You can also use scoped versions:
-- `patch(auth): fix login validation bug`
-- `patch(security): fix critical vulnerability` (for hotfixes)
-- `no-bump(docs): update README`
+- `patch(experiment/neptune): fix neptune client login bug`
+- `no-bump(torch/docs): update artifact-torch README`
 
 Pull requests related to the `root` component (e.g. from `hotfix-root/*` or `setup-root/*`) **must** use the `no-bump` prefix (this is enforced by the relevant workflows).
 
 Periodically, designated contributors open PRs from component `dev` branches to `main`---resulting in associatd version bumps according to the above.
+
+<p align="center">
+  <img src="./assets/pr_title_convention.svg" width="1500" alt="PR Ttile Convention">
+</p>
+
 
 ### Contribution Guidelines
 
