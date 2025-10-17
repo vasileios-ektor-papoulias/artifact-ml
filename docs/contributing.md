@@ -1,4 +1,4 @@
-# Contribution Guidelines
+# Artifact-ML Contribution Guidelines
 
 **Contributions are welcome!**
 

@@ -739,7 +739,7 @@ poetry install
 
 ## 🤝 Contributing
 
-Contributions are welcome. Please refer to the [central Artifact-ML contribution guidelines](../docs/contributing.md) for development standards and submission procedures.
+Contributions are welcome. Please refer to the [project's contribution guidelines](../docs/contributing.md) for development standards and submission procedures.
 
 ## 📄 License
 

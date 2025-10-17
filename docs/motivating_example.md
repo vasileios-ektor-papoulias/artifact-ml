@@ -1,4 +1,4 @@
-# Motivating Example: Ad Hoc vs. Systematic Experiment Logic
+# Artifact-ML Motivating Example
 
 This document provides a practical schematic example showcasing the problem addressed by Artifact-ML.
 

@@ -1,4 +1,4 @@
-# Design Philosophy
+# Artifact-ML Design Philosophy
 
 This document outlines the core design principles that guide the development of Artifact-ML. These principles address the fundamental challenges in machine learning experiment infrastructure and explain how Artifact-ML's architecture enables reusable, maintainable validation workflows.
 
