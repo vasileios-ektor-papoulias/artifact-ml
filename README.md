@@ -31,55 +31,13 @@ The upshot is:
 
 - **Consistent and trustworthy evaluation** — validation is standardized across experiments, eliminating variance caused by subtle discrepancies in custom logic.
 
-For a concrete demonstration of the problem (and solution) addressed by Artifact, see our [**motivating example doc**](/docs/motivating_example.md).
+For a concrete demonstration of the problem (and solution) addressed by Artifact, see our [**motivating example doc**](docs/motivating_example.md).
 
-For a deep-dive into the core design philosophy underlying the project see our [**design philosophy doc**](/docs/design_philosophy.md).
+For a deep-dive into the core design philosophy underlying the project see our [**design philosophy doc**](docs/design_philosophy.md).
 
 <p align="center">
   <img src="assets/pdf_comparison.png" width="600" alt="PDF Comparison">
 </p>
-
-## 🚀 Getting Started
-
-### Installation
-
-```bash
-git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
-```
-#### 1. `artifact-core`
-To install `artifact-core` run:
-
-```bash
-cd artifact-ml/artifact-core
-poetry install
-```
-For details on getting started with `artifact-core`, consult the relevant [docs](artifact-core/README.md).
-
-#### 2. `artifact-experiment`
-To install `artifact-experiment` run:
-
-```bash
-cd artifact-ml/artifact-experiment
-poetry install
-```
-
-For details on getting started with `artifact-experiment`, consult the relevant [docs](artifact-experiment/README.md).
-
-#### 3. `artifact-torch`
-To install `artifact-torch` run:
-
-```bash
-cd artifact-ml/artifact-torch
-poetry install
-```
-
-For details on getting started with `artifact-torch`, consult the relevant [docs](artifact-torch/README.md).
-
-## 🔮 Future Development
-
-We plan to actively expand the framework's scope and capabilities.
-
-For a collection of future development avenues, please consult our [**future development doc**](docs/future_development.md).
 
 ## 🏗️ Packages
 
@@ -106,6 +64,50 @@ A deep learning framework built on top of `artifact-core` and `artifact-experime
 It handles all training loop concerns aside from model architecture and data pipelines, enabling seamless, declarative customization via a system of typed callbacks.
 
 Models, trainers, and workflows are all strongly typed, and the system leverages type variance and inference to ensure that the right callbacks fit the right trainers and workflows.
+
+## 🚀 Getting Started
+
+### Installation
+
+```bash
+git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
+```
+#### 1. [`artifact-core`](artifact-core/README.md)
+To install `artifact-core` run:
+
+```bash
+cd artifact-ml/artifact-core
+poetry install
+```
+For details on getting started with `artifact-core`, consult the relevant [docs](artifact-core/README.md).
+
+#### 2. [`artifact-experiment`](artifact-experiment/README.md)
+To install `artifact-experiment` run:
+
+```bash
+cd artifact-ml/artifact-experiment
+poetry install
+```
+
+For details on getting started with `artifact-experiment`, consult the relevant [docs](artifact-experiment/README.md).
+
+#### 3. [`artifact-torch`](artifact-torch/README.md)
+To install `artifact-torch` run:
+
+```bash
+cd artifact-ml/artifact-torch
+poetry install
+```
+
+For details on getting started with `artifact-torch`, consult the relevant [docs](artifact-torch/README.md).
+
+## 🔮 Future Development
+
+We plan to actively expand the framework's scope and capabilities.
+
+For a collection of future development avenues, please consult our [**future development doc**](docs/future_development.md).
+
+
 
 ## 🤝 Contributing
 
