@@ -386,4 +386,4 @@ Contributions are welcome. Please refer to the [central Artifact-ML contribution
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the [MIT License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-ml).

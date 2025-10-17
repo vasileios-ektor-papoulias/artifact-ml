@@ -18,8 +18,8 @@
 It bridges the gap between validation computation and experiment tracking through a core **validation plan** abstraction responsible for the execution and tracking of artifact collections.
 
 It stands alongside:
-- [`artifact-core`](../artifact-core.README.md): Framework foundation providing a flexible minimal interface for the computation of validation artifacts.
-- [`artifact-torch`](../artifact-torch.README.md): PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
+- [`artifact-core`](../artifact-core/README.md): Framework foundation providing a flexible minimal interface for the computation of validation artifacts.
+- [`artifact-torch`](../artifact-torch/README.md): PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
 
 ## 🎯 Key Value Propositions
 
@@ -400,4 +400,4 @@ Contributions are welcome. Please refer to the [central Artifact-ML contribution
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the [MIT License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-ml).

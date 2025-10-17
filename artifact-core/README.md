@@ -18,8 +18,8 @@
 This repository serves as the foundation of the **Artifact** framework.
 
 It stands alongside:
-- [`artifact-experiment`](../artifact-experiment.README.md): The framework's experiment tracking extension, providing **executable validation plan abstractions** exporting results to popular tracking backends (e.g. Mlflow).
-- [`artifact-torch`](../artifact-torch.README.MD): PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
+- [`artifact-experiment`](../artifact-experiment/README.md): The framework's experiment tracking extension, providing **executable validation plan abstractions** exporting results to popular tracking backends (e.g. Mlflow).
+- [`artifact-torch`](../artifact-torch/README.MD): PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
 
 `artifact-core` provides a **flexible minimal interface** for the computation of heterogeneous validation artifacts in machine learning experiments.
 
@@ -743,4 +743,4 @@ Contributions are welcome. Please refer to the [central Artifact-ML contribution
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the [MIT License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-ml).
