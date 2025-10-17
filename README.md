@@ -53,7 +53,7 @@ To install `artifact-core` run:
 cd artifact-ml/artifact-core
 poetry install
 ```
-For details on getting started with `artifact-core`, consult the relevant [docs](/artifact-core/README.md).
+For details on getting started with `artifact-core`, consult the relevant [docs](artifact-core/README.md).
 
 #### 2. `artifact-experiment`
 To install `artifact-experiment` run:
@@ -63,7 +63,7 @@ cd artifact-ml/artifact-experiment
 poetry install
 ```
 
-For details on getting started with `artifact-experiment`, consult the relevant [docs](/artifact-experiment/README.md).
+For details on getting started with `artifact-experiment`, consult the relevant [docs](artifact-experiment/README.md).
 
 #### 3. `artifact-torch`
 To install `artifact-torch` run:
@@ -73,25 +73,25 @@ cd artifact-ml/artifact-torch
 poetry install
 ```
 
-For details on getting started with `artifact-torch`, consult the relevant [docs](/artifact-torch/README.md).
+For details on getting started with `artifact-torch`, consult the relevant [docs](artifact-torch/README.md).
 
 ## 🔮 Future Development
 
 We plan to actively expand the framework's scope and capabilities.
 
-For a collection of future development avenues, please consult our [**future development doc**](/docs/future_development.md).
+For a collection of future development avenues, please consult our [**future development doc**](docs/future_development.md).
 
 ## 🏗️ Packages
 
 Artifact-ML consists of three packages:
 
-### 1. [`artifact-core`](/artifact-core/README.md)
+### 1. [`artifact-core`](artifact-core/README.md)
 
 The framework foundation, defining the base abstractions and interfaces for the design and execution of validation artifacts.
 
 It offers pre-built out-of-the-box artifact implementations with seamless support for custom extensions.
 
-### 2. [`artifact-experiment`](/artifact-experiment/README.md)
+### 2. [`artifact-experiment`](artifact-experiment/README.md)
 
 The experiment orchestration and tracking extension to Artifact-ML.
 
@@ -99,7 +99,7 @@ It facilitates the design of purely declarative validation workflows leveraging 
 
 It provides fully automated tracking capabilities with popular backends (e.g. Mlflow).
 
-### 3. [`artifact-torch`](/artifact-torch/README.md)
+### 3. [`artifact-torch`](artifact-torch/README.md)
 
 A deep learning framework built on top of `artifact-core` and `artifact-experiment`, abstracting away engineering complexity to let researchers focus on architectural innovation.
 
@@ -111,9 +111,9 @@ Models, trainers, and workflows are all strongly typed, and the system leverages
 
 Contributions are welcome.
 
-For relevant guidelines, please consult our [**contribution guidelines doc**](/docs/contributing.md).
+For relevant guidelines, please consult our [**contribution guidelines doc**](docs/contributing.md).
 
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the [MIT License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-ml).
