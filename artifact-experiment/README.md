@@ -21,6 +21,12 @@ It stands alongside:
 - [`artifact-core`](../artifact-core/README.md): Framework foundation providing a flexible minimal interface for the computation of validation artifacts.
 - [`artifact-torch`](../artifact-torch/README.md): PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
 
+**Core Value Proposition:**
+- **Reusable Validation Workflows**: Define validation plans once, execute across different models and datasets
+- **Backend-Agnostic Tracking**: Unified interface supporting MLflow, ClearML, Neptune, and local filesystem
+- **Seamless Integration**: Direct integration with artifact-core's computation engine
+- **Flexible Callback Architecture**: Extensible system for custom artifact computation and tracking workflows
+
 ## 🚀 Installation
 
 Clone the Artifact-ML monorepo by running:
