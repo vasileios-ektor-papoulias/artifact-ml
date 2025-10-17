@@ -27,7 +27,21 @@ It stands alongside:
 - **Type safety throughout**: Full type checking for models, data flow, and component compatibility
 - **Domain-specific extensions**: Specialized toolkits for different problem domains
 
-## 🚀 Usage Sketch
+## 🚀 Installation
+
+Clone the Artifact-ML monorepo by running:
+
+```bash
+git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
+```
+
+Install the `artifact-torch` package by running:
+```bash
+cd artifact-ml/artifact-torch
+poetry install
+```
+
+## 📚s Usage Sketch
 
 ```python
 from artifact_experiment.libs.tracking.filesystem.client import FilesystemTrackingClient

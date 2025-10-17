@@ -33,6 +33,20 @@ By abstracting away unique parameter requirements (static data specifications, h
 
 This design eliminates the need for custom integration code per artifact, enabling generic experiment scripts that scale seamlessly across diverse validation requirements with zero modification/ friction.
 
+## 🚀 Installation
+
+Clone the Artifact-ML monorepo by running:
+
+```bash
+git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
+```
+
+Install the `artifact-core` package by running:
+```bash
+cd artifact-ml/artifact-core
+poetry install
+```
+
 ## 📚 Usage Sketch
 
 ```python
@@ -725,16 +739,6 @@ class NewTableComparisonScore(
         if score > self._hyperparams.threshold and self._hyperparams.use_weights:
             score = 2*score
         return score
-```
-
-## 🚀 Installation
-
-### Using Poetry (Recommended)
-
-```bash
-git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
-cd artifact-ml/artifact-core
-poetry install
 ```
 
 ## 🤝 Contributing

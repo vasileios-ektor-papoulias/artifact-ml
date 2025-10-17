@@ -21,12 +21,19 @@ It stands alongside:
 - [`artifact-core`](../artifact-core/README.md): Framework foundation providing a flexible minimal interface for the computation of validation artifacts.
 - [`artifact-torch`](../artifact-torch/README.md): PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
 
-## 🎯 Key Value Propositions
+## 🚀 Installation
 
-- **Reusable Validation Workflows**: Define validation plans once, execute across different models and datasets
-- **Backend-Agnostic Tracking**: Unified interface supporting MLflow, ClearML, Neptune, and local filesystem
-- **Seamless Integration**: Direct integration with artifact-core's computation engine
-- **Flexible Callback Architecture**: Extensible system for custom artifact computation and tracking workflows
+Clone the Artifact-ML monorepo by running:
+
+```bash
+git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
+```
+
+Install the `artifact-experiment` package by running:
+```bash
+cd artifact-ml/artifact-experiment
+poetry install
+```
 
 ## 📚 Usage Sketch
 
@@ -382,16 +389,6 @@ class MyBackendScoreLogger(ArtifactLogger[float, MyBackendRunAdapter]):
     def log(self, artifact: float, artifact_name: str):
         # Implement backend-specific score logging
         pass
-```
-
-## 🚀 Installation
-
-### Using Poetry (Recommended)
-
-```bash
-git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
-cd artifact-ml/artifact-experiment
-poetry install
 ```
 
 ## 🤝 Contributing
