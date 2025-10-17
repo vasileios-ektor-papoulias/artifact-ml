@@ -41,7 +41,7 @@ cd artifact-ml/artifact-torch
 poetry install
 ```
 
-## 📚s Usage Sketch
+## 📚 Usage Sketch
 
 ```python
 from artifact_experiment.libs.tracking.filesystem.client import FilesystemTrackingClient
