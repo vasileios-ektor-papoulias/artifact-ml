@@ -8,9 +8,11 @@
 
 ![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
 ![License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-ml)
+
 [![CI](https://github.com/vasileios-ektor-papoulias/artifact-ml/actions/workflows/ci_main.yml/badge.svg?branch=main)](https://github.com/vasileios-ektor-papoulias/artifact-ml/actions/workflows/ci_main.yml)
-[![experiment coverage](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/branch/main/graph/badge.svg?flag=experiment)](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/flags#experiment)
+[![Coverage](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/branch/main/graph/badge.svg?flag=experiment)](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/flags#experiment)
 [![CodeFactor](https://www.codefactor.io/repository/github/vasileios-ektor-papoulias/artifact-ml/badge)](https://www.codefactor.io/repository/github/vasileios-ektor-papoulias/artifact-ml)
+
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-experiment&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-experiment)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-experiment&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-experiment)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-experiment&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-experiment)
