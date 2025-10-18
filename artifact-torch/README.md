@@ -13,10 +13,10 @@
 [![Coverage](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/branch/main/graph/badge.svg?flag=torch)](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/flags#torch)
 [![CodeFactor](https://www.codefactor.io/repository/github/vasileios-ektor-papoulias/artifact-ml/badge)](https://www.codefactor.io/repository/github/vasileios-ektor-papoulias/artifact-ml)
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-torch&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-torch)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-torch&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-torch)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-torch&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-torch)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-torch&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-torch)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-torch&metric=alert_status&branch=main)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-torch&branch=main)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-torch&metric=sqale_rating&branch=main)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-torch&branch=main)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-torch&metric=security_rating&branch=main)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-torch&branch=main)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-torch&metric=reliability_rating&branch=main)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-torch&branch=main)
 
 ---
 
