@@ -75,13 +75,6 @@ jobs:
         env:
           SONAR_HOST_URL: https://sonarcloud.io
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_SCANNER_OPTS: >
-            -Dsonar.projectKey=${{ matrix.project_key }}
-            -Dsonar.organization=vasileios-ektor-papoulias
-            -Dsonar.sources=${{ matrix.component }}
-            -Dsonar.tests=${{ matrix.component }}/tests
-            -Dsonar.python.version=3.11
-            -Dsonar.python.coverage.reportPaths=coverage.xml
 
       - name: Build Package
         run: |
