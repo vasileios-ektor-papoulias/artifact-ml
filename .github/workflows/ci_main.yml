@@ -9,6 +9,9 @@ on:
 jobs:
   ci_component:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -17,20 +20,24 @@ jobs:
           - component: artifact-core
             module: artifact_core
             flag: core
+            project_key: vasileios-ektor-papoulias_artifact-core
           - component: artifact-experiment
             module: artifact_experiment
             flag: experiment
+            project_key: vasileios-ektor-papoulias_artifact-experiment
           - component: artifact-torch
             module: artifact_torch
             flag: torch
+            project_key: vasileios-ektor-papoulias_artifact-torch
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
@@ -60,6 +67,21 @@ jobs:
           files: ${{ matrix.component }}/coverage.xml
           flags: ${{ matrix.flag }}
           fail_ci_if_error: true
+      
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        with:
+          projectBaseDir: ${{ matrix.component }}
+        env:
+          SONAR_HOST_URL: https://sonarcloud.io
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_SCANNER_OPTS: >
+            -Dsonar.projectKey=${{ matrix.project_key }}
+            -Dsonar.organization=vasileios-ektor-papoulias
+            -Dsonar.sources=${{ matrix.component }}
+            -Dsonar.tests=${{ matrix.component }}/tests
+            -Dsonar.python.version=3.11
+            -Dsonar.python.coverage.reportPaths=coverage.xml
 
       - name: Build Package
         run: |
