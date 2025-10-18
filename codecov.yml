@@ -1,0 +1,23 @@
+flags:
+  core:
+    carryforward: true
+  experiment:
+    carryforward: true
+  torch:
+    carryforward: true
+
+coverage:
+  status:
+    project:
+      core:
+        target: auto
+        flags: [core]
+      experiment:
+        target: auto
+        flags: [experiment]
+      torch:
+        target: auto
+        flags: [torch]
+    patch:
+      default:
+        flag_coverage_not_uploaded_behavior: success
