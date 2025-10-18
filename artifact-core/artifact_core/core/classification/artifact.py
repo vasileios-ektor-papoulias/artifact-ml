@@ -9,8 +9,8 @@ from artifact_core.base.artifact_dependencies import (
     ArtifactResult,
 )
 from artifact_core.libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
-from artifact_core.libs.resource_validation.classification.classification_resource_validator import (
-    ClassificationResourcesValidator,
+from artifact_core.libs.resource_validation.classification.resource_validator import (
+    ClassificationResourceValidator,
 )
 from artifact_core.libs.resources.categorical.category_store.category_store import CategoryStore
 from artifact_core.libs.resources.classification.classification_results import ClassificationResults
@@ -73,7 +73,7 @@ class ClassificationArtifact(
     def _validate(
         self, resources: ClassificationArtifactResources[CategoryStoreT, ClassificationResultsT]
     ) -> ClassificationArtifactResources[CategoryStoreT, ClassificationResultsT]:
-        ClassificationResourcesValidator.validate(
+        ClassificationResourceValidator.validate(
             true_category_store=resources.true_category_store,
             classification_results=resources.classification_results,
         )

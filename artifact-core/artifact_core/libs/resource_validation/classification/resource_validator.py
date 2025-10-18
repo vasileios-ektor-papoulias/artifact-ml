@@ -5,7 +5,7 @@ from artifact_core.libs.resources.classification.classification_results import C
 from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
 
 
-class ClassificationResourcesValidator:
+class ClassificationResourceValidator:
     @classmethod
     def validate(
         cls,
