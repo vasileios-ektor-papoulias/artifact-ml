@@ -55,10 +55,7 @@ class RunAdapter(ABC, Generic[NativeRunT]):
 
     @contextmanager
     def native(self) -> Iterator[NativeRunT]:
-        try:
-            yield self._native_run
-        finally:
-            pass
+        yield self._native_run
 
     @staticmethod
     def _generate_random_id() -> str:

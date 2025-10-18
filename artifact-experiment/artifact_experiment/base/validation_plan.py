@@ -344,7 +344,7 @@ class ValidationPlan(
             callback_factory.build_score_collection_callback(
                 score_collection_type=score_collection_type, resource_spec=resource_spec
             )
-            for score_collection_type in cls._get_score_collection_types()
+            for score_collection_type in ls_score_collection_types
         ]
         score_collection_handler = ScoreCollectionCallbackHandler(
             ls_callbacks=ls_callbacks, tracking_client=tracking_client
@@ -396,7 +396,7 @@ class ValidationPlan(
             callback_factory.build_plot_collection_callback(
                 plot_collection_type=plot_collection_type, resource_spec=resource_spec
             )
-            for plot_collection_type in cls._get_plot_collection_types()
+            for plot_collection_type in ls_plot_collection_types
         ]
         plot_collection_handler = PlotCollectionCallbackHandler(
             ls_callbacks=ls_callbacks, tracking_client=tracking_client
