@@ -1,4 +1,4 @@
-name: BUMP_COMPONENT_VERSION
+name: BUMP_COMPONENT_PUSH[MAIN]
 
 on:
   workflow_run:

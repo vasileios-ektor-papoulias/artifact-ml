@@ -1,4 +1,4 @@
-name: CI_MAIN
+name: CI_PUSH[MAIN]
 
 on:
   push:

@@ -1,10 +1,10 @@
-name: ENFORCE_SOURCE_BRANCH_NAMING
+name: ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_TORCH]
 
 on:
   pull_request:
     types: [opened, synchronize, reopened, edited]
     branches:
-      - dev-core
+      - dev-torch
 
 jobs:
   check-branch-naming:
@@ -12,7 +12,7 @@ jobs:
     permissions:
       contents: read
     env:
-      ALLOWED_COMPONENTS: "core"
+      ALLOWED_COMPONENTS: "torch"
       ALLOWED_BRANCH_TYPES: "feature fix"
     steps:
       - name: Checkout code

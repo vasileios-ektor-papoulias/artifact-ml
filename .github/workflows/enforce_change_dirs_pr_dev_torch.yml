@@ -1,19 +1,19 @@
-name: ENFORCE_CHANGE_DIRS
+name: ENFORCE_CHANGE_DIRS_PR[DEV_TORCH]
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
     branches:
-      - dev-core
+      - dev-torch
 
 jobs:
 
-  enforce-change-dirs-to-dev-core:
-    if: ${{ github.base_ref == 'dev-core' && github.head_ref != 'main' }}
+  enforce-change-dirs-to-dev-torch:
+    if: ${{ github.base_ref == 'dev-torch' && github.head_ref != 'main' }}
     runs-on: ubuntu-latest
     env:
-      COMPONENT: artifact-core
-      DIRECTORY: artifact-core
+      COMPONENT: artifact-torch
+      DIRECTORY: artifact-torch
     steps:
       - name: Debug info
         run: |
@@ -21,7 +21,7 @@ jobs:
           echo "Head ref: ${{ github.head_ref }}"
           echo "Event name: ${{ github.event_name }}"
           echo "Repository: ${{ github.repository }}"
-          echo "This job should run for PRs targeting dev-core"
+          echo "This job should run for PRs targeting dev-torch"
       
       - name: Checkout code
         uses: actions/checkout@v4
@@ -36,3 +36,4 @@ jobs:
           echo "Enforcing changes only in ${{ env.DIRECTORY }} directory for ${{ env.COMPONENT }} component"
           # Check if all changed files are within the component directory
           .github/scripts/enforce_path/ensure_changed_files_in_dir.sh "${{ env.DIRECTORY }}" "${{ github.base_ref }}"
+

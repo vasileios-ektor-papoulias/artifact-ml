@@ -1,4 +1,4 @@
-name: LINT_PR_TITLE
+name: LINT_TITLE_PR[MAIN]
 
 on:
   pull_request:

@@ -1,4 +1,4 @@
-name: ENFORCE_CHANGE_DIRS
+name: ENFORCE_CHANGE_DIRS_PR[MAIN]
 
 on:
   pull_request:

@@ -1,4 +1,4 @@
-name: CI_EXPERIMENT_ON_PUSH
+name: CI_PUSH[CORE]
 
 on:
   push:
@@ -8,11 +8,11 @@ on:
       - 'dev-experiment'
       - 'dev-torch'
     paths:
-      - 'artifact-experiment/**'
+      - 'artifact-core/**'
   workflow_dispatch:
 
 env:
-  COMPONENT: artifact-experiment
+  COMPONENT: artifact-core
 
 jobs:
   ci_component:
@@ -20,12 +20,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 

@@ -1,4 +1,4 @@
-name: CI_DEV_CORE
+name: CI_PUSH[DEV_CORE]
 
 on:
   push:

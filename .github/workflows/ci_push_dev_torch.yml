@@ -1,18 +1,13 @@
-name: CI_CORE_ON_PUSH
+name: CI_PUSH[DEV_TORCH]
 
 on:
   push:
-    branches-ignore:
-      - 'main'
-      - 'dev-core'
-      - 'dev-experiment'
+    branches:
       - 'dev-torch'
-    paths:
-      - 'artifact-core/**'
   workflow_dispatch:
 
 env:
-  COMPONENT: artifact-core
+  COMPONENT: artifact-torch
 
 jobs:
   ci_component:
@@ -20,12 +15,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 

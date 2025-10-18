@@ -1,18 +1,13 @@
-name: CI_TORCH_ON_PUSH
+name: CI_PUSH[DEV_EXPERIMENT]
 
 on:
   push:
-    branches-ignore:
-      - 'main'
-      - 'dev-core'
+    branches:
       - 'dev-experiment'
-      - 'dev-torch'
-    paths:
-      - 'artifact-torch**'
   workflow_dispatch:
 
 env:
-  COMPONENT: artifact-torch
+  COMPONENT: artifact-experiment
 
 jobs:
   ci_component:

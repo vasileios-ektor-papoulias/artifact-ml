@@ -1,4 +1,4 @@
-name: LINT_MERGE_COMMIT_MESSAGE
+name: LINT_MESSAGE_PUSH[MAIN]
 
 on:
   push:
