@@ -39,7 +39,7 @@ jobs:
           cd ${{ matrix.component }}
           curl -sSL https://install.python-poetry.org | python -
           export PATH="$HOME/.local/bin:$PATH"
-          poetry install --with devs
+          poetry install --with dev
 
       - name: Run Linting with Ruff
         run: |
