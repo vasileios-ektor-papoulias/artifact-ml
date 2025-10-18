@@ -10,11 +10,9 @@ license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.11"
 
-
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
-
 
 [tool.poetry.dependencies]
 python = ">=3.11,<4.0"
@@ -22,6 +20,8 @@ artifact-core = {path = "../artifact-core", develop = true}
 artifact-experiment = {path = "../artifact-experiment", develop = true}
 torch = ">=2.7.0,<3.0.0"
 
+[tool.poetry.group.dev]
+optional = true
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.11.4"

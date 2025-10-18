@@ -11,8 +11,18 @@ jobs:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        component: [artifact-core, artifact-experiment, artifact-torch]
+        include:
+          - component: artifact-core
+            module: artifact_core
+            flag: core
+          - component: artifact-experiment
+            module: artifact_experiment
+            flag: experiment
+          - component: artifact-torch
+            module: artifact_torch
+            flag: torch
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,7 +39,7 @@ jobs:
           cd ${{ matrix.component }}
           curl -sSL https://install.python-poetry.org | python -
           export PATH="$HOME/.local/bin:$PATH"
-          poetry install
+          poetry install --with devs
 
       - name: Run Linting with Ruff
         run: |
@@ -39,7 +49,17 @@ jobs:
       - name: Run Unit Tests with Pytest
         run: |
           cd ${{ matrix.component }}
-          poetry run pytest
+          poetry run pytest \
+            --cov="${{ matrix.module }}" \
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ${{ matrix.component }}/coverage.xml
+          flags: ${{ matrix.flag }}
+          fail_ci_if_error: true
 
       - name: Build Package
         run: |
