@@ -59,7 +59,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
 
     def upload(self, path_source: str, dir_target: str, delete_after_upload: bool = False):
         if not self.is_active:
-            raise InactiveClearMLRunError("Run is inactive")
+            raise InactiveClearMLRunError()
         dir_target = self._prepend_root_dir(path=dir_target)
         self._native_run.upload_artifact(
             name=dir_target,
@@ -77,7 +77,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
         iteration: int = 0,
     ):
         if not self.is_active:
-            raise InactiveClearMLRunError("Run is inactive")
+            raise InactiveClearMLRunError()
         title = self._prepend_root_dir(path=title)
         logger = self._native_run.get_logger()
         logger.report_scalar(
@@ -95,7 +95,7 @@ class ClearMLRunAdapter(RunAdapter[Task]):
         iteration: int = 0,
     ):
         if not self.is_active:
-            raise InactiveClearMLRunError("Run is inactive")
+            raise InactiveClearMLRunError()
         title = self._prepend_root_dir(path=title)
         logger = self._native_run.get_logger()
         logger.report_matplotlib_figure(

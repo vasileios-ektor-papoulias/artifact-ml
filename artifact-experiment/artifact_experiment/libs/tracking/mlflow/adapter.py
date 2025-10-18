@@ -61,7 +61,7 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeRun]):
 
     def upload(self, path_source: str, dir_target: str):
         if not self.is_active:
-            raise InactiveMlflowRunError("Run is inactive")
+            raise InactiveMlflowRunError()
         dir_target = self._prepend_root_dir(path=dir_target)
         key = self._get_store_key(path=dir_target)
         self._native_run.client.log_artifact(
@@ -72,7 +72,7 @@ class MlflowRunAdapter(RunAdapter[MlflowNativeRun]):
 
     def log_score(self, backend_path: str, value: float, step: int = 0):
         if not self.is_active:
-            raise InactiveMlflowRunError("Run is inactive")
+            raise InactiveMlflowRunError()
         backend_path = self._prepend_root_dir(path=backend_path)
         key = self._get_store_key(path=backend_path)
         self._native_run.client.log_metric(run_id=self.run_uuid, key=key, value=value, step=step)

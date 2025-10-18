@@ -69,14 +69,14 @@ class NeptuneRunAdapter(RunAdapter[neptune.Run]):
 
     def upload(self, path_source: str, dir_target: str):
         if not self.is_active:
-            raise InactiveNeptuneRunError("Run is inactive")
+            raise InactiveNeptuneRunError()
         dir_target = self._prepend_root_dir(path=dir_target)
         key = self._get_store_key(path=dir_target)
         self._native_run[key].upload(path_source)
 
     def log(self, artifact_path: str, artifact: ArtifactResult):
         if not self.is_active:
-            raise InactiveNeptuneRunError("Run is inactive")
+            raise InactiveNeptuneRunError()
         artifact_path = self._prepend_root_dir(path=artifact_path)
         key = self._get_store_key(path=artifact_path)
         self._native_run[key].append(artifact)

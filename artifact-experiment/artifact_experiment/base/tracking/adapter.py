@@ -8,7 +8,8 @@ RunAdapterT = TypeVar("RunAdapterT", bound="RunAdapter")
 
 
 class InactiveRunError(Exception):
-    pass
+    def __init__(self, message: str = "Run is inactive"):
+        super().__init__(message)
 
 
 class RunAdapter(ABC, Generic[NativeRunT]):
