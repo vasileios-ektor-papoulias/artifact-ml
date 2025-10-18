@@ -3,12 +3,6 @@ from pathlib import Path
 
 from artifact_experiment.base.tracking.adapter import InactiveRunError
 
-try:
-    from artifact_experiment.libs.ui.directory_open_button import DirectoryOpenButton
-
-except ImportError:
-    DirectoryOpenButton = None
-
 
 class InactiveFilesystemRunError(InactiveRunError):
     pass
@@ -58,7 +52,9 @@ class FilesystemRun:
         os.makedirs(name=self.run_dir, exist_ok=True)
 
     def _print_run_url(self):
-        if DirectoryOpenButton is not None:
-            DirectoryOpenButton(path=self.run_dir, description=self._open_button_description)
-        else:
+        try:
+            from artifact_experiment.libs.ui.directory_open_button import DirectoryOpenButton
+        except ImportError:
             print(f"Run directory created at: {self.run_dir}")
+        else:
+            DirectoryOpenButton(path=self.run_dir, description=self._open_button_description)
