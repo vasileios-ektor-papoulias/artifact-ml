@@ -10,9 +10,9 @@ from sklearn.metrics import (
     recall_score,
 )
 
-from artifact_core.libs.implementation.binary_classification.confusion.calculator import (
-    ConfusionCalculator,
+from artifact_core.libs.implementation.binary_classification.confusion.raw import (
     ConfusionMatrixCell,
+    RawConfusionCalculator,
 )
 from artifact_core.libs.utils.calculators.safe_div_calculator import SafeDivCalculator
 from artifact_core.libs.utils.misc.dict_aligner import DictAligner
@@ -179,7 +179,7 @@ class BinaryPredictionMetricCalculator:
         true: Mapping[Hashable, bool],
         predicted: Mapping[Hashable, bool],
     ) -> float:
-        dict_conf = ConfusionCalculator.compute_dict_confusion_counts(
+        dict_conf = RawConfusionCalculator.compute_dict_confusion_counts(
             true=true, predicted=predicted
         )
         tn = dict_conf[ConfusionMatrixCell.TRUE_NEGATIVE]
@@ -193,7 +193,7 @@ class BinaryPredictionMetricCalculator:
         true: Mapping[Hashable, bool],
         predicted: Mapping[Hashable, bool],
     ) -> float:
-        dict_conf = ConfusionCalculator.compute_dict_confusion_counts(
+        dict_conf = RawConfusionCalculator.compute_dict_confusion_counts(
             true=true, predicted=predicted
         )
         tn = dict_conf[ConfusionMatrixCell.TRUE_NEGATIVE]
@@ -207,7 +207,7 @@ class BinaryPredictionMetricCalculator:
         true: Mapping[Hashable, bool],
         predicted: Mapping[Hashable, bool],
     ) -> float:
-        dict_conf = ConfusionCalculator.compute_dict_confusion_counts(
+        dict_conf = RawConfusionCalculator.compute_dict_confusion_counts(
             true=true, predicted=predicted
         )
         fp = dict_conf[ConfusionMatrixCell.FALSE_POSITIVE]
@@ -221,7 +221,7 @@ class BinaryPredictionMetricCalculator:
         true: Mapping[Hashable, bool],
         predicted: Mapping[Hashable, bool],
     ) -> float:
-        dict_conf = ConfusionCalculator.compute_dict_confusion_counts(
+        dict_conf = RawConfusionCalculator.compute_dict_confusion_counts(
             true=true, predicted=predicted
         )
         fn = dict_conf[ConfusionMatrixCell.FALSE_NEGATIVE]

@@ -9,11 +9,13 @@ from matplotlib.figure import Figure
 from matplotlib.image import AxesImage
 
 from artifact_core.libs.implementation.binary_classification.confusion.calculator import (
-    ConfusionCalculator,
-)
-from artifact_core.libs.implementation.binary_classification.confusion.normalized_calculator import (
-    ConfusionMatrixNormalizationStrategy,
     NormalizedConfusionCalculator,
+)
+from artifact_core.libs.implementation.binary_classification.confusion.normalizer import (
+    ConfusionMatrixNormalizationStrategy,
+)
+from artifact_core.libs.implementation.binary_classification.confusion.raw import (
+    RawConfusionCalculator,
 )
 
 
@@ -54,7 +56,7 @@ class ConfusionMatrixPlotter:
         normalization: ConfusionMatrixNormalizationStrategy,
         config: ConfusionMatrixPlotConfig = ConfusionMatrixPlotConfig(),
     ) -> Figure:
-        arr_cm_raw = ConfusionCalculator.compute_confusion_matrix(
+        arr_cm_raw = RawConfusionCalculator.compute_confusion_matrix(
             true=true, predicted=predicted
         ).astype(float)
         arr_cm = NormalizedConfusionCalculator.compute_normalized_confusion_matrix(

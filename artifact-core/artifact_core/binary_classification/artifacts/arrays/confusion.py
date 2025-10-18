@@ -13,10 +13,12 @@ from artifact_core.binary_classification.registries.arrays.registry import (
 from artifact_core.binary_classification.registries.arrays.types import (
     BinaryClassificationArrayType,
 )
-from artifact_core.libs.implementation.binary_classification.confusion.normalized_calculator import (
+from artifact_core.libs.implementation.binary_classification.confusion.calculator import (
     ConfusionMatrixNormalizationStrategy,
-    ConfusionNormalizationStrategyLiteral,
     NormalizedConfusionCalculator,
+)
+from artifact_core.libs.implementation.binary_classification.confusion.normalizer import (
+    ConfusionNormalizationStrategyLiteral,
 )
 from artifact_core.libs.resources.categorical.category_store.binary import (
     BinaryCategoryStore,

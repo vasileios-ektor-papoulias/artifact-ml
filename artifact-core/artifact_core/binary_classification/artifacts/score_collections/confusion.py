@@ -11,10 +11,12 @@ from artifact_core.binary_classification.registries.score_collections.registry i
 from artifact_core.binary_classification.registries.score_collections.types import (
     BinaryClassificationScoreCollectionType,
 )
-from artifact_core.libs.implementation.binary_classification.confusion.normalized_calculator import (
+from artifact_core.libs.implementation.binary_classification.confusion.calculator import (
     ConfusionMatrixNormalizationStrategy,
-    ConfusionNormalizationStrategyLiteral,
     NormalizedConfusionCalculator,
+)
+from artifact_core.libs.implementation.binary_classification.confusion.normalizer import (
+    ConfusionNormalizationStrategyLiteral,
 )
 from artifact_core.libs.resources.categorical.category_store.binary import (
     BinaryCategoryStore,

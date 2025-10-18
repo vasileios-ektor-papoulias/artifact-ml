@@ -13,8 +13,10 @@ from artifact_core.binary_classification.registries.plots.registry import (
 from artifact_core.binary_classification.registries.plots.types import (
     BinaryClassificationPlotType,
 )
-from artifact_core.libs.implementation.binary_classification.confusion.normalized_calculator import (
+from artifact_core.libs.implementation.binary_classification.confusion.calculator import (
     ConfusionMatrixNormalizationStrategy,
+)
+from artifact_core.libs.implementation.binary_classification.confusion.normalizer import (
     ConfusionNormalizationStrategyLiteral,
 )
 from artifact_core.libs.implementation.binary_classification.confusion.plotter import (
