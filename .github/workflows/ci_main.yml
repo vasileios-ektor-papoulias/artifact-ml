@@ -66,10 +66,11 @@ jobs:
         with:
           files: ${{ matrix.component }}/coverage.xml
           flags: ${{ matrix.flag }}
+          use_oidc: true
           fail_ci_if_error: true
       
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v5
         with:
           projectBaseDir: ${{ matrix.component }}
         env:
