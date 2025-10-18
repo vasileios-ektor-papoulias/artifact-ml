@@ -12,8 +12,9 @@
 ![License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-ml)
 
 [![CI](https://github.com/vasileios-ektor-papoulias/artifact-ml/actions/workflows/ci_main.yml/badge.svg?branch=main)](https://github.com/vasileios-ektor-papoulias/artifact-ml/actions/workflows/ci_main.yml)
-[![Coverage](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/branch/main/graph/badge.svg?flag=torch)](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/flags#torch)
+[![Coverage](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/branch/main/graph/badge.svg)](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/)
 [![CodeFactor](https://www.codefactor.io/repository/github/vasileios-ektor-papoulias/artifact-ml/badge)](https://www.codefactor.io/repository/github/vasileios-ektor-papoulias/artifact-ml)
+
 ---
 
 ## 📋 Overview & Purpose
