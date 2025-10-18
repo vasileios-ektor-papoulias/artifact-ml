@@ -112,7 +112,7 @@ url = "../artifact-core"
 [[package]]
 name = "artifact-experiment"
 version = "0.1.0"
-description = "Standardized validation plan execution and artifact logging for ML experiments."
+description = "Experiment orchestration and tracking for the Artifact framework."
 optional = false
 python-versions = ">=3.11,<4.0"
 groups = ["main"]
@@ -4698,4 +4698,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<4.0"
-content-hash = "5a78f485de5b237fa3e367c96425599be07698cf584455de5e89930b51417196"
+content-hash = "725c1030dd0bf47fefbe5cb7c7d173444fd7792069c49cefd0ce8952eb727b22"
