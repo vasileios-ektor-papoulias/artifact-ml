@@ -1,0 +1,12 @@
+site_name: Artifact Docs
+docs_dir: docs
+
+plugins:
+  - search
+  - monorepo
+
+nav:
+  - Home: index.md
+  - Core: !include ../artifact-core/docs/nav.yml
+  - Experiment: !include ../artifact-experiment/docs/nav.yml
+  - Torch: !include ../artifact-torch/docs/nav.yml

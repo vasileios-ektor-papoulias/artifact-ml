@@ -4,9 +4,9 @@
 
 To contribute, please consult the guide below.
 
-For a detailed specification of Artifact's **DevOps processes** please consult the relevant [docs](../.github/devops.md).
+For a detailed specification of Artifact's **DevOps processes** please consult the relevant [docs](../.github/docs/devops.md).
 
-For a detailed specification of Artifact's **CI/CD pipelines** please consult the relevant [docs](../.github/cicd.md).
+For a detailed specification of Artifact's **CI/CD pipelines** please consult the relevant [docs](../.github/docs/cicd.md).
 
 <p align="center">
   <img src="../assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
