@@ -73,6 +73,4 @@ class BinaryFeatureSpec(CategoricalFeatureSpec):
     @staticmethod
     def _validate_positive_category(positive_category: str, ls_categories: List[str]):
         if positive_category not in ls_categories:
-            raise ValueError(
-                f"`positive_category` {positive_category!r} must be one of ls_categories={ls_categories}."
-            )
+            raise ValueError(f"`positive_category` {positive_category!r} not in {ls_categories=}.")
