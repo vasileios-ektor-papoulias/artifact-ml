@@ -1,7 +1,7 @@
 # ignore ipynb files when calculating language composition
 *.ipynb linguist-vendored=true
 
-# force LF on config that RTD reads
+# force LF on ReadTheDocs config
 .readthedocs.yaml text eol=lf
 .readthedocs.yml  text eol=lf
 mkdocs.yml        text eol=lf
