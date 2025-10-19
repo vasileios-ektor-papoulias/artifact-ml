@@ -5,11 +5,9 @@ This document provides a practical schematic example showcasing the problem addr
 | ![Artifact-ML Logo](assets/artifact_ml_logo.svg){ width="400" } |
 |:--:|
 
-## 🔧 Ad Hoc vs. Systematic Experiment Workflows
+The following exhibits the same tabular synthesis experiment workflow implemented two ways:
 
-The following exhibits the same tabular synthesis experiment implemented two ways:
-
-### Ad-Hoc Experiment Script
+## Ad-Hoc Experiment Workflow
 
 First, we present a schematic ad-hoc implementation of the workflow.
 
@@ -267,7 +265,7 @@ print("Training completed!")
 - **Model evolution forces script maintenance**: Model modifications—even when validation logic remains unchanged—necessitate updating the corresponding experiment scripts to accommodate interface changes. Research teams expend substantial effort maintaining experiment infrastructure rather than advancing innovation.
 - **Unintended differences create biased comparisons**: When maintaining multiple brittle validation pipelines, subtle discrepancies can emerge---different preprocessing steps, inconsistent hyperparameters, or varying evaluation metrics. This can lead to unreliable model comparisons where performance differences reflect implementation accidents rather than true model capabilities.
 
-### Systematic Experiment Script
+### Systematic Experiment Workflow
 
 We now present a schematic systematic implementation of the same workflow.
 
