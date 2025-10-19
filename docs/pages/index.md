@@ -41,7 +41,7 @@ For a concrete demonstration of the problem (and solution) addressed by Artifact
 For a deep-dive into the core design philosophy underlying the project see our [**design philosophy doc**](docs/design_philosophy.md).
 
 <p align="center">
-  <img src="../assets/pdf_comparison.png" width="600" alt="PDF Comparison">
+  <img src="pdf_comparison.png" width="600" alt="PDF Comparison">
 </p>
 
 ## 🏗️ Packages
