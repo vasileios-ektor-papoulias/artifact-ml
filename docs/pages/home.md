@@ -4,7 +4,7 @@
 
 
 <p align="center">
-  <img src="../assets/artifact_ml_logo.svg" width="600" alt="Overview Diagram">
+  <img src="../assets/artifact_ml_logo.svg" width="600" alt="Artifact-ML Logo">
 </p>
 
 
