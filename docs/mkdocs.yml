@@ -8,8 +8,8 @@ theme:
   name: material
 
   logo: assets/artifact_ml_logo.svg
-  
-  favicon: assets/favicon.ico
+
+  favicon: assets/artifact_ml_favicon.ico
 
   font:
     text: Roboto
