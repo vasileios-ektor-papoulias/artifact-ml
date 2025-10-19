@@ -5,7 +5,7 @@ plugins:
   - monorepo
 
 nav:
-  - Artifact-ML: index.md
+  - home: index.md
   - artifact-core: '!include ../artifact-core/docs/mkdocs.yml'
   - artifact-experiment: '!include ../artifact-experiment/docs/mkdocs.yml'
   - artifact-torch: '!include ../artifact-torch/docs/mkdocs.yml'

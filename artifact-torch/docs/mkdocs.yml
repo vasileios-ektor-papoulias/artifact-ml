@@ -1,4 +1,4 @@
 site_name: artifact-torch
 docs_dir: .
 nav:
-  - Home: pages/home.md
+  - home: pages/home.md
