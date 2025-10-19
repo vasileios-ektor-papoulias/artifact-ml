@@ -1,15 +1,22 @@
-# Artifact-ML Motivating Example
+# Motivating Example
 
 This document provides a practical schematic example showcasing the problem addressed by Artifact-ML.
 
 | ![Artifact-ML Logo](assets/artifact_ml_logo.svg){ width="400" } |
 |:--:|
 
-## 🔧 Motivating Example: Ad Hoc vs. Systematic Experiment Logic
+## 🔧 Ad Hoc vs. Systematic Experiment Workflows
 
 The following exhibits the same tabular synthesis experiment implemented two ways:
 
-### Without Artifact-ML: Validation-Specific Experiment Scripts
+### Ad-Hoc Experiment Script
+
+First, we present a schematic ad-hoc implementation of the workflow.
+
+Even though the hgh-level intent could apply to any tabular synthesis experiment, the script is designed to train a specific model.
+
+Consequently, it is riddled with impertive glue code.
+
 ```python
 # Monolithic experiment script demonstrating fundamental problems despite intent to keep code organized
 from typing import List, Dict, Tuple, Optional, Any
@@ -260,7 +267,14 @@ print("Training completed!")
 - **Model evolution forces script maintenance**: Model modifications—even when validation logic remains unchanged—necessitate updating the corresponding experiment scripts to accommodate interface changes. Research teams expend substantial effort maintaining experiment infrastructure rather than advancing innovation.
 - **Unintended differences create biased comparisons**: When maintaining multiple brittle validation pipelines, subtle discrepancies can emerge---different preprocessing steps, inconsistent hyperparameters, or varying evaluation metrics. This can lead to unreliable model comparisons where performance differences reflect implementation accidents rather than true model capabilities.
 
-### With Artifact-ML: Clean & Reusable Experiment Infrastructure
+### Systematic Experiment Script
+
+We now present a schematic systematic implementation of the same workflow.
+
+The same workflow could work for any tabular synthesizer.
+
+Every line of code declares intent, consequently the script is considerably shorter.
+
 
 **1. Model Implementation** - Researchers---adhering to lightweight interface contracts---focus soley on architectural innovation:
 
