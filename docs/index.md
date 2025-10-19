@@ -75,7 +75,7 @@ To install `artifact-core` run:
 cd artifact-ml/artifact-core
 poetry install
 ```
-For details on getting started with `artifact-core`, consult the relevant [docs](artifact-core/README.md).
+For details on getting started with `artifact-core`, consult the relevant [docs](../artifact-core/README.md).
 
 #### 2. [`artifact-experiment`](artifact-experiment/README.md)
 To install `artifact-experiment` run:
@@ -85,7 +85,7 @@ cd artifact-ml/artifact-experiment
 poetry install
 ```
 
-For details on getting started with `artifact-experiment`, consult the relevant [docs](artifact-experiment/README.md).
+For details on getting started with `artifact-experiment`, consult the relevant [docs](../artifact-experiment/README.md).
 
 #### 3. [`artifact-torch`](artifact-torch/README.md)
 To install `artifact-torch` run:
@@ -95,13 +95,13 @@ cd artifact-ml/artifact-torch
 poetry install
 ```
 
-For details on getting started with `artifact-torch`, consult the relevant [docs](artifact-torch/README.md).
+For details on getting started with `artifact-torch`, consult the relevant [docs](../artifact-torch/README.md).
 
 ## 🔮 Future Development
 
 We plan to actively expand the framework's scope and capabilities.
 
-For a collection of future development avenues, please consult our [**future development doc**](docs/future_development.md).
+For a collection of future development avenues, please consult our [**future development doc**](pages/future_development.md).
 
 
 
@@ -109,7 +109,7 @@ For a collection of future development avenues, please consult our [**future dev
 
 Contributions are welcome.
 
-For relevant guidelines, please consult our [**contribution guidelines doc**](docs/contributing.md).
+For relevant guidelines, please consult our [**contribution guidelines doc**](pages/contributing.md).
 
 
 ## 📄 License
