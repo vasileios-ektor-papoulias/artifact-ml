@@ -69,7 +69,7 @@ nav:
     - Home: index.md
     - Motivating Example: pages/motivating_example.md
     - Design Philosophy: pages/design_philosophy.md
-    - Future Development: pages/future_development.md
+    - Future Development Avenues: pages/future_development_avenues.md
     - Contributing: pages/contributing.md
   - artifact-core: '!include ../artifact-core/docs/mkdocs.yml'
   - artifact-experiment: '!include ../artifact-experiment/docs/mkdocs.yml'

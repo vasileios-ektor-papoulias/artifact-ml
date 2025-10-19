@@ -101,7 +101,7 @@ For details on getting started with `artifact-torch`, consult the relevant [docs
 
 We plan to actively expand the framework's scope and capabilities.
 
-For a collection of future development avenues, please consult our [**future development doc**](pages/future_development.md).
+For a collection of future development avenues, please consult our [**future development doc**](pages/future_development_avenues.md).
 
 
 
