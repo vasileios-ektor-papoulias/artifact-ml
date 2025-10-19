@@ -27,9 +27,9 @@ The upshot is:
 
 - **Consistent and trustworthy evaluation** — validation is standardized across experiments, eliminating variance caused by subtle discrepancies in custom logic.
 
-For a concrete demonstration of the problem (and solution) addressed by Artifact, see our [**motivating example doc**](pages/motivating_example.md).
+For a concrete demonstration of the problem (and solution) addressed by Artifact, see our [**motivating example doc**](motivating_example.md).
 
-For a deep-dive into the core design philosophy underlying the project see our [**design philosophy doc**](pages/design_philosophy.md).
+For a deep-dive into the core design philosophy underlying the project see our [**design philosophy doc**](design_philosophy.md).
 
 <p align="center">
   <img src="assets/pdf_comparison.png" width="600" alt="PDF Comparison">
@@ -101,7 +101,7 @@ For details on getting started with `artifact-torch`, consult the relevant [docs
 
 We plan to actively expand the framework's scope and capabilities.
 
-For a collection of future development avenues, please consult our [**future development doc**](pages/future_development.md).
+For a collection of future development avenues, please consult our [**future development doc**](future_development.md).
 
 
 
@@ -109,7 +109,7 @@ For a collection of future development avenues, please consult our [**future dev
 
 Contributions are welcome.
 
-For relevant guidelines, please consult our [**contribution guidelines doc**](pages/contributing.md).
+For relevant guidelines, please consult our [**contribution guidelines doc**](contributing.md).
 
 
 ## 📄 License
