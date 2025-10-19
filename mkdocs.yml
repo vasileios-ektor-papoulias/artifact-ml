@@ -7,7 +7,7 @@ plugins:
 
 nav:
   - Artifact-ML: pages/index.md
-  - artifact-core: '!include artifact-core/mkdocs.yml'
-  - artifact-experiment: '!include artifact-experiment/mkdocs.yml'
-  - artifact-torch: '!include artifact-torch/mkdocs.yml'
-  - DevOps & CICD: '!include .github/mkdocs.yml'
+  # - artifact-core: '!include artifact-core/mkdocs.yml'
+  # - artifact-experiment: '!include artifact-experiment/mkdocs.yml'
+  # - artifact-torch: '!include artifact-torch/mkdocs.yml'
+  # - DevOps & CICD: '!include .github/mkdocs.yml'
