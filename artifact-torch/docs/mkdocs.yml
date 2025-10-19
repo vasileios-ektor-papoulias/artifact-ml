@@ -1,4 +1,0 @@
-site_name: artifact-torch
-docs_dir: pages
-nav:
-  - Home: home.md

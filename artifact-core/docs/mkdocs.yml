@@ -1,4 +1,0 @@
-site_name: artifact-core
-docs_dir: pages
-nav:
-  - Home: home.md
