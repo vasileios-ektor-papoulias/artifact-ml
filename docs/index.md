@@ -27,9 +27,9 @@ The upshot is:
 
 - **Consistent and trustworthy evaluation** — validation is standardized across experiments, eliminating variance caused by subtle discrepancies in custom logic.
 
-For a concrete demonstration of the problem (and solution) addressed by Artifact, see our [**motivating example doc**](docs/motivating_example.md).
+For a concrete demonstration of the problem (and solution) addressed by Artifact, see our [**motivating example doc**](motivating_example.md).
 
-For a deep-dive into the core design philosophy underlying the project see our [**design philosophy doc**](docs/design_philosophy.md).
+For a deep-dive into the core design philosophy underlying the project see our [**design philosophy doc**](design_philosophy.md).
 
 <p align="center">
   <img src="assets/pdf_comparison.png" width="600" alt="PDF Comparison">
