@@ -1,11 +1,11 @@
 site_name: Artifact-ML Docs
-docs_dir: docs/pages
+docs_dir: docs 
 plugins:
   - search
   - monorepo
 
 nav:
-  - Artifact-ML: index.md
+  - Artifact-ML: pages/index.md 
   # - artifact-core: '!include artifact-core/mkdocs.yml'
   # - artifact-experiment: '!include artifact-experiment/mkdocs.yml'
   # - artifact-torch: '!include artifact-torch/mkdocs.yml'
