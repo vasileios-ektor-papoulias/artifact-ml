@@ -10,4 +10,4 @@ nav:
   - artifact-core: '!include ../artifact-core/docs/mkdocs.yml'
   - artifact-experiment: '!include ../artifact-experiment/docs/mkdocs.yml'
   - artifact-torch: '!include ../artifact-torch/docs/mkdocs.yml'
-  - DevOps & CICD: index.md
+  - DevOps & CICD: '!include ../.github/docs/mkdocs.yml'
