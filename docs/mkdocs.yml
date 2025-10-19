@@ -1,8 +1,29 @@
 site_name: Artifact-ML Docs
+repo_url: https://github.com/vasileios-ektor-papoulias/artifact-ml
+edit_uri: edit/main/
+
 docs_dir: .
+
+theme:
+  name: material
+
 plugins:
   - search
   - monorepo
+
+markdown_extensions:
+  - attr_list
+  - admonition
+  - def_list
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:materialx.emoji.to_svg
 
 nav:
   - Artifact-ML: index.md
