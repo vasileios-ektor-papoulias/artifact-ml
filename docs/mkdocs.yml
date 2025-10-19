@@ -65,7 +65,7 @@ markdown_extensions:
 
 nav:
   - Artifact-ML:
-    - home: home.md
+    - home: index.md
     - Motivating Example: pages/motivating_example.md
     - Design Philosophy: pages/design_philosophy.md
     - Future Development: pages/future_development.md

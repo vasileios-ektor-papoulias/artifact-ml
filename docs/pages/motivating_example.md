@@ -2,8 +2,9 @@
 
 This document provides a practical schematic example showcasing the problem addressed by Artifact-ML.
 
-| ![Artifact-ML Logo](assets/artifact_ml_logo.svg){ width="400" } |
-|:--:|
+<p align="center">
+  <img src="../../assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
+</p>
 
 The following exhibits the same tabular synthesis experiment workflow implemented two ways:
 

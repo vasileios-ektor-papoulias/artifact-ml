@@ -68,7 +68,7 @@ Models, trainers, and workflows are all strongly typed, and the system leverages
 ```bash
 git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
 ```
-#### 1. [`artifact-core`](artifact-core/README.md)
+#### 1. [`artifact-core`](../artifact-core/docs/pages/home.md)
 To install `artifact-core` run:
 
 ```bash
@@ -77,7 +77,7 @@ poetry install
 ```
 For details on getting started with `artifact-core`, consult the relevant [docs](../artifact-core/docs/pages/home.md).
 
-#### 2. [`artifact-experiment`](artifact-experiment/README.md)
+#### 2. [`artifact-experiment`](../artifact-experiment/docs/pages/home.md)
 To install `artifact-experiment` run:
 
 ```bash
@@ -87,7 +87,7 @@ poetry install
 
 For details on getting started with `artifact-experiment`, consult the relevant [docs](../artifact-experiment/docs/pages/home.md).
 
-#### 3. [`artifact-torch`](artifact-torch/README.md)
+#### 3. [`artifact-torch`](../artifact-torch/docs/pages/home.md)
 To install `artifact-torch` run:
 
 ```bash

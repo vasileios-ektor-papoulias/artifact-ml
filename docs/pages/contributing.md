@@ -9,7 +9,7 @@ For a detailed specification of Artifact's **DevOps processes** please consult t
 For a detailed specification of Artifact's **CI/CD pipelines** please consult the relevant [docs](../.github/docs/cicd.md).
 
 <p align="center">
-  <img src="../assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
+  <img src="../../assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
 </p>
 
 
