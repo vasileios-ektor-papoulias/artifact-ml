@@ -7,6 +7,10 @@ docs_dir: .
 theme:
   name: material
 
+  logo: assets/artifact_ml_logo.svg
+  
+  favicon: assets/favicon.ico
+
   font:
     text: Roboto
     code: Roboto Mono
