@@ -5,7 +5,7 @@ The present constitues a detailed exposition to Artifact-ML's **CI/CD pipelines*
 For a specification of the project's **DevOps pipelines** please consult the relevant [docs](devops.md).
 
 <p align="center">
-  <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
+  <img src="../assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
 </p>
 
 ## Overview
@@ -24,7 +24,7 @@ Tests are organized in `.github/tests`. Their directory structure mirrors that o
 ## GitHub Actions Workflows
 
 <p align="center">
-  <img src="./assets/github_actions_logo.png" width="500" alt="Github Actions Logo">
+  <img src="../assets/github_actions_logo.png" width="500" alt="Github Actions Logo">
 </p>
 
 ### Workflow Name Convention
@@ -96,7 +96,7 @@ The github actions workflows powering our CI/CD pipeline delegate to shell scrip
 The latter are organized under the `.github/scripts` directory.
 
 <p align="center">
-  <img src="./assets/shell_logo.png" width="500" alt="Shell Logo">
+  <img src="../assets/shell_logo.png" width="500" alt="Shell Logo">
 </p>
 
 ### Execution Context

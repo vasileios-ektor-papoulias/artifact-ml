@@ -1,4 +1,4 @@
 site_name: artifact-core
-docs_dir: docs
+docs_dir: pages
 nav:
   - Overview: index.md
