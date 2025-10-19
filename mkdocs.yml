@@ -7,6 +7,6 @@ plugins:
 
 nav:
   - Home: index.md
-  - Core: !include ../artifact-core/docs/nav.yml
-  - Experiment: !include ../artifact-experiment/docs/nav.yml
-  - Torch: !include ../artifact-torch/docs/nav.yml
+  - Core: '!include ../artifact-core/mkdocs.yml'
+  - Experiment: '!include ../artifact-experiment/mkdocs.yml'
+  - Torch: '!include ../artifact-torch/mkdocs.yml'
