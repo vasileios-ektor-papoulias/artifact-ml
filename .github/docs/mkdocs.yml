@@ -1,4 +1,4 @@
 site_name: DevOps & cicd
-docs_dir: docs
+docs_dir: .
 nav:
   - Overview: pages/cicd.md
