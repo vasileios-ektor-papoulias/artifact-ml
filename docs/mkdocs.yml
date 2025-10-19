@@ -17,13 +17,16 @@ theme:
 
   palette:
     palette:
+    palette:
     - scheme: slate
+      media: "(prefers-color-scheme: dark)"
       primary: indigo
       accent: indigo
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
     - scheme: default
+      media: "(prefers-color-scheme: light)"
       primary: indigo
       accent: indigo
       toggle:
