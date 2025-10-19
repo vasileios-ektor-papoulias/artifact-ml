@@ -1,4 +1,4 @@
 site_name: DevOps & cicd
 docs_dir: .
 nav:
-  - home: pages/home.md
+  - Home: pages/home.md
