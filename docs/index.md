@@ -4,17 +4,8 @@
 
 
 <p align="center">
-  <img src="artifact_ml_logo.svg" width="600" alt="Artifact-ML Logo">
+  <img src="assets/artifact_ml_logo.svg" width="600" alt="Artifact-ML Logo">
 </p>
-
-
-[![Documentation](https://img.shields.io/badge/docs-mkdocs-blue)](https://artifact-ml.readthedocs.io/en/latest/)
-![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
-![License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-ml)
-
-[![CI](https://img.shields.io/github/actions/workflow/status/vasileios-ektor-papoulias/artifact-ml/ci_push_main.yml?branch=main&label=CI)](https://github.com/vasileios-ektor-papoulias/artifact-ml/actions/workflows/ci_push_main.yml)
-[![Coverage](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/branch/main/graph/badge.svg)](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/)
-[![CodeFactor](https://www.codefactor.io/repository/github/vasileios-ektor-papoulias/artifact-ml/badge)](https://www.codefactor.io/repository/github/vasileios-ektor-papoulias/artifact-ml)
 
 ---
 
@@ -41,7 +32,7 @@ For a concrete demonstration of the problem (and solution) addressed by Artifact
 For a deep-dive into the core design philosophy underlying the project see our [**design philosophy doc**](docs/design_philosophy.md).
 
 <p align="center">
-  <img src="pdf_comparison.png" width="600" alt="PDF Comparison">
+  <img src="assets/pdf_comparison.png" width="600" alt="PDF Comparison">
 </p>
 
 ## 🏗️ Packages
