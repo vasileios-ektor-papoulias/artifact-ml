@@ -27,9 +27,9 @@ The upshot is:
 
 - **Consistent and trustworthy evaluation** — validation is standardized across experiments, eliminating variance caused by subtle discrepancies in custom logic.
 
-For a concrete demonstration of the problem (and solution) addressed by Artifact, see our [**motivating example doc**](motivating_example.md).
+For a concrete demonstration of the problem (and solution) addressed by Artifact, see our [**motivating example doc**](pages/motivating_example.md).
 
-For a deep-dive into the core design philosophy underlying the project see our [**design philosophy doc**](design_philosophy.md).
+For a deep-dive into the core design philosophy underlying the project see our [**design philosophy doc**](pages/design_philosophy.md).
 
 <p align="center">
   <img src="assets/pdf_comparison.png" width="600" alt="PDF Comparison">
@@ -75,7 +75,7 @@ To install `artifact-core` run:
 cd artifact-ml/artifact-core
 poetry install
 ```
-For details on getting started with `artifact-core`, consult the relevant [docs](../artifact-core/README.md).
+For details on getting started with `artifact-core`, consult the relevant [docs](../artifact-core/docs/pages/home.md).
 
 #### 2. [`artifact-experiment`](artifact-experiment/README.md)
 To install `artifact-experiment` run:
@@ -85,7 +85,7 @@ cd artifact-ml/artifact-experiment
 poetry install
 ```
 
-For details on getting started with `artifact-experiment`, consult the relevant [docs](../artifact-experiment/README.md).
+For details on getting started with `artifact-experiment`, consult the relevant [docs](../artifact-experiment/docs/pages/home.md).
 
 #### 3. [`artifact-torch`](artifact-torch/README.md)
 To install `artifact-torch` run:
@@ -95,13 +95,13 @@ cd artifact-ml/artifact-torch
 poetry install
 ```
 
-For details on getting started with `artifact-torch`, consult the relevant [docs](../artifact-torch/README.md).
+For details on getting started with `artifact-torch`, consult the relevant [docs](../artifact-torch/docs/pages/home.md).
 
 ## 🔮 Future Development
 
 We plan to actively expand the framework's scope and capabilities.
 
-For a collection of future development avenues, please consult our [**future development doc**](future_development.md).
+For a collection of future development avenues, please consult our [**future development doc**](pages/future_development.md).
 
 
 
@@ -109,7 +109,7 @@ For a collection of future development avenues, please consult our [**future dev
 
 Contributions are welcome.
 
-For relevant guidelines, please consult our [**contribution guidelines doc**](contributing.md).
+For relevant guidelines, please consult our [**contribution guidelines doc**](pages/contributing.md).
 
 
 ## 📄 License

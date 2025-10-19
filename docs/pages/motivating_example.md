@@ -2,9 +2,8 @@
 
 This document provides a practical schematic example showcasing the problem addressed by Artifact-ML.
 
-<p align="center">
-  <img src="../assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
-</p>
+| ![Artifact-ML Logo](assets/artifact_ml_logo.svg){ width="400" } |
+|:--:|
 
 ## 🔧 Motivating Example: Ad Hoc vs. Systematic Experiment Logic
 
