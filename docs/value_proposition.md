@@ -6,7 +6,7 @@
 
 Machine learning experiment code is often cluttered with imperative logic making it difficult to maintain, scale, or reuse across projects.
 
-his typically stems from unnecessary coupling between experiment workflows and model implementation details.
+This is typically the product of unnecessarily coupled experiment workflows and model implementations.
 
 To illustrate: a simple conceptual requirement such as *compute PCA projection*—something any tabular synthesizer should be able to do—often turns into *compute PCA projection after extracting numeric columns, handling this model’s NaN patterns, and converting from this model’s specific output format.* Similarly, workflows that should operate on *“models that generate tabular data”* end up tied to *neural network models* embedding architectural assumptions where none are needed.
 
