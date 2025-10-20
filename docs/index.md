@@ -20,9 +20,9 @@ The project comprises three packages:
 
 ## Contents
 
-- [Packages](pages/packages.md) — overview of the core packages that make up Artifact-ML.  
-- [Getting Started](pages/getting_started.md) — how to install and start building declarative experiment workflows.  
-- [Value Proposition](pages/value_proposition.md) — why Artifact-ML exists and the problem it solves.  
-- [Motivating Example](pages/motivating_example.md) — a concrete example illustrating the problem and solution in action.  
+- [Packages](pages/packages.md) — overview of the packages comprising the framework.  
+- [Getting Started](pages/getting_started.md) — quick installation instructions.  
+- [Value Proposition](pages/value_proposition.md) — high-level description of the problem addressed by Artifact-ML.  
+- [Motivating Example](pages/motivating_example.md) — a concrete example illustrating the problem (and solution) in action.  
 - [Design Philosophy](pages/design_philosophy.md) — the core ideas and principles that shape the framework.  
 - [Domain Specific Toolkits](pages/domain_specific_toolkits.md) — how Artifact-ML structures reusable workflows across application domains.
