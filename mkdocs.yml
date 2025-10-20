@@ -1,12 +1,79 @@
-site_name: Artifact Docs
+site_name: Artifact-ML Docs
+repo_url: https://github.com/vasileios-ektor-papoulias/artifact-ml
+edit_uri: edit/main/
+
 docs_dir: docs
+
+theme:
+  name: material
+
+  logo: assets/artifact_ml_logo.svg
+
+  favicon: assets/artifact_ml_favicon.ico
+
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+  palette:
+    palette:
+    palette:
+    - scheme: slate
+      media: "(prefers-color-scheme: dark)"
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+    - scheme: default
+      media: "(prefers-color-scheme: light)"
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+
+  features:
+    - navigation.tabs
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - content.footnote.tooltips
+    - search.suggest
+    - search.highlight
 
 plugins:
   - search
   - monorepo
 
+markdown_extensions:
+  - attr_list
+  - admonition
+  - def_list
+  - toc:
+      permalink: true
+      title: "Contents"
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
 nav:
-  - Home: index.md
-  - Core: '!include artifact-core/mkdocs.yml'
-  - Experiment: '!include artifact-experiment/mkdocs.yml'
-  - Torch: '!include artifact-torch/mkdocs.yml'
+  - Artifact-ML:
+    - Home: index.md
+    - Packages: packages.md
+    - Getting Started: getting_started.md
+    - Value Proposition: value_proposition.md
+    - Motivating Example: motivating_example.md
+    - Design Philosophy: design_philosophy.md
+    - Domain Toolkits: domain_toolkits.md
+  - artifact-core: '!include artifact-core/mkdocs.yml'
+  - artifact-experiment: '!include artifact-experiment/mkdocs.yml'
+  - artifact-torch: '!include artifact-torch/mkdocs.yml'
+  - Development: '!include .github/mkdocs.yml'

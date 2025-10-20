@@ -1,11 +1,7 @@
-# Artifact-ML DevOps Processes
-
-The present provides a specification of Artifact-ML's **DevOps** processes.
-
-For a specification of the project's **CI/CD pipelines** please consult the relevant [docs](cicd.md).
+# DevOps Processes
 
 <p align="center">
-  <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
+  <img src="../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
 
@@ -28,33 +24,33 @@ The project is correspondingly partitioned in the following *components* (provid
 
 
 <p align="center">
-  <img src="./assets/repo_structure.svg" width="1500" alt="Repo Structure">
+  <img src="../assets/repo_structure.svg" width="1500" alt="Repo Structure">
 </p>
 
 ## Branches
 
-- **main**: `dev-<component_name>`
+- **main**: `main`
    - Role: The most recent stable release of Artifact-ML.
    - Update:
       - Updated by periodically merging in `dev` branches---resulting in new version releases.
-      - Updated by merging in hotfix branches through pull request---resulting in new version releases.
-      - Updated by merging in setup branches through pull request---not resulting in new version releases.
+      - Updated by merging in `hotfix` branches through pull request.
+      - Updated by merging in `setup` branches through pull request.
 
 - **Development Branches**: `dev-<component_name>`
    - Role: Component-specific development branches used as buffers for recent changes.
-   - Update: Updated by merging in feature/ fix branches through pull request. 
+   - Update: Updated by merging in `feature`/ `fix` branches through pull request.
    - Examples: `dev-core`, `dev-experiment`, `dev-torch`.
 
 - **Feature/Bug Fix Branches**: `feature-<component_name>/<descriptive_name>`, `fix-<component_name>/<descriptive_name>`
    - Role: Used for regular development work.
    - Update: Updated by direct pushes.
-   - Restrictions: Should only modify files in one component directory (enforced when opening a PR to a given `dev` branch).
+   - Restrictions: Should only modify files in one component directory (enforced when opening a PR to `dev-<component_name>`).
    - Example: `feature-<experiment>/add-login`
 
 - **Hotfix Branches**: `hotfix-<component_name>/<descriptive_name>`
    - Role: Used for urgent fixes that need to be applied directly to `main`.
    - Update: Updated by direct pushes.
-   - Restrictions: Should only modify files in one component directory (enforced when opening a PR to main).
+   - Restrictions: Should only modify files in one component directory (enforced when opening a PR to `main`).
    - Examples: `hotfix-core/fix-critical-bug`, `hotfix-experiment/fix-validation-issue`, `hotfix-torch/fix-model-loading`
 
 - **Setup Branches**: `setup-<component_name>/<descriptive_name>`
@@ -62,11 +58,11 @@ The project is correspondingly partitioned in the following *components* (provid
    - Update: Updated by direct pushes.
    - Restrictions: 
       - Always use with `no-bump` bump type (as setup changes should not trigger version bumps).
-      - Should only modify files in the specified component directory (enforced when opening a PR to main).
+      - Should only modify files in the specified component directory (enforced when opening a PR to `main`).
    - Examples: `setup-core/initial-config`, `setup-experiment/update-docs`, `setup-torch/add-examples`
   
 <p align="center">
-  <img src="./assets/branch_taxonomy.svg" width="1500" alt="Branch Taxonomy">
+  <img src="../assets/branch_taxonomy.svg" width="1500" alt="Branch Taxonomy">
 </p>
 
 ## Versioning and PRs to `main`
@@ -97,7 +93,7 @@ Pull requests related to the `root` component (e.g. from `hotfix-root/*` or `set
 Periodically, designated contributors open PRs from component `dev` branches to `main`---resulting in associatd version bumps according to the above.
 
 <p align="center">
-  <img src="./assets/pr_title_convention.svg" width="1500" alt="PR Ttile Convention">
+  <img src="../assets/pr_title_convention.svg" width="1500" alt="PR Ttile Convention">
 </p>
 
 
@@ -106,5 +102,9 @@ Periodically, designated contributors open PRs from component `dev` branches to 
 The following diagram summarizes the project's release flow:
 
 <p align="center">
-  <img src="./assets/release_flow.svg" width="1500" alt="Release Flow">
+  <img src="../assets/release_flow.svg" width="1500" alt="Release Flow">
 </p>
+
+## Relevant Pages
+
+For a specification of the project's **CI/CD pipelines** please consult the relevant [docs](cicd_pipelines.md).
