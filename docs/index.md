@@ -1,33 +1,28 @@
 # Artifact-ML
 
-> Artifact-ML eliminates imperative glue code in machine learning experiments by providing the tools to build **shareable** workflows **declaratively**.
-
-
 <p align="center">
   <img src="assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
 </p>
 
 ## Overview
 
-Machine learning experiment code is often cluttered with imperative logic and repeated boilerplate, making it difficult to maintain, scale, or reuse across projects. Artifact-ML addresses this by providing reusable experiment infrastructure with a primary focus on standardized validation.
+[Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) eliminates imperative glue code in machine learning experiments by providing the tools to build **shareable** workflows **declaratively**.
 
-It enables the design of shareable validation logic that is reusable by any experiment within a given task category.
+By *shareable*, we refer to workflows that are **defined once** and **reused across multiple models within the same task category**.
 
-This is achieved through carefully designed type hierarchies and clean interface contracts serving to decouple high-level experiment orchestration from low-level model implementation.
+By *declarative*, we refer to building through expressing high-level intent---rather than catering to implementation details.
 
-The project is organized into domain-specific toolkits, each offering validation workflows tailored to common machine learning tasks (e.g., tabular data synthesis, binary classification).
+The project comprises three packages:
 
-The upshot is:
-
-- **Reduced friction in the research process** — researchers can focus on iterating and exploring new ideas, with immediate, effortless feedback enabled by the seamless presentation of declaratively defined validation artifacts.
-
-- **Eliminated duplication of code** — no need for model-specific validation logic or imperative glue code; validation workflows are defined once and reused across experiments.
-
-- **Consistent and trustworthy evaluation** — validation is standardized across experiments, eliminating variance caused by subtle discrepancies in custom logic.
+- [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core): foundational interfaces and abstractions for building validation workflows declaratively.
+- [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment): experiment tracking toolkit supporting popular tracking backends (e.g. [Mlflow](https://mlflow.org/)).
+- [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch): interfaces and abstractions for building shareable deep learning experiments declaratively.
 
 ## Contents
 
-- [Motivating Example](pages/motivating_example.md) — a concrete demonstration of the problem (and solution) addressed by Artifact.  
-- [Design Philosophy](pages/design_philosophy.md) — a deep dive into the core principles underlying the project.  
 - [Packages](pages/packages.md) — overview of the core packages comprising Artifact-ML.  
-- [Getting Started](pages/getting_started.md) — how to install and begin using Artifact-ML.
+- [Getting Started](pages/getting_started.md) — how to install and begin using Artifact-ML.  
+- [Value Proposition](pages/value_proposition.md) — a concrete demonstration of the problem (and solution) addressed by Artifact-ML.  
+- [Motivating Example](pages/motivating_example.md) — a concrete demonstration of the problem (and solution) addressed by Artifact-ML.  
+- [Design Philosophy](pages/design_philosophy.md) — a deep dive into the core principles underlying the project.  
+- [Domain Specific Toolkits](pages/domain_specific_toolkits.md) — a deep dive into the core principles underlying the project.  

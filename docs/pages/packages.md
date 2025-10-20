@@ -2,28 +2,32 @@
 
 <p align="center">
   <img src="../../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
-</p>
+</p>  
+  
+Artifact-ML comprises **three** packages:  
 
-Artifact-ML consists of three packages:
+## [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core) [(docs)](../../../artifact-core/docs/pages/home.md)  
 
-## [`artifact-core`](../../../artifact-core/docs/pages/home.md)
-
-The framework foundation, defining the base abstractions and interfaces for the design and execution of validation artifacts.
+The framework foundation, defining the base abstractions and interfaces for the design and execution of validation artifacts.  
 
 It offers pre-built out-of-the-box artifact implementations with seamless support for custom extensions.
 
-## [`artifact-experiment`](../../../artifact-experiment/docs/pages/home.md)
+## [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment) [(docs)](../../../artifact-experiment/docs/pages/home.md)  
 
-The experiment orchestration and tracking extension to Artifact-ML.
+The experiment orchestration and tracking extension to Artifact-ML.  
 
-It facilitates the design of purely declarative validation workflows leveraging `artifact-core`.
+It facilitates the design of purely declarative validation workflows (validation plans) leveraging `artifact-core`.  
 
 It provides fully automated tracking capabilities with popular backends (e.g. Mlflow).
 
-## [`artifact-torch`](../../../artifact-torch/docs/pages/home.md)
+## [`artifact-torch`]((https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment)) [(docs)](../../../artifact-torch/docs/pages/home.md)  
 
-A deep learning framework built on top of `artifact-core` and `artifact-experiment`, abstracting away engineering complexity to let researchers focus on architectural innovation.
+A deep learning framework built on top of `artifact-core` and `artifact-experiment`, abstracting away engineering complexity to let researchers focus on architectural innovation.  
 
-It handles all training loop concerns aside from model architecture and data pipelines, enabling seamless, declarative customization via a system of typed callbacks.
+It handles **all training loop concerns** aside from model architecture and data pipelines, enabling seamless, declarative customization.  
 
-Models, trainers, and workflows are all strongly typed, and the system leverages type variance and inference to ensure that the right callbacks fit the right trainers and workflows.
+Validation workflows are relegated to `artifact-core`, while deep learning–specific workflows are structured by organizing competing models into a type hierarchy and implementing a dual, strongly typed callback system.
+
+## Getting Started
+
+For installation instructions refer to the following [page](getting_started.md).
