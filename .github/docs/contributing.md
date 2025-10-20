@@ -21,7 +21,7 @@ Artifact-ML is organized into four components: `root`, `core`, `experiment`, `to
 - **Create a branch** based on `main` named `hotfix-<component>/<descriptive-name>` (e.g., `hotfix-core/fix-critical-bug`).
 - **Limit changes** to the selected component’s directory.
 - **Open a PR** to `main` with bump type `patch` or `no-bump`
-  *(See: [PR title & versioning rules](devops.md#pr-title-conventions))*.
+  *(See: [PR title & versioning rules](devops_processes.md#pr-title-conventions))*.
 - **Incorporate reviewer feedback** by addressing comments, pushing updates, and resolving discussions before requesting re-review.
 
 ## 3) Setup & Configuration Changes
@@ -29,7 +29,7 @@ Artifact-ML is organized into four components: `root`, `core`, `experiment`, `to
 - **Create a branch** based on `main` named `setup-<component>/<descriptive-name>` (e.g., `setup-experiment/update-docs`).
 - **Limit changes** to the selected component’s directory.
 - **Open a PR** to `main` with bump type `no-bump`
-*(See: [PR title & versioning rules](devops.md#pr-title-conventions))*.
+*(See: [PR title & versioning rules](devops_processes.md#pr-title-conventions))*.
 - **Incorporate reviewer feedback** by addressing comments, pushing updates, and resolving discussions before requesting re-review.
 
 ## Relevant Pages
