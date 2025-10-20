@@ -16,11 +16,11 @@ By *declarative*, we refer to building through expressing high-level intent---ra
 
 The project comprises three packages:
 
-- [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core) [docs](../../artifact-core/docs/index.md): foundational interfaces and abstractions for building validation workflows.
-- [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment) [docs](../../artifact-experiment/docs/index.md): experiment tracking toolkit supporting popular tracking backends (e.g. [Mlflow](https://mlflow.org/)).
-- [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch) [docs](../../artifact-torch/docs/index.md): interfaces and abstractions for building deep learning experiments.
+- [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core) [(docs)](../../artifact-core/docs/index.md): foundational interfaces and abstractions for building validation workflows.
+- [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment) [(docs)](../../artifact-experiment/docs/index.md): experiment tracking toolkit supporting popular tracking backends (e.g. [Mlflow](https://mlflow.org/)).
+- [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch) [(docs)](../../artifact-torch/docs/index.md): interfaces and abstractions for building deep learning experiments.
 
-## Contents
+## Topics
 
 - [Packages](packages.md) — overview of the packages comprising the framework.  
 - [Getting Started](getting_started.md) — quick installation instructions.  

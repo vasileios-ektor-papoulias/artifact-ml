@@ -4,7 +4,7 @@
   <img src="assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
 </p>
 
-## Contents
+## Topics
 
 - [Contributing](contributing.md) — how to get started with contributing.  
 - [Pull Requests](pull_requests.md) — how to structure and submit pull requests.  
