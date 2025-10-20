@@ -6,7 +6,7 @@
 
 ## Topics
 
-- [Contributing](contributing.md) — how to get started with contributing.  
+- [Contributing](contributing.md) — contribution guidelines.  
 - [Pull Requests](pull_requests.md) — how to structure and submit pull requests.  
 - [DevOps Processes](devops.md) — branching model and repository structure.  
 - [CI/CD Pipelines](cicd.md) — continuous integration and deployment workflows.  
