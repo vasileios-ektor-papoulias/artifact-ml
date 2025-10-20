@@ -12,6 +12,8 @@ By *shareable*, we refer to workflows that are **defined once** and **reused acr
 
 By *declarative*, we refer to building through expressing high-level intent---rather than catering to implementation details.
 
+## Packages
+
 The project comprises three packages:
 
 - [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core) [docs](../../../artifact-core/docs/pages/home.md): foundational interfaces and abstractions for building validation workflows.

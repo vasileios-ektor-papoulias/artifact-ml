@@ -2,18 +2,19 @@
 
 <p align="center">
   <img src="../../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
-</p>  
+</p>
 
-In line with our [design philosophy](design_philosophy.md), Artifact-ML is organized into **domain-specific toolkits**, each offering validation workflows tailored to a given machine learning task (e.g. binary classification).
+In line with our [design philosophy](design_philosophy.md), Artifact-ML is organized into **domain-specific toolkits**, each offering validation workflows tailored to a specific machine learning task (e.g. binary classification).
 
-Currently, the following domains are supported:
+Currently, we provide toolkits for the following domains:
 
-- tabular data synthesis,
-- binary classification.
+- tabular data synthesis
+- binary classification
 
-Each [package](pages/packages.md) in the ecosystem follows this structure, bundling together complete toolkits for all supported domains.
+Each [package](pages/packages.md) in the ecosystem is organized accordingly---bundling together toolkits for supported domains.
 
-For instance, to compute validation artifacts for a binary classification experiments import the validation engine at:  
+For instance, to compute validation artifacts for a binary classification experiment, import the validation engine at:
+
 ```python
 from artifact_core.binary_classification import BinaryClassificationEngine
 
