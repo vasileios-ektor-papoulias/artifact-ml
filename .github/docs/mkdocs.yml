@@ -3,7 +3,7 @@ docs_dir: .
 nav:
   - Home: pages/home.md
   - Contributing: pages/contributing.md
-  - PR Guidelines: pages/pr_guidelines.md
+  - PR Guidelines: pages/pull_requests.md
   - DevOps Processes: pages/devops_processes.md
   - CICD Pipelines: pages/cicd_pipelines.md
   - Future Development: pages/future_development.md
