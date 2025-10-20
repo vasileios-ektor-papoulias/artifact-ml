@@ -16,15 +16,15 @@ By *declarative*, we refer to building through expressing high-level intent---ra
 
 The project comprises three packages:
 
-- [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core) [docs](../../artifact-core/docs/pages/home.md): foundational interfaces and abstractions for building validation workflows.
-- [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment) [docs](../../artifact-experiment/docs/pages/home.md): experiment tracking toolkit supporting popular tracking backends (e.g. [Mlflow](https://mlflow.org/)).
-- [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch) [docs](../../artifact-torch/docs/pages/home.md): interfaces and abstractions for building deep learning experiments.
+- [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core) [docs](../../artifact-core/docs/index.md): foundational interfaces and abstractions for building validation workflows.
+- [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment) [docs](../../artifact-experiment/docs/index.md): experiment tracking toolkit supporting popular tracking backends (e.g. [Mlflow](https://mlflow.org/)).
+- [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch) [docs](../../artifact-torch/docs/index.md): interfaces and abstractions for building deep learning experiments.
 
 ## Contents
 
-- [Packages](pages/packages.md) — overview of the packages comprising the framework.  
-- [Getting Started](pages/getting_started.md) — quick installation instructions.  
-- [Value Proposition](pages/value_proposition.md) — high-level description of the problem addressed by Artifact-ML.  
-- [Motivating Example](pages/motivating_example.md) — a concrete example illustrating the problem (and solution) in action.  
-- [Design Philosophy](pages/design_philosophy.md) — the core ideas and principles that shape the framework.  
-- [Domain Toolkits](pages/domain_toolkits.md) — how Artifact-ML structures reusable workflows across application domains.
+- [Packages](packages.md) — overview of the packages comprising the framework.  
+- [Getting Started](getting_started.md) — quick installation instructions.  
+- [Value Proposition](value_proposition.md) — high-level description of the problem addressed by Artifact-ML.  
+- [Motivating Example](motivating_example.md) — a concrete example illustrating the problem (and solution) in action.  
+- [Design Philosophy](design_philosophy.md) — the core ideas and principles that shape the framework.  
+- [Domain Toolkits](domain_toolkits.md) — how Artifact-ML structures reusable workflows across application domains.

@@ -11,7 +11,7 @@ Currently, we provide toolkits for the following domains:
 - tabular data synthesis
 - binary classification
 
-Each [package](pages/packages.md) in the ecosystem is organized accordingly---bundling together toolkits for supported domains.
+Each [package](packages.md) in the ecosystem is organized accordingly---bundling together toolkits for supported domains.
 
 For instance, to compute validation artifacts for a binary classification experiment, import the validation engine at:
 
