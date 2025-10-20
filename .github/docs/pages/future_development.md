@@ -4,7 +4,7 @@
   <img src="../../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
-## Expanding Validation Capabilities: New Domain-Specific Toolkits
+## New Domain-Specific Toolkits
 
 We plan to continue expanding the framework by releasing engines tailored to other types of ML experiments:
 
