@@ -69,6 +69,8 @@ nav:
     - Home: index.md
     - Motivating Example: pages/motivating_example.md
     - Design Philosophy: pages/design_philosophy.md
+    - Packages: pages/packages.md
+    - Getting Started: pages/getting_started.md
   - artifact-core: '!include ../artifact-core/docs/mkdocs.yml'
   - artifact-experiment: '!include ../artifact-experiment/docs/mkdocs.yml'
   - artifact-torch: '!include ../artifact-torch/docs/mkdocs.yml'

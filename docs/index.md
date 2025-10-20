@@ -1,15 +1,12 @@
-# ⚙️ Artifact-ML
+# Artifact-ML
 
-> Artifact-ML provides shareable machine learning experiment infrastructure with a primary focus on declarative validation. It minimizes imperative code to eliminate duplication and promote concise, reusable experiment workflows.
+> Artifact-ML eliminates imperative glue code in machine learning experiments by providing the tools to build **shareable** workflows **declaratively**.
 
 
 <p align="center">
-  <img src="assets/artifact_ml_logo.svg" width="600" alt="Artifact-ML Logo">
+  <img src="assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
 </p>
 
----
-
-## 📋 Overview & Purpose
 
 Machine learning experiment code is often cluttered with imperative logic and repeated boilerplate, making it difficult to maintain, scale, or reuse across projects. Artifact-ML addresses this by providing reusable experiment infrastructure with a primary focus on standardized validation.
 
@@ -27,85 +24,9 @@ The upshot is:
 
 - **Consistent and trustworthy evaluation** — validation is standardized across experiments, eliminating variance caused by subtle discrepancies in custom logic.
 
-For a concrete demonstration of the problem (and solution) addressed by Artifact, see our [**motivating example doc**](pages/motivating_example.md).
+## Contents
 
-For a deep-dive into the core design philosophy underlying the project see our [**design philosophy doc**](pages/design_philosophy.md).
-
-<p align="center">
-  <img src="assets/pdf_comparison.png" width="600" alt="PDF Comparison">
-</p>
-
-## 🏗️ Packages
-
-Artifact-ML consists of three packages:
-
-### 1. [`artifact-core`](..artifact-core/README.md)
-
-The framework foundation, defining the base abstractions and interfaces for the design and execution of validation artifacts.
-
-It offers pre-built out-of-the-box artifact implementations with seamless support for custom extensions.
-
-### 2. [`artifact-experiment`](artifact-experiment/README.md)
-
-The experiment orchestration and tracking extension to Artifact-ML.
-
-It facilitates the design of purely declarative validation workflows leveraging `artifact-core`.
-
-It provides fully automated tracking capabilities with popular backends (e.g. Mlflow).
-
-### 3. [`artifact-torch`](artifact-torch/README.md)
-
-A deep learning framework built on top of `artifact-core` and `artifact-experiment`, abstracting away engineering complexity to let researchers focus on architectural innovation.
-
-It handles all training loop concerns aside from model architecture and data pipelines, enabling seamless, declarative customization via a system of typed callbacks.
-
-Models, trainers, and workflows are all strongly typed, and the system leverages type variance and inference to ensure that the right callbacks fit the right trainers and workflows.
-
-## 🚀 Getting Started
-
-### Installation
-
-```bash
-git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
-```
-#### 1. [`artifact-core`](../artifact-core/docs/pages/home.md)
-To install `artifact-core` run:
-
-```bash
-cd artifact-ml/artifact-core
-poetry install
-```
-For details on getting started with `artifact-core`, consult the relevant [docs](../artifact-core/docs/pages/home.md).
-
-#### 2. [`artifact-experiment`](../artifact-experiment/docs/pages/home.md)
-To install `artifact-experiment` run:
-
-```bash
-cd artifact-ml/artifact-experiment
-poetry install
-```
-
-For details on getting started with `artifact-experiment`, consult the relevant [docs](../artifact-experiment/docs/pages/home.md).
-
-#### 3. [`artifact-torch`](../artifact-torch/docs/pages/home.md)
-To install `artifact-torch` run:
-
-```bash
-cd artifact-ml/artifact-torch
-poetry install
-```
-
-For details on getting started with `artifact-torch`, consult the relevant [docs](../artifact-torch/docs/pages/home.md).
-
-
-
-## 🤝 Contributing
-
-Contributions are welcome.
-
-For relevant guidelines, please consult our [**contribution guidelines doc**](pages/contributing.md).
-
-
-## 📄 License
-
-This project is licensed under the [MIT License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-ml).
+- [Motivating Example](pages/motivating_example.md) — a concrete demonstration of the problem (and solution) addressed by Artifact.  
+- [Design Philosophy](pages/design_philosophy.md) — a deep dive into the core principles underlying the project.  
+- [Packages](pages/packages.md) — overview of the core packages comprising Artifact-ML.  
+- [Getting Started](pages/getting_started.md) — how to install and begin using Artifact-ML.

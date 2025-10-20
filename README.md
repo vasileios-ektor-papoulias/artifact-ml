@@ -1,6 +1,6 @@
 # ⚙️ Artifact-ML
 
->Artifact-ML eliminates imperative glue code in machine learning experiments by providing the tools to build **shareable** workflows **declaratively**.
+> Artifact-ML eliminates imperative glue code in machine learning experiments by providing the tools to build **shareable** workflows **declaratively**.
 
 <p align="center">
   <img src="docs/assets/artifact_ml_logo.svg" width="500" alt="Artifact-ML Logo">
