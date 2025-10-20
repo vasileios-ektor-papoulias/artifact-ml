@@ -16,7 +16,7 @@ By *declarative*, we refer to building through expressing high-level intent---ra
 
 - [Packages](packages.md) — overview of the packages comprising the framework.  
 - [Getting Started](getting_started.md) — quick installation instructions.  
-- [Value Proposition](value_proposition.md) — high-level description of the problem addressed by Artifact-ML.  
+- [Value Proposition](value_proposition.md) — high-level description of the problem addressed by the project.  
 - [Motivating Example](motivating_example.md) — a concrete example illustrating the problem (and solution) in action.  
 - [Design Philosophy](design_philosophy.md) — the core ideas and principles that shape the framework.  
-- [Domain Toolkits](domain_toolkits.md) — how Artifact-ML structures reusable workflows across application domains.
+- [Domain Toolkits](domain_toolkits.md) — a note on the project's organization by application domain.
