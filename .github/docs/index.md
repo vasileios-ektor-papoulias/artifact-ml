@@ -8,6 +8,6 @@
 
 - [Contributing](contributing.md) — contribution guidelines.  
 - [Pull Requests](pull_requests.md) — how to structure and submit pull requests.  
-- [DevOps Processes](devops.md) — branching model and repository structure.  
-- [CI/CD Pipelines](cicd.md) — continuous integration and deployment workflows.  
+- [DevOps Processes](devops_processes.md) — branching model and repository structure.  
+- [CI/CD Pipelines](cicd_pipelines.md) — continuous integration and deployment workflows.  
 - [Future Development](future_development.md) — upcoming directions and roadmap.
