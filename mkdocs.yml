@@ -2,7 +2,7 @@ site_name: Artifact-ML Docs
 repo_url: https://github.com/vasileios-ektor-papoulias/artifact-ml
 edit_uri: edit/main/
 
-docs_dir: .
+docs_dir: docs
 
 theme:
   name: material
