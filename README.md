@@ -1,7 +1,5 @@
 # Artifact-ML
 
-> Artifact-ML eliminates imperative glue code in ML experiments by providing the tools to build **shareable** workflows **declaratively**.
-
 <p align="center">
   <img src="docs/assets/artifact_ml_logo.svg" width="500" alt="Artifact-ML Logo">
 </p>
@@ -19,9 +17,9 @@
 ---
 
 ## ⚙️ Overview
-Artifact-ML eliminates imperative glue code in ML experiments by providing the tools to build **shareable** workflows **declaratively**.
+Artifact-ML eliminates imperative glue code in ML experiments by providing the tools to build **reusable** workflows **declaratively**.
 
-By *shareable*, we refer to workflows that are **defined once** and **reused across multiple models within the same task category**.
+By *reusable*, we refer to workflows that are defined once with the potential to be reused by any model within the same task category.
 
 By *declarative*, we refer to building through expressing high-level intent---rather than catering to implementation details.
 
