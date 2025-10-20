@@ -6,19 +6,11 @@
 
 ## Overview
 
-[Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) eliminates imperative glue code in machine learning experiments by providing the tools to build **shareable** workflows **declaratively**.
+[Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) eliminates imperative glue code in ML experiments by providing the tools to build **shareable** workflows **declaratively**.
 
 By *shareable*, we refer to workflows that are **defined once** and **reused across multiple models within the same task category**.
 
 By *declarative*, we refer to building through expressing high-level intent---rather than catering to implementation details.
-
-## Packages
-
-The project comprises three packages:
-
-- [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core) [(docs)](../artifact-core/docs/index.md): foundational interfaces and abstractions for building validation workflows.
-- [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment) [(docs)](../artifact-experiment/docs/index.md): experiment tracking toolkit supporting popular tracking backends (e.g. [Mlflow](https://mlflow.org/)).
-- [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch) [(docs)](../artifact-torch/docs): interfaces and abstractions for building deep learning experiments.
 
 ## Topics
 
