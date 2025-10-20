@@ -1,12 +1,10 @@
 # ⚙️ Artifact-ML
 
-> Artifact-ML provides shareable machine learning experiment infrastructure with a primary focus on declarative validation. It minimizes imperative code to eliminate duplication and promote concise, reusable experiment workflows.
-
+>Artifact-ML eliminates imperative glue code in machine learning experiments by providing the tools to build **shareable** workflows **declaratively**.
 
 <p align="center">
-  <img src="docs/assets/artifact_ml_logo.svg" width="600" alt="Artifact-ML Logo">
+  <img src="docs/assets/artifact_ml_logo.svg" width="500" alt="Artifact-ML Logo">
 </p>
-
 
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue)](https://artifact-ml.readthedocs.io/en/latest/)
 ![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
@@ -16,109 +14,65 @@
 [![Coverage](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/branch/main/graph/badge.svg)](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/)
 [![CodeFactor](https://www.codefactor.io/repository/github/vasileios-ektor-papoulias/artifact-ml/badge)](https://www.codefactor.io/repository/github/vasileios-ektor-papoulias/artifact-ml)
 
+
+
 ---
 
-## 📋 Overview & Purpose
+## 📋 Overview
+Artifact-ML eliminates imperative glue code in machine learning experiments by providing the tools to build **shareable** workflows **declaratively**.
 
-Machine learning experiment code is often cluttered with imperative logic and repeated boilerplate, making it difficult to maintain, scale, or reuse across projects. Artifact-ML addresses this by providing reusable experiment infrastructure with a primary focus on standardized validation.
+By *shareable*, we refer to workflows that are **defined once** and **reused across multiple models within the same task category**.
 
-It enables the design of shareable validation logic that is reusable by any experiment within a given task category.
+By *declarative*, we refer to building through expressing high-level intent---rather than catering to implementation details.
 
-This is achieved through carefully designed type hierarchies and clean interface contracts serving to decouple high-level experiment orchestration from low-level model implementation.
+The project comprises three packages:
 
-The project is organized into domain-specific toolkits, each offering validation workflows tailored to common machine learning tasks (e.g., tabular data synthesis, binary classification).
+- [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core): foundational interfaces and abstractions for building validation workflows declaratively.
+- [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment): experiment tracking toolkit supporting popular tracking backends (e.g. [Mlflow](https://mlflow.org/)).
+- [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch): interfaces and abstractions for building shareable deep learning experiments declaratively.
 
-The upshot is:
-
-- **Reduced friction in the research process** — researchers can focus on iterating and exploring new ideas, with immediate, effortless feedback enabled by the seamless presentation of declaratively defined validation artifacts.
-
-- **Eliminated duplication of code** — no need for model-specific validation logic or imperative glue code; validation workflows are defined once and reused across experiments.
-
-- **Consistent and trustworthy evaluation** — validation is standardized across experiments, eliminating variance caused by subtle discrepancies in custom logic.
-
-For a concrete demonstration of the problem (and solution) addressed by Artifact, see our [**motivating example doc**](docs/motivating_example.md).
-
-For a deep-dive into the core design philosophy underlying the project see our [**design philosophy doc**](docs/design_philosophy.md).
-
-<p align="center">
-  <img src="docs/assets/pdf_comparison.png" width="600" alt="PDF Comparison">
-</p>
-
-## 🏗️ Packages
-
-Artifact-ML consists of three packages:
-
-### 1. [`artifact-core`](artifact-core/README.md)
-
-The framework foundation, defining the base abstractions and interfaces for the design and execution of validation artifacts.
-
-It offers pre-built out-of-the-box artifact implementations with seamless support for custom extensions.
-
-### 2. [`artifact-experiment`](artifact-experiment/README.md)
-
-The experiment orchestration and tracking extension to Artifact-ML.
-
-It facilitates the design of purely declarative validation workflows leveraging `artifact-core`.
-
-It provides fully automated tracking capabilities with popular backends (e.g. Mlflow).
-
-### 3. [`artifact-torch`](artifact-torch/README.md)
-
-A deep learning framework built on top of `artifact-core` and `artifact-experiment`, abstracting away engineering complexity to let researchers focus on architectural innovation.
-
-It handles all training loop concerns aside from model architecture and data pipelines, enabling seamless, declarative customization via a system of typed callbacks.
-
-Models, trainers, and workflows are all strongly typed, and the system leverages type variance and inference to ensure that the right callbacks fit the right trainers and workflows.
-
-## 🚀 Getting Started
-
-### Installation
-
+## 🚀 Quick Start
 ```bash
 git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
 ```
-#### 1. [`artifact-core`](artifact-core/README.md)
-To install `artifact-core` run:
+
+### To install [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core) run:
 
 ```bash
 cd artifact-ml/artifact-core
 poetry install
 ```
-For details on getting started with `artifact-core`, consult the relevant [docs](artifact-core/README.md).
 
-#### 2. [`artifact-experiment`](artifact-experiment/README.md)
-To install `artifact-experiment` run:
+### To install [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment) run:
 
 ```bash
 cd artifact-ml/artifact-experiment
 poetry install
 ```
 
-For details on getting started with `artifact-experiment`, consult the relevant [docs](artifact-experiment/README.md).
-
-#### 3. [`artifact-torch`](artifact-torch/README.md)
-To install `artifact-torch` run:
+### To install [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch) run:
 
 ```bash
 cd artifact-ml/artifact-torch
 poetry install
 ```
 
-For details on getting started with `artifact-torch`, consult the relevant [docs](artifact-torch/README.md).
+## 📚 Documentation
 
-## 🔮 Future Development
+Documentation for Artifact-ML is available at [**Artifact-ML Docs**](https://artifact-ml.readthedocs.io/en/latest/).
 
-We plan to actively expand the framework's scope and capabilities.
+Package-specfic docs are available at:
 
-For a collection of future development avenues, please consult our [**future development doc**](docs/future_development.md).
-
+- [artifact-core docs](https://artifact-ml.readthedocs.io/en/latest/artifact-core)
+- [artifact-experiment docs](https://artifact-ml.readthedocs.io/en/latest/artifact-experiment)
+- [artifact-torch docs](https://artifact-ml.readthedocs.io/en/latest/artifact-torch)
 
 
 ## 🤝 Contributing
 
-Contributions are welcome.
+Contributions are welcome!
 
-For relevant guidelines, please consult our [**contribution guidelines doc**](docs/contributing.md).
+Please consult our [**contribution guidelines document**](https://artifact-ml.readthedocs.io/en/latest/Development/contributing).
 
 
 ## 📄 License
