@@ -4,7 +4,7 @@ build:
   tools:
     python: "3.12"
 mkdocs:
-  configuration: docs/mkdocs.yml
+  configuration: mkdocs.yml
   fail_on_warning: false
 python:
   install:
