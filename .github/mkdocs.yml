@@ -1,0 +1,9 @@
+site_name: Development
+docs_dir: .
+nav:
+  - Home: index.md
+  - Contributing: contributing.md
+  - PR Guidelines: pull_requests.md
+  - DevOps Processes: devops_processes.md
+  - CICD Pipelines: cicd_pipelines.md
+  - Future Development: future_development.md

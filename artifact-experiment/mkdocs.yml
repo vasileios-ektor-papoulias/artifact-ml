@@ -1,4 +1,4 @@
 site_name: artifact-experiment
 docs_dir: .
 nav:
-  - Home: pages/home.md
+  - Home: index.md

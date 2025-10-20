@@ -1,7 +1,7 @@
 # DevOps Processes
 
 <p align="center">
-  <img src="../../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
+  <img src="../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
 
@@ -24,7 +24,7 @@ The project is correspondingly partitioned in the following *components* (provid
 
 
 <p align="center">
-  <img src="../../assets/repo_structure.svg" width="1500" alt="Repo Structure">
+  <img src="../assets/repo_structure.svg" width="1500" alt="Repo Structure">
 </p>
 
 ## Branches
@@ -62,7 +62,7 @@ The project is correspondingly partitioned in the following *components* (provid
    - Examples: `setup-core/initial-config`, `setup-experiment/update-docs`, `setup-torch/add-examples`
   
 <p align="center">
-  <img src="../../assets/branch_taxonomy.svg" width="1500" alt="Branch Taxonomy">
+  <img src="../assets/branch_taxonomy.svg" width="1500" alt="Branch Taxonomy">
 </p>
 
 ## Versioning and PRs to `main`
@@ -93,7 +93,7 @@ Pull requests related to the `root` component (e.g. from `hotfix-root/*` or `set
 Periodically, designated contributors open PRs from component `dev` branches to `main`---resulting in associatd version bumps according to the above.
 
 <p align="center">
-  <img src="../../assets/pr_title_convention.svg" width="1500" alt="PR Ttile Convention">
+  <img src="../assets/pr_title_convention.svg" width="1500" alt="PR Ttile Convention">
 </p>
 
 
@@ -102,7 +102,7 @@ Periodically, designated contributors open PRs from component `dev` branches to 
 The following diagram summarizes the project's release flow:
 
 <p align="center">
-  <img src="../../assets/release_flow.svg" width="1500" alt="Release Flow">
+  <img src="../assets/release_flow.svg" width="1500" alt="Release Flow">
 </p>
 
 ## Relevant Pages
