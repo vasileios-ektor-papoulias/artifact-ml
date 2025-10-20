@@ -1,7 +1,7 @@
 # Design Philosophy
 
 <p align="center">
-  <img src="../../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
+  <img src="../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
 ## Domain Toolkits: Validation First

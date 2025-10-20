@@ -1,7 +1,7 @@
 # Value Proposition
 
 <p align="center">
-  <img src="../../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
+  <img src="../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
 Machine learning experiment code is often cluttered with imperative logic and repeated boilerplate, making it difficult to maintain, scale, or reuse across projects.
