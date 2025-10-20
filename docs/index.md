@@ -39,7 +39,7 @@ For a deep-dive into the core design philosophy underlying the project see our [
 
 Artifact-ML consists of three packages:
 
-### 1. [`artifact-core`](artifact-core/README.md)
+### 1. [`artifact-core`](..artifact-core/README.md)
 
 The framework foundation, defining the base abstractions and interfaces for the design and execution of validation artifacts.
 
@@ -96,12 +96,6 @@ poetry install
 ```
 
 For details on getting started with `artifact-torch`, consult the relevant [docs](../artifact-torch/docs/pages/home.md).
-
-## 🔮 Future Development
-
-We plan to actively expand the framework's scope and capabilities.
-
-For a collection of future development avenues, please consult our [**future development doc**](pages/future_development_avenues.md).
 
 
 

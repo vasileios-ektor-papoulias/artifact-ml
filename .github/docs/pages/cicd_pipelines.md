@@ -1,8 +1,4 @@
-# Artifact-ML CI/CD Pipeline
-
-The present constitues a detailed exposition to Artifact-ML's **CI/CD pipelines**.
-
-For a specification of the project's **DevOps pipelines** please consult the relevant [docs](devops.md).
+# CI/CD Pipelines
 
 <p align="center">
   <img src="../../assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
@@ -278,4 +274,6 @@ bats -r .github/tests/version_bump
 bats .github/tests/linting/test_lint_pr_title.bats
 ```
 
+## 🔗 Relevant Pages
 
+For a specification of the project's **DevOps pipelines** please consult the relevant [docs](devops_processes.md).

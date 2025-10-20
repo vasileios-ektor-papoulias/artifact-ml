@@ -1,8 +1,4 @@
-# Artifact-ML DevOps Processes
-
-The present provides a specification of Artifact-ML's **DevOps** processes.
-
-For a specification of the project's **CI/CD pipelines** please consult the relevant [docs](cicd.md).
+# DevOps Processes
 
 <p align="center">
   <img src="../../assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
@@ -108,3 +104,7 @@ The following diagram summarizes the project's release flow:
 <p align="center">
   <img src="../../assets/release_flow.svg" width="1500" alt="Release Flow">
 </p>
+
+## 🔗 Relevant Pages
+
+For a specification of the project's **CI/CD pipelines** please consult the relevant [docs](cicd_pipelines.md).

@@ -5,7 +5,7 @@ This document outlines the core design principles that guide the development of 
 Understanding these principles is essential for appreciating how Artifact-ML eliminates code duplication and enables researchers to focus on innovation rather than infrastructure maintenance.
 
 <p align="center">
-  <img src="/assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
+  <img src="../../assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
 </p>
 
 ## 🎯 Design Philosophy

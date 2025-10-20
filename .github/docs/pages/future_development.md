@@ -1,4 +1,4 @@
-# Future Development Avenues
+# Future Development
 
 <p align="center">
   <img src="../../assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
@@ -20,8 +20,14 @@ These extensions will maintain the same core philosophy of decoupling validation
 Future versions will provide deeper integration with popular ML frameworks and tools:
 
 - integration with other machine learning frameworks (e.g. TensorFlow),
-- support for distributed validation on large datasets (e.g. integration with PySpark),
+- support for distributed validation on large datasets (e.g. integration with PySpark).
 
 ## Performance Optimization
 
-- running validation asynchronously in the background via a distributed task manager
+- running validation asynchronously in the background via a distributed task manager.
+
+## 🔗 Relevant Pages
+
+For detailed **contribution guidelines** please consult the relevant [docs](contributing.md).
+
+For detailed **PR guidelines** please consult the relevant [docs](pull_requests.md).
