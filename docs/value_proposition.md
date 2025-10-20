@@ -4,6 +4,8 @@
   <img src="../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
+## Problem: Imperative Experiment Logic  
+
 Machine learning experiment code is often cluttered with imperative logic making it difficult to maintain, scale, or reuse across projects.
 
 This is typically the product of unnecessarily coupled experiment workflows and model implementations.
@@ -12,13 +14,15 @@ To illustrate: a simple conceptual requirement such as *compute PCA projection*â
 
 This contamination of intent with implementation details forces researchers to re-implement validation logic across models, even when conceptual requirements remain identical.  
 
-Artifact-ML addresses this by providing the tools to build reusable ML experiment workflows declaratively.
+## Solution: Reusable Workflows Defined Declaratively
+
+Artifact-ML addresses the above by providing the tools to build reusable ML experiment workflows declaratively.
 
 By *reusable*, we refer to workflows that are defined once with the potential to be reused by any model within the same task category.
 
 By *declarative*, we refer to building through expressing high-level intent---rather than catering to implementation details.
 
-The upshot is:
+## Upshot
 
 - **Elimination of Imperative Glue Code** â€” validation workflows are defined declaratively, removing the need for model-specific wiring or boilerplate code.
 
