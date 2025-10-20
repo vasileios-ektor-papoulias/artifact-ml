@@ -72,7 +72,7 @@ nav:
     - Value Proposition: pages/value_proposition.md
     - Motivating Example: pages/motivating_example.md
     - Design Philosophy: pages/design_philosophy.md
-    - Domain-Specific Toolkits: pages/domain_specific_toolkits.md
+    - Domain Toolkits: pages/domain_toolkits.md
   - artifact-core: '!include ../artifact-core/docs/mkdocs.yml'
   - artifact-experiment: '!include ../artifact-experiment/docs/mkdocs.yml'
   - artifact-torch: '!include ../artifact-torch/docs/mkdocs.yml'
