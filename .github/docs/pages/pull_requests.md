@@ -4,7 +4,7 @@
   <img src="../../assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
 </p>
 
-## 📌 PR Type & Branch Rules
+## PR Type & Branch Rules
 
 | Type                     | Naming convention                                   | Target branch            | Description                                               |
 |---------------------------|----------------------------------------------------|--------------------------|-----------------------------------------------------------|
@@ -15,7 +15,7 @@
 
 ---
 
-## 🧭 Component
+## Component
 
 Indicate which component this PR affects
 
@@ -26,7 +26,7 @@ Indicate which component this PR affects
 
 ---
 
-## 🏷️ Version Bump Type *(for PRs to main)*
+## Version Bump Type *(for PRs to main)*
 
 Prefix your PR title accordingly (e.g., "patch: fix bug")
 - `patch` — backwards-compatible bug fix  
@@ -39,7 +39,7 @@ Prefix your PR title accordingly (e.g., "patch: fix bug")
 > ⚠️ Setup PRs must use `no-bump` (convention).
 
 
-## 🧪 Description
+## Description
 
 Please describe the change clearly using the structure below:
 
@@ -49,7 +49,7 @@ Please describe the change clearly using the structure below:
 - **Impact**: What areas are affected? (e.g., components touched, breaking changes, dependencies)
 
 
-## ✅ Checklist
+## Checklist
 
 - My branch name follows the required naming convention.  
 - All CI checks pass.  
@@ -58,7 +58,7 @@ Please describe the change clearly using the structure below:
 - The changes are limited to the declared component.  
 - Documentation or tests were updated if needed.
 
-## 🔗 Relevant Pages
+## Relevant Pages
 
 For detailed **contribution guidelines** please consult the relevant [docs](contributing.md).
 

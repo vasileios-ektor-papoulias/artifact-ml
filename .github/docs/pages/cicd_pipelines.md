@@ -274,6 +274,6 @@ bats -r .github/tests/version_bump
 bats .github/tests/linting/test_lint_pr_title.bats
 ```
 
-## 🔗 Relevant Pages
+## Relevant Pages
 
 For a specification of the project's **DevOps pipelines** please consult the relevant [docs](devops_processes.md).

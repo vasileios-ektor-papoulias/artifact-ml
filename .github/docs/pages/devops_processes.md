@@ -105,6 +105,6 @@ The following diagram summarizes the project's release flow:
   <img src="../../assets/release_flow.svg" width="1500" alt="Release Flow">
 </p>
 
-## 🔗 Relevant Pages
+## Relevant Pages
 
 For a specification of the project's **CI/CD pipelines** please consult the relevant [docs](cicd_pipelines.md).

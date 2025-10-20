@@ -26,7 +26,7 @@ Future versions will provide deeper integration with popular ML frameworks and t
 
 - running validation asynchronously in the background via a distributed task manager.
 
-## 🔗 Relevant Pages
+## Relevant Pages
 
 For detailed **contribution guidelines** please consult the relevant [docs](contributing.md).
 

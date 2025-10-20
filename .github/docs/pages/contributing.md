@@ -32,7 +32,7 @@ Artifact-ML is organized into four components: `root`, `core`, `experiment`, `to
 *(See: [PR title & versioning rules](devops.md#pr-title-conventions))*.
 - **Incorporate reviewer feedback** by addressing comments, pushing updates, and resolving discussions before requesting re-review.
 
-## 🔗 Relevant Pages
+## Relevant Pages
 
 For detailed **PR guidelines** please consult the relevant [docs](pull_requests.md).
 
