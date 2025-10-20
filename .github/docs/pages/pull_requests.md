@@ -1,7 +1,7 @@
 # Pull Requests
 
 <p align="center">
-  <img src="../../assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
+  <img src="../../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
 ## PR Type & Branch Rules
