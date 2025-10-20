@@ -16,8 +16,6 @@ theme:
     code: Roboto Mono
 
   palette:
-    palette:
-    palette:
     - scheme: slate
       media: "(prefers-color-scheme: dark)"
       primary: indigo
