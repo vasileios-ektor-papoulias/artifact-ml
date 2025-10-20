@@ -7,6 +7,7 @@
   <img src="assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
 </p>
 
+## Overview
 
 Machine learning experiment code is often cluttered with imperative logic and repeated boilerplate, making it difficult to maintain, scale, or reuse across projects. Artifact-ML addresses this by providing reusable experiment infrastructure with a primary focus on standardized validation.
 
