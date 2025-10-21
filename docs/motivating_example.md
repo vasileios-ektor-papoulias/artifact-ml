@@ -15,7 +15,7 @@ We assume the following are available in the execution context:
 - **`real_data`** — a `pandas.DataFrame` containing the original (ground-truth) tabular dataset.
 - **`config`** — a `dict` holding all required experiment configuration metadata.
 
-### Imperative Experiment Script
+### Imperative Implementation
 
 First, we present a schematic imperative implementation of the workflow.
 
@@ -263,7 +263,7 @@ def create_distribution_plots(
     return fig
 ```
 
-### Reusable Experiment Workflow Built Declaratively
+### Declarative Reusable Implementation
 
 We now present a schematic implementation of the same workflow built with Artifact-ML.
 
