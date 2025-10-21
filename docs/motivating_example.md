@@ -406,7 +406,7 @@ class MyTrainer(
         DataLoaderRoutine[ModelInputT, ModelOutputT]
         ]:
         return MyDataLoaderRoutine.build(
-            data_loader=data_loader, # Artifact-ML typed wrapper
+            data_loader=data_loader, # Artifact-ML type-aware wrapper
             tracking_client=tracking_client
             )
 ```
@@ -426,12 +426,12 @@ data_spec = DataSpec(
 
 dataset = Dataset(
     real_data
-    )  # Artifact-ML typed wrapper
+    )  # Artifact-ML type-aware wrapper
 
 data_loader = DataLoader(
     dataset=dataset,
     batch_size=config.batch_size
-    ) # Artifact-ML typed wrapper
+    ) # Artifact-ML type-aware wrapper
 
 artifact_routine = MyArtifactRoutine.build(
         data=real_data,
