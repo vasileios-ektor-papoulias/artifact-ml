@@ -10,9 +10,10 @@ Clone the [Artifact-ML repository](https://github.com/vasileios-ektor-papoulias/
 git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
 ```
 
-To install [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment), run:  
+Install [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment) by running:  
 
 ```bash
 cd artifact-ml/artifact-experiment
+
 poetry install
 ```

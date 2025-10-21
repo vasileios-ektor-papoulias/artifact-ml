@@ -41,8 +41,10 @@ git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
 ```
 
 Install the `artifact-torch` package by running:
+
 ```bash
 cd artifact-ml/artifact-torch
+
 poetry install
 ```
 

@@ -24,7 +24,7 @@ By *reusable*, we refer to workflows that are defined once with the potential to
 
 By *declarative*, we refer to building through expressing high-level intent---rather than catering to implementation details.
 
-For additional context, please refer to our [value proposition](value_proposition.md) and [motivating example](motivating_example.md) docs.
+For additional context, please refer to our [value proposition](https://artifact-ml.readthedocs.io/en/latest/value_proposition/) and [motivating example](https://artifact-ml.readthedocs.io/en/latest/motivating_example/) docs.
 
 <p align="center">
   <img src="assets/pdf_comparison.png" width="600" alt="PDF Comparison Artifact">
@@ -50,6 +50,7 @@ git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
 
 ```bash
 cd artifact-ml/artifact-core
+
 poetry install
 ```
 
@@ -57,6 +58,7 @@ poetry install
 
 ```bash
 cd artifact-ml/artifact-experiment
+
 poetry install
 ```
 
@@ -64,6 +66,7 @@ poetry install
 
 ```bash
 cd artifact-ml/artifact-torch
+
 poetry install
 ```
 

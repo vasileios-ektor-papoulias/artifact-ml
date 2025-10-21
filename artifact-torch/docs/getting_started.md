@@ -10,9 +10,10 @@ Clone the [Artifact-ML repository](https://github.com/vasileios-ektor-papoulias/
 git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
 ```
 
-To install [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch), run:  
+Install [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch) by running:  
 
 ```bash
 cd artifact-ml/artifact-torch
+
 poetry install
 ```

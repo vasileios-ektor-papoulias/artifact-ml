@@ -49,8 +49,10 @@ git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
 ```
 
 Install the `artifact-core` package by running:
+
 ```bash
 cd artifact-ml/artifact-core
+
 poetry install
 ```
 
