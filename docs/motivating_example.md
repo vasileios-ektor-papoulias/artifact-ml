@@ -56,7 +56,6 @@ for epoch in range(config.num_epochs):
     model.train()
     epoch_loss = 0
     for batch_idx, batch in enumerate(data_loader):
-    # Training step
         optimizer.zero_grad()
         # This model expects batch as dict with 'features' and 'targets' keys
         batch_dict = {'features': batch[:, :-1], 'targets': batch[:, -1:]}
@@ -70,24 +69,24 @@ for epoch in range(config.num_epochs):
     
     # Periodic validation
     if epoch % config.validation_frequency == 0:
-        model.eval()  # Switch to eval mode
-        print(f"Running validation at epoch {epoch}...")
-        
-        # Compute validation loss using data loader
+        model.eval()s
+        print(f"Running validation at epoch {epoch}...")    
+
+        # Compute average loss
         with torch.no_grad():
             avg_loss = compute_loss(
                 model=model,
                 data_loader=data_loader
                 )
 
-        # Generate synthetic data for validation
+        # Generate synthetic data for utility assessment
         synthetic_data, metadata = generate_synthetic_data(
             model,
-            n_samples=config.n_samples, # Model-specific generation hyperparameters
-            temperature=config.temperature, # might differ for competing models
+            n_samples=config.n_samples, # generation hyperparams coupled to model
+            temperature=config.temperature,
         )
         
-        # Compute validation artifacts comparing real vs synthetic data
+        # Compute validation artifacts
         mean_errors = compute_mean_errors(
             real_data=real_data,
             synthetic_data=synthetic_data,
@@ -112,32 +111,25 @@ for epoch in range(config.num_epochs):
             categorical_columns=categorical_columns
             )
 
-        
-        # Log validation metrics
+        # Log validation artifacts
         mlflow.log_metric("avg_loss", avg_loss, step=epoch)
         mlflow.log_metric("mean_absolute_error", mean_errors.mean(), step=epoch)
         mlflow.log_metric("mean_js_distance", np.mean(js_distances), step=epoch)
         mlflow.log_metric("correlation_distance", corr_distance, step=epoch)
-
-        # Log plots
-        dist_filename = f"distributions_epoch_{epoch}.png"
+        dist_filename = f"distributions_{epoch=}.png"
         dist_fig.savefig(
             dist_filename,
             dpi=150,
             bbox_inches='tight'
             )
         mlflow.log_artifact(dist_filename)
-            
-        # Cleanup
         os.remove(dist_filename)
         plt.close(dist_fig)
-        
-        # Print progress
-        print(f"Epoch {epoch}: Loss={epoch_loss:.4f}, ValLoss={avg_val_loss:.4f}")
-        
-        # Switch back to training mode
-        model.train()
 
+    # Emit epoch-end progress update
+    print(f"Epoch {epoch}: Loss={epoch_loss:.4f}, ValLoss={avg_val_loss:.4f}")
+
+# Emit workflow completion update
 print("Training completed!")
 ```
 The model utilizes the following validation utils, tuned to model implementation via imperative adapter code.
@@ -154,11 +146,11 @@ def compute_loss(
     for val_batch in data_loader:
         with torch.no_grad():
             # Imperative adaptation to model profile
-            val_batch_dict = {
+            dict_val_batch = {
                 'features': val_batch[:, :-1],
                 'targets': val_batch[:, -1:]
                 }
-            val_outputs, batch_val_loss = model.forward_training(val_batch_dict)
+            val_outputs, batch_val_loss = model.forward_training(dict_val_batch)
             # Different models might need: val_loss = criterion(model.forward(val_batch), targets)
             val_loss += batch_val_loss.item()
             val_batches += 1
@@ -252,7 +244,11 @@ def _js_distance_continuous_binned(
     synthetic_binned = np.digitize(synthetic_col, bin_edges)
     return _js_distance_categorical(real_binned, synthetic_binned)
 
-def create_distribution_plots(real_data: pd.DataFrame, synthetic_data: pd.DataFrame, plot_columns: Optional[List[str]] = None) -> plt.Figure:
+def create_distribution_plots(
+    real_data: pd.DataFrame,
+    synthetic_data: pd.DataFrame,
+    plot_columns: Optional[List[str]] = None
+    ) -> plt.Figure:
     if plot_columns is None:
         plot_columns = real_data.select_dtypes(include=[np.number]).columns
     fig, axes = plt.subplots(len(plot_columns), 2, figsize=(15, 4 * len(plot_columns)))
