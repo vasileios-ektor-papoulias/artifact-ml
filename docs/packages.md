@@ -12,7 +12,7 @@ The framework foundation, defining the base abstractions and interfaces for the 
 
 It offers pre-built out-of-the-box artifact implementations with seamless support for custom extensions.
 
-For more details consult the [package's docs](../../artifact-core/docs/).
+For more details consult the [package's docs](../../artifact-core/docs/index.md).
 
 ## [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment)
 
