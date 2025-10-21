@@ -2,6 +2,7 @@ site_name: artifact-experiment
 docs_dir: docs
 nav:
   - Home: index.md
+  - Getting Started: getting_started.mds
   - User Guide: user_guide.md
   - Architecture: architecture.md
   - Core Entities: core_entities.md

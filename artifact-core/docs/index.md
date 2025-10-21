@@ -23,6 +23,7 @@ This design eliminates the need for custom integration code per artifact, enabli
 
 ## Topics
 
+- [Getting Started](getting_started.md) - quick installation instructions.
 - [User Guide](user_guide.md) — general user instructions.
 - [Domain Toolkits](domain_toolkits.md)
   - [Table Comparison Toolkit](table_comparison_toolkit.md) — guide to the tabular synthesis validation toolkit.

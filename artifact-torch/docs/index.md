@@ -15,6 +15,7 @@ It stands alongside:
 
 ## Topics
 
+- [Getting Started](getting_started.md) - quick installation instructions.
 - [User Guide](user_guide.md) — general user instructions.
 - [Architecture](architecture.md) — high level framework architecture.  
 - [Core Entities](core_entities.md) — framework core entity specification.
