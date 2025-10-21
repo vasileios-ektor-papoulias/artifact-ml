@@ -320,7 +320,7 @@ class MyValidationPlan(TableComparisonPlan):
 
 ```python
 # Works with any tabular synthesizer fulfilling the
-# generation hyperparams contract (contravariantly).
+# generation hyperparams contract (contravariant).
 
 class MyArtifactRoutine(
     TableComparisonRoutine[
@@ -348,8 +348,8 @@ class MyArtifactRoutine(
 
 ```python
 # Works with any neural network fulfilling the IO contract.
-# The input contract is covariant.
-# The output contract is contravariant.
+# The input contract is contravariant.
+# The output contract is covariant.
 
 class MyDataLoaderRoutine(
     DataLoaderRoutine[
@@ -369,8 +369,8 @@ class MyDataLoaderRoutine(
 
 ```python
 # Works with any tabular synthesizer fulfilling the IO contract.
-# The input contract is covariant.
-# The output contract is contravariant.
+# The input contract is contravariant.
+# The output contract is covariant.
 
 class MyTrainer(
     CustomTrainer[
