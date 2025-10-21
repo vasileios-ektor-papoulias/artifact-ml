@@ -41,6 +41,8 @@ data_loader = DataLoader(
     dataset=dataset,
     batch_size=config.batch_size
     )
+n_batches = len(data_loader)
+
 model = MyModel(**config)
 optimizer = torch.optim.Adam(
     model.parameters(),
@@ -66,6 +68,7 @@ for epoch in range(config.num_epochs):
         optimizer.step()
         epoch_loss += loss.item()
     scheduler.step()
+    epoch_loss = epoch_loss / n_batches
     
     # Periodic validation
     if epoch % config.validation_frequency == 0:
@@ -127,7 +130,7 @@ for epoch in range(config.num_epochs):
         plt.close(dist_fig)
 
     # Emit epoch-end progress update
-    print(f"Epoch {epoch}: Loss={epoch_loss:.4f}, ValLoss={avg_val_loss:.4f}")
+    print(f"Epoch {epoch}: Loss={epoch_loss:.4f}")
 
 # Emit workflow completion update
 print("Training completed!")
@@ -141,20 +144,20 @@ def compute_loss(
     model: Any,
     data_loader: Any
     ) -> float:
-    val_loss = 0.0
-    val_batches = 0
-    for val_batch in data_loader:
+    loss = 0.0
+    num_batches = 0
+    for batch in data_loader:
         with torch.no_grad():
             # Imperative adaptation to model profile
-            dict_val_batch = {
-                'features': val_batch[:, :-1],
-                'targets': val_batch[:, -1:]
+            batch_dict = {
+                'features': batch[:, :-1],
+                'targets': batch[:, -1:]
                 }
-            val_outputs, batch_val_loss = model.forward_training(dict_val_batch)
-            # Different models might need: val_loss = criterion(model.forward(val_batch), targets)
-            val_loss += batch_val_loss.item()
-            val_batches += 1
-    return val_loss / val_batches if val_batches > 0 else float('inf')
+            outputs, batch_loss = model.forward_training(batch_dict)
+            # Different models might need: loss = criterion(model.forward(batch), targets)
+            loss += batch_loss.item()
+            num_batches += 1
+    return loss / num_batches if num_batches > 0 else float('inf')
 
 def generate_synthetic_data(
     model: Any,
