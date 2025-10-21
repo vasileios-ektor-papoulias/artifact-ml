@@ -48,7 +48,7 @@ ground_truth_prob_pdf_plot
 ```
 
 <p align="center">
-  <img src="../../assets/ground_truth_distribution.png" width="1000" alt="Ground Truth Distribution Artifact">
+  <img src="../../assets/ground_truth_distribution.png" width="600" alt="Ground Truth Distribution Artifact">
 </p>
 
 ```python
@@ -62,5 +62,5 @@ roc_auc_plot = engine.produce_classification_plot(
 roc_auc_plot
 ```
 <p align="center">
-  <img src="../../assets/roc.png" width="1000" alt="ROC Artifact">
+  <img src="../../assets/roc_plot.png" width="600" alt="ROC Artifact">
 </p>

@@ -238,4 +238,4 @@ If you develop a custom artifact that could benefit the broader community, consi
 
 Custom artifacts that demonstrate broad applicability, statistical rigor, and clean implementation are excellent candidates for inclusion in the core framework.
 
-For general contribution guidelines, please consult the following [page](../../contributing.md).
+For general contribution guidelines, please consult the following [page](https://artifact-ml.readthedocs.io/en/latest/Development/contributing).
