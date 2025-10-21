@@ -6,6 +6,10 @@
 
 `artifact-core` provides a concrete implementation for evaluation of binary classification results.
 
+## Supported Artifacts
+
+TBD
+
 ## Usage Example
 
 ```python
@@ -58,21 +62,5 @@ roc_auc_plot = engine.produce_classification_plot(
 roc_auc_plot
 ```
 <p align="center">
-  <img src="../../assets/roc_artifact.png" width="350" alt="ROC Artifact">
+  <img src="../../assets/roc_artifact.png" width="1000" alt="ROC Artifact">
 </p>
-
-## Artifact Collection
-
-### Plots
-
-
-### Scores
-
-
-### Score Collections
-
-
-### Array Collections
-
-
-### Plot Collections
