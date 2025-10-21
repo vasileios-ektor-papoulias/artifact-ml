@@ -20,3 +20,7 @@ By *declarative*, we refer to building through expressing high-level intent---ra
 - [Motivating Example](motivating_example.md) — a concrete example illustrating the problem (and solution) in action.  
 - [Design Philosophy](design_philosophy.md) — the core ideas and principles that shape the framework.  
 - [Domain Toolkits](domain_toolkits.md) — a note on the project's organization by application domain.
+
+<p align="center">
+  <img src="assets/pdf_comparison.png" width="600" alt="PDF Comparison Artifact">
+</p>

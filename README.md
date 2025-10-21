@@ -84,3 +84,7 @@ Please consult our [**contribution guidelines document**](https://artifact-ml.re
 ## 📄 License
 
 This project is licensed under the [MIT License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-ml).
+
+<p align="center">
+  <img src="assets/pdf_comparison.png" width="600" alt="PDF Comparison Artifact">
+</p>
