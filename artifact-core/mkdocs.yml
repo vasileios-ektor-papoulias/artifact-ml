@@ -2,3 +2,10 @@ site_name: artifact-core
 docs_dir: docs
 nav:
   - Home: index.md
+  - User Guid: user_guide.md
+  - Domain Toolkits: domain_toolkits.md
+  - Table Comparison Toolkit: table_comparison_toolkit.md
+  - Architecture: architecture.md
+  - Core Entities: core_entities.md
+  - Implementation Guide: implementation_guide.md
+  - Contributing Artifacts: contributing_artifacts.md

@@ -33,6 +33,9 @@ The project comprises three packages:
 - [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch): interfaces and abstractions for building deep learning experiments.
 
 ## 🚀 Quick Start
+
+Clone the [**Artifact-ML**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) monorepo by running:
+
 ```bash
 git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
 ```
