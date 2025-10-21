@@ -1,6 +1,6 @@
 # ⚙️ artifact-experiment
 
-> Experiment orchestration and tracking for the Artifact framework.
+> Experiment orchestration and tracking for Artifact-ML.
 
 <p align="center">
   <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">

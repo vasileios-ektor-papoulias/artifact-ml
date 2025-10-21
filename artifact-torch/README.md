@@ -1,6 +1,6 @@
 # ⚙️ artifact-torch
 
-> PyTorch integration for the Artifact framework, providing the tools to build reusable, end-to-end deep learning workflows declaratiely.
+> Declarative builder toolkit for end-to-end, reusable deep learning workflows.
 
 <p align="center">
   <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
@@ -25,7 +25,7 @@
 
 `artifact-torch` provides PyTorch integration for the Artifact framework.
 
-It offers the tools required to build reusable, end-to-end deep learning workflows declaratiely.
+It offers the tools to build reusable, end-to-end deep learning workflows declaratiely.
 
 It stands alongside:
 
