@@ -135,7 +135,7 @@ for epoch in range(config.num_epochs):
 # Emit workflow completion update
 print("Training completed!")
 ```
-The model utilizes the following validation utils, tuned to model implementation via imperative adapter code.
+The workflow is powered by the following utils, tuned to model implementation details via imperative adapter code.
 
 ```python
 from collections import Counter
