@@ -360,11 +360,11 @@ class MyDataLoaderRoutine(
 ```python
 class MyTrainer(
     CustomTrainer[
-        TableSynthesizer[ModelInput, ModelOutput, Any], # Trainer works with any tabular synthesizer adhering to the expected IO profile.
+        TableSynthesizer[ModelInput, ModelOutput, Any], # Expected model type.
         ModelInput, # Expected forward pass input.
         ModelOutput, # Expected forward pass output.
-        ModelTrackingCriterion, # Trainer works with base model tracking criterion (model tracking unused).
-        StopperUpdateData # Trainer works with base stopper update data (used simple epoch bound stopper).
+        ModelTrackingCriterion, # See artifact-torch docs.
+        StopperUpdateData # See artifact-torch docs.
     ]
 ):
     def _get_optimizer(self) -> torch.optim.Optimizer:
@@ -386,12 +386,12 @@ class MyTrainer(
     
     @staticmethod
     def _get_train_loader_routine(
-        data_loader: DataLoader[ModelInputT], # Typed Artifact-ML wrapper of native torch DataLoader
-        tracking_client: Optional[TrackingClient], # Artifact-ML experiment tracking client (for logging)
+        data_loader: DataLoader[ModelInputT], 
+        tracking_client: Optional[TrackingClient], 
     ) -> Optional[DataLoaderRoutine[ModelInputT, ModelOutputT]]:
         return DemoLoaderRoutine.build(
-            data_loader=data_loader,
-            tracking_client=tracking_client
+            data_loader=data_loader, # Artifact-ML typed wrapper
+            tracking_client=tracking_client # Artifact-ML experiment tracking client
             )
 ```
 
@@ -400,7 +400,7 @@ class MyTrainer(
 ```python
 model = MyModel(*config)
 
-data_spec = DataSpec(*config) # Static information about the real data e.g. feature names
+data_spec = DataSpec(*config) # Static dataset info (e.g. column names)
 dataset = Dataset(real_data)
 data_loader = DataLoader(
     dataset=dataset,
