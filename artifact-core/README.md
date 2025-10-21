@@ -19,7 +19,6 @@
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-core&metric=security_rating&branch=main)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-core&branch=main)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-core&metric=reliability_rating&branch=main)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-core&branch=main)
 
-
 ---
 
 ## 📋 Overview
@@ -40,74 +39,6 @@ The goal is to enable declarative experiment orchestration through simple enum-b
 By abstracting away unique parameter requirements (static data specifications, hyperparameters) into framework-managed components, `artifact-core` enables downstream client code (e.g. experiment scripts) to invoke a wide array of validation artifacts using only type enumerations---as opposed to artifact-specific argument profiles.
 
 This design eliminates the need for custom integration code per artifact, enabling generic experiment scripts that scale seamlessly across diverse validation requirements with zero modification/ friction.
-
-## 📚 Usage Sketch
-
-```python
-import pandas as pd
-
-from artifact_core.table_comparison import (
-    TableComparisonEngine,
-    TableComparisonScoreCollectionType,
-    TabularDataSpec
-)
-
-df_real = pd.read_csv("real_data.csv")
-
-df_synthetic = pd.read_csv("synthetic_data.csv")
-
-data_spec = TabularDataSpec.from_df(
-    df=df_real, 
-    cat_features=categorical_features, 
-    cont_features=continuous_features
-)
-
-engine = TableComparisonEngine(resource_spec=data_spec)
-
-dict_js_distance_per_feature = engine.produce_dataset_comparison_score_collection(
-    score_collection_type=TableComparisonScoreCollectionType.JS_DISTANCE,
-    dataset_real=df_real,
-    dataset_synthetic=df_synthetic,
-)
-
-dict_js_distance_per_feature
-```
-
-<p align="center">
-  <img src="assets/js.png" width="350" alt="JS Distance Artifact">
-</p>
-
-```python
-from artifact_core.table_comparison import (
-    TableComparisonPlotType,
-)
-
-pca_plot = engine.produce_dataset_comparison_plot(
-    plot_type=TableComparisonPlotType.PCA_JUXTAPOSITION,
-    dataset_real=df_real,
-    dataset_synthetic=df_synthetic,
-)
-
-pca_plot
-```
-
-<p align="center">
-  <img src="assets/pca_comparison_artifact.png" width="1000" alt="PCA Projection Artifact">
-</p>
-
-```python
-pdf_plot = engine.produce_dataset_comparison_plot(
-    plot_type=TableComparisonPlotType.PDF,
-    dataset_real=df_real,
-    dataset_synthetic=df_synthetic,
-)
-
-pdf_plot
-```
-
-<p align="center">
-  <img src="assets/pdf_comparison_artifact.png" width="1700" alt="PDF Comparison Artifact">
-</p>
 
 ## 🚀 Installation
 

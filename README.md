@@ -14,8 +14,6 @@
 [![Coverage](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/branch/main/graph/badge.svg)](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/)
 [![CodeFactor](https://www.codefactor.io/repository/github/vasileios-ektor-papoulias/artifact-ml/badge)](https://www.codefactor.io/repository/github/vasileios-ektor-papoulias/artifact-ml)
 
-
-
 ---
 
 ## ⚙️ Overview
