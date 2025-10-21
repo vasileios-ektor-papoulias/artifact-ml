@@ -24,5 +24,5 @@ Each domain toolkit implements its own:
 
 ## Supported Toolkits
 
-- [Table Comparison Toolkit](domain_toolkits/table_comparison_toolkit.md) — toolkit supporting tabular data synthesis workflows.
-- [Domain Toolkits](domain_toolkits/binary_classification_toolkit.md) — toolkit supporting binary classification workflows.
+- [Table Comparison Toolkit](domain_toolkits/table_comparison.md) — toolkit supporting tabular data synthesis workflows.
+- [Domain Toolkits](domain_toolkits/binary_classification.md) — toolkit supporting binary classification workflows.

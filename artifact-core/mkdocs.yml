@@ -5,8 +5,8 @@ nav:
   - User Guide: user_guide.md
   - Domain Toolkits:
       - Domain Toolkits: domain_toolkits/index.md
-      - Table Comparison Toolkit: domain_toolkits/table_comparison_toolkit.md
-      - Binary Classification Toolkit: domain_toolkits/binary_classification_toolkit.md
+      - Table Comparison: domain_toolkits/table_comparison.md
+      - Binary Classification: domain_toolkits/binary_classification.md
   - Architecture: architecture.md
   - Core Entities: core_entities.md
   - Development Guide: development_guide.md
