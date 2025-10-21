@@ -437,6 +437,5 @@ trainer = MyTrainer.build(
     tracking_client=tracking_client
 )
 
-# Training + validation + tracking automatically handled
 results = trainer.train()  
 ```
