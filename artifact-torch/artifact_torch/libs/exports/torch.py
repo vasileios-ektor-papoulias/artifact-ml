@@ -13,12 +13,12 @@ class TorchCheckpointExporter(Exporter[Dict[str, Any]]):
 
     @classmethod
     def _export(
-        cls, data: Dict[str, Any], tracking_client: TrackingClient, target_dir: str, filename: str
+        cls, data: Dict[str, Any], tracking_client: TrackingClient, dir_target: str, filename: str
     ):
         with tempfile.TemporaryDirectory() as tmpdir:
             path_source = os.path.join(tmpdir, filename)
             torch.save(data, path_source)
-            tracking_client.upload(path_source=path_source, dir_target=target_dir)
+            tracking_client.upload(path_source=path_source, dir_target=dir_target)
 
     @classmethod
     def _get_target_dir(cls) -> str:
