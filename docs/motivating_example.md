@@ -415,6 +415,8 @@ class MyTrainer(
 **Experiment Execution** - Complete training, validation, and experiment tracking in just a few lines:
 
 ```python
+tracking_client = TrackingClient(*config)
+
 model = MyModel(*config)
 
 data_spec = DataSpec(*config) # Static dataset info (e.g. column names)
@@ -424,7 +426,6 @@ data_loader = DataLoader(
     batch_size=config.batch_size
     )
 
-tracking_client = TrackingClient(*config)
 artifact_routine = MyArtifactRoutine.build(
         data=real_data,
         data_spec=data_spec,
