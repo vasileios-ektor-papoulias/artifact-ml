@@ -1,13 +1,11 @@
-/* extra.css — shrink code block font size in MkDocs (Material-compatible) */
-
 /* 1) Global code size (inline + fenced) using Material variable */
 :root {
-    --md-code-font-size: 0.85rem; /* try 0.9rem or 0.8rem */
+    --md-code-font-size: 0.85rem;
   }
   
   /* Fallback + fine-tune for fenced code blocks only */
   .md-typeset pre code {
-    font-size: 0.85em;     /* relative to body text */
+    font-size: 0.75em;     /* relative to body text */
     line-height: 1.4;      /* readability */
     tab-size: 4;           /* nicer tabs */
   }
@@ -20,6 +18,6 @@
   /* only apply the block shrink on wider screens */
   @media (min-width: 960px) {
     .md-typeset pre code {
-      font-size: 0.8em;    /* slightly smaller on desktops */
+      font-size: 0.7em;    /* slightly smaller on desktops */
     }
   }
