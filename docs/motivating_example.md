@@ -317,7 +317,7 @@ class MyValidationPlan(TableComparisonPlan):
           ]
 ```
 
-**Artifact Validation Routine** - Reusable validation plan executor built declaratively:
+**Artifact Validation Routine** - Reusable validation plan executor (built declaratively):
 
 ```python
 class MyArtifactRoutine(TableComparisonRoutine[GenerationParams]):
@@ -338,7 +338,7 @@ class MyArtifactRoutine(TableComparisonRoutine[GenerationParams]):
         return MyValidationPlan()
 ```
 
-**Data Loader Routine** - Reusable callback executor built declaratively:
+**Data Loader Routine** - Reusable callback executor (built declaratively):
 
 ```python
 class MyDataLoaderRoutine(
@@ -355,7 +355,7 @@ class MyDataLoaderRoutine(
             ]
 ```
 
-**Trainer Configuration** - Reusable training loop built declaratively:
+**Trainer Configuration** - Reusable training loop (built declaratively):
 
 ```python
 class MyTrainer(
@@ -388,7 +388,9 @@ class MyTrainer(
     def _get_train_loader_routine(
         data_loader: DataLoader[ModelInputT], 
         tracking_client: Optional[TrackingClient], 
-    ) -> Optional[DataLoaderRoutine[ModelInputT, ModelOutputT]]:
+    ) -> Optional[
+        DataLoaderRoutine[ModelInputT, ModelOutputT]
+        ]:
         return DemoLoaderRoutine.build(
             data_loader=data_loader, # Artifact-ML typed wrapper
             tracking_client=tracking_client # Artifact-ML experiment tracking client
