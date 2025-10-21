@@ -293,7 +293,7 @@ class MyModel(
         ) -> pd.DataFrame: ...
 ```
 
-**Validation Plan** - Specification of desired validation artifacts built declaratively (via subclass hooks):
+**Validation Plan** - Declarative specification of desired validation artifacts:
 
 ```python
 class MyValidationPlan(TableComparisonPlan):
@@ -317,7 +317,7 @@ class MyValidationPlan(TableComparisonPlan):
           ]
 ```
 
-**Artifact Validation Routine** - Reusable validation plan executor built declaratively (via subclass hooks):
+**Artifact Validation Routine** - Reusable validation plan executor built declaratively:
 
 ```python
 class MyArtifactRoutine(TableComparisonRoutine[GenerationParams]):
@@ -338,7 +338,7 @@ class MyArtifactRoutine(TableComparisonRoutine[GenerationParams]):
         return MyValidationPlan()
 ```
 
-**Data Loader Routine** - Reusable callback executor built declaratively (via subclass hooks):
+**Data Loader Routine** - Reusable callback executor built declaratively:
 
 ```python
 class MyDataLoaderRoutine(
@@ -355,7 +355,7 @@ class MyDataLoaderRoutine(
             ]
 ```
 
-**Trainer Configuration** - Reusable training loop built declaratively (via subclass hooks):
+**Trainer Configuration** - Reusable training loop built declaratively:
 
 ```python
 class MyTrainer(
