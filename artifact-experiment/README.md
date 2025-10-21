@@ -28,12 +28,12 @@
 It bridges the gap between validation computation and experiment tracking through a core **validation plan** abstraction responsible for the execution and tracking of artifact collections.
 
 It stands alongside:
-- [`artifact-core`](../artifact-core/README.md): Framework foundation providing a flexible uniform interface for the computation of validation artifacts.
-- [`artifact-torch`](../artifact-torch/README.md): PyTorch integration for rapid prototyping with seamless validation using Artifact-ML.
+- [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core): Framework foundation providing a flexible uniform interface for the computation of validation artifacts.
+- [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch): PyTorch integration for building reusable deep-learning workflows.
 
 ## 🚀 Installation
 
-[**Artifact-ML monorepo**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main)
+Clone the [**Artifact-ML monorepo**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main)  by running:
 
 ```bash
 git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
@@ -47,22 +47,13 @@ poetry install
 
 ## 📚 Documentation
 
-Documentation for `artifact-core` is available at [**artifact-core docs**](https://artifact-ml.readthedocs.io/en/latest/artifact-core).
+Documentation for `artifact-experiment` is available at [**artifact-core docs**](https://artifact-ml.readthedocs.io/en/latest/artifact-experiment).
 
 ## 🤝 Contributing
 
 Contributions are welcome!
 
 Please consult our [**contribution guidelines document**](https://artifact-ml.readthedocs.io/en/latest/Development/contributing).
-
-## 📄 License
-
-This project is licensed under the [MIT License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-ml).
-
-
-## 🤝 Contributing
-
-Contributions are welcome. Please refer to the [project's contribution guidelines](../docs/contributing.md) for development standards and submission procedures.
 
 ## 📄 License
 
