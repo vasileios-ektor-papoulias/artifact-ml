@@ -320,7 +320,14 @@ class MyValidationPlan(TableComparisonPlan):
 **Artifact Validation Routine** - Reusable validation plan executor (built declaratively):
 
 ```python
-class MyArtifactRoutine(TableComparisonRoutine[GenerationParams]):
+# Works with any tabular synthesizer fulfilling the
+# generation hyperparams contract (contravariantly).
+
+class MyArtifactRoutine(
+    TableComparisonRoutine[
+        GenerationParams
+        ] # Expected generation hyperparams.
+    ):
 
     @classmethod
     def _get_period(cls) -> int:
@@ -341,10 +348,14 @@ class MyArtifactRoutine(TableComparisonRoutine[GenerationParams]):
 **Data Loader Routine** - Reusable callback executor (built declaratively):
 
 ```python
+# Works with any neural network fulfilling the IO contract.
+# The input contract is covariant.
+# The output contract is contravariant.
+
 class MyDataLoaderRoutine(
     DataLoaderRoutine[
         ModelInput, ModelOutput
-        ] # Expected IO profile
+        ] # Expected IO profile.
     ):
     @staticmethod
     def _get_score_callbacks() -> List[
@@ -358,6 +369,10 @@ class MyDataLoaderRoutine(
 **Trainer Configuration** - Reusable training loop (built declaratively):
 
 ```python
+# Works with any tabular synthesizer fulfilling the IO contract.
+# The input contract is covariant.
+# The output contract is contravariant.
+
 class MyTrainer(
     CustomTrainer[
         TableSynthesizer[ModelInput, ModelOutput, Any], # Expected model type.
@@ -393,7 +408,7 @@ class MyTrainer(
         ]:
         return MyDataLoaderRoutine.build(
             data_loader=data_loader, # Artifact-ML typed wrapper
-            tracking_client=tracking_client # Artifact-ML experiment tracking client
+            tracking_client=tracking_client
             )
 ```
 
