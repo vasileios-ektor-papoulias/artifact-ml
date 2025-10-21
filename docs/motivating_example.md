@@ -161,9 +161,8 @@ def compute_loss(
 
 def generate_synthetic_data(
     model: Any,
-    n_samples: int = 1000,
-    temperature: float = 0.8,
-    top_k: int = 50
+    n_samples: int,
+    temperature: float
     ) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     # This model's generate method returns (synthetic_data, metadata) tuple
     synthetic_data, metadata = model.generate_samples(
