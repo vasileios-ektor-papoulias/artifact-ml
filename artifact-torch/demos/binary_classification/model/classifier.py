@@ -3,11 +3,11 @@ from typing import Dict, Hashable, List, Tuple, Type, TypeVar
 
 import pandas as pd
 import torch
-from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
+from artifact_core.binary_classification import BinaryFeatureSpecProtocol
 from artifact_core.libs.resources.classification.binary_classification_results import (
     BinaryClassificationResults,
 )
-from artifact_torch.binary_classification.model import BinaryClassifier
+from artifact_torch.binary_classification import BinaryClassifier
 from artifact_torch.core.model.classifier import ClassificationParams
 
 from demos.binary_classification.model.io import MLPClassifierInput, MLPClassifierOutput

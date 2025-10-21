@@ -35,8 +35,10 @@ The following code segment launches the tabular synthesizer training workflow.
 
 ```python
 import pandas as pd
+import seaborn as sns
 from artifact_core.table_comparison import TabularDataSpec
-from artifact_experiment.libs.tracking.filesystem.client import FilesystemTrackingClient
+from artifact_experiment.tracking import FilesystemTrackingClient
+from matplotlib import pyplot as plt
 
 from demos.table_comparison.config.constants import (
     EXPERIMENT_ID,

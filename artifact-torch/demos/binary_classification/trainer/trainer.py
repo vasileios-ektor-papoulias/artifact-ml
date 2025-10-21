@@ -1,7 +1,7 @@
 from typing import Any, Optional
 
 import torch
-from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_experiment.tracking import TrackingClient
 from artifact_torch.base.components.callbacks.checkpoint import CheckpointCallback
 from artifact_torch.base.components.early_stopping.stopper import EarlyStopper, StopperUpdateData
 from artifact_torch.base.components.model_tracking.tracker import (

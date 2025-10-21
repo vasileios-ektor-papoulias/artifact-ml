@@ -11,14 +11,16 @@ s
 
 ```python
 from typing import List
-from artifact_experiment.table_comparison.validation_plan import (
-    TableComparisonPlan,
-    TableComparisonScoreType,
+from artifact_core.table_comparison import (
+    TableComparisonArrayCollectionType,
+    TableComparisonArrayType,
+    TableComparisonPlotCollectionType,
     TableComparisonPlotType,
     TableComparisonScoreCollectionType,
-    TableComparisonArrayCollectionType,
-    TableComparisonPlotCollectionType,
+    TableComparisonScoreType,
+    TabularDataSpec,
 )
+from artifact_experiment.table_comparison import TableComparisonPlan
 
 class MyValidationPlan(TableComparisonPlan):
     @staticmethod
@@ -61,7 +63,7 @@ class MyValidationPlan(TableComparisonPlan):
 ```python
 import pandas as pd
 
-from artifact_core.libs.resource_spec.tabular.spec import TabularDataSpec
+from artifact_core.table_comparison import TabularDataSpec
 
 # Load and prepare data
 df_real = pd.read_csv("real_data.csv")
@@ -88,7 +90,7 @@ feature_means = plan.array_collections.get("MEAN_JUXTAPOSITION")
 
 #### MLflow Integration
 ```python
-from artifact_experiment.libs.tracking.mlflow.client import MlflowTrackingClient
+from artifact_experiment.tracking import MlflowTrackingClient
 
 # Setup MLflow experiment
 MLFLOW_EXPERIMENT_NAME = "artifact-experiment-demo"
@@ -107,7 +109,7 @@ mlflow_client.run.stop()
 
 #### ClearML Integration
 ```python
-from artifact_experiment.libs.tracking.clear_ml.client import ClearMLTrackingClient
+from artifact_experiment.tracking import ClearMLTrackingClient
 
 # Create ClearML tracking client
 CLEAR_ML_PROJECT_NAME = "artifact-experiment-demo"
@@ -121,7 +123,7 @@ clearml_client.run.stop()
 
 #### Neptune Integration
 ```python
-from artifact_experiment.libs.tracking.neptune.client import NeptuneTrackingClient
+from artifact_experiment.tracking import NeptuneTrackingClient
 
 # Create Neptune tracking client
 NEPTUNE_PROJECT_NAME = "artifact-experiment-demo"
@@ -135,7 +137,7 @@ neptune_client.run.stop()
 
 #### Local Filesystem Integration
 ```python
-from artifact_experiment.libs.tracking.filesystem.client import FilesystemTrackingClient
+from artifact_experiment.tracking import FilesystemTrackingClient
 
 # Create filesystem tracking client (saves to ~/artifact_ml/)
 EXPERIMENT_ID = "artifact-experiment-demo"

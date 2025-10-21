@@ -35,8 +35,10 @@ The following code segment launches the binary classification training workflow.
 
 ```python
 import pandas as pd
+import seaborn as sns
 from artifact_core.binary_classification import BinaryFeatureSpec
-from artifact_experiment.libs.tracking.filesystem.client import FilesystemTrackingClient
+from artifact_experiment.tracking import FilesystemTrackingClient
+from matplotlib import pyplot as plt
 
 from demos.binary_classification.config.constants import (
     EXPERIMENT_ID,

@@ -1,17 +1,18 @@
 from typing import List, Optional
 
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_experiment.base.tracking.client import TrackingClient
-from artifact_experiment.table_comparison.validation_plan import (
+from artifact_core.table_comparison import (
     TableComparisonArrayCollectionType,
     TableComparisonArrayType,
-    TableComparisonPlan,
     TableComparisonPlotCollectionType,
     TableComparisonPlotType,
     TableComparisonScoreCollectionType,
     TableComparisonScoreType,
+    TabularDataSpecProtocol,
 )
-from artifact_torch.table_comparison.routine import TableComparisonRoutine
+from artifact_experiment.table_comparison import TableComparisonPlan
+from artifact_experiment.tracking import TrackingClient
+from artifact_torch.table_comparison import TableComparisonRoutine
+
 from demos.table_comparison.config.constants import (
     ARTIFACT_VALIDATION_PERIOD,
     GENERATION_N_RECORDS,

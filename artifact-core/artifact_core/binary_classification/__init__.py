@@ -12,6 +12,7 @@ from artifact_core.binary_classification.engine.engine import (
     BinaryClassificationScoreCollectionType,
     BinaryClassificationScoreType,
 )
+from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
 from artifact_core.libs.resource_spec.binary.spec import BinaryFeatureSpec
 from artifact_core.libs.utils.system.package_importer import PackageImporter
 
