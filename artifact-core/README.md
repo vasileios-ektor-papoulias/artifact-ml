@@ -47,23 +47,24 @@ This design eliminates the need for custom integration code per artifact, enabli
 
 ```python
 import pandas as pd
-from artifact_core.libs.resource_spec.tabular.spec import TabularDataSpec
+
 from artifact_core.table_comparison import (
     TableComparisonEngine,
-    TableComparisonScoreType,
+    TableComparisonScoreCollectionType,
+    TabularDataSpec
 )
 
 df_real = pd.read_csv("real_data.csv")
 
 df_synthetic = pd.read_csv("synthetic_data.csv")
 
-spec = TabularDataSpec.from_df(
+data_spec = TabularDataSpec.from_df(
     df=df_real, 
     cat_features=categorical_features, 
     cont_features=continuous_features
 )
 
-engine = TableComparisonEngine(resource_spec=spec)
+engine = TableComparisonEngine(resource_spec=data_spec)
 
 dict_js_distance_per_feature = engine.produce_dataset_comparison_score_collection(
     score_collection_type=TableComparisonScoreCollectionType.JS_DISTANCE,
@@ -75,7 +76,7 @@ dict_js_distance_per_feature
 ```
 
 <p align="center">
-  <img src="./assets/js.png" width="350" alt="JS Distance Artifact">
+  <img src="assets/js.png" width="350" alt="JS Distance Artifact">
 </p>
 
 ```python
@@ -93,7 +94,7 @@ pca_plot
 ```
 
 <p align="center">
-  <img src="./assets/pca_comparison_artifact.png" width="1000" alt="PCA Projection Artifact">
+  <img src="assets/pca_comparison_artifact.png" width="1000" alt="PCA Projection Artifact">
 </p>
 
 ```python
@@ -107,7 +108,7 @@ pdf_plot
 ```
 
 <p align="center">
-  <img src="./assets/pdf_comparison_artifact.png" width="1700" alt="PDF Comparison Artifact">
+  <img src="assets/pdf_comparison_artifact.png" width="1700" alt="PDF Comparison Artifact">
 </p>
 
 ## 🚀 Installation

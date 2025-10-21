@@ -8,23 +8,24 @@
 
 ```python
 import pandas as pd
-from artifact_core.libs.resource_spec.tabular.spec import TabularDataSpec
+
 from artifact_core.table_comparison import (
     TableComparisonEngine,
-    TableComparisonScoreType,
+    TableComparisonScoreCollectionType,
+    TabularDataSpec
 )
 
 df_real = pd.read_csv("real_data.csv")
 
 df_synthetic = pd.read_csv("synthetic_data.csv")
 
-spec = TabularDataSpec.from_df(
+data_spec = TabularDataSpec.from_df(
     df=df_real, 
     cat_features=categorical_features, 
     cont_features=continuous_features
 )
 
-engine = TableComparisonEngine(resource_spec=spec)
+engine = TableComparisonEngine(resource_spec=data_spec)
 
 dict_js_distance_per_feature = engine.produce_dataset_comparison_score_collection(
     score_collection_type=TableComparisonScoreCollectionType.JS_DISTANCE,
