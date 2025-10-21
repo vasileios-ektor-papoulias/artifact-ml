@@ -126,7 +126,7 @@ poetry install
 
 ## 📚 Documentation
 
-Documentation for `artifact-core` is available at [**artifact-core Docs**](https://artifact-ml.readthedocs.io/en/latest/).
+Documentation for `artifact-core` is available at [**artifact-core docs**](https://artifact-ml.readthedocs.io/en/latest/artifact-core).
 
 ## 🤝 Contributing
 
