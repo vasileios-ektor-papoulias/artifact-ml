@@ -31,5 +31,8 @@
         "train_loader_callback_period": 1,
         "validation_plan_callback_period": 5,
         "classification_threshold": 0.5
+    },
+    "tracking":{
+        "experiment_id": "demo"
     }
 }

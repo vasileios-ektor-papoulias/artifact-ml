@@ -18,6 +18,7 @@ with _config_file.open() as f:
     _architecture_config = raw_config["architecture"]
     _training_config = raw_config["training"]
     _validation_config = raw_config["validation"]
+    _tracking_config = raw_config["tracking"]
 
     # Data Config
     TRAINING_DATASET_PATH: Path = _artifact_torch_root / Path(_data_config["training_dataset_path"])
@@ -53,3 +54,6 @@ with _config_file.open() as f:
     GENERATION_N_RECORDS: int = _validation_config["generation_n_records"]
     GENERATION_USE_MEAN: bool = _validation_config["generation_use_mean"]
     GENERATION_TEMPERATURE: float = _validation_config["generation_temperature"]
+
+    # Tracking Config
+    EXPERIMENT_ID: str = _tracking_config["experiment_id"]

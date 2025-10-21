@@ -10,7 +10,7 @@
 
 ## 📋 Overview
 
-This demo showcases the full capabilities of `artifact-torch` through a production-ready tabular data synthesis pipeline.
+This demo showcases the full capabilities of `artifact-torch` through an end-to-end tabular data synthesis experiment.
 
 It demonstrates how to:
 
@@ -35,10 +35,16 @@ The following code segment launches the tabular synthesizer training workflow.
 
 ```python
 import pandas as pd
-from artifact_core.libs.resource_spec.tabular.spec import TabularDataSpec
+from artifact_core.table_comparison import TabularDataSpec
 from artifact_experiment.libs.tracking.filesystem.client import FilesystemTrackingClient
+
+from demos.table_comparison.config.constants import (
+    EXPERIMENT_ID,
+    LS_CAT_FEATURES,
+    LS_CTS_FEATURES,
+    TRAINING_DATASET_PATH,
+)
 from demos.table_comparison.tabular_vae import TabularVAE
-from demos.table_comparison.config.constants import LS_CAT_FEATURES, LS_CTS_FEATURES, TRAINING_DATASET_PATH
 
 # Load the dataset
 df_real = pd.read_csv(TRAINING_DATASET_PATH)
@@ -60,22 +66,25 @@ epoch_scores = model.fit(
     data_spec=data_spec, 
     tracking_client=filesystem_tracker
 )
+```
 
-# Generate synthetic data
+To generate synthetic data run:
+
+```python
 df_synthetic = model.generate(n_records=1000)
 ```
 
-We've packaged it in a Juyter notebook for convenience.
-
 ### Execution: Notebook
 
+We've packaged the full workflow in a Juyter notebook for convenience.
+
 1. **Start Jupyter**: Launch Jupyter in the artifact-torch directory
-2. **Open the notebook**: Navigate to `demos/table_comparison/demo.ipynb`
+2. **Open the notebook**: Navigate to `artifact_torch/demos/table_comparison/demo.ipynb`
 3. **Run all cells**: Execute the cells in sequence to see the complete workflow
 
 ### Configuration
 
-The demo is configurable through `demos/table_comparison/config/config.json`:
+The demo is configurable through `artifact_torch/demos/table_comparison/config/config.json`:
 
 ```json
 {
@@ -84,21 +93,41 @@ The demo is configurable through `demos/table_comparison/config/config.json`:
         "ls_cts_features": ["Age", "RestingBP", "Cholesterol", "MaxHR", "Oldpeak"],
         "ls_cat_features": ["Sex", "ChestPainType", "FastingBS", "RestingECG", "ExerciseAngina", "ST_Slope", "HeartDisease"]
     },
+    "transformers": {
+        "n_bins_cts": 10
+    },
     "architecture": {
         "n_embd": 8,
-        "ls_encoder_layer_sizes": [512, 256],
+        "ls_encoder_layer_sizes": [
+            512,
+            256
+        ],
         "latent_dim": 128,
-        "loss_beta": 0.1
+        "loss_beta": 0.1,
+        "leaky_relu_slope": 0.1,
+        "bn_momentum": 0.1,
+        "bn_epsilon": 1e-5,
+        "dropout_rate": 0
     },
     "training": {
-        "max_n_epochs": 200,
+        "device": "cpu",
+        "max_n_epochs": 100,
         "learning_rate": 0.001,
         "batch_size": 512,
-        "checkpoint_period": 5
+        "drop_last": false,
+        "shuffle": true,
+        "checkpoint_period": 5,
+        "batch_loss_period": 1
     },
     "validation": {
+        "train_loader_callback_period": 1,
         "validation_plan_callback_period": 5,
-        "generation_n_records": 1000
+        "generation_n_records": 1000,
+        "generation_use_mean": false,
+        "generation_temperature": 1
+    },
+    "tracking":{
+        "experiment_id": "demo"
     }
 }
 ```
@@ -118,23 +147,23 @@ When you start training, the client prints the exact directory path where result
 
 ## 📊 Dataset
 
-The demo uses the **Heart Disease dataset** (`../assets/real.csv`) with:
+The demo uses the **Heart Disease dataset** (`artifact_torch/assets/real.csv`) with:
 
 **Continuous Features:**
-- `Age`: Patient age
-- `RestingBP`: Resting blood pressure
-- `Cholesterol`: Cholesterol level
-- `MaxHR`: Maximum heart rate achieved
-- `Oldpeak`: ST depression induced by exercise
+- `Age`: Patient age.
+- `RestingBP`: Resting blood pressure.
+- `Cholesterol`: Cholesterol level.
+- `MaxHR`: Maximum heart rate achieved.
+- `Oldpeak`: ST depression induced by exercise.
 
 **Categorical Features:**
-- `Sex`: Patient gender
-- `ChestPainType`: Type of chest pain
-- `FastingBS`: Fasting blood sugar
-- `RestingECG`: Resting electrocardiogram results
-- `ExerciseAngina`: Exercise-induced angina
-- `ST_Slope`: ST slope
-- `HeartDisease`: Target variable (heart disease presence)
+- `Sex`: Patient gender.
+- `ChestPainType`: Type of chest pain.
+- `FastingBS`: Fasting blood sugar.
+- `RestingECG`: Resting electrocardiogram results.
+- `ExerciseAngina`: Exercise-induced angina.
+- `ST_Slope`: slope (direction and angle) of the ST segment on ECG tracing.
+- `HeartDisease`: heart disease presence (target variable).
 
 ## 🎯 Model Architecture
 
