@@ -274,10 +274,20 @@ Every line of code **declares intent**, resulting in a compact and expressive wo
 **Model Implementation** - Isolated architecture design:
 
 ```python
-class MyModel(TableSynthesizer[ModelInput, ModelOutput, GenerationParams]): # Generic IO profile and generation hyperparams
-    def forward(self, batch: ModelInput) -> ModelOutput: ...
+class MyModel(
+    TableSynthesizer[
+        ModelInput, ModelOutput, GenerationParams
+        ]
+    ): # Generic IO profile and generation hyperparams
+    def forward(
+        self,
+        batch: ModelInput
+        ) -> ModelOutput: ...
     
-    def generate(self, generation_params: GenerationParams) -> pd.DataFrame: ...
+    def generate(
+        self,
+        generation_params: GenerationParams
+        ) -> pd.DataFrame: ...
 ```
 
 **Validation Plan** - Specification of desired validation artifacts built declaratively (via subclass hooks):
@@ -324,7 +334,9 @@ class MyArtifactRoutine(TableComparisonRoutine[GenerationParams]):
 
 ```python
 class MyDataLoaderRoutine(
-    DataLoaderRoutine[ModelInput, ModelOutput] # Compatible expected IO profile
+    DataLoaderRoutine[
+        ModelInput, ModelOutput
+        ] # Compatible expected IO profile
     ):
     @staticmethod
     def _get_score_callbacks() -> List[
