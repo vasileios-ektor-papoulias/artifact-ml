@@ -12,7 +12,7 @@ For comprehensive usage examples and detailed implementation patterns, refer to 
 - [binary classification demo project](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch/demos/binary_classification).
 
 
-## Step-by-Step Guide: Building a Project with Artifact-Torch
+## Building a Project with Artifact-Torch
 
 This section provides an **intuitive step-by-step guide** for building your own project using `artifact-torch`. Each step shows you how to configure the framework's interfaces for your specific use case - essentially, all implementations are configurations that tell the framework how to handle your particular ML task.
 
@@ -38,8 +38,6 @@ project_root/
 └── config/
     └── configuration files
 ```
-
-## Implementation Sequence
 
 ### Step 1: Application Domain (Domain Toolkit) Selection
 
