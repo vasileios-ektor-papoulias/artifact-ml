@@ -1,5 +1,7 @@
 # Artifact-ML
 
+> Reusable ML experiment workflows built declaratively.
+
 <p align="center">
   <img src="docs/assets/artifact_ml_logo.svg" width="500" alt="Artifact-ML Logo">
 </p>

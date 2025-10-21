@@ -1,12 +1,10 @@
 # ⚙️ artifact-core
 
-> The core component of the Artifact framework, providing a flexible minimal interface for the computation of heterogeneous validation artifacts in machine learning experiments.
-
+> A unified minimal interface for the computation of heterogeneous validation artifacts in machine learning experiments.
 
 <p align="center">
   <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
 </p>
-
 
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue)](https://artifact-ml.readthedocs.io/en/latest/artifact_core)
 ![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
