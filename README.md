@@ -26,6 +26,8 @@ By *reusable*, we refer to workflows that are defined once with the potential to
 
 By *declarative*, we refer to building through expressing high-level intent---rather than catering to implementation details.
 
+For additional context, please refer to our [value proposition](value_proposition.md) and [motivating example](motivating_example.md) docs.
+
 ## 🏗️ Packages
 
 The project comprises three packages:
