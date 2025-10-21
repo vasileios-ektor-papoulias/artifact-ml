@@ -19,7 +19,7 @@ We assume the following are available in the execution context:
 
 First, we present a schematic imperative implementation of the workflow.
 
-Even though high-level intent applies to any tabular synthesis experiment, the script is tightly coupled to a specific model.
+Even though its high-level intent applies to any tabular synthesis experiment, the script is tightly coupled to a specific model.
 
 Consequently, it is verbose and riddled with impertive glue code.
 
@@ -428,7 +428,7 @@ data_spec = DataSpec(
 dataset = Dataset(
     real_data
     )  # Artifact-ML typed wrapper
-    
+
 data_loader = DataLoader(
     dataset=dataset,
     batch_size=config.batch_size
