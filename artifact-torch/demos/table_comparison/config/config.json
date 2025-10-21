@@ -36,5 +36,8 @@
         "generation_n_records": 1000,
         "generation_use_mean": false,
         "generation_temperature": 1
+    },
+    "tracking":{
+        "experiment_id": "demo"
     }
 }

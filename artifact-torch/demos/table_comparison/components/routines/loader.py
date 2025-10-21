@@ -10,6 +10,7 @@ from artifact_torch.base.components.callbacks.data_loader import (
 )
 from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
 from artifact_torch.libs.components.callbacks.data_loader.loss import TrainLossCallback
+
 from demos.table_comparison.config.constants import TRAIN_LOADER_CALLBACK_PERIOD
 from demos.table_comparison.model.io import TabularVAEInput, TabularVAEOutput
 

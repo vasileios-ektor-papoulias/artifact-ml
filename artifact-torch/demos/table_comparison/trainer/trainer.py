@@ -1,7 +1,7 @@
 from typing import Any, Optional
 
 import torch
-from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_experiment.tracking import TrackingClient
 from artifact_torch.base.components.callbacks.checkpoint import CheckpointCallback
 from artifact_torch.base.components.early_stopping.stopper import EarlyStopper, StopperUpdateData
 from artifact_torch.base.components.model_tracking.tracker import (
@@ -15,6 +15,8 @@ from artifact_torch.base.trainer.custom import CustomTrainer
 from artifact_torch.libs.components.callbacks.checkpoint.standard import StandardCheckpointCallback
 from artifact_torch.libs.components.early_stopping.epoch_bound import EpochBoundStopper
 from artifact_torch.table_comparison.model import TableSynthesizer
+from torch import optim
+
 from demos.table_comparison.components.routines.batch import DemoBatchRoutine
 from demos.table_comparison.components.routines.loader import DemoLoaderRoutine
 from demos.table_comparison.config.constants import (
@@ -24,7 +26,6 @@ from demos.table_comparison.config.constants import (
     MAX_N_EPOCHS,
 )
 from demos.table_comparison.model.io import TabularVAEInput, TabularVAEOutput
-from torch import optim
 
 
 class TabularVAETrainer(

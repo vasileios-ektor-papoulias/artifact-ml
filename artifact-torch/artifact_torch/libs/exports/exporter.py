@@ -12,13 +12,13 @@ class Exporter(Generic[ExportDataT]):
         target_dir = cls._get_target_dir()
         filename = cls._get_filename(prefix=prefix, step=step)
         cls._export(
-            data=data, tracking_client=tracking_client, target_dir=target_dir, filename=filename
+            data=data, tracking_client=tracking_client, dir_target=target_dir, filename=filename
         )
 
     @classmethod
     @abstractmethod
     def _export(
-        cls, data: ExportDataT, tracking_client: TrackingClient, target_dir: str, filename: str
+        cls, data: ExportDataT, tracking_client: TrackingClient, dir_target: str, filename: str
     ): ...
 
     @classmethod

@@ -4,6 +4,7 @@ from typing import Dict, List, Optional, Tuple, Type, TypeVar
 import torch
 import torch.nn as nn
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+
 from demos.table_comparison.config.constants import (
     BN_EPSILON,
     BN_MOMENTUM,

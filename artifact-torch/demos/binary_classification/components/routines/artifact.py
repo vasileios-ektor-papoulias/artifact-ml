@@ -1,17 +1,17 @@
 from typing import List, Optional
 
-from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
-from artifact_experiment.base.tracking.client import TrackingClient
-from artifact_experiment.binary_classification.validation_plan import (
+from artifact_core.binary_classification import (
     BinaryClassificationArrayCollectionType,
     BinaryClassificationArrayType,
-    BinaryClassificationPlan,
     BinaryClassificationPlotCollectionType,
     BinaryClassificationPlotType,
     BinaryClassificationScoreCollectionType,
     BinaryClassificationScoreType,
+    BinaryFeatureSpecProtocol,
 )
-from artifact_torch.binary_classification.routine import BinaryClassificationRoutine
+from artifact_experiment.binary_classification import BinaryClassificationPlan
+from artifact_experiment.tracking import TrackingClient
+from artifact_torch.binary_classification import BinaryClassificationRoutine
 
 from demos.binary_classification.config.constants import (
     ARTIFACT_VALIDATION_PERIOD,

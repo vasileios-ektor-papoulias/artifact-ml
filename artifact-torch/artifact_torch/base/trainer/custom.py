@@ -96,6 +96,7 @@ class CustomTrainer(
             artifact_routine=artifact_routine,
             batch_routine=batch_routine,
             ls_loader_routines=ls_loader_routines,
+            tracking_client=tracking_client,
         )
         return trainer
 
@@ -264,7 +265,6 @@ class CustomTrainer(
         )
         early_stopper = cls._get_early_stopper()
         model_tracker = cls._get_model_tracker()
-
         checkpoint_callback = cls._get_checkpoint_callback(tracking_client=tracking_client)
         trainer = cls(
             training_state=training_state,

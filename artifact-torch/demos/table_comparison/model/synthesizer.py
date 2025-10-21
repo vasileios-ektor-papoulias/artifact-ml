@@ -2,9 +2,10 @@ from dataclasses import dataclass
 from typing import Type, TypeVar
 
 import pandas as pd
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.table_comparison import TabularDataSpecProtocol
 from artifact_torch.core.model.generative import GenerationParams
 from artifact_torch.table_comparison.model import TableSynthesizer
+
 from demos.table_comparison.libs.transformers.discretizer import Discretizer
 from demos.table_comparison.libs.transformers.encoder import Encoder
 from demos.table_comparison.model.io import TabularVAEInput, TabularVAEOutput

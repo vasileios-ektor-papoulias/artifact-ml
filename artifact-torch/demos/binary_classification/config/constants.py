@@ -17,6 +17,7 @@ with _config_file.open() as f:
     _architecture_config = raw_config["architecture"]
     _training_config = raw_config["training"]
     _validation_config = raw_config["validation"]
+    _tracking_config = raw_config["tracking"]
 
     # Data Config
     TRAINING_DATASET_PATH: Path = _artifact_torch_root / Path(_data_config["training_dataset_path"])
@@ -46,3 +47,6 @@ with _config_file.open() as f:
     TRAIN_LOADER_CALLBACK_PERIOD: int = _validation_config["train_loader_callback_period"]
     ARTIFACT_VALIDATION_PERIOD: int = _validation_config["validation_plan_callback_period"]
     CLASSIFICATION_THRESHOLD: float = _validation_config["classification_threshold"]
+
+    # Tracking Config
+    EXPERIMENT_ID: str = _tracking_config["experiment_id"]

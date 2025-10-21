@@ -35,6 +35,7 @@ theme:
     - navigation.tabs
     - navigation.top
     - navigation.footer
+    - navigation.indexes
     - toc.follow
     - content.code.copy
     - content.code.annotate
@@ -54,13 +55,20 @@ markdown_extensions:
   - toc:
       permalink: true
       title: "Contents"
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.highlight
   - pymdownx.details
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.emoji:
       emoji_generator: !!python/name:materialx.emoji.to_svg
+
+extra_css:
+  - stylesheets/extra.css
 
 nav:
   - Artifact-ML:

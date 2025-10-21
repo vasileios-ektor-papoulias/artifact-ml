@@ -12,7 +12,7 @@ The framework foundation, defining the base abstractions and interfaces for the 
 
 It offers pre-built out-of-the-box artifact implementations with seamless support for custom extensions.
 
-For more details consult the [package's docs](artifact-core/docs/index.md).
+For more details consult the [package's docs](https://artifact-ml.readthedocs.io/en/latest/artifact-core).
 
 ## [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment)
 
@@ -22,7 +22,7 @@ It facilitates the design of purely declarative validation workflows (validation
 
 It provides fully automated tracking capabilities with popular backends (e.g. Mlflow).
 
-For more details consult the [package's docs](artifact-experiment/docs/index.md).
+For more details consult the [package's docs](https://artifact-ml.readthedocs.io/en/latest/artifact-experiment).
 
 ## [`artifact-torch`]((https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment))
 
@@ -32,7 +32,7 @@ It handles **all training loop concerns** aside from model architecture and data
 
 Validation workflows are relegated to `artifact-core`, while deep learning–specific workflows are structured by organizing competing models into a type hierarchy and implementing a dual, strongly typed callback system.
 
-For more details consult the [package's docs](artifact-torch/docs/index.md).
+For more details consult the [package's docs](https://artifact-ml.readthedocs.io/en/latest/artifact-torch).
 
 ## Getting Started
 
