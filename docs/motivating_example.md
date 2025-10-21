@@ -135,7 +135,7 @@ for epoch in range(config.num_epochs):
 # Emit workflow completion update
 print("Training completed!")
 ```
-The workflow is powered by the following utils, tuned to model implementation details via imperative adapter code.
+The workflow is powered by the following utils, designed to cater to model implementation details via imperative adapter code.
 
 ```python
 from collections import Counter
@@ -272,7 +272,7 @@ We now present a schematic implementation of the same workflow built with Artifa
 
 The end result is **reusable** by any compatible model.
 
-Every line of code **declares intent**, resulting in a compact and expressive workflow with significantly less code overhead.
+Every line of code **declares intent**, resulting in a compact and expressive implementation with significantly less code overhead.
 
 **Model Implementation** - Isolated architecture design:
 
