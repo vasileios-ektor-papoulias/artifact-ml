@@ -47,7 +47,7 @@ poetry install
 
 ## 📚 Documentation
 
-Documentation for `artifact-experiment` is available at [**artifact-core docs**](https://artifact-ml.readthedocs.io/en/latest/artifact-experiment).
+Documentation for `artifact-experiment` is available at [**artifact-experiment docs**](https://artifact-ml.readthedocs.io/en/latest/artifact-experiment).
 
 ## 🤝 Contributing
 
