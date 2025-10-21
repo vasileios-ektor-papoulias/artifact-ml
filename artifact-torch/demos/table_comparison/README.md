@@ -1,4 +1,4 @@
-# 🚀 Artifact-Torch Demo: Tabular Data Synthesis with VAE
+# Artifact-Torch Demo: Tabular Data Synthesis with VAE
 
 > A comprehensive demonstration of the artifact-torch framework showcasing a tabular data synthesis experiment.
 
@@ -17,58 +17,6 @@ It demonstrates how to:
 1. **Build and train** a Variational Autoencoder (VAE) for tabular data synthesis
 2. **Integrate seamlessly** with `artifact-core`'s validation artifacts and `artifact-experiment`'s validation plans through `artifact-torch`
 
-## 🏗️ Architecture
-
-The demo implements a VAE-based tabular synthesizer using `artifact-torch`:
-
-### Core Components
-
-- **`TabularVAE`**: High-level interface orchestrating the entire synthesis pipeline
-- **`TabularVAESynthesizer`**: Implements `artifact-torch`'s `TableSynthesizer` interface for VAE-based synthesis
-- **`TabularVAETrainer`**: Extends `artifact-torch`'s `CustomTrainer` to create a concrete training loop for the VAE model
-- **`DemoTableComparisonRoutine`**: Configures `TableComparisonRoutine` (`ArtifactRoutine` subclass for tabular data synthesis) to integrate artifact-ML validation into the training loop
-- **`DemoBatchRoutine`**: Configures `BatchRoutine` to provides batch-level performance evaluation callbacks
-- **`DemoLoaderRoutine`**: Configures `DataLoaderRoutine` to handles epoch-end performance monitoring through dataloader iteration
-
-### File Structure
-
-```
-demo/
-├── demo.ipynb                     # Main demonstration notebook
-├── tabular_vae.py                 # High-level TabularVAE interface
-├── config/
-│   ├── config.json                # Configuration parameters
-│   └── constants.py               # Configuration loading utilities
-├── model/
-│   ├── synthesizer.py             # VAE model implementation
-│   ├── io.py                      # Model I/O utilities
-│   └── architectures/
-│       └── vae.py                 # VAE architecture definition
-├── trainer/
-│   └── trainer.py                 # Extends CustomTrainer for VAE
-├── components/
-│   └── routines/
-│       ├── artifact.py            # Integrates artifact-ML validation into training loop
-│       ├── batch.py               # Provides batch-level performance evaluation callbacks
-│       └── loader.py              # Handles epoch-end performance monitoring through dataloader iteration
-├── data/
-│   └── dataset.py                 # Dataset implementation for VAE
-└── libs/
-    ├── transformers/
-    │   ├── discretizer.py         # Continuous feature discretization
-    │   └── encoder.py             # Categorical feature encoding
-    ├── layers/
-    │   ├── mlp.py                 # Multi-layer perceptron implementation
-    │   ├── diagonal_gaussian_latent.py  # Gaussian latent layer
-    │   ├── embedder.py            # Feature embedding layer
-    │   ├── multi_feature_predictor.py   # Multi-feature prediction
-    │   └── lin_bn_drop.py         # Linear + BatchNorm + Dropout layer
-    ├── losses/
-    │   └── beta_loss.py           # Beta-VAE loss implementation
-    └── utils/
-        └── sampler.py             # Sampling utilities
-```
-
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -81,9 +29,9 @@ cd artifact-ml/artifact-torch
 poetry install
 ```
 
-### Running the Demo
+### Execution: Script
 
-#### Quick Start Example
+The following code segment launches the tabular synthesizer training workflow.
 
 ```python
 import pandas as pd
@@ -117,15 +65,15 @@ epoch_scores = model.fit(
 df_synthetic = model.generate(n_records=1000)
 ```
 
-We've packaged this complete workflow in an interactive Jupyter notebook for easy exploration:
+We've packaged it in a Juyter notebook for convenience.
 
-#### Running the Notebook
+### Execution: Notebook
 
 1. **Start Jupyter**: Launch Jupyter in the artifact-torch directory
 2. **Open the notebook**: Navigate to `demos/table_comparison/demo.ipynb`
 3. **Run all cells**: Execute the cells in sequence to see the complete workflow
 
-#### Configuration
+### Configuration
 
 The demo is configurable through `demos/table_comparison/config/config.json`:
 
@@ -155,7 +103,7 @@ The demo is configurable through `demos/table_comparison/config/config.json`:
 }
 ```
 
-#### Where Results Are Stored
+### Export Directory
 
 The `FilesystemTrackingClient` saves all results to `~/artifact_ml/demo/<run_id>/` with this structure:
 
