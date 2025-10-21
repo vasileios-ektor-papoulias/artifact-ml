@@ -1,4 +1,4 @@
-/* 1) Global code size (inline + fenced) using Material variable */
+/* Global code size (inline + fenced) using Material variable */
 :root {
     --md-code-font-size: 0.85rem;
   }
