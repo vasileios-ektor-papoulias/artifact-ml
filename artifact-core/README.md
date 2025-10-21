@@ -29,10 +29,11 @@
 This repository serves as the foundation of [**Artifact-ML**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main).
 
 It stands alongside:
+
 - [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment): The framework's experiment tracking extension.
 - [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch): PyTorch integration for building reusable deep-learning workflows.
 
-`artifact-core` provides a unified minimal interface for the computation of heterogeneous validation artifacts in machine learning experiments.
+`artifact-core` provides a **unified minimal interface** for the computation of heterogeneous validation artifacts in machine learning experiments.
 
 Here, we use the word *minimal* to refer to an interface that is as thin as possible given its purpose.
 

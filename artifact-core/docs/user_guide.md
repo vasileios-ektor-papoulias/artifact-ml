@@ -36,7 +36,7 @@ dict_js_distance_per_feature
 ```
 
 <p align="center">
-  <img src="./assets/js.png" width="350" alt="JS Distance Artifact">
+  <img src="../assets/js.png" width="350" alt="JS Distance Artifact">
 </p>
 
 ```python
@@ -54,7 +54,7 @@ pca_plot
 ```
 
 <p align="center">
-  <img src="./assets/pca_comparison_artifact.png" width="1000" alt="PCA Projection Artifact">
+  <img src="../assets/pca_comparison_artifact.png" width="1000" alt="PCA Projection Artifact">
 </p>
 
 ```python
@@ -68,20 +68,32 @@ pdf_plot
 ```
 
 <p align="center">
-  <img src="./assets/pdf_comparison_artifact.png" width="1700" alt="PDF Comparison Artifact">
+  <img src="../assets/pdf_comparison_artifact.png" width="1700" alt="PDF Comparison Artifact">
 </p>
 
 ## Computing Validation Artifacts
 
-Artifact engines provide the primary interface for computing validation artifacts. Create an engine instance with your resource specification, then use the engine's methods to compute individual artifacts or collections of artifacts by specifying the artifact type and input data. The engine handles all complexity of artifact lookup, instantiation, and execution, providing a clean interface where you specify what you want to compute and the data to compute it on. This declarative approach eliminates repetitive imperative code for artifact configuration, parameter management, and result handling.
+Artifact engines provide the primary interface for computing validation artifacts.
+
+Create an engine instance with your resource specification, then use the engine's methods to compute individual artifacts or collections of artifacts by specifying the artifact type and input data.
+
+The engine handles all complexity of artifact lookup, instantiation, and execution, providing a clean interface where you specify what you want to compute and the data to compute it on. This declarative approach eliminates repetitive imperative code for artifact configuration, parameter management, and result handling.
 
 ```python
 # Create engine with resource specification
 engine = TableComparisonEngine(resource_spec=spec)
 
 # Compute individual artifacts
-score = engine.produce_dataset_comparison_score(score_type=ScoreType.MEAN_JS_DISTANCE, dataset_real=df_real, dataset_synthetic=df_synthetic)
-plot = engine.produce_dataset_comparison_plot(plot_type=PlotType.PCA_JUXTAPOSITION, dataset_real=df_real, dataset_synthetic=df_synthetic)
+score = engine.produce_dataset_comparison_score(
+  score_type=ScoreType.MEAN_JS_DISTANCE,
+  dataset_real=df_real,
+  dataset_synthetic=df_synthetic
+  )
+plot = engine.produce_dataset_comparison_plot(
+  plot_type=PlotType.PCA_JUXTAPOSITION,
+  dataset_real=df_real,
+  dataset_synthetic=df_synthetic
+  )
 ```
 
 ## Overriding Artifact Hyperparameters
