@@ -415,22 +415,31 @@ class MyTrainer(
 **Experiment Execution** - Complete training, validation, and experiment tracking in just a few lines:
 
 ```python
-tracking_client = TrackingClient(*config)
+tracking_client = TrackingClient(
+    **config
+    ) # Artifact-ML entity for experiment tracking
 
-model = MyModel(*config)
+model = MyModel(**config)
 
-data_spec = DataSpec(*config) # Static dataset info (e.g. column names)
-dataset = Dataset(real_data)
+data_spec = DataSpec(
+    **config
+    ) # Artifact-ML entity: static dataset info (e.g. column names)
+
+dataset = Dataset(
+    real_data
+    )  # Artifact-ML typed wrapper
+    
 data_loader = DataLoader(
     dataset=dataset,
     batch_size=config.batch_size
-    )
+    ) # Artifact-ML typed wrapper
 
 artifact_routine = MyArtifactRoutine.build(
         data=real_data,
         data_spec=data_spec,
         tracking_client=tracking_client
         )
+
 trainer = MyTrainer.build(
     model=model,
     train_data_loader=data_loader,
