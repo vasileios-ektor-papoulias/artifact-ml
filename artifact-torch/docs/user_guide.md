@@ -37,6 +37,9 @@ project_root/
 6. **Orchestration**: Create a high-level API for simplified usage (optional)
 
 
-## End to End Demo Project
+## End to End Demo Projects
 
-For comprehensive usage examples and detailed implementation patterns, refer to our [synthetic tabular data demo project](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch/demos/table_comparison).
+For comprehensive usage examples and detailed implementation patterns, refer to our end-to-end demo projects:
+
+- [synthetic tabular data demo project](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch/demos/table_comparison).
+- [binary classification demo project](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch/demos/binary_classification).
