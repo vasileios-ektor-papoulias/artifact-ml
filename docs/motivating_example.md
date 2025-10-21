@@ -23,9 +23,6 @@ Even though high-level intent applies to any tabular synthesis experiment, the s
 
 Consequently, it is verbose and riddled with impertive glue code.
 
-# Assume we have access to:
-# a pandas dataframe named "real_data", "synthetic_data" and a config dict name "config"
-
 ```python
 from typing import List, Dict, Tuple, Optional, Any
 import sklearn.metrics
