@@ -42,7 +42,7 @@ This design eliminates the need for custom integration code per artifact, enabli
 
 ## 🚀 Installation
 
-Clone the [**Artifact-ML**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) monorepo by running:
+Clone the [**Artifact-ML monorepo**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) by running:
 
 ```bash
 git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git

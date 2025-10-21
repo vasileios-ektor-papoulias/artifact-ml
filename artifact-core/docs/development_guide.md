@@ -1,10 +1,10 @@
-# Implementation Guide
+# Development Guide
 
 <p align="center">
   <img src="../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
-To better understand how the architecture works in practice, we go through the steps required to create a complete validation toolkit from scratch:
+We demonstrate the steps required to create a complete validation toolkit from scratch:
 
 ## 1. Define Artifact Types
 

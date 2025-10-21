@@ -26,7 +26,7 @@
 `artifact-torch` provides PyTorch integration for the Artifact framework.
 
 It stands alongside:
-- [`artifact-core`](../artifact-core/README.md): Framework foundation providing a flexible minimal interface for the computation of validation artifacts.
+- [`artifact-core`](../artifact-core/README.md): Framework foundation providing a flexible uniform interface for the computation of validation artifacts.
 - [`artifact-experiment`](../artifact-experiment/README.md): The framework's experiment tracking extension, providing **executable validation plan abstractions** exporting results to popular tracking backends (e.g. Mlflow).
 
 `artifact-torch` abstracts common deep learning engineering patterns—training loops, device management, callback systems, and validation orchestration—allowing researchers to focus on architectural innovation over infrastructure development.

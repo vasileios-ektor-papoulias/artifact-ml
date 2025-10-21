@@ -9,5 +9,5 @@ nav:
       - Binary Classification Toolkit: domain_toolkits/binary_classification_toolkit.md
   - Architecture: architecture.md
   - Core Entities: core_entities.md
-  - Implementation Guide: implementation_guide.md
+  - Development Guide: development_guide.md
   - Contributing Artifacts: contributing_artifacts.md
