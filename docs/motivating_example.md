@@ -265,7 +265,7 @@ def create_distribution_plots(
     return fig
 ```
 
-### Declarative Reusable Implementation
+### Declarative Implementation (Reusable)
 
 We now present a schematic implementation of the same workflow built with Artifact-ML.
 
