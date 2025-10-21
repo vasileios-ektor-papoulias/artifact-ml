@@ -33,7 +33,7 @@ It stands alongside:
 
 ## 🚀 Installation
 
-Clone the [**Artifact-ML monorepo**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main)  by running:
+Clone the [**Artifact-ML monorepo**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) by running:
 
 ```bash
 git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
