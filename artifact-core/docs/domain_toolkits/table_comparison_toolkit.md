@@ -82,7 +82,7 @@ dict_js_distance_per_feature
 ```
 
 <p align="center">
-  <img src="../../assets/js.png" width="350" alt="JS Distance Artifact">
+  <img src="../../assets/js_distance.png" width="350" alt="JS Distance Artifact">
 </p>
 
 ```python
@@ -100,7 +100,7 @@ pca_plot
 ```
 
 <p align="center">
-  <img src="../../assets/pca_comparison_artifact.png" width="1000" alt="PCA Projection Artifact">
+  <img src="../../assets/pca_comparison.png" width="1000" alt="PCA Projection Artifact">
 </p>
 
 ```python
@@ -114,6 +114,6 @@ pdf_plot
 ```
 
 <p align="center">
-  <img src="../../assets/pdf_comparison_artifact.png" width="1700" alt="PDF Comparison Artifact">
+  <img src="../../assets/pdf_comparison.png" width="1700" alt="PDF Comparison Artifact">
 </p>
 
