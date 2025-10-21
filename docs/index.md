@@ -12,6 +12,10 @@ By *reusable*, we refer to workflows that are defined once with the potential to
 
 By *declarative*, we refer to building through expressing high-level intent---rather than catering to implementation details.
 
+<p align="center">
+  <img src="assets/pdf_comparison.png" width="400" alt="PDF Comparison Artifact">
+</p>
+
 ## Topics
 
 - [Packages](packages.md) — overview of the packages comprising the framework.  
@@ -21,6 +25,3 @@ By *declarative*, we refer to building through expressing high-level intent---ra
 - [Design Philosophy](design_philosophy.md) — the core ideas and principles that shape the framework.  
 - [Domain Toolkits](domain_toolkits.md) — a note on the project's organization by application domain.
 
-<p align="center">
-  <img src="assets/pdf_comparison.png" width="600" alt="PDF Comparison Artifact">
-</p>

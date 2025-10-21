@@ -28,6 +28,10 @@ By *declarative*, we refer to building through expressing high-level intent---ra
 
 For additional context, please refer to our [value proposition](value_proposition.md) and [motivating example](motivating_example.md) docs.
 
+<p align="center">
+  <img src="assets/pdf_comparison.png" width="400" alt="PDF Comparison Artifact">
+</p>
+
 ## 🏗️ Packages
 
 The project comprises three packages:
@@ -86,7 +90,3 @@ Please consult our [**contribution guidelines document**](https://artifact-ml.re
 ## 📄 License
 
 This project is licensed under the [MIT License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-ml).
-
-<p align="center">
-  <img src="assets/pdf_comparison.png" width="600" alt="PDF Comparison Artifact">
-</p>
