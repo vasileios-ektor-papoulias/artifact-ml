@@ -391,7 +391,7 @@ class MyTrainer(
     ) -> Optional[
         DataLoaderRoutine[ModelInputT, ModelOutputT]
         ]:
-        return DemoLoaderRoutine.build(
+        return MyDataLoaderRoutine.build(
             data_loader=data_loader, # Artifact-ML typed wrapper
             tracking_client=tracking_client # Artifact-ML experiment tracking client
             )
