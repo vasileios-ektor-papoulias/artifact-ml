@@ -27,7 +27,7 @@ By *declarative*, we refer to building through expressing high-level intent---ra
 For additional context, please refer to our [value proposition](value_proposition.md) and [motivating example](motivating_example.md) docs.
 
 <p align="center">
-  <img src="assets/pdf_comparison.png" width="400" alt="PDF Comparison Artifact">
+  <img src="assets/pdf_comparison.png" width="600" alt="PDF Comparison Artifact">
 </p>
 
 ## 🏗️ Packages
