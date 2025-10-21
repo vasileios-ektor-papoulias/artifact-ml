@@ -36,13 +36,6 @@ from scipy import stats
 import torch
 from torch.utils.data import Dataset, DataLoader
 
-dataset = Dataset(real_data)
-data_loader = DataLoader(
-    dataset=dataset,
-    batch_size=config.batch_size
-    )
-n_batches = len(data_loader)
-
 model = MyModel(**config)
 optimizer = torch.optim.Adam(
     model.parameters(),
@@ -52,6 +45,13 @@ scheduler = torch.optim.lr_scheduler.StepLR(
     optimizer,
     step_size=config.step_size
     )
+
+dataset = Dataset(real_data)
+data_loader = DataLoader(
+    dataset=dataset,
+    batch_size=config.batch_size
+    )
+n_batches = len(data_loader)
 
 # Manual training loop with integrated validation
 for epoch in range(config.num_epochs):
@@ -281,7 +281,7 @@ class MyModel(
     TableSynthesizer[
         ModelInput, ModelOutput, GenerationParams
         ]
-    ): # Generic IO profile and generation hyperparams
+    ): # Type contracts: IO profile and generation hyperparams
     def forward(
         self,
         batch: ModelInput
@@ -321,9 +321,10 @@ class MyValidationPlan(TableComparisonPlan):
 
 ```python
 class MyArtifactRoutine(TableComparisonRoutine[GenerationParams]):
-    @staticmethod
-    def _get_validation_plan() -> TableComparisonPlan:
-        return MyValidationPlan()
+
+    @classmethod
+    def _get_period(cls) -> int:
+        return config.validation_frequency
     
     @staticmethod
     def _get_generation_params() -> GenerationParams:
@@ -331,6 +332,10 @@ class MyArtifactRoutine(TableComparisonRoutine[GenerationParams]):
             num_samples=config.num_samples,
             temperature=config.temperature
             )
+
+    @staticmethod
+    def _get_validation_plan() -> TableComparisonPlan:
+        return MyValidationPlan()
 ```
 
 **Data Loader Routine** - Reusable callback executor built declaratively (via subclass hooks):
@@ -339,14 +344,14 @@ class MyArtifactRoutine(TableComparisonRoutine[GenerationParams]):
 class MyDataLoaderRoutine(
     DataLoaderRoutine[
         ModelInput, ModelOutput
-        ] # Compatible expected IO profile
+        ] # Expected IO profile
     ):
     @staticmethod
     def _get_score_callbacks() -> List[
         DataLoaderScoreCallback[ModelInput, ModelOutput]
         ]:
         return [
-            TrainLossCallback()
+            TrainLossCallback(period=config.validation_frequency)
             ]
 ```
 
@@ -355,9 +360,9 @@ class MyDataLoaderRoutine(
 ```python
 class MyTrainer(
     CustomTrainer[
-        TableSynthesizer[ModelInput, ModelOutput, Any], # Trainer works with any tabular synthesizer adhering to expected IO profile.
-        ModelInput, # Compatible expected forward pass input.
-        ModelOutput, # Compatible expected forward pass output.
+        TableSynthesizer[ModelInput, ModelOutput, Any], # Trainer works with any tabular synthesizer adhering to the expected IO profile.
+        ModelInput, # Expected forward pass input.
+        ModelOutput, # Expected forward pass output.
         ModelTrackingCriterion, # Trainer works with base model tracking criterion (model tracking unused).
         StopperUpdateData # Trainer works with base stopper update data (used simple epoch bound stopper).
     ]
@@ -393,25 +398,21 @@ class MyTrainer(
 **Experiment Execution** - Complete training, validation, and experiment tracking in just a few lines:
 
 ```python
+model = MyModel(*config)
+
 data_spec = DataSpec(*config) # Static information about the real data e.g. feature names
-
 dataset = Dataset(real_data)
-
 data_loader = DataLoader(
     dataset=dataset,
     batch_size=config.batch_size
     )
 
-model = MyModel(*config)
-
+tracking_client = TrackingClient(*config)
 artifact_routine = MyArtifactRoutine.build(
         data=real_data,
         data_spec=data_spec,
         tracking_client=tracking_client
         )
-
-tracking_client = TrackingClient(*config)
-
 trainer = MyTrainer.build(
     model=model,
     train_data_loader=data_loader,
@@ -419,5 +420,6 @@ trainer = MyTrainer.build(
     tracking_client=tracking_client
 )
 
-results = trainer.train()  # Training + validation + tracking automatically handled
+# Training + validation + tracking automatically handled
+results = trainer.train()  
 ```
