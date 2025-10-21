@@ -41,33 +41,30 @@ project_root/
 
 ## Implementation Sequence
 
-1. **Define I/O Types**: Establish type contracts for model inputs and outputs
-2. **Implement Model Interface**: Extend domain-specific interfaces with your architecture
-3. **Configure Data Pipeline**: Implement type-safe dataset and dataloader components
-4. **Configure Validation**: Configure validation routines by implementing subclass hooks
-5. **Configure Training**: Configure CustomTrainer by implementing subclass hooks
-6. **Orchestration**: Create a high-level API for simplified usage (optional)
+### Step 1: Application Domain (Domain Toolkit) Selection
 
-### Step 1: Select Your ML Task and Framework Coverage
+The **first step** is identifying your ML task and checking if `artifact-torch` provides a domain toolkit to support it.
 
-The **first step** is identifying your ML task and checking if `artifact-torch` provides framework support for it. Currently supported tasks include:
+Currently, supported domains include:
 
-- **Tabular Data Synthesis**: Generate synthetic tabular data (our demo focus)
+- **tabular data synthesis** (used as an example in this demo)
+- **binary classification**
 
-Once you select your project type, `artifact-torch` **always provides two interfaces** for you to implement:
+For each supported domain, `artifact-torch` provides two **core interfaces** for you to implement:
 
-1. **The model interface** - defines how your model integrates with the training framework
-2. **The artifact validation routine** - leverages `artifact-core` and `artifact-experiment` to provide project-type specific validation capabilities that are periodically injected into the training loop
+- model,
+- artifact validation routine: domain-specific validation workflows periodically injected into the training loop
 
 For **tabular data synthesis**, these interfaces are:
 - `TableSynthesizer` interface for models
 - `TableComparisonRoutine` for validation
 
-### Step 2: Define the Model Input/Output Types
+### Step 2: Model Input/Output Type Specification
 
-**What you need to do**: Define typed interfaces that describe your model's inputs and outputs.
+**What you need to do**: Define strict type contracts for your model's forward pass signature
 
-#### **Model I/O Definition** (`model/io.py`)
+Suggested directory: `model/io.py`
+
 ```python
 import torch
 
@@ -82,18 +79,35 @@ class TabularVAEModelOutput(ModelOutput):
     logvar: torch.Tensor                  # Latent log variance
     loss: torch.Tensor                    # Computed loss
 ```
+Keep in mind that all experiment workflows you'll build later on will be type-aware (with variance) and able to detect compatibility with your model given the above type contract specifications.
 
-**Configuration Purpose:**
-- **Type Contracts**: Framework knows exactly what data flows through your pipeline
-- **Callback Compatibility**: These I/O types determine which batch and dataloader callbacks you can use, as static type analysis can verify that your model I/O types satisfy the framework's callback type requirements through the type variance system
+For this reason, it's beneficial to keep type requirements as lenient as possible (e.g. few standard inputs, many outputs).
 
-### Step 3: Implement the Model
+Doing so expands the space of compatible workflows.
 
-**What you need to do**: Implement the model interface for your specific architecture while respecting the expected contracts. This allows you to build whatever architecture you want while maintaining full control over your model's internal structure and behavior.
+### Step 3: Model Implementation
 
-In general, implementing one of the model interfaces—in this case for table synthesis—might require implementing secondary configuration objects, such as generation parameters.
+**What you need to do**: Implement the model interface for your specific architecture while respecting the IO contracts.
 
-#### **Model Implementation** (`model/synthesizer.py`)
+In general, implementing one of the model interfaces (in this case the Tableynthesizer interface) might require implementing secondary configuration objects (in this case generation parameters).
+
+Note that the above remark on lenient type requirements applies to these configuration objects as well (e.g. ask for a limited set of standard generation hyperparams like temperature).
+
+**Secondary Configuration Objects** (Suggested directory: `model/synthesizer.py`)
+```python
+from dataclasses import dataclass
+
+from artifact_torch.core.model.generative import GenerationParams
+
+@dataclass
+class TabularVAEGenerationParams(GenerationParams):
+    n_records: int
+    use_mean: bool = False
+    temperature: float = 1.0
+    sample: bool = True
+```
+
+**Model Implementation** (Suggested directory: `model/synthesizer.py`)
 ```python
 from dataclasses import dataclass
 from typing import Optional
@@ -113,25 +127,13 @@ class TabularVAESynthesizer(TableSynthesizer):
         return self._postprocess_generated_data(raw_output)
 ```
 
-#### **Secondary Configuration Objects** (`model/synthesizer.py`)
-```python
-from dataclasses import dataclass
+### Step 4: Dataset Implementation
 
-from artifact_torch.core.model.generative import GenerationParams
+**What you need to do**: Implement the pipeline responsible for preparing individual training samples.
 
-@dataclass
-class TabularVAEGenerationParams(GenerationParams):
-    n_records: int
-    use_mean: bool = False
-    temperature: float = 1.0
-    sample: bool = True
-```
+This is achieved by extending the Artifact-ML Dataset interface (type-aware torch-native Dataset wrapper) while respecting the expected type contracts.
 
-### Step 4: Implement the Dataset
-
-**What you need to do**: Implement how to load individual training samples by extending the Dataset interface while respecting the expected contracts. The framework provides lightweight wrappers around PyTorch's native objects with type annotations and enhanced functionality.
-
-#### **Dataset Implementation** (`data/dataset.py`)
+Suggested directory: `data/dataset.py`.
 ```python
 import pandas as pd
 import torch
@@ -152,7 +154,7 @@ class TabularVAEDataset(Dataset[TabularVAEModelInput]):
         return len(self._df_encoded)
 ```
 
-**Using Dataset with DataLoader**: Once you've implemented your dataset, you can use it with the framework's DataLoader wrapper for batching during training:
+**Using Dataset with DataLoader**: Once you've implemented your dataset, you can use it with an Artifact-ML DataLoader (type-aware torch-native DataLoader wrapper) for batch preparation:
 
 ```python
 from artifact_torch.base.data.data_loader import DataLoader
@@ -165,13 +167,15 @@ loader = DataLoader(
 )
 ```
 
-### Step 5: Configure your custom `Validation Plan`
+### Step 5: Validation Plan Specification
 
 **What you need to do**: Select the artifact collection you'd like to track as training progresses. Your customized plan will help configure the `ArtifactRoutine` injected into the training loop---see step 6. 
 
-#### **Validation Plan Configuration** (`artifact_experiment/table_comparison/validation_plan.py`)
+Suggested directory: `components/validation_plan.py`.
+
 ```python
 from typing import List
+
 from artifact_experiment.table_comparison.validation_plan import (
     TableComparisonPlan,
     TableComparisonScoreType,
@@ -222,14 +226,15 @@ class DemoTableComparisonPlan(TableComparisonPlan):
         ]
 ```
 
-### Step 6: Configure Validation Routines
+### Step 6: Validation Routine Configuration
 
 **What you need to do**: Configure all validation hooks you would like to inject into your training loop:
-- `ArtifactRoutine`: Artifact-ML validation flow (in the context of tabular data synthesis this becomes `TableComparisonRoutine`).
-- `DataLoaderRoutine`: Monitoring via post-epoch per-data loader execution,
-- `BatchRoutine`: Monitoring via per-batch execution
 
-#### **Validation Routine Configuration** (`components/routines/artifact.py`)
+- `ArtifactRoutine`: domain specific validation flow (in the context of tabular data synthesis this is the `TableComparisonRoutine`).
+- `DataLoaderRoutine`: post-epoch per-data loader monitoring,
+- `BatchRoutine`: inter-epoch per-batch monitoring
+
+**Artifact Routine Configuration** (Suggested directory: `components/routines/artifact.py`)
 ```python
 from typing import Optional
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
@@ -261,7 +266,7 @@ class DemoTableComparisonRoutine(TableComparisonRoutine):
         )
 ```
 
-#### **Batch Routine Configuration** (`components/routines/batch.py`)
+**Batch Routine Configuration** (Suggested directory: `components/routines/batch.py`)
 ```python
 from typing import List
 from artifact_experiment.base.tracking.client import TrackingClient
@@ -276,7 +281,7 @@ class DemoBatchRoutine(BatchRoutine[TabularVAEInput, TabularVAEOutput]):
         return [BatchLossCallback(period=BATCH_LOSS_PERIOD, tracking_client=None)]
 ```
 
-#### **Data Loader Routine Configuration** (`components/routines/loader.py`)
+**Data Loader Routine Configuration** (Suggested directory: `components/routines/loader.py`)
 ```python
 from typing import List
 from artifact_torch.base.components.callbacks.data_loader import (
@@ -306,11 +311,27 @@ class DemoLoaderRoutine(DataLoaderRoutine[TabularVAEInput, TabularVAEOutput]):
 
 **Custom Callback Development**: For project-specific requirements, you can create custom callbacks tailored to your model's I/O profile by extending the appropriate base callback classes in your project's `libs/components/callbacks/` directory. These custom callbacks will seamlessly integrate with existing framework callbacks compatible with your model's I/O types, giving you both flexibility and access to the full ecosystem of pre-built functionality.
 
-### Step 7: Configure the Trainer
+### Step 7: Trainer Configuration
 
-**What you need to do**: Configure the trainer by extending CustomTrainer and implementing its hook methods. You're configuring the parameters and behavior of the training loop—optimization strategy, learning rate scheduling, early stopping criteria, and checkpointing behavior.
+**What you need to do**: Configure the trainer by extending CustomTrainer and implementing its hook methods.
 
-#### **Trainer Configuration** (`trainer/trainer.py`)
+The trainer exposes configurable hooks governing core aspects of the training lifecycle:
+
+- **Optimization Setup**  
+  Configure standard PyTorch training components, including:
+  - Optimizer selection and hyperparameters
+  - Learning-rate scheduler policy
+  - Device placement
+
+- **Early Stopping & Model Selection**  
+  Specify termination criteria based on validation signals and track the best-performing model state for subsequent use.
+
+- **Validation Routines**  
+ Specify domain-agnostic validation logic at the batch/ data-laoder level as well as domain-specific evaluation hooks (e.g. comparing the real and synthetic data in a tabular synthesis experiment). This is achieved by implementing trainer hooks using the routines developed in the previous step.
+
+- **Model State Monitoring (Checkpointing)**  
+  Enable periodic and event-driven checkpointing to persist model weights, optimizer/scheduler state, and relevant metadata for recovery and reproducibility.
+
 ```python
 from typing import Any, Optional
 import torch
@@ -376,18 +397,10 @@ class TabularVAETrainer(CustomTrainer[
         return DemoLoaderRoutine.build(data_loader=data_loader, tracking_client=tracking_client)
 ```
 
-**Trainer Configuration Hooks:**
-- **Optimization**: Configure optimizer, scheduler, and device
-- **Early Stopping**: Configure when training should terminate
-- **Checkpointing**: Configure model saving during training
-- **Routines**: Wire up your batch and dataloader routines
-- **Tracking**: Configure model tracking and metrics collection
-
 ### (Optional) Step 8: Orchestrate All Components
 
 **Optionally** create a high-level interface that orchestrates all your configured components into a clean, easy-to-use API.
 
-#### **Orchestration Class** (`tabular_vae.py`)
 ```python
 class TabularVAE:
     def __init__(self, discretizer: Discretizer, encoder: Encoder, config: TabularVAEConfig):
