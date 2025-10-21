@@ -62,6 +62,9 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_generator: !!python/name:materialx.emoji.to_svg
 
+extra_css:
+  - stylesheets/extra.css
+
 nav:
   - Artifact-ML:
     - Home: index.md
