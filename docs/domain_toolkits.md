@@ -25,7 +25,7 @@ Currently, we provide toolkits for the following domains:
 
 Each [package](packages.md) in the ecosystem is organized accordingly---bundling together toolkits for supported domains.
 
-Accordingly, all packages expose their user-facing components by domain as top-level modules in: `<package_name>/<domain_toolkit_name>`.
+In particular, packages expose their user-facing components by domain as top-level modules in: `<package_name>/<domain_toolkit_name>`.
 
 For instance, to compute validation artifacts for a binary classification experiment, import the validation engine at:
 
@@ -34,6 +34,7 @@ from artifact_core.binary_classification import BinaryClassificationEngine
 
 ...
 ```
+For more details see the [artifact-core binary classification toolkit guide](https://artifact-ml.readthedocs.io/en/latest/artifact-core/domain_toolkits/binary_classification/).
 
 ## Relevant Pages
 
