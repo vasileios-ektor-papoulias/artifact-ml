@@ -22,8 +22,8 @@ In line with our [design philosophy](https://artifact-ml.readthedocs.io/en/lates
 - [Getting Started](getting_started.md) - quick installation instructions.
 - [User Guide](user_guide.md) — general user instructions.
 - [Domain Toolkits](domain_toolkits.md)
-    - [Table Comparison Toolkit](table_comparison_toolkit.md) — guide to the tabular synthesis validation toolkit.
-    - [Binary Classification Toolkit](binary_classification_toolkit.md) — guide to the binary classification validation toolkit.
+    - [Table Comparison Toolkit](domain_toolkits/table_comparison.md) — guide to the tabular synthesis validation toolkit.
+    - [Binary Classification Toolkit](domain_toolkits/binary_classification.md) — guide to the binary classification validation toolkit.
 - [Architecture](architecture.md) — high level framework architecture.  
 - [Core Entities](core_entities.md) — framework core entity specification.
 - [Development Guide](development_guide.md) — low-level development guidelines.

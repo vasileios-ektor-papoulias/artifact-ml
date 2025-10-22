@@ -27,10 +27,10 @@ from artifact_core.binary_classification import BinaryClassificationEngine
 ...
 ```
 
-## Relevant Pages:
+## Relevant Pages
 
 For documentation on the domain toolkits provided by each package within the Artifact-ML ecosystem, see:
 
 - [Domain Toolkits: artifact-core ](https://artifact-ml.readthedocs.io/en/latest/artifact-core/domain_toolkits/)
-    - [Table Comparison Toolkit](https://artifact-ml.readthedocs.io/en/latest/artifact-core/domain_toolkits/domain_toolkits/table_comparison/)
-    - [Binary Classification Toolkit](https://artifact-ml.readthedocs.io/en/latest/artifact-core/domain_toolkits/domain_toolkits/binary_classification/)
+    - [Table Comparison Toolkit](https://artifact-ml.readthedocs.io/en/latest/artifact-core/domain_toolkits/table_comparison/)
+    - [Binary Classification Toolkit](https://artifact-ml.readthedocs.io/en/latest/artifact-core/domain_toolkits/binary_classification/)
