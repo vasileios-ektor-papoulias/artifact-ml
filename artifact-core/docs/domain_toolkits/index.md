@@ -4,23 +4,53 @@
   <img src="../../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
-`artifact-core` is organized by ML application domain (e.g. tabular data synthesis, binary classification).
+## Toolkit Contents
 
-Broadly, domains are defined by the validation resources they require.
+In line with Artifact-ML's overall organization, `artifact-core` provides distinct [domain toolkits](https://artifact-ml.readthedocs.io/en/latest/domain_toolkits/).
 
-For instance, in the context of tabular data synthesis, models are evaluated by comparing the real and synthetic datasets---and this tuple constitutes the domain's validation resources.
+Each toolkit implements its own flavour of all core interfaces.
 
-For each supported domain  the relevant toolkit offers implementations for all core abstractions.
+Thereby, toolkits provide their own:
 
-This approach results in focused validation ecosystems benefitting from common infrastructure.
+**Resource Spec**: static resource metadata container.
 
-Each domain toolkit implements its own:
+**Artifact types**: enumerations used to specify validation artifacts.
 
-**Validation Resources**: resource specification protocol and associated artifact resources.
+**Artifact Engine**: unified interface for the computation of domain-specific artifacts.
 
-**Artifact Registries**: specialized registries managing the collection and retrieval of domain-specific artifacts.
+```python
+import pandas as pd
 
-**Artifact Engine**: specialized artifact engines providing a unified interface for the computation of domain-specific artifacts.
+from artifact_core.table_comparison import (
+    TableComparisonEngine,
+    TableComparisonPlotType,
+    TabularDataSpec
+)
+
+df_real = pd.read_csv("real_data.csv")
+
+df_synthetic = pd.read_csv("synthetic_data.csv")
+
+data_spec = TabularDataSpec.from_df(
+    df=df_real, 
+    cat_features=categorical_features, 
+    cont_features=continuous_features
+)
+
+engine = TableComparisonEngine(resource_spec=data_spec)
+
+pca_plot = engine.produce_dataset_comparison_plot(
+    plot_type=TableComparisonPlotType.PCA_JUXTAPOSITION,
+    dataset_real=df_real,
+    dataset_synthetic=df_synthetic,
+)
+
+pca_plot
+```
+
+<p align="center">
+  <img src="../assets/pca_comparison.png" width="1000" alt="PCA Comparison Artifact">
+</p>
 
 ## Supported Toolkits
 

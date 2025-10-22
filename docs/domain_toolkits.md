@@ -6,6 +6,12 @@
 
 In line with our [design philosophy](design_philosophy.md), Artifact-ML is organized in **domain toolkits**, each offering experiment workflows tailored to a specific machine learning application domain (e.g. binary classification).
 
+Broadly, domains are defined by the validation resources they require.
+
+For instance, tabular synthesizers are evaluated by comparing the characteristics of the real and synthetic datasets.
+
+Consequently, this tuple characterizes the tabular data synthesis domain.
+
 ## Supported Domains
 
 Currently, we provide toolkits for the following domains:
