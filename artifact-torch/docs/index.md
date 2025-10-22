@@ -6,7 +6,7 @@ It offers the tools required to build reusable, end-to-end deep learning workflo
 
 It stands alongside:
 
-- [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core): Framework foundation providing a uniform minimal interface for the computation of validation artifacts.
+- [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core): a unified interface for the declarative computation of diverse validation artifacts in ML experiments.
 - [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment): The framework's experiment tracking extension.
 
 <p align="center">

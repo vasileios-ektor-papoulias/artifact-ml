@@ -1,6 +1,6 @@
 # ⚙️ artifact-core
 
-> A unified minimal interface for the computation of heterogeneous validation artifacts in machine learning experiments.
+> A unified interface for the declarative computation of diverse validation artifacts in ML experiments.
 
 <p align="center">
   <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
@@ -28,17 +28,13 @@ This repository serves as the foundation of [**Artifact-ML**](https://github.com
 It stands alongside:
 
 - [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment): The framework's experiment tracking extension.
-- [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch): PyTorch integration for building reusable deep-learning workflows.
+- [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch): PyTorch integration for building reusable deep-learning workflows declaratively.
 
-`artifact-core` provides a **unified minimal interface** for the computation of heterogeneous validation artifacts in machine learning experiments.
+`artifact-core` provides a unified interface for the declarative computation of diverse validation artifacts in ML experiments.
 
-Here, we use the word *minimal* to refer to an interface that is as thin as possible given its purpose.
+The goal is to enable reusable validation workflows by providing the tools to trigger diverse validation artifacts by name---with zero adapter code.
 
-The goal is to enable declarative experiment orchestration through simple enum-based configuration.
-
-By abstracting away unique parameter requirements (static data specifications, hyperparameters) into framework-managed components, `artifact-core` enables downstream client code (e.g. experiment scripts) to invoke a wide array of validation artifacts using only type enumerations---as opposed to artifact-specific argument profiles.
-
-This design eliminates the need for custom integration code per artifact, enabling generic experiment scripts that scale seamlessly across diverse validation requirements with zero modification/ friction.
+In line with our [design philosophy](https://artifact-ml.readthedocs.io/en/latest/value_philosophy/), achieving this establishes the foundation for Artifact-ML’s broader objective: eliminating imperative glue code in ML experiment workflows.
 
 ## 🚀 Installation
 
