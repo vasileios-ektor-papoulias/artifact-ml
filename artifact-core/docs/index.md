@@ -4,11 +4,11 @@
   <img src="assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
 </p>
 
-The foundation of [**Artifact-ML**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main).
+[`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/artifact-core) serves as the foundation of [**Artifact-ML**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main).
 
 This package stands alongside:
 
-- [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment): The framework's experiment tracking extension.
+- [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment): experiment orchestration and tracking extension.
 - [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch): PyTorch integration for building reusable deep-learning workflows declaratively.
 
 `artifact-core` provides a unified interface for the computation of diverse validation artifacts.

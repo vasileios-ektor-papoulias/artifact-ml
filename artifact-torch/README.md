@@ -23,14 +23,14 @@
 
 ## 📋 Overview
 
-`artifact-torch` provides PyTorch integration for the Artifact framework.
+`artifact-torch` provides PyTorch integration for [Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml).
 
 It offers the tools to build reusable, end-to-end deep learning workflows declaratiely.
 
 It stands alongside:
 
 - [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core): a unified interface for the declarative computation of diverse validation artifacts in ML experiments.
-- [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment): The framework's experiment tracking extension.
+- [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment): experiment orchestration and tracking extension.
 
 ## 🚀 Installation
 
