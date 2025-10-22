@@ -4,7 +4,9 @@
   <img src="../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
-In line with our [design philosophy](design_philosophy.md), Artifact-ML is organized in **domain toolkits**, each offering experiment workflows tailored to a specific machine learning application domain (e.g. binary classification).
+In line with our [design philosophy](design_philosophy.md), Artifact-ML is organized in **domain toolkits**.
+
+Each toolkit facilitates building experiment workflows tailored to a specific machine learning application domain (e.g. binary classification).
 
 Broadly, domains are defined by the validation resources they require.
 
