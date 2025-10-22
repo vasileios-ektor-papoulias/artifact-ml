@@ -15,7 +15,7 @@ This package stands alongside:
 
 The goal is to enable reusable validation workflows by providing the tools to trigger diverse artifacts by name---with zero adapter code.
 
-In line with our [design philosophy](https://artifact-ml.readthedocs.io/en/latest/value_philosophy/), achieving this establishes the foundation for Artifact-ML’s broader objective: eliminating imperative glue code in ML experiment workflows.
+In line with our [design philosophy](https://artifact-ml.readthedocs.io/en/latest/value_philosophy/), achieving this establishes the foundation for [Artifact-ML’s](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) broader objective: eliminating imperative glue code in ML experiment workflows.
 
 ## Topics
 
