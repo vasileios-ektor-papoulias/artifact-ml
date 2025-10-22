@@ -14,7 +14,7 @@ Thereby, toolkits provide their own:
 
 **Resource Spec**: static resource metadata container.
 
-**Artifact types**: enumerations used to specify validation artifacts.
+**Artifact Types**: enumerations used to specify validation artifacts.
 
 **Artifact Engine**: unified interface for the computation of domain-specific artifacts.
 
