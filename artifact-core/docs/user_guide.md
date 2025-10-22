@@ -10,14 +10,12 @@ Artifact engines provide a unified interface for computing validation artifacts 
 
 Create an engine instance with your resource specification, then use the engine's methods to compute individual artifacts by specifying the artifact type and input data.
 
-## Usage Sketch
-
 ```python
 import pandas as pd
 
 from artifact_core.table_comparison import (
     TableComparisonEngine,
-    TableComparisonScoreCollectionType,
+    TableComparisonPlotType,
     TabularDataSpec
 )
 
@@ -33,24 +31,6 @@ data_spec = TabularDataSpec.from_df(
 
 engine = TableComparisonEngine(resource_spec=data_spec)
 
-dict_js_distance_per_feature = engine.produce_dataset_comparison_score_collection(
-    score_collection_type=TableComparisonScoreCollectionType.JS_DISTANCE,
-    dataset_real=df_real,
-    dataset_synthetic=df_synthetic,
-)
-
-dict_js_distance_per_feature
-```
-
-<p align="center">
-  <img src="../assets/js_distance.png" width="350" alt="JS Distance Artifact">
-</p>
-
-```python
-from artifact_core.table_comparison import (
-    TableComparisonPlotType,
-)
-
 pca_plot = engine.produce_dataset_comparison_plot(
     plot_type=TableComparisonPlotType.PCA_JUXTAPOSITION,
     dataset_real=df_real,
@@ -64,56 +44,18 @@ pca_plot
   <img src="../assets/pca_comparison.png" width="1000" alt="PCA Projection Artifact">
 </p>
 
-```python
-pdf_plot = engine.produce_dataset_comparison_plot(
-    plot_type=TableComparisonPlotType.PDF,
-    dataset_real=df_real,
-    dataset_synthetic=df_synthetic,
-)
+## Configuring Artifact Hyperparameters
 
-pdf_plot
-```
+When using `artifact-core` as a package in your own project, you can override the default configuration of existing artifacts.
 
-<p align="center">
-  <img src="../assets/pdf_comparison.png" width="1700" alt="PDF Comparison Artifact">
-</p>
+### Steps
 
-## Overriding Artifact Hyperparameters
+1. Create a `.artifact-ml` directory in your project root.
+2. Create a configuration file named after the domain toolkit of interest (e.g., `table_comparison.json`).
+3. Specify your custom configuration in JSON format.
+4. Your configuration override will be automatically detected and merged with the default one---with your settings taking precedence.
 
-When using `artifact-core` as a package in your own project, you can override the default configuration of existing artifacts:
-
-### How Configuration Override Works
-
-1. Create a `.artifact-ml` directory in your project root
-2. Create a configuration file named after the domain toolkit of interest (e.g., `table_comparison.json`)
-3. Define your custom configuration in JSON format
-4. Your configuration override will be automatically detected and merged with the default one
-
-### Example: Overriding Table Comparison Configuration
-
-Create a file at `.artifact-ml/table_comparison.json` in your project root:
-
-```json
-{
-  "scores": {
-    "MEAN_JS_DISTANCE": {
-      "n_bins_cts_histogram": 200,
-      "categorical_only": true
-    }
-  },
-  "plots": {
-    "TSNE_JUXTAPOSITION": {
-      "perplexity": 50,
-      "learning_rate": 200,
-      "max_iter": 2000
-    }
-  }
-}
-```
-
-This configuration will override the default settings for the `MEAN_JS_DISTANCE` score and the `TSNE_JUXTAPOSITION` plot, while keeping the default settings for all other artifacts.
-
-### Configuration Structure
+### Config File Structure
 
 The configuration file follows the same structure as the default configuration:
 
@@ -137,13 +79,38 @@ Only include the sections and parameters you want to override.
 
 Your configuration will be merged with the default one automatically, with your settings taking precedence.
 
-## Custom Artifacts
+### Example
+The following example illustrates how to override table comparison artifact configurations.
+
+Create a file at `.artifact-ml/table_comparison.json` in your project root:
+
+```json
+{
+  "scores": {
+    "MEAN_JS_DISTANCE": {
+      "n_bins_cts_histogram": 200,
+      "categorical_only": true
+    }
+  },
+  "plots": {
+    "TSNE_JUXTAPOSITION": {
+      "perplexity": 50,
+      "learning_rate": 200,
+      "max_iter": 2000
+    }
+  }
+}
+```
+
+This will override the default settings for the `MEAN_JS_DISTANCE` score and the `TSNE_JUXTAPOSITION` plot, while keeping the default settings for all other artifacts.
+
+## Implementing Custom Artifacts
 
 `artifact-core` supports project-specific custom artifacts, enabling users to extend domain toolkits with specialized validation logic tailored to their unique requirements.
 
 Custom artifacts integrate seamlessly with the existing framework infrastructure while providing complete flexibility.
 
-### Creating Custom Artifacts
+### Creation
 
 **1. Configure Custom Artifact Path**
 
@@ -219,7 +186,7 @@ class CustomScore(TableComparisonScore[CustomScoreHyperparams]):
 }
 ```
 
-### Using Custom Artifacts
+### Usage
 
 Once configured, custom artifacts can be used exactly like built-in ones:
 
@@ -232,7 +199,7 @@ custom_score = engine.produce_dataset_comparison_score(
 )
 ```
 
-### Contributing Custom Artifacts
+### Contribution
 
 If you develop a custom artifact that could benefit the broader community, consider contributing it.
 
