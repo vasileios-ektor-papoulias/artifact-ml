@@ -23,18 +23,18 @@
 
 ## 📋 Overview
 
-`artifact-core` serves as the foundation of [**Artifact-ML**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main).
+`artifact-core` constitutes the foundation of [**Artifact-ML**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main).
 
-It stands alongside:
+It provides a unified interface for the declarative computation of diverse validation artifacts in ML experiments.
+
+Its objective is to enable reusable validation workflows by providing the tools to trigger artifacts by name---with zero adapter code.
+
+In line with our [design philosophy](https://artifact-ml.readthedocs.io/en/latest/value_philosophy/), achieving this establishes the foundation for [Artifact-ML’s](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) broader objective: eliminating imperative glue code in ML experiments at large.
+
+`artifact-core` stands alongside:
 
 - [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment): experiment orchestration and tracking extension.
 - [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch): PyTorch integration for building reusable deep-learning workflows declaratively.
-
-`artifact-core` provides a unified interface for the computation of diverse validation artifacts.
-
-The goal is to enable reusable validation workflows by providing the tools to trigger diverse artifacts by name---with zero adapter code.
-
-In line with our [design philosophy](https://artifact-ml.readthedocs.io/en/latest/value_philosophy/), achieving this establishes the foundation for [Artifact-ML’s](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) broader objective: eliminating imperative glue code in ML experiment workflows.
 
 ## 🚀 Installation
 
