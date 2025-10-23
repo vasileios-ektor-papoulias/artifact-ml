@@ -4,9 +4,7 @@
   <img src="../../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
-`artifact-core` provides a concrete implementation for the comparison of tabular datasets.
-
-This is intended to serve research projects in synthetic tabular data generation.
+The [artifact-core](../../../index.md) table comparison toolkit offers a comprehensive suite of artifacts for the evaluation of tabular data synthesis experiments.
 
 ## Supported Artifacts
 
