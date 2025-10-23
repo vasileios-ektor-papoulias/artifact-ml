@@ -1,7 +1,7 @@
 # artifact-torch
 
 <p align="center">
-  <img src="assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
+  <img src="assets/artifact_ml_logo.svg" width="300" alt="Artifact-ML Logo">
 </p>
 
 [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/artifact-torch) provides PyTorch integration for [Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml).

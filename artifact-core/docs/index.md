@@ -1,7 +1,7 @@
 # artifact-core
 
 <p align="center">
-  <img src="assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
+  <img src="assets/artifact_ml_logo.svg" width="300" alt="Artifact-ML Logo">
 </p>
 
 [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/artifact-core) serves as the foundation of [**Artifact-ML**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main).

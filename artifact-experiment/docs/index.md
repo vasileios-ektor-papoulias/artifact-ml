@@ -1,7 +1,7 @@
 # artifact-experiment
 
 <p align="center">
-  <img src="assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
+  <img src="assets/artifact_ml_logo.svg" width="300" alt="Artifact-ML Logo">
 </p>
 
 [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/artifact-experiment) constitutes the experiment orchestration and tracking extension to [Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml).
