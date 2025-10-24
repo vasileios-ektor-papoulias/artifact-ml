@@ -92,33 +92,33 @@ roc_auc_plot
 - `DET_CURVE` — Detection Error Tradeoff curve.
 - `RECALL_THRESHOLD_CURVE` — Recall as a function of decision threshold.
 - `PRECISION_THRESHOLD_CURVE` — Precision as a function of decision threshold.
-- `SCORE_PDF` — PDF of model scores.
+- `SCORE_PDF` — PDF of model scores (predicted positive probabilities).
 - `GROUND_TRUTH_PROB_PDF` — PDF of ground-truth probabilities.
 
 ### Score Collections
 - `NORMALIZED_CONFUSION_COUNTS` — TP/TN/FP/FN normalized counts across conditions.
-- `BINARY_PREDICTION_SCORES` — Batched scalar metrics for predictions.
-- `THRESHOLD_VARIATION_SCORES` — Metrics evaluated over threshold sweeps.
-- `SCORE_STATS` — Summary stats for all scores.
-- `POSITIVE_CLASS_SCORE_STATS` — Stats restricted to positive-class scores.
-- `NEGATIVE_CLASS_SCORE_STATS` — Stats restricted to negative-class scores.
-- `SCORE_MEANS` — Means of scores by grouping.
-- `SCORE_STDS` — Standard deviations of scores by grouping.
-- `SCORE_VARIANCES` — Variances of scores by grouping.
-- `SCORE_MEDIANS` — Medians of scores by grouping.
-- `SCORE_FIRST_QUARTILES` — 25th percentiles of scores by grouping.
-- `SCORE_THIRD_QUARTILES` — 75th percentiles of scores by grouping.
-- `SCORE_MINIMA` — Minimum scores by grouping.
-- `SCORE_MAXIMA` — Maximum scores by grouping.
-- `GROUND_TRUTH_PROB_STATS` — Summary stats for ground-truth probabilities.
+- `BINARY_PREDICTION_SCORES` — Batched scalar metrics for predictions (e.g. precision, recall etc.).
+- `THRESHOLD_VARIATION_SCORES` — Metrics evaluated over threshold sweeps (e.g. pr_auc).
+- `SCORE_STATS` — Score (predicted positive probability) distribution statistics.
+- `POSITIVE_CLASS_SCORE_STATS` — Score (predicted positive probability) distribution statistics restricted to positive class.
+- `NEGATIVE_CLASS_SCORE_STATS` — Score (predicted positive probability) distribution statistics restricted to negative class.
+- `SCORE_MEANS` — Score distribution means by split (all, positive, negative).
+- `SCORE_STDS` — Score distribution stds by split (all, positive, negative).
+- `SCORE_VARIANCES` — Score distribution variances by split (all, positive, negative).
+- `SCORE_MEDIANS` — Score distribution medians by split (all, positive, negative).
+- `SCORE_FIRST_QUARTILES` — Score distribution 25th percentiles by split (all, positive, negative).
+- `SCORE_THIRD_QUARTILES` — Score distribution 75th percentiles by split (all, positive, negative).
+- `SCORE_MINIMA` — Score distribution minima by split (all, positive, negative).
+- `SCORE_MAXIMA` — Score distribution maxima by split (all, positive, negative).
+- `GROUND_TRUTH_PROB_STATS` — Summary stats for predicted ground-truth probabilities.
 
 ### Arrays
 - `CONFUSION_MATRIX` — Single confusion matrix array.
 
 ### Array Collections
-- `CONFUSION_MATRICES` — Collection of confusion matrices (e.g., across thresholds or splits).
+- `CONFUSION_MATRICES` — Collection of confusion matrices across normalizations (none, true, predicted, all).
 
 ### Plot Collections
-- `CONFUSION_MATRIX_PLOTS` — Set of confusion matrix visuals (e.g., per split).
-- `THRESHOLD_VARIATION_CURVES` — Set of metric-vs-threshold curves.
-- `SCORE_PDF_PLOTS` — Set of score PDF plots (e.g., per class or split).
+- `CONFUSION_MATRIX_PLOTS` — Set of confusion matrix visuals across normalizations (none, true, predicted, all).
+- `THRESHOLD_VARIATION_CURVES` — Set of metric-vs-threshold curves (e.g. roc, pr etc.).
+- `SCORE_PDF_PLOTS` — Set of score (predicted positive probabilities) PDF plots across splits (all, positive, negative).
