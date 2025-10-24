@@ -4,13 +4,13 @@
   <img src="assets/artifact_ml_logo.svg" width="300" alt="Artifact-ML Logo">
 </p>
 
-`artifact-core` constitutes the foundation of [**Artifact-ML**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main).
+[`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core) constitutes the foundation of [**Artifact-ML**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main).
 
 It provides a unified interface for the declarative computation of diverse validation artifacts in ML experiments.
 
 Its objective is to enable reusable validation workflows by providing the tools to trigger artifacts by name---with zero adapter code.
 
-In line with our [design philosophy](https://artifact-ml.readthedocs.io/en/latest/value_philosophy/), achieving this establishes the foundation for [Artifact-ML’s](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) broader objective: eliminating imperative glue code in ML experiments at large.
+In line with our [design philosophy](https://artifact-ml.readthedocs.io/en/latest/design_philosophy/), achieving this sets the stage for [Artifact-ML’s](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) broader objective: the elimination of imperative glue code in ML experiments at large.
 
 `artifact-core` stands alongside:
 
