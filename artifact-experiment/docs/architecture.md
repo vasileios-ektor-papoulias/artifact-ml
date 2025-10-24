@@ -5,7 +5,21 @@
 </p>
 
 
-`artifact-experiment` follows a layered architecture that separates validation specification, execution orchestration, backend integration, and external dependencies:
+## Architectural Layers
+
+### User Specification Layer
+The interface through which users declaratively specify validation workflows and experiment configurations.
+
+### Execution Orchestration Layer
+The internal coordination system that transforms user specifications into executable validation workflows.
+
+### Backend Integration Layer
+The abstraction layer that unifies experiment tracking and management across multiple backend systems.
+
+### External Dependency Layer
+The interface that connects the framework to external systems for validation computation and experiment persistence.
+
+## Architecture Diagram
 
 ```mermaid
 graph TB
@@ -42,14 +56,3 @@ graph TB
     RA --> EB
 ```
 
-## User Specification Layer
-The interface for declaratively specifying validation requirements and experiment configurations.
-
-## Execution Orchestration Layer
-The internal workflow coordination system that transforms specifications into executable validation processes.
-
-## Backend Integration Layer
-The abstraction boundary that enables unified experiment tracking across multiple backend platforms.
-
-## External Dependencies
-External systems that the framework integrates with for validation computation and experiment persistence.
