@@ -18,7 +18,7 @@ For more details consult the [package's docs](https://artifact-ml.readthedocs.io
 
 The experiment orchestration extension to [Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/).  
 
-It provides the tools to build reusable validation workflows with integrated tracking using popular backend services e.g. [Mlflow](https://mlflow.org/).
+It provides the tools to build reusable validation workflows with integrated tracking using popular backend services (e.g. [Mlflow](https://mlflow.org/)).
 
 For more details consult the [package's docs](https://artifact-ml.readthedocs.io/en/latest/artifact-experiment).
 
