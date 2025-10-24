@@ -40,7 +40,7 @@ The project comprises three packages:
 
 ## 🚀 Quick Start
 
-Clone the [**Artifact-ML**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) monorepo by running:
+Clone the **Artifact-ML** monorepo by running:
 
 ```bash
 git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
