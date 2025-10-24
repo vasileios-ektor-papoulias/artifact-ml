@@ -6,7 +6,7 @@
 
 [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/artifact-experiment) constitutes the experiment orchestration extension to [Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml).
 
-It provides tools to build reusable validation workflows with integrated tracking.
+It provides the tools to build reusable validation workflows with integrated tracking using popular backend services e.g. [Mlflow](https://mlflow.org/).
 
 It stands alongside:
 
