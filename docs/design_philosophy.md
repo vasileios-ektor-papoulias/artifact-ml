@@ -4,7 +4,7 @@
   <img src="../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
-## Domain Toolkits: Validation First
+## Validation First: Domain Toolkits
 
 Our view is that the **natural common ground between experiments lies in validation, not training**.
 
@@ -18,22 +18,14 @@ This principle gives rise to [**domain toolkits**](domain_toolkits.md): self-con
 
 Each toolkit integrates shared framework infrastructure with domain-specific evaluation primitives, facilitating the development of experiment workflows reusable by all models that *do the same thing*.
 
-## Type Hierarchies Within Domain Toolkits
+## Auxiliary Structure: Type Hierarchies
 
 The key idea is to treat **auxiliary model structure as orthogonal to validation requirements**.  
 
 Within a given validation domain, models are organized into a **type hierarchy** that captures this additional structure.
 
-Workflows are then defined in a **dual hierarchy**, allowing them to automatically determine which models they are compatible with.  
+Workflows are then defined in a **dual hierarchy**, enabling the automatic determination of model–workflow compatibility through type-checking.
 
-This approach makes it possible to precisely match models to workflows, enabling structured reuse rather than ad-hoc coupling.
+Ultimately, this enables the development of reusable end-to-end  workflows, not just validation components.   
 
-Once established, it allows us to **abstract away entire experiment workflows**, not just validation components.  
-
-This principle underpins `artifact-torch`.
-
-The shared auxiliary structure among deep learning models is characterized by the **I/O profile of their forward pass**.
-
-We build a **strongly typed callback system** dual to the resulting hierarchy.
-
-Ultimately, this allows us to develop workflows usable by any neural network within the same domain area and adhering to at least the required forward pass IO profile.
+This principle is exemplified in `artifact-torch`, where we capture the auxiliary structure underpinning deep learning models by the **I/O profile of their forward pass**.
