@@ -6,11 +6,7 @@
 
 The [`artifact-core`](../index.md) binary classification toolkit offers a comprehensive suite of artifacts for the evaluation of binary classification experiments.
 
-## Supported Artifacts
-
-TBD
-
-## Usage Example
+## Usage Sketch
 
 ```python
 from typing import Dict
@@ -64,3 +60,7 @@ roc_auc_plot
 <p align="center">
   <img src="../../assets/roc_plot.png" width="600" alt="ROC Artifact">
 </p>
+
+## Supported Artifacts
+
+TBD
