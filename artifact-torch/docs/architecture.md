@@ -4,7 +4,21 @@
   <img src="../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
-The framework employs a three-layer architecture with standardized interface contracts that enable maximal infrastructure reuse. Beyond abstracting engineering concerns, adherence to these type contracts unlocks instant access to comprehensive validation capabilities. Researchers select a problem domain (e.g., tabular data synthesis), adhere to its contracts and focus solely on architectural innovations. They no longer need to write lengthy experiment scripts with messy logic tailored to individual models. Training infrastructure can be shared. This eliminates implementation overhead and accelerates research velocity.
+## Architectural Layers
+
+### User Implementation Layer
+The interface through which researchers design and implement custom model architectures and data pipelines.
+
+### User Configuration Layer
+The interface through which users define and manage reusable experiment workflows through declarative configuration.
+
+### Framework Infrastructure Layer
+The underlying automated system that executes and manages experiment workflows.
+
+### External Integration Layer
+The interface that connects the framework to external Artifact-ML components and services.
+
+## Architecture Diagram
 
 ```mermaid
 graph TD
@@ -136,15 +150,3 @@ graph TD
     style VerticalSpacer2 fill:transparent,stroke:transparent
     style VerticalSpacer3 fill:transparent,stroke:transparent
 ```
-
-## User Implementation Layer
-The boundary where researchers implement domain-specific logic and model architectures.
-
-## User Configuration Layer
-The interface for configuring training behavior and validation workflows through declarative specifications.
-
-## Framework Infrastructure Layer
-The automated training infrastructure that operates transparently behind user configurations.
-
-## External Integration Layer
-The connection points to external Artifact framework components.
