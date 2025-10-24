@@ -17,7 +17,7 @@ cd artifact-ml/artifact-core
 
 poetry install
 ```
-For details consult the [package's docs](artifact-core/docs/index.md).  
+For details consult the [package's docs](https://artifact-ml.readthedocs.io/en/latest/artifact-core).  
 
 ## [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment)  
 To install, run: 
@@ -27,7 +27,7 @@ cd artifact-ml/artifact-experiment
 
 poetry install
 ```
-For details consult the [package's docs](artifact-experiment/docs/index.md).  
+For details consult the [package's docs](https://artifact-ml.readthedocs.io/en/latest/artifact-experiment).  
 
 ## [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch)  
 To install, run: 
@@ -38,4 +38,4 @@ cd artifact-ml/artifact-torch
 poetry install
 ```
 
-For details consult the [package's docs](artifact-torch/docs/index.md) docs.
+For details consult the [package's docs](../artifact-torch/docs/index.md).
