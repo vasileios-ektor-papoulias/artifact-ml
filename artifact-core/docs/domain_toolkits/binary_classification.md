@@ -4,7 +4,7 @@
   <img src="../../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
-The [`artifact-core`](../../../index.md) binary classification toolkit offers a comprehensive suite of artifacts for the evaluation of binary classification experiments.
+The [`artifact-core`](../../index.md) binary classification toolkit offers a comprehensive suite of artifacts for the evaluation of binary classification experiments.
 
 ## Supported Artifacts
 
