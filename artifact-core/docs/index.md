@@ -12,7 +12,7 @@ Its objective is to enable reusable validation workflows by providing the tools 
 
 In line with our [design philosophy](https://artifact-ml.readthedocs.io/en/latest/design_philosophy/), achieving this sets the stage for [Artifact-ML’s](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) broader objective: the elimination of imperative glue code in ML experiments at large.
 
-`artifact-core` stands alongside:
+[`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core) stands alongside:
 
 - [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment): experiment orchestration extension for building reusable validation workflows with integrated tracking.
 - [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch): PyTorch integration for building reusable deep-learning workflows declaratively.
