@@ -14,7 +14,7 @@ In line with our [design philosophy](https://artifact-ml.readthedocs.io/en/lates
 
 `artifact-core` stands alongside:
 
-- [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment): experiment orchestration and tracking extension.
+- [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment): experiment orchestration extension for building reusable validation workflows with integrated tracking.
 - [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch): PyTorch integration for building reusable deep-learning workflows declaratively.
 
 ## Topics

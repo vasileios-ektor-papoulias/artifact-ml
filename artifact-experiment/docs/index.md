@@ -4,9 +4,9 @@
   <img src="assets/artifact_ml_logo.svg" width="300" alt="Artifact-ML Logo">
 </p>
 
-[`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/artifact-experiment) constitutes the experiment orchestration and tracking extension to [Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml).
+[`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/artifact-experiment) constitutes the experiment orchestration extension to [Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml).
 
-It provides tools to build complete reusable, validation workflows with integrated tracking via purely declarative configuration.
+It provides tools to build reusable validation workflows with integrated tracking.
 
 It stands alongside:
 
