@@ -69,7 +69,7 @@ roc_auc_plot
 >
 > These are **not to be confused with metric scores**, which are scalar evaluation metrics such as accuracy, precision, recall, or ROC_AUC.
 >
-> Further, we use the term *predicted ground-truth probabilities* refer to the probabilities the model assigns to the *true (ground-truth)* class for each sample.
+> Further, we use the term *predicted ground-truth probabilities* to refer to the probabilities the model assigns to the *true (ground-truth)* class for each sample.
 
 ## Scores
 
