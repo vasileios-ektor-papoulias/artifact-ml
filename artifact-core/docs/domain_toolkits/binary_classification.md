@@ -48,14 +48,14 @@ score_pdf_plot
 </p>
 
 ```python
-roc_auc_plot = engine.produce_classification_plot(
+roc_plot = engine.produce_classification_plot(
     plot_type=BinaryClassificationPlotType.ROC_CURVE,
     true=true,
     predicted=predicted,
     probs_pos=probs_pos,
 )
 
-roc_auc_plot
+roc_plot
 ```
 <p align="center">
   <img src="../../assets/roc_plot.png" width="600" alt="ROC Artifact">
