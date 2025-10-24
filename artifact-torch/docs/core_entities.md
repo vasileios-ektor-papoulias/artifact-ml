@@ -4,7 +4,7 @@
   <img src="../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
-The framework delivers on its objective through coordinated interaction of specialized abstractions across its [four architectural layers](architecture.md):
+[`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch) delivers on its objective through the coordinated interaction of specialized abstractions across its [four architectural layers](architecture.md):
 
 ## User Implementation Layer
 
@@ -94,7 +94,7 @@ class MyDataLoaderRoutine(
 ```
 
 
-### Framework Infrastructure Layer
+## Framework Infrastructure Layer
 
 - **Callback System**: Type-aware execution hooks that inject custom behavior at specific training points. Callbacks use variance-based type parameters to ensure compatibility with model I/O types through static analysis.
 

@@ -5,7 +5,7 @@
 </p>
 
 
-The framework operates by coordinating the interaction of specialized entities across its four [architectural](architecture.md) layers:
+[`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment) operates by coordinating the interaction of specialized entities across its four [architectural](architecture.md) layers:
 
 ## User Specification Layer
 

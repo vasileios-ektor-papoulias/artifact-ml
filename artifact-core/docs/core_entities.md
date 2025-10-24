@@ -4,7 +4,7 @@
   <img src="../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
-`artifact-core` operates by coordinating the interaction of specialized entities across its three [architectural layers](architecture.md):
+[`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core) operates by coordinating the interaction of specialized entities across its three [architectural layers](architecture.md):
 
 ## User Interaction Layer
 
