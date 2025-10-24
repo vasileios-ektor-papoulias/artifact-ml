@@ -9,7 +9,7 @@ The framework operates by coordinating the interaction of specialized entities a
 
 ## **User Specification Layer**
 
-- **ValidationPlan**: Provides declarative validation specification through subclass hooks, transforming user requirements into executable workflows with experiment tracking capabilities.
+- **ValidationPlan**: Provides declarative validation specification through subclass hooks.
 
 ```python
 class MyValidationPlan(TableComparisonPlan):
@@ -24,15 +24,15 @@ class MyValidationPlan(TableComparisonPlan):
 
 ## **Execution Orchestration Layer**
 
-- **ArtifactFactories**: Create callbacks that integrate with `artifact-core`'s computation engine, bridging validation specification with actual computation
-- **Callbacks**: Execute individual validation computations and report results to tracking clients for export
-- **CallbackHandlers**: Orchestrate callback execution across artifact types, managing validation workflow execution and coordinating with tracking clients
+- **ArtifactFactories**: Create callbacks that integrate with `artifact-core`'s computation engine.
+- **Callbacks**: Execute individual validation computations and report results to tracking clients for export.
+- **CallbackHandlers**: Orchestrate callback execution.
 
 ## **Backend Integration Layer**
 
-- **TrackingClients**: Coordinate experiment export by orchestrating loggers and adapters for unified backend interaction
-- **ArtifactLoggers**: Handle artifact-specific export logic, converting computed results into backend-compatible formats
-- **RunAdapters**: Normalize backend-specific run objects, providing consistent interfaces across different experiment tracking platforms
+- **TrackingClients**: Coordinate experiment export by orchestrating loggers and run adapters for unified backend interaction.
+- **ArtifactLoggers**: Handle export logic, converting computed results into backend-compatible formats.
+- **RunAdapters**: Normalize backend-specific run objects, providing consistent interfaces across different experiment tracking platforms.
 
 ```python
 # Unified interface across backends
