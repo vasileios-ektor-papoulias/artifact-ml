@@ -33,18 +33,18 @@ class_spec = BinaryFeatureSpec(
 
 engine = BinaryClassificationEngine(resource_spec=class_spec)
 
-ground_truth_prob_pdf_plot = engine.produce_classification_plot(
-    plot_type=BinaryClassificationPlotType.GROUND_TRUTH_PROB_PDF,
+score_pdf_plot = engine.produce_classification_plot(
+    plot_type=BinaryClassificationPlotType.SCORE_PDF,
     true=true,
     predicted=predicted,
     probs_pos=probs_pos,
 )
 
-ground_truth_prob_pdf_plot
+score_pdf_plot
 ```
 
 <p align="center">
-  <img src="../../assets/ground_truth_distribution.png" width="600" alt="Ground Truth Distribution Artifact">
+  <img src="../../assets/score_distribution.png" width="600" alt="Score Distribution Artifact">
 </p>
 
 ```python
@@ -61,7 +61,7 @@ roc_auc_plot
   <img src="../../assets/roc_plot.png" width="600" alt="ROC Artifact">
 </p>
 
-# Supported Artifacts
+## Supported Artifacts
 
 > **Terminology Note** 
 > 
@@ -71,7 +71,7 @@ roc_auc_plot
 >
 > Further, we use the term *predicted ground-truth probabilities* to refer to the probabilities the model assigns to the *true (ground-truth)* class for each sample.
 
-## Scores
+### Scores
 
 - `ACCURACY` — Overall classification accuracy.  
 - `BALANCED_ACCURACY` — Mean of recall (TPR) and specificity (TNR).  
@@ -94,11 +94,11 @@ roc_auc_plot
 - `GROUND_TRUTH_PROB_MIN` — Minimum predicted ground-truth probability.  
 - `GROUND_TRUTH_PROB_MAX` — Maximum predicted ground-truth probability.
 
-## Arrays
+### Arrays
 
 - `CONFUSION_MATRIX` — Single confusion matrix array of TP, TN, FP, and FN counts.
 
-## Plots
+### Plots
 
 - `CONFUSION_MATRIX_PLOT` — Visual confusion matrix.  
 - `ROC_CURVE` — Receiver Operating Characteristic curve.  
@@ -109,7 +109,7 @@ roc_auc_plot
 - `SCORE_PDF` — Probability density function (PDF) of scores (predicted positive probabilities).  
 - `GROUND_TRUTH_PROB_PDF` — PDF of predicted ground-truth probabilities.
 
-## Score Collections
+### Score Collections
 
 - `NORMALIZED_CONFUSION_COUNTS` — normalized TP/TN/FP/FN counts.  
 - `BINARY_PREDICTION_SCORES` — Batched scalar metrics (e.g., precision, recall).  
@@ -127,11 +127,11 @@ roc_auc_plot
 - `SCORE_MAXIMA` — Maximum score (predicted positive probability) by split (all, positive, negative).  
 - `GROUND_TRUTH_PROB_STATS` — Summary statistics for predicted ground-truth probabilities.
 
-## Array Collections
+### Array Collections
 
 - `CONFUSION_MATRICES` — Collection of confusion matrices across normalization modes (`none`, `true`, `predicted`, `all`).
 
-## Plot Collections
+### Plot Collections
 
 - `CONFUSION_MATRIX_PLOTS` — Set of confusion matrix visuals across normalization modes (`none`, `true`, `predicted`, `all`).  
 - `THRESHOLD_VARIATION_CURVES` — Metric-vs-threshold curve set (e.g., ROC, PR, DET).  
