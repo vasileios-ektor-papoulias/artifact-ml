@@ -38,4 +38,4 @@ cd artifact-ml/artifact-torch
 poetry install
 ```
 
-For details consult the [package's docs](../artifact-torch/docs/index.md).
+For details consult the [package's docs](https://artifact-ml.readthedocs.io/en/latest/artifact-torch).
