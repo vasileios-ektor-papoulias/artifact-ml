@@ -61,64 +61,78 @@ roc_auc_plot
   <img src="../../assets/roc_plot.png" width="600" alt="ROC Artifact">
 </p>
 
-## Supported Artifacts
+# Supported Artifacts
 
-### Scores
-- `ACCURACY` — Overall classification accuracy.
-- `BALANCED_ACCURACY` — Mean of recall (TPR) and specificity (TNR).
-- `PRECISION` — Positive predictive value (PPV).
-- `NPV` — Negative predictive value.
-- `RECALL` — True positive rate (TPR, sensitivity).
-- `TNR` — True negative rate (specificity).
-- `FPR` — False positive rate.
-- `FNR` — False negative rate.
-- `F1` — Harmonic mean of precision and recall.
-- `MCC` — Matthews correlation coefficient.
-- `ROC_AUC` — Area under the ROC curve.
+> **Terminology Note** 
+> 
+> We refer to the model’s *predicted positive probabilities* — the continuous output values representing its confidence before thresholding — as *scores*.
+>
+> These are **not to be confused with metric scores**, which are scalar evaluation metrics such as accuracy, precision, recall, or ROC_AUC.
+>
+> Further, we use the term *predicted ground-truth probabilities* refer to the probabilities the model assigns to the *true (ground-truth)* class for each sample.
+
+## Scores
+
+- `ACCURACY` — Overall classification accuracy.  
+- `BALANCED_ACCURACY` — Mean of recall (TPR) and specificity (TNR).  
+- `PRECISION` — Positive predictive value (PPV).  
+- `NPV` — Negative predictive value.  
+- `RECALL` — True positive rate (TPR, sensitivity).  
+- `TNR` — True negative rate (specificity).  
+- `FPR` — False positive rate.  
+- `FNR` — False negative rate.  
+- `F1` — Harmonic mean of precision and recall.  
+- `MCC` — Matthews correlation coefficient.  
+- `ROC_AUC` — Area under the ROC curve.  
 - `PR_AUC` — Area under the Precision–Recall curve.
-- `GROUND_TRUTH_PROB_MEAN` — Mean of ground-truth probabilities.
-- `GROUND_TRUTH_PROB_STD` — Standard deviation of ground-truth probabilities.
-- `GROUND_TRUTH_PROB_VARIANCE` — Variance of ground-truth probabilities.
-- `GROUND_TRUTH_PROB_MEDIAN` — Median of ground-truth probabilities.
-- `GROUND_TRUTH_PROB_FIRST_QUARTILE` — 25th percentile of ground-truth probabilities.
-- `GROUND_TRUTH_PROB_THIRD_QUARTILE` — 75th percentile of ground-truth probabilities.
-- `GROUND_TRUTH_PROB_MIN` — Minimum ground-truth probability.
-- `GROUND_TRUTH_PROB_MAX` — Maximum ground-truth probability.
+- `GROUND_TRUTH_PROB_MEAN` — Mean of predicted ground-truth probabilities.  
+- `GROUND_TRUTH_PROB_STD` — Standard deviation of predicted ground-truth probabilities.  
+- `GROUND_TRUTH_PROB_VARIANCE` — Variance of predicted ground-truth probabilities.  
+- `GROUND_TRUTH_PROB_MEDIAN` — Median of predicted ground-truth probabilities.  
+- `GROUND_TRUTH_PROB_FIRST_QUARTILE` — 25th percentile of predicted ground-truth probabilities.  
+- `GROUND_TRUTH_PROB_THIRD_QUARTILE` — 75th percentile of predicted ground-truth probabilities.  
+- `GROUND_TRUTH_PROB_MIN` — Minimum predicted ground-truth probability.  
+- `GROUND_TRUTH_PROB_MAX` — Maximum predicted ground-truth probability.
 
-### Plots
-- `CONFUSION_MATRIX_PLOT` — Visual confusion matrix.
-- `ROC_CURVE` — Receiver Operating Characteristic curve.
-- `PR_CURVE` — Precision–Recall curve.
-- `DET_CURVE` — Detection Error Tradeoff curve.
-- `RECALL_THRESHOLD_CURVE` — Recall as a function of decision threshold.
-- `PRECISION_THRESHOLD_CURVE` — Precision as a function of decision threshold.
-- `SCORE_PDF` — PDF of model scores (predicted positive probabilities).
-- `GROUND_TRUTH_PROB_PDF` — PDF of ground-truth probabilities.
+## Arrays
 
-### Score Collections
-- `NORMALIZED_CONFUSION_COUNTS` — TP/TN/FP/FN normalized counts across conditions.
-- `BINARY_PREDICTION_SCORES` — Batched scalar metrics for predictions (e.g. precision, recall etc.).
-- `THRESHOLD_VARIATION_SCORES` — Metrics evaluated over threshold sweeps (e.g. pr_auc).
-- `SCORE_STATS` — Score (predicted positive probability) distribution statistics.
-- `POSITIVE_CLASS_SCORE_STATS` — Score (predicted positive probability) distribution statistics restricted to positive class.
-- `NEGATIVE_CLASS_SCORE_STATS` — Score (predicted positive probability) distribution statistics restricted to negative class.
-- `SCORE_MEANS` — Score distribution means by split (all, positive, negative).
-- `SCORE_STDS` — Score distribution stds by split (all, positive, negative).
-- `SCORE_VARIANCES` — Score distribution variances by split (all, positive, negative).
-- `SCORE_MEDIANS` — Score distribution medians by split (all, positive, negative).
-- `SCORE_FIRST_QUARTILES` — Score distribution 25th percentiles by split (all, positive, negative).
-- `SCORE_THIRD_QUARTILES` — Score distribution 75th percentiles by split (all, positive, negative).
-- `SCORE_MINIMA` — Score distribution minima by split (all, positive, negative).
-- `SCORE_MAXIMA` — Score distribution maxima by split (all, positive, negative).
-- `GROUND_TRUTH_PROB_STATS` — Summary stats for predicted ground-truth probabilities.
+- `CONFUSION_MATRIX` — Single confusion matrix array of TP, TN, FP, and FN counts.
 
-### Arrays
-- `CONFUSION_MATRIX` — Single confusion matrix array.
+## Plots
 
-### Array Collections
-- `CONFUSION_MATRICES` — Collection of confusion matrices across normalizations (none, true, predicted, all).
+- `CONFUSION_MATRIX_PLOT` — Visual confusion matrix.  
+- `ROC_CURVE` — Receiver Operating Characteristic curve.  
+- `PR_CURVE` — Precision–Recall curve.  
+- `DET_CURVE` — Detection Error Tradeoff curve.  
+- `RECALL_THRESHOLD_CURVE` — Recall as a function of decision threshold.  
+- `PRECISION_THRESHOLD_CURVE` — Precision as a function of decision threshold.  
+- `SCORE_PDF` — Probability density function (PDF) of scores (predicted positive probabilities).  
+- `GROUND_TRUTH_PROB_PDF` — PDF of predicted ground-truth probabilities.
 
-### Plot Collections
-- `CONFUSION_MATRIX_PLOTS` — Set of confusion matrix visuals across normalizations (none, true, predicted, all).
-- `THRESHOLD_VARIATION_CURVES` — Set of metric-vs-threshold curves (e.g. roc, pr etc.).
-- `SCORE_PDF_PLOTS` — Set of score (predicted positive probabilities) PDF plots across splits (all, positive, negative).
+## Score Collections
+
+- `NORMALIZED_CONFUSION_COUNTS` — normalized TP/TN/FP/FN counts.  
+- `BINARY_PREDICTION_SCORES` — Batched scalar metrics (e.g., precision, recall).  
+- `THRESHOLD_VARIATION_SCORES` — Metrics evaluated across decision threshold sweeps (e.g., PR AUC, ROC AUC etc.).  
+- `SCORE_STATS` — Score (predicted positive probability) summary statistics.
+- `POSITIVE_CLASS_SCORE_STATS` — Score (predicted positive probability) summary statistics restricted to the positive class.  
+- `NEGATIVE_CLASS_SCORE_STATS` — Score (predicted positive probability) summary statistics restricted to the negative class.  
+- `SCORE_MEANS` — Mean predicted score (positive probability) by split (all, positive, negative).  
+- `SCORE_STDS` — Standard deviation of scores (predicted positive probabilities) by split (all, positive, negative).  
+- `SCORE_VARIANCES` — Variance of scores (predicted positive probabilities) by split (all, positive, negative).  
+- `SCORE_MEDIANS` — Median score (predicted positive probability) by split (all, positive, negative).  
+- `SCORE_FIRST_QUARTILES` — 25th percentile of scores (predicted positive probabilities) by split (all, positive, negative).  
+- `SCORE_THIRD_QUARTILES` — 75th percentile of scores (predicted positive probabilities) by split (all, positive, negative).  
+- `SCORE_MINIMA` — Minimum score (predicted positive probability) by split (all, positive, negative).  
+- `SCORE_MAXIMA` — Maximum score (predicted positive probability) by split (all, positive, negative).  
+- `GROUND_TRUTH_PROB_STATS` — Summary statistics for predicted ground-truth probabilities.
+
+## Array Collections
+
+- `CONFUSION_MATRICES` — Collection of confusion matrices across normalization modes (`none`, `true`, `predicted`, `all`).
+
+## Plot Collections
+
+- `CONFUSION_MATRIX_PLOTS` — Set of confusion matrix visuals across normalization modes (`none`, `true`, `predicted`, `all`).  
+- `THRESHOLD_VARIATION_CURVES` — Metric-vs-threshold curve set (e.g., ROC, PR, DET).  
+- `SCORE_PDF_PLOTS` — Score (predicted positive probability) density plots across splits (all, positive, negative).
