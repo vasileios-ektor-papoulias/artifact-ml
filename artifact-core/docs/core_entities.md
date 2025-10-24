@@ -4,9 +4,11 @@
   <img src="../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
+## Entities by Layer
+
 [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core) operates by coordinating the interaction of specialized entities across its three [architectural layers](architecture.md):
 
-## User Interaction Layer
+### User Interaction Layer
 
 - **ArtifactEngine**: Unified interface for executing validation artifacts declaratively. It delegates artifact instantiation to registries and provides a streamlined entry point for execution.
 
@@ -20,39 +22,56 @@ pca_plot = engine.produce_dataset_comparison_plot(
 )
 ```
 
-## Framework Infrastructure Layer
+### Framework Infrastructure Layer
 
-- **Artifact**: Abstract computational unit defining the `compute()` method contract.  
+- **Artifact**: Abstract computational unit defining the `compute()` method contract.
   Artifacts are heterogeneous (multi-modal) and categorized by their return type (modality):
-  - **Scores** – Single numerical metrics.
-  - **Arrays** – NumPy arrays containing computed data.
-  - **Plots** – Matplotlib figures used for visualization.
-  - **Collections** – Groups of related artifacts (e.g., multiple scores or plots).
+
+    - **Scores** – Single numerical metrics.
+
+    - **Arrays** – NumPy arrays containing computed data.
+
+    - **Plots** – Matplotlib figures used for visualization.
+
+    - **Collections** – Groups of related artifacts (e.g., multiple scores or plots).
+
+- **ArtifactHyperparams**: Configuration objects that parameterize artifact behavior.
+
+- **ArtifactResourceSpec**: Schema definitions that describe the structural and semantic properties of validation resources (e.g., feature types and data formats for tabular data).
+
+- **ArtifactResources**: data containers providing the inputs required for artifact computation.  
 
 - **ArtifactType**: Enumeration system that assigns unique identifiers to artifact implementations.
 
 - **ArtifactRegistry**: The management layer that organizes, registers, and instantiates artifacts by type. Each registry groups artifacts sharing compatible resource types, return modalities, and resource specifications.
 
-- **ArtifactResources**: data containers providing the inputs required for artifact computation.  
 
-- **ArtifactResourceSpec**: Schema definitions that describe the structural and semantic properties of validation resources (e.g., feature types and data formats for tabular data).
-
-- **ArtifactHyperparams**: Configuration objects that parameterize artifact behavior.
-
-## External Dependencies
+### External Dependencies
 
 - **Configuration Files**: JSON-based parameter definitions that control artifact behavior.
 
-- **Resource Data**: Domain-specific datasets and validation resources that serve as the inputs for artifact computation (e.g., pandas DataFrames for tabular validation tasks).
+- **Resource Data**: validation resources that serve as the inputs for artifact computation (e.g., pandas DataFrames for tabular validation tasks).
 
-## Integration Flow
+```mermaid
+flowchart LR
+    Caller[Caller] --> Engine[ArtifactEngine]
+    RS[ResourceSpec] --> Engine
+    AT[ArtifactType] --> Engine
+    AR[ArtifactResources] --> Engine
+    Engine --> Registry[ArtifactRegistry]
+    Registry --> Artifact[Artifact]
+    Engine --> Artifact
+    Artifact --> Result((Result))
+```
+
+## Entity Integration
 
 **Artifacts** are callables modeling individual validation workflows.
 
 Artifact initialization requires:
 
 - Static metadata characterizing the validation resources---provided as a `ResourceSpec` instance.
-- Optional configuration parameters---provided as an `ArtifactHyperparams` instance.
+- Configuration parameters---provided as an `ArtifactHyperparams` instance.
 
 **Artifact Registries** organize and manage artifacts by domain and modality (i.e., return type).
 
@@ -80,15 +99,3 @@ When called with an `ArtifactType` enum and corresponding resources, the engine:
 - Retrieves the appropriate artifact from the relevant `ArtifactRegistry`.
 - Injects the provided `ArtifactResources` into the artifact instance.
 - Executes the artifact’s validation workflow and returns the result.
-
-```mermaid
-flowchart LR
-    Caller[Caller] --> Engine[ArtifactEngine]
-    RS[ResourceSpec] --> Engine
-    AT[ArtifactType] --> Engine
-    AR[ArtifactResources] --> Engine
-    Engine --> Registry[ArtifactRegistry]
-    Registry --> Artifact[Artifact]
-    Engine --> Artifact
-    Artifact --> Result((Result))
-```

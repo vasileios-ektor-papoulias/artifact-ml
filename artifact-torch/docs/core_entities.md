@@ -4,9 +4,11 @@
   <img src="../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
+## Entities by Layer
+
 [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch) delivers on its objective through the coordinated interaction of specialized abstractions across its [four architectural layers](architecture.md):
 
-## User Implementation Layer
+### User Implementation Layer
 
 - **Model Interfaces**: Domain-specific protocols (e.g., `TableSynthesizer`) that define contracts for model integration with the training framework. Researchers extend these interfaces and implement required methods for training and validation.
 
@@ -25,7 +27,7 @@ class MyModel(
         pass
 ```
 
-## User Configuration Layer
+### User Configuration Layer
 
 - **CustomTrainer**: Orchestrates the complete training process while providing configuration hooks for declarative customization. Users implement hook methods for optimizer selection, early stopping criteria, and callback configuration while the framework handles training loop execution, device management, and gradient computation.
 
@@ -94,7 +96,7 @@ class MyDataLoaderRoutine(
 ```
 
 
-## Framework Infrastructure Layer
+### Framework Infrastructure Layer
 
 - **Callback System**: Type-aware execution hooks that inject custom behavior at specific training points. Callbacks use variance-based type parameters to ensure compatibility with model I/O types through static analysis.
 
@@ -104,7 +106,7 @@ class MyDataLoaderRoutine(
   - **Early Stopping**: Configurable training termination based on validation metrics.
   - **Model Tracking**: State management and best model persistence.
 
-## External Integration Layer
+### External Integration Layer
 
 - **Integration with `artifact-core`**: Automatic validation artifact computation during training through specialized routines that coordinate with the appropriate Artifact-ML [domain toolkit](https://artifact-ml.readthedocs.io/en/latest/artifact-core/domain_toolkits/).
 
