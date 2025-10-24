@@ -7,7 +7,7 @@
 
 The framework operates by coordinating the interaction of specialized entities across its four [architectural](architecture.md) layers:
 
-## **User Specification Layer**
+## User Specification Layer
 
 - **ValidationPlan**: Provides declarative validation specification through subclass hooks.
 
@@ -22,13 +22,13 @@ class MyValidationPlan(TableComparisonPlan):
         return [TableComparisonPlotType.PDF]
 ```
 
-## **Execution Orchestration Layer**
+## Execution Orchestration Layer
 
 - **ArtifactFactories**: Create callbacks that integrate with `artifact-core`'s computation engine.
 - **Callbacks**: Execute individual validation computations and report results to tracking clients for export.
 - **CallbackHandlers**: Orchestrate callback execution.
 
-## **Backend Integration Layer**
+## Backend Integration Layer
 
 - **TrackingClients**: Coordinate experiment export by orchestrating loggers and run adapters for unified backend interaction.
 - **ArtifactLoggers**: Handle export logic, converting computed results into backend-compatible formats.
@@ -42,7 +42,7 @@ neptune_client = NeptuneTrackingClient.build(experiment_id="my_project")
 filesystem_client = FilesystemTrackingClient.build(experiment_id="my_experiment")
 ```
 
-## **External Dependencies**
+## External Dependencies
 
 - **`artifact-core`**: Individual validation computation units derive from `artifact-core`. These are wrapped in callbacks and executed through handlers to build comprehensive validation workflows.
 
@@ -54,11 +54,11 @@ Supported backends include:
   - [ClearML](https://clear.ml/),
   - [Neptune](https://neptune.ai/),
   - local filesystem,
-  - and in-memory caching
+  - in-memory caching,
 
 all accessed through the unified RunAdapter interface.
 
-## **Seamless Integration Flow**
+## Integration Flow
 The complete flow demonstrates how entities collaborate to achieve the framework's goals:
 
 1. **ValidationPlan** specifies artifacts of interest through subclass hooks.

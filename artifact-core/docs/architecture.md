@@ -4,7 +4,23 @@
   <img src="../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
-`artifact-core` follows a layered architecture offering maximal extendibility while exposing a simple interface to end-users:
+## Architectural Layers
+
+### User Interaction Layer
+
+The interface through which users engage with the framework’s validation capabilities.
+
+### Framework Infrastructure Layer
+
+The internal computational and management system that executes and maintains artifact workflows.
+
+### External Dependency Layer
+
+The interface that connects the framework to external inputs and configurations required for operation.
+
+Crucially, user-facing interfaces are separated from internal framework infrastructure: users interact primarily with `ArtifactEngine` while the framework handles the complexity of artifact registration, instantiation, and execution through its internal infrastructure components.
+
+## Architecture Diagram
 
 ```mermaid
 graph TB
@@ -37,13 +53,3 @@ graph TB
     AR --> Data
 ```
 
-## User Interaction Layer
-The interface boundary between users and the framework's validation capabilities.
-
-## Framework Infrastructure Layer
-The internal computational and management infrastructure that powers artifact execution.
-
-## External Dependencies
-External inputs and configurations that the framework depends on for operation.
-
-This architecture enables artifact-core to provide a clean separation between user-facing interfaces and internal framework infrastructure. Users interact primarily with ArtifactEngine while the framework handles the complexity of artifact registration, instantiation, and execution through its internal infrastructure components.

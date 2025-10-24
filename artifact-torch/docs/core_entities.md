@@ -6,7 +6,7 @@
 
 The framework delivers on its objective through coordinated interaction of specialized abstractions across its [four architectural layers](architecture.md):
 
-## **User Implementation Layer**
+## User Implementation Layer
 
 - **Model Interfaces**: Domain-specific protocols (e.g., `TableSynthesizer`) that define contracts for model integration with the training framework. Researchers extend these interfaces and implement required methods for training and validation.
 
@@ -15,19 +15,59 @@ The framework delivers on its objective through coordinated interaction of speci
 - **Data Abstractions**: Type-safe wrappers around PyTorch's data primitives with enhanced functionality, including generic `Dataset[T]` wrapper and enhanced `DataLoader` with automatic device management.
 
 ```python
-class MyModel(TableSynthesizer[MyModelInput, MyModelOutput]):
-    def training_step(self, batch: MyModelInput) -> MyModelOutput:
-        # Model-specific training logic
+class MyModel(
+  TableSynthesizer[ModelInput, ModelOutput, MyGenerationParams]
+  ):
+    def forward(self, batch: ModelInput) -> ModelOutput:
         pass
     
-    def generate_synthetic_data(self, num_samples: int) -> pd.DataFrame:
-        # Domain-specific generation logic
+    def generate(self, generation_params: MyGenerationParams) -> pd.DataFrame:
         pass
 ```
 
-## **User Configuration Layer**
+## User Configuration Layer
 
 - **CustomTrainer**: Orchestrates the complete training process while providing configuration hooks for declarative customization. Users implement hook methods for optimizer selection, early stopping criteria, and callback configuration while the framework handles training loop execution, device management, and gradient computation.
+
+```python
+class MyTrainer(
+    CustomTrainer[
+        TableSynthesizer[ModelInput, ModelOutput, Any], # Expected model type.
+        ModelInput, # Expected forward pass input.
+        ModelOutput, # Expected forward pass output.
+        ModelTrackingCriterion, # See artifact-torch docs.
+        StopperUpdateData # See artifact-torch docs.
+    ]
+):
+    def _get_optimizer(self) -> torch.optim.Optimizer:
+        return torch.optim.Adam(
+            self.model.parameters(),
+            lr=config.lr
+            )
+    
+    def _get_scheduler(self) -> torch.optim.lr_scheduler.LRScheduler:
+        return torch.optim.lr_scheduler.StepLR(
+            self.optimizer,
+            step_size=config.step_size
+            )
+    
+    def _get_early_stopper(self) -> EarlyStopper:
+        return EpochBoundStopper(
+            n_epochs=config.num_epochs
+            )
+    
+    @staticmethod
+    def _get_train_loader_routine(
+        data_loader: DataLoader[ModelInputT], 
+        tracking_client: Optional[TrackingClient], 
+    ) -> Optional[
+        DataLoaderRoutine[ModelInputT, ModelOutputT]
+        ]:
+        return MyDataLoaderRoutine.build(
+            data_loader=data_loader, # Artifact-ML type-aware wrapper
+            tracking_client=tracking_client
+            )
+```
 
 - **Validation Routines**: Validation workflow executors that integrate into the training pipeline:
   - **BatchRoutine**: callback execution during individual batch processing.
@@ -35,15 +75,26 @@ class MyModel(TableSynthesizer[MyModelInput, MyModelOutput]):
   - **ArtifactRoutine**: execution of callbacks injecting validation capabilities provided by `artifact-core`.
 
 ```python
-class MyTrainer(CustomTrainer[MyModelInput, MyModelOutput]):
-    def _get_optimizer(self) -> torch.optim.Optimizer:
-        return torch.optim.Adam(self.model.parameters(), lr=0.001)
-    
-    def _get_artifact_routine(self) -> MyArtifactRoutine:
-        return MyArtifactRoutine.build(validation_data, tracking_client)
+# Works with any neural network fulfilling the IO contract.
+# The input contract is contravariant.
+# The output contract is covariant.
+
+class MyDataLoaderRoutine(
+    DataLoaderRoutine[
+        ModelInput, ModelOutput
+        ] # Expected IO profile.
+    ):
+    @staticmethod
+    def _get_score_callbacks() -> List[
+        DataLoaderScoreCallback[ModelInput, ModelOutput]
+        ]:
+        return [
+            TrainLossCallback(period=config.validation_frequency)
+            ]
 ```
 
-### **Framework Infrastructure Layer**
+
+### Framework Infrastructure Layer
 
 - **Callback System**: Type-aware execution hooks that inject custom behavior at specific training points. Callbacks use variance-based type parameters to ensure compatibility with model I/O types through static analysis.
 
@@ -53,14 +104,8 @@ class MyTrainer(CustomTrainer[MyModelInput, MyModelOutput]):
   - **Early Stopping**: Configurable training termination based on validation metrics.
   - **Model Tracking**: State management and best model persistence.
 
-```python
-# Framework automatically manages device placement, caching, early stopping
-trainer = MyTrainer.build(model=model, train_loader=train_loader)
-trainer.train()  # All infrastructure handled automatically
-```
-
-## **External Integration Layer**
+## External Integration Layer
 
 - **Integration with `artifact-core`**: Automatic validation artifact computation during training through specialized routines that coordinate with the appropriate Artifact-ML [domain toolkit](https://artifact-ml.readthedocs.io/en/latest/artifact-core/domain_toolkits/).
 
-- **Integration with `artifact-experiment`**: Experiment tracking using popular backend services ([MLflow](https://mlflow.org/), [ClearML](https://clear.ml/), [Neptune](https://neptune.ai/)) or simple filesystem/ in-memory caching.
+- **Integration with `artifact-experiment`**: Experiment tracking using popular backend services (e.g. [MLflow](https://mlflow.org/), [ClearML](https://clear.ml/), [Neptune](https://neptune.ai/)) or simple filesystem/ in-memory caching.

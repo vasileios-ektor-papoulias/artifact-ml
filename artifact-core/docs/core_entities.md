@@ -4,14 +4,15 @@
   <img src="../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
-`artifact-core` operates by coordinating the interaction of specialized entities across its [architectural](architecture.md) layers:
+`artifact-core` operates by coordinating the interaction of specialized entities across its three [architectural layers](architecture.md):
 
-## **User Interaction Layer**
-The primary interface layer that users interact with to orchestrate comprehensive validation workflows:
+## User Interaction Layer
 
-- **ArtifactEngine**: Simple yet flexible entry point providing a unified interface for executing individual validation artifacts. It manages registry access, handles artifact instantiation with appropriate configurations, and provides straightforward methods for computing validation results. Crucially method signatures are minimal, relegating secondary arguments like static data spec information and hyperparameters to be handled by the framework.
+- **ArtifactEngine**: Unified interface for executing validation artifacts declaratively. It delegates artifact instantiation to registries and provides a streamlined entry point for execution.
+
 ```python
 engine = TableComparisonEngine(resource_spec=spec)
+
 pca_plot = engine.produce_dataset_comparison_plot(
     plot_type=TableComparisonPlotType.PCA_PROJECTION_PLOT,
     dataset_real=df_real,
@@ -19,34 +20,75 @@ pca_plot = engine.produce_dataset_comparison_plot(
 )
 ```
 
-**Architecture Role**: ArtifactEngine serves as the main entry point that abstracts artifact lookup, instantiation, and execution complexity while providing a clean interface for individual artifact computation - users specify what artifact they want and the data to compute it on, and get back the validation result.
+## Framework Infrastructure Layer
 
-## **Framework Infrastructure Layer**
-Internal framework components that provide the computational foundation and artifact management system:
+- **Artifact**: Abstract computational unit defining the `compute()` method contract.  
+  Artifacts are heterogeneous (multi-modal) and categorized by their return type (modality):
+  - **Scores** – Single numerical metrics.
+  - **Arrays** – NumPy arrays containing computed data.
+  - **Plots** – Matplotlib figures used for visualization.
+  - **Collections** – Groups of related artifacts (e.g., multiple scores or plots).
 
-- **Artifact**: Abstract computation units that define the `compute()` method contract. Artifacts are heterogeneous (multi-modal) and categorized by return type:
-  - **Scores**: Single numerical metrics
-  - **Arrays**: Numpy arrays containing computed data  
-  - **Plots**: Matplotlib figures for visualization
-  - **Collections**: Groups of related artifacts (e.g., multiple scores or plots)
+- **ArtifactType**: Enumeration system that assigns unique identifiers to artifact implementations.
 
-- **ArtifactRegistry**: Management system that organizes artifacts by type and coordinates registration, retrieval, and instantiation. Artifacts in the same registry share resources, return types, and resource specification types.
+- **ArtifactRegistry**: The management layer that organizes, registers, and instantiates artifacts by type. Each registry groups artifacts sharing compatible resource types, return modalities, and resource specifications.
 
-- **ArtifactType**: Enumeration system that provides unique identifiers for different artifact implementations, enabling dynamic lookup and instantiation within registries.
+- **ArtifactResources**: data containers providing the inputs required for artifact computation.  
 
-- **ArtifactResources**: Generic data objects that artifacts operate on, providing the input datasets or resources required for validation computation. The design of resource types is central to the framework's extensibility—by defining domain-specific resource contracts, we naturally group thematically related models that share validation requirements, enabling them to leverage common validation logic regardless of their internal architectural differences.
+- **ArtifactResourceSpec**: Schema definitions that describe the structural and semantic properties of validation resources (e.g., feature types and data formats for tabular data).
 
-- **ArtifactResourceSpec**: Protocol definitions that capture the structural properties and schema characteristics of validation resources (e.g., feature types and data schemas for tabular data).
+- **ArtifactHyperparams**: Configuration objects that parameterize artifact behavior.
 
-- **ArtifactHyperparams**: Configuration objects that enable customizable artifact behavior through domain-specific parameter settings.
+## External Dependencies
 
-**Entity Coordination**: ArtifactEngine coordinates with ArtifactRegistry for artifact lookup and instantiation using ArtifactResourceSpec for type validation, while Artifact implementations use ArtifactResources for computation and ArtifactHyperparams for configuration. The interplay between ArtifactResources and ArtifactResourceSpec ensures type safety while enabling the framework's core capability of grouping diverse models by their validation resource compatibility.
+- **Configuration Files**: JSON-based parameter definitions that control artifact behavior.
 
-## **External Dependencies**
-Configuration and data inputs that drive artifact computation and enable framework customization:
+- **Resource Data**: Domain-specific datasets and validation resources that serve as the inputs for artifact computation (e.g., pandas DataFrames for tabular validation tasks).
 
-- **Configuration Files**: JSON-based parameter definitions that control artifact behavior, enable project-specific customization, and support configuration inheritance through the `.artifact` directory system.
+## Integration Flow
 
-- **Resource Data**: Input datasets and validation resources that provide the raw data for artifact computation, typically domain-specific data formats (e.g., pandas DataFrames for tabular data).
+**Artifacts** are callables modeling individual validation workflows.
 
-**Integration Flow**: Configuration Files define artifact parameters loaded by ArtifactHyperparams, while Resource Data flows through ArtifactResources to enable domain-specific validation computations.
+Artifact initialization requires:
+
+- Static metadata characterizing the validation resources---provided as a `ResourceSpec` instance.
+- Optional configuration parameters---provided as an `ArtifactHyperparams` instance.
+
+**Artifact Registries** organize and manage artifacts by domain and modality (i.e., return type).
+
+They serve as lookup tables from which artifacts can be retrieved dynamically.
+
+Registries read artifact hyperparameters from configuration files.
+
+Artifact retrieval requires:
+
+- The artifact identifier, provided as an `ArtifactType` enum instance.
+- The resource specification, provided as a `ResourceSpec` instance.  
+
+**Artifact Engines** orchestrate artifact execution across modalities within a given domain.
+
+They maintain access to all relevant registries, delegate artifact initialization and provide unified execution interfaces for each artifact modality.
+
+Engine initialization requires:
+
+- A `ResourceSpec` instance describing the available validation resources.
+
+Once initialized, an engine exposes functions such as `compute_score()` (one for each modality).
+
+When called with an `ArtifactType` enum and corresponding resources, the engine:
+
+- Retrieves the appropriate artifact from the relevant `ArtifactRegistry`.
+- Injects the provided `ArtifactResources` into the artifact instance.
+- Executes the artifact’s validation workflow and returns the result.
+
+```mermaid
+flowchart LR
+    Caller[Caller] --> Engine[ArtifactEngine]
+    RS[ResourceSpec] --> Engine
+    AT[ArtifactType] --> Engine
+    AR[ArtifactResources] --> Engine
+    Engine --> Registry[ArtifactRegistry]
+    Registry --> Artifact[Artifact]
+    Engine --> Artifact
+    Artifact --> Result((Result))
+```
