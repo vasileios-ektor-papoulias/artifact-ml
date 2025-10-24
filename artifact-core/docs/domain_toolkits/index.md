@@ -12,11 +12,11 @@ Each toolkit implements its own flavour of all core interfaces.
 
 Thereby, toolkits provide their own:
 
-**Resource Spec**: static resource metadata container.
+**ResourceSpec**: schema definitions that describe the structural and semantic properties of validation resources (e.g., feature types and data formats for tabular data).
 
-**Artifact Types**: enumerations used to specify validation artifacts.
+**ArtifactType**: enumeration system that assigns unique identifiers to artifact implementations.
 
-**Artifact Engine**: unified interface for the computation of domain-specific artifacts.
+**ArtifactEngine**: unified interface for executing validation artifacts declaratively.
 
 ```python
 import pandas as pd
