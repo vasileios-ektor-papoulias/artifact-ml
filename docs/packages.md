@@ -8,7 +8,9 @@
 
 ## [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core)
 
-The framework foundation, providing a unified interface for the declarative computation of diverse validation artifacts in ML experiments.  
+The framework foundation.
+
+It provides a unified interface for the declarative computation of diverse validation artifacts in ML experiments.
 
 Its objective is to enable reusable validation workflows by providing the tools to trigger artifacts by name---with zero adapter code.
 
@@ -18,7 +20,7 @@ For more details consult the [package's docs](https://artifact-ml.readthedocs.io
 
 ## [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment)
 
-The experiment orchestration extension to [Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/).  
+Experiment orchestration extension.
 
 It provides the tools to build reusable validation workflows with integrated tracking using popular backend services (e.g. [Mlflow](https://mlflow.org/)).
 
@@ -26,7 +28,7 @@ For more details consult the [package's docs](https://artifact-ml.readthedocs.io
 
 ## [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch)
 
-Pytorch integration for [Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/).
+Pytorch integration.
 
 It offers the tools to build reusable, end-to-end deep learning workflows declaratively.
 
