@@ -14,11 +14,9 @@ For comprehensive usage examples and detailed implementation patterns, refer to 
 
 ## Building a Project with Artifact-Torch
 
-This section provides an **intuitive step-by-step guide** for building your own project using `artifact-torch`. Each step shows you how to configure the framework's interfaces for your specific use case - essentially, all implementations are configurations that tell the framework how to handle your particular ML task.
+This section provides a step-by-step guide for building your own deep learning project using [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch).
 
 ### Suggested Project Organization
-
-The following template summarizes the various entities that need to be implemented when building a deep learning project with `artifact-torch`:
 
 ```
 project_root/
@@ -41,16 +39,16 @@ project_root/
 
 ### Step 1: Application Domain (Domain Toolkit) Selection
 
-The **first step** is identifying your ML task and checking if `artifact-torch` provides a domain toolkit to support it.
+The **first step** is identifying your ML task and checking if [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch) provides a domain toolkit to support it.
 
 Currently, supported domains include:
 
 - **tabular data synthesis** (used as an example in this demo)
 - **binary classification**
 
-For each supported domain, `artifact-torch` provides two **core interfaces** for you to implement:
+For each supported domain, [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch) provides two **core interfaces** for you to implement:
 
-- model,
+- model: your model architecture,
 - artifact validation routine: domain-specific validation workflows periodically injected into the training loop
 
 For **tabular data synthesis**, these interfaces are:
