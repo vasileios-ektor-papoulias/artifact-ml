@@ -8,7 +8,7 @@
 We present the *same* tabular synthesis experiment expressed in two styles:
 
 - an imperative script tightly coupled to a specific model, 
-- a declarative workflow powered by Artifact-ML.
+- a declarative workflow powered by [Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml).
 
 We assume the following are available in the execution context:
 
