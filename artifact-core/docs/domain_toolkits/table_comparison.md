@@ -4,7 +4,7 @@
   <img src="../../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
-The [artifact-core](../index.md) table comparison toolkit offers a comprehensive suite of artifacts for the evaluation of tabular data synthesis experiments.
+The [artifact-core](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core) table comparison toolkit offers a comprehensive suite of artifacts for the evaluation of tabular data synthesis experiments.
 
 ## Usage Sketch
 
