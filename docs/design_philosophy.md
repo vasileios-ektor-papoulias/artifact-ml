@@ -30,4 +30,4 @@ Workflows are then defined in a **dual hierarchy**, enabling the automatic deter
 
 Ultimately, this enables the development of reusable end-to-end  workflows, not just validation components.
 
-This principle is exemplified in `artifact-torch`, where we capture the auxiliary structure underpinning deep learning models by the I/O profile of their forward pass.
+This principle is exemplified by [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch), where we capture the auxiliary structure underpinning deep learning models by the I/O profile of their forward pass.
