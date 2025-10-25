@@ -3,7 +3,7 @@
 > Reusable ML experiment workflows built declaratively.
 
 <p align="center">
-  <img src="docs/assets/artifact_ml_logo.svg" width="500" alt="Artifact-ML Logo">
+  <img src="docs/assets/artifact_ml_logo.svg" width="450" alt="Artifact-ML Logo">
 </p>
 
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue)](https://artifact-ml.readthedocs.io/en/latest/)
@@ -27,7 +27,7 @@ By *declarative*, we refer to building through expressing high-level intent---ra
 For additional context, please refer to our [value proposition](https://artifact-ml.readthedocs.io/en/latest/value_proposition/) and [motivating example](https://artifact-ml.readthedocs.io/en/latest/motivating_example/) docs.
 
 <p align="center">
-  <img src="assets/pdf_comparison.png" width="500" alt="PDF Comparison Artifact">
+  <img src="assets/pdf_comparison.png" width="450" alt="PDF Comparison Artifact">
 </p>
 
 ## 🏗️ Packages
