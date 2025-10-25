@@ -4,28 +4,26 @@
   <img src="../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>
 
-## Validation First: Domain Toolkits
+## Organization by Validation Requirements: Domain Toolkits
 
-Our view is that the **natural common ground between experiments lies in validation, not training**.
+Our view is that the natural common ground between experiments lies in validation.
 
 When deciding which logic should be shareable between models, we start by asking a simple question: *What does the model do?* Any model that can answer this question in the same way—e.g., any model that performs the same task—should be able to share the same experiment workflow.
 
-Training may differ across architectures, but **validation defines the essence of the task itself**.
-
-To formalize this, we identify **model families through validation resource grouping**: we determine the ***minimal resources*** required to execute validation logic and group models by their capacity to emit it. 
+To formalize this, we identify model families through validation resource grouping: we determine the ***minimal resources*** required to execute validation logic and group models by their capacity to emit them. 
 
 This principle gives rise to [**domain toolkits**](domain_toolkits.md): self-contained validation ecosystems aligned with specific application domains (e.g., tabular data synthesis, binary classification).
 
 Each toolkit integrates shared framework infrastructure with domain-specific evaluation primitives, facilitating the development of experiment workflows reusable by all models that *do the same thing*.
 
-## Auxiliary Structure: Type Hierarchies
+## Structural Differentiation within Domains: Type Hierarchies
 
-The key idea is to treat **auxiliary model structure as orthogonal to validation requirements**.  
+We treat auxiliary model structure as orthogonal to validation requirements.  
 
 Within a given validation domain, models are organized into a **type hierarchy** that captures this additional structure.
 
-Workflows are then defined in a **dual hierarchy**, enabling the automatic determination of model–workflow compatibility through type-checking.
+Workflows are then defined in a **dual hierarchy**, enabling the automatic determination of model–workflow compatibility through static type-checking.
 
-Ultimately, this enables the development of reusable end-to-end  workflows, not just validation components.   
+Ultimately, this enables the development of reusable end-to-end  workflows, not just validation components.
 
-This principle is exemplified in `artifact-torch`, where we capture the auxiliary structure underpinning deep learning models by the **I/O profile of their forward pass**.
+This principle is exemplified in `artifact-torch`, where we capture the auxiliary structure underpinning deep learning models by the I/O profile of their forward pass.
