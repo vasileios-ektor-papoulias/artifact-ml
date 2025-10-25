@@ -10,12 +10,12 @@
 
 ## 📋 Overview
 
-This demo showcases the full capabilities of `artifact-torch` through an end-to-end binary classification experiment.
+This demo showcases the full capabilities of [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch) through an end-to-end binary classification experiment.
 
 It demonstrates how to:
 
-1. **Build and train** a Multilayer Perceptron (MLP) for binary classification
-2. **Integrate seamlessly** with `artifact-core`'s validation artifacts and `artifact-experiment`'s validation plans through `artifact-torch`
+1. Build a Multilayer Perceptron (MLP) for binary classification.
+2. Train the model with reusable [Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml) experiment workflows.
 
 ## 🚀 Getting Started
 

@@ -14,8 +14,8 @@ This demo showcases the full capabilities of `artifact-torch` through an end-to-
 
 It demonstrates how to:
 
-1. **Build and train** a Variational Autoencoder (VAE) for tabular data synthesis
-2. **Integrate seamlessly** with `artifact-core`'s validation artifacts and `artifact-experiment`'s validation plans through `artifact-torch`
+1. Build a Variational Autoencoder (VAE) for tabular data synthesis.
+2. Train the model with reusable [Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml) experiment workflows.
 
 ## 🚀 Getting Started
 
