@@ -34,7 +34,6 @@
         "train_loader_callback_period": 1,
         "validation_plan_callback_period": 5,
         "generation_n_records": 1000,
-        "generation_use_mean": false,
         "generation_temperature": 1
     },
     "tracking":{

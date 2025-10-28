@@ -52,7 +52,6 @@ with _config_file.open() as f:
     TRAIN_LOADER_CALLBACK_PERIOD: int = _validation_config["train_loader_callback_period"]
     ARTIFACT_VALIDATION_PERIOD: int = _validation_config["validation_plan_callback_period"]
     GENERATION_N_RECORDS: int = _validation_config["generation_n_records"]
-    GENERATION_USE_MEAN: bool = _validation_config["generation_use_mean"]
     GENERATION_TEMPERATURE: float = _validation_config["generation_temperature"]
 
     # Tracking Config

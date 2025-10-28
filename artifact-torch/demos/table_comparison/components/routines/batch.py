@@ -6,14 +6,14 @@ from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.base.model.base import Model
 from artifact_torch.libs.components.callbacks.batch.loss import BatchLossCallback
 
+from demos.table_comparison.components.routines.protocols import DemoModelInput, DemoModelOutput
 from demos.table_comparison.config.constants import BATCH_LOSS_PERIOD
-from demos.table_comparison.model.io import TabularVAEInput, TabularVAEOutput
 
 
-class DemoBatchRoutine(BatchRoutine[TabularVAEInput, TabularVAEOutput, Model]):
+class DemoBatchRoutine(BatchRoutine[DemoModelInput, DemoModelOutput, Model]):
     @staticmethod
     def _get_batch_callbacks(
         tracking_client: Optional[TrackingClient],
-    ) -> List[BatchCallback[TabularVAEInput, TabularVAEOutput, Model, Any]]:
+    ) -> List[BatchCallback[DemoModelInput, DemoModelOutput, Model, Any]]:
         _ = tracking_client
         return [BatchLossCallback(period=BATCH_LOSS_PERIOD, tracking_client=None)]

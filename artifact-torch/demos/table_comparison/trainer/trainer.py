@@ -1,4 +1,4 @@
-from typing import Any, Optional
+from typing import Any, Generic, Optional, TypeVar
 
 import torch
 from artifact_experiment.tracking import TrackingClient
@@ -8,38 +8,40 @@ from artifact_torch.base.components.model_tracking.tracker import (
     ModelTracker,
     ModelTrackingCriterion,
 )
-from artifact_torch.base.components.routines.batch import BatchRoutine
-from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
-from artifact_torch.base.data.data_loader import DataLoader
-from artifact_torch.base.trainer.custom import CustomTrainer
+from artifact_torch.base.trainer.trainer import Trainer
 from artifact_torch.libs.components.callbacks.checkpoint.standard import StandardCheckpointCallback
 from artifact_torch.libs.components.early_stopping.epoch_bound import EpochBoundStopper
 from artifact_torch.table_comparison.model import TableSynthesizer
 from torch import optim
 
-from demos.table_comparison.components.routines.batch import DemoBatchRoutine
-from demos.table_comparison.components.routines.loader import DemoLoaderRoutine
+from demos.table_comparison.components.routines.protocols import (
+    DemoModelInput,
+    DemoModelOutput,
+)
 from demos.table_comparison.config.constants import (
     CHECKPOINT_PERIOD,
     DEVICE,
     LEARNING_RATE,
     MAX_N_EPOCHS,
 )
-from demos.table_comparison.model.io import TabularVAEInput, TabularVAEOutput
+
+ModelInputT = TypeVar("ModelInputT", bound=DemoModelInput)
+ModelOutputT = TypeVar("ModelOutputT", bound=DemoModelOutput)
 
 
-class TabularVAETrainer(
-    CustomTrainer[
-        TableSynthesizer[TabularVAEInput, TabularVAEOutput, Any],
-        TabularVAEInput,
-        TabularVAEOutput,
+class DemoTrainer(
+    Trainer[
+        TableSynthesizer[ModelInputT, ModelOutputT, Any],
+        ModelInputT,
+        ModelOutputT,
         ModelTrackingCriterion,
         StopperUpdateData,
-    ]
+    ],
+    Generic[ModelInputT, ModelOutputT],
 ):
     @staticmethod
     def _get_optimizer(
-        model: TableSynthesizer[TabularVAEInput, TabularVAEOutput, Any],
+        model: TableSynthesizer[ModelInputT, ModelOutputT, Any],
     ) -> optim.Optimizer:
         return optim.Adam(params=model.parameters(), lr=LEARNING_RATE)
 
@@ -75,22 +77,3 @@ class TabularVAETrainer(
             return StandardCheckpointCallback(
                 period=CHECKPOINT_PERIOD, tracking_client=tracking_client
             )
-
-    @staticmethod
-    def _get_batch_routine(
-        tracking_client: Optional[TrackingClient],
-    ) -> Optional[
-        BatchRoutine[
-            TabularVAEInput,
-            TabularVAEOutput,
-            TableSynthesizer[TabularVAEInput, TabularVAEOutput, Any],
-        ]
-    ]:
-        return DemoBatchRoutine.build(tracking_client=tracking_client)
-
-    @staticmethod
-    def _get_train_loader_routine(
-        data_loader: DataLoader[TabularVAEInput],
-        tracking_client: Optional[TrackingClient],
-    ) -> Optional[DataLoaderRoutine[TabularVAEInput, TabularVAEOutput]]:
-        return DemoLoaderRoutine.build(data_loader=data_loader, tracking_client=tracking_client)

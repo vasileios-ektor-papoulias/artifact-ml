@@ -1,5 +1,6 @@
 from typing import List
 
+from artifact_experiment.base.data_split import DataSplit
 from artifact_torch.base.components.callbacks.data_loader import (
     DataLoaderArrayCallback,
     DataLoaderArrayCollectionCallback,
@@ -9,39 +10,50 @@ from artifact_torch.base.components.callbacks.data_loader import (
     DataLoaderScoreCollectionCallback,
 )
 from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
-from artifact_torch.libs.components.callbacks.data_loader.loss import TrainLossCallback
+from artifact_torch.libs.components.callbacks.data_loader.loss import LoaderLossCallback
 
+from demos.table_comparison.components.routines.protocols import DemoModelInput, DemoModelOutput
 from demos.table_comparison.config.constants import TRAIN_LOADER_CALLBACK_PERIOD
-from demos.table_comparison.model.io import TabularVAEInput, TabularVAEOutput
 
 
-class DemoLoaderRoutine(DataLoaderRoutine[TabularVAEInput, TabularVAEOutput]):
+class DemoLoaderRoutine(DataLoaderRoutine[DemoModelInput, DemoModelOutput]):
     @staticmethod
-    def _get_score_callbacks() -> List[DataLoaderScoreCallback[TabularVAEInput, TabularVAEOutput]]:
-        return [TrainLossCallback(period=TRAIN_LOADER_CALLBACK_PERIOD)]
+    def _get_score_callbacks(
+        data_split: DataSplit,
+    ) -> List[DataLoaderScoreCallback[DemoModelInput, DemoModelOutput]]:
+        return [LoaderLossCallback(period=TRAIN_LOADER_CALLBACK_PERIOD, data_split=data_split)]
 
     @staticmethod
-    def _get_array_callbacks() -> List[DataLoaderArrayCallback[TabularVAEInput, TabularVAEOutput]]:
+    def _get_array_callbacks(
+        data_split: DataSplit,
+    ) -> List[DataLoaderArrayCallback[DemoModelInput, DemoModelOutput]]:
+        _ = data_split
         return []
 
     @staticmethod
-    def _get_plot_callbacks() -> List[DataLoaderPlotCallback[TabularVAEInput, TabularVAEOutput]]:
+    def _get_plot_callbacks(
+        data_split: DataSplit,
+    ) -> List[DataLoaderPlotCallback[DemoModelInput, DemoModelOutput]]:
+        _ = data_split
         return []
 
     @staticmethod
-    def _get_score_collection_callbacks() -> List[
-        DataLoaderScoreCollectionCallback[TabularVAEInput, TabularVAEOutput]
-    ]:
+    def _get_score_collection_callbacks(
+        data_split: DataSplit,
+    ) -> List[DataLoaderScoreCollectionCallback[DemoModelInput, DemoModelOutput]]:
+        _ = data_split
         return []
 
     @staticmethod
-    def _get_array_collection_callbacks() -> List[
-        DataLoaderArrayCollectionCallback[TabularVAEInput, TabularVAEOutput]
-    ]:
+    def _get_array_collection_callbacks(
+        data_split: DataSplit,
+    ) -> List[DataLoaderArrayCollectionCallback[DemoModelInput, DemoModelOutput]]:
+        _ = data_split
         return []
 
     @staticmethod
-    def _get_plot_collection_callbacks() -> List[
-        DataLoaderPlotCollectionCallback[TabularVAEInput, TabularVAEOutput]
-    ]:
+    def _get_plot_collection_callbacks(
+        data_split: DataSplit,
+    ) -> List[DataLoaderPlotCollectionCallback[DemoModelInput, DemoModelOutput]]:
+        _ = data_split
         return []

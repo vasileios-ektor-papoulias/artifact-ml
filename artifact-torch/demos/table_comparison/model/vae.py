@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple, Type, TypeVar
+from typing import Dict, List, Tuple, Type, TypeVar
 
 import torch
 import torch.nn as nn
@@ -100,7 +100,7 @@ class VariationalAutoencoder(nn.Module):
 
     def forward(
         self, t_features: torch.Tensor
-    ) -> Tuple[List[torch.Tensor], torch.Tensor, torch.Tensor, Optional[torch.Tensor]]:
+    ) -> Tuple[List[torch.Tensor], torch.Tensor, torch.Tensor, torch.Tensor]:
         t_embedded = self._embedder(t_features)
         t_input = self._embedding_bridge(t_embedded)
         t_hidden = self._encoder(t_input)

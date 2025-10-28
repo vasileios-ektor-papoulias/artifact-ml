@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Mapping, Optional
 
 from artifact_core.table_comparison import (
     TableComparisonArrayCollectionType,
@@ -9,17 +9,19 @@ from artifact_core.table_comparison import (
     TableComparisonScoreType,
     TabularDataSpecProtocol,
 )
+from artifact_experiment.base.data_split import DataSplit
 from artifact_experiment.table_comparison import TableComparisonPlan
 from artifact_experiment.tracking import TrackingClient
 from artifact_torch.table_comparison import TableComparisonRoutine
 
+from demos.table_comparison.components.routines.protocols import (
+    DemoGenerationParams,
+)
 from demos.table_comparison.config.constants import (
     ARTIFACT_VALIDATION_PERIOD,
     GENERATION_N_RECORDS,
     GENERATION_TEMPERATURE,
-    GENERATION_USE_MEAN,
 )
-from demos.table_comparison.model.synthesizer import TabularVAEGenerationParams
 
 
 class DemoTableComparisonPlan(TableComparisonPlan):
@@ -67,26 +69,27 @@ class DemoTableComparisonPlan(TableComparisonPlan):
         ]
 
 
-class DemoTableComparisonRoutine(TableComparisonRoutine[TabularVAEGenerationParams]):
+class DemoTableComparisonRoutine(TableComparisonRoutine[DemoGenerationParams]):
     @classmethod
-    def _get_period(cls) -> int:
-        return ARTIFACT_VALIDATION_PERIOD
+    def _get_periods(cls) -> Mapping[DataSplit, int]:
+        return {DataSplit.TRAIN: ARTIFACT_VALIDATION_PERIOD}
 
     @classmethod
-    def _get_generation_params(cls) -> TabularVAEGenerationParams:
-        return TabularVAEGenerationParams(
-            n_records=GENERATION_N_RECORDS,
-            use_mean=GENERATION_USE_MEAN,
-            temperature=GENERATION_TEMPERATURE,
-            sample=True,
-        )
-
-    @classmethod
-    def _get_validation_plan(
+    def _get_validation_plans(
         cls,
         artifact_resource_spec: TabularDataSpecProtocol,
         tracking_client: Optional[TrackingClient],
-    ) -> TableComparisonPlan:
-        return DemoTableComparisonPlan.build(
-            resource_spec=artifact_resource_spec, tracking_client=tracking_client
+    ) -> Mapping[DataSplit, TableComparisonPlan]:
+        return {
+            DataSplit.TRAIN: DemoTableComparisonPlan.build(
+                resource_spec=artifact_resource_spec,
+                data_split=DataSplit.TRAIN,
+                tracking_client=tracking_client,
+            )
+        }
+
+    @classmethod
+    def _get_generation_params(cls) -> DemoGenerationParams:
+        return DemoGenerationParams(
+            n_records=GENERATION_N_RECORDS, temperature=GENERATION_TEMPERATURE
         )
