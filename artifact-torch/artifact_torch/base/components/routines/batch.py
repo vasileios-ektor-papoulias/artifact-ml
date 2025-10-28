@@ -62,7 +62,5 @@ class BatchRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr, ModelTContr
         handler = BatchCallbackHandler[ModelInputTContr, ModelOutputTContr, ModelTContr, Any](
             ls_callbacks=ls_callbacks,
         )
-        subroutine = cls(
-            handler=handler,
-        )
-        return subroutine
+        routine = cls(handler=handler)
+        return routine
