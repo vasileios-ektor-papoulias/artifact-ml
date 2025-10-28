@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar
+from typing import Any, Dict, Generic, Optional, Sequence, Type, TypeVar
 
 import pandas as pd
 import torch
@@ -21,7 +21,7 @@ from artifact_torch.base.components.model_tracking.tracker import (
     ModelTrackingCriterion,
 )
 from artifact_torch.base.components.routines.artifact import (
-    ArtifactValidationRoutine,
+    ArtifactRoutine,
 )
 from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
@@ -37,10 +37,10 @@ ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
 ModelT = TypeVar("ModelT", bound=Model[Any, Any])
 ModelTrackingCriterionT = TypeVar("ModelTrackingCriterionT", bound=ModelTrackingCriterion)
 StopperUpdateDataT = TypeVar("StopperUpdateDataT", bound=StopperUpdateData)
-CustomTrainerT = TypeVar("CustomTrainerT", bound="CustomTrainer")
+TrainerT = TypeVar("TrainerT", bound="Trainer")
 
 
-class CustomTrainer(
+class Trainer(
     TrainerBase[ModelT, ModelInputT, ModelOutputT],
     Generic[
         ModelT,
@@ -50,53 +50,64 @@ class CustomTrainer(
         StopperUpdateDataT,
     ],
 ):
-    _train_loss_key = "TRAIN_LOSS"
-    _val_loss_key = "VAL_LOSS"
-    _maintain_batch_scores = False
+    _train_loss_key = "loss_train"
+    _val_loss_key = "loss_val"
+    _cache_batch_artifacts = False
 
     def __init__(
         self,
-        training_state: TrainingState,
+        training_state: TrainingState[ModelT],
         train_loader: DataLoader[ModelInputT],
         device: torch.device,
-        evaluation_flow: EvaluationFlow[ModelT, ModelInputT, ModelOutputT],
         early_stopper: EarlyStopper[StopperUpdateDataT],
         model_tracker: Optional[ModelTracker[ModelTrackingCriterionT]],
         checkpoint_callback: Optional[CheckpointCallback],
         batch_routine: Optional[BatchRoutine[ModelInputT, ModelOutputT, ModelT]],
+        evaluation_flow: EvaluationFlow[ModelT, ModelInputT, ModelOutputT],
     ):
         super().__init__(training_state=training_state, train_loader=train_loader, device=device)
-        self._evaluation_flow = evaluation_flow
-        self._model_tracker = model_tracker
         self._early_stopper = early_stopper
+        self._model_tracker = model_tracker
         self._checkpoint_callback = checkpoint_callback
         self._batch_routine = batch_routine
+        self._evaluation_flow = evaluation_flow
         self._batch_cache = StandardCache[Any]()
         self._epoch_score_cache = ScoreCache()
 
     @classmethod
     def build(
-        cls: Type[CustomTrainerT],
+        cls: Type[TrainerT],
         model: ModelT,
         train_loader: DataLoader[ModelInputT],
-        artifact_routine: Optional[ArtifactValidationRoutine[ModelT, Any, Any, Any, Any]] = None,
-        val_loader_routine: Optional[DataLoaderRoutine[ModelInputT, ModelOutputT]] = None,
+        batch_routine: Optional[BatchRoutine[ModelInputT, ModelOutputT, ModelT]] = None,
+        loader_routines: Optional[Sequence[DataLoaderRoutine[ModelInputT, ModelOutputT]]] = None,
+        artifact_routine: Optional[ArtifactRoutine[ModelT, Any, Any, Any, Any]] = None,
         tracking_client: Optional[TrackingClient] = None,
-    ) -> CustomTrainerT:
-        batch_routine = cls._get_batch_routine(tracking_client=tracking_client)
-        train_loader_routine = cls._get_train_loader_routine(
-            data_loader=train_loader, tracking_client=tracking_client
-        )
-        ls_loader_routines = [
-            routine for routine in [train_loader_routine, val_loader_routine] if routine is not None
-        ]
-        trainer = cls._build(
+    ) -> TrainerT:
+        optimizer = cls._get_optimizer(model=model)
+        scheduler = cls._get_scheduler(optimizer=optimizer)
+        training_state = TrainingState[ModelT](
             model=model,
-            train_loader=train_loader,
+            optimizer=optimizer,
+            scheduler=scheduler,
+        )
+        device = cls._get_device()
+        evaluation_flow = EvaluationFlow(
             artifact_routine=artifact_routine,
+            loader_routines=loader_routines,
+        )
+        early_stopper = cls._get_early_stopper()
+        model_tracker = cls._get_model_tracker()
+        checkpoint_callback = cls._get_checkpoint_callback(tracking_client=tracking_client)
+        trainer = cls(
+            training_state=training_state,
+            train_loader=train_loader,
+            device=device,
+            evaluation_flow=evaluation_flow,
+            model_tracker=model_tracker,
+            early_stopper=early_stopper,
+            checkpoint_callback=checkpoint_callback,
             batch_routine=batch_routine,
-            ls_loader_routines=ls_loader_routines,
-            tracking_client=tracking_client,
         )
         return trainer
 
@@ -151,24 +162,6 @@ class CustomTrainer(
         tracking_client: Optional[TrackingClient],
     ) -> Optional[CheckpointCallback]: ...
 
-    @staticmethod
-    @abstractmethod
-    def _get_batch_routine(
-        tracking_client: Optional[TrackingClient],
-    ) -> Optional[BatchRoutine[ModelInputT, ModelOutputT, ModelT]]: ...
-
-    @staticmethod
-    @abstractmethod
-    def _get_train_loader_routine(
-        data_loader: DataLoader[ModelInputT],
-        tracking_client: Optional[TrackingClient],
-    ) -> Optional[
-        DataLoaderRoutine[
-            ModelInputT,
-            ModelOutputT,
-        ]
-    ]: ...
-
     def _should_stop(self) -> bool:
         return self._early_stopper.stopped
 
@@ -204,7 +197,8 @@ class CustomTrainer(
                 model=self.model,
                 batch_idx=batch_idx,
             )
-            self._batch_cache.append(items=self._batch_routine.cache)
+            if self._cache_batch_artifacts:
+                self._batch_cache.append(items=self._batch_routine.cache)
 
     def _execute_evaluation_flow(self):
         self._evaluation_flow.clear_cache()
@@ -240,40 +234,3 @@ class CustomTrainer(
             n_epochs_elapsed=self.n_epochs_elapsed, train_loss=train_loss, val_loss=val_loss
         )
         return desc
-
-    @classmethod
-    def _build(
-        cls: Type[CustomTrainerT],
-        model: ModelT,
-        train_loader: DataLoader[ModelInputT],
-        batch_routine: Optional[BatchRoutine[ModelInputT, ModelOutputT, ModelT]] = None,
-        artifact_routine: Optional[ArtifactValidationRoutine[ModelT, Any, Any, Any, Any]] = None,
-        ls_loader_routines: Optional[List[DataLoaderRoutine[ModelInputT, ModelOutputT]]] = None,
-        tracking_client: Optional[TrackingClient] = None,
-    ) -> CustomTrainerT:
-        optimizer = cls._get_optimizer(model=model)
-        scheduler = cls._get_scheduler(optimizer=optimizer)
-        training_state = TrainingState[ModelT](
-            model=model,
-            optimizer=optimizer,
-            scheduler=scheduler,
-        )
-        device = cls._get_device()
-        evaluation_flow = EvaluationFlow(
-            artifact_routine=artifact_routine,
-            ls_loader_routines=ls_loader_routines,
-        )
-        early_stopper = cls._get_early_stopper()
-        model_tracker = cls._get_model_tracker()
-        checkpoint_callback = cls._get_checkpoint_callback(tracking_client=tracking_client)
-        trainer = cls(
-            training_state=training_state,
-            train_loader=train_loader,
-            device=device,
-            evaluation_flow=evaluation_flow,
-            model_tracker=model_tracker,
-            early_stopper=early_stopper,
-            checkpoint_callback=checkpoint_callback,
-            batch_routine=batch_routine,
-        )
-        return trainer
