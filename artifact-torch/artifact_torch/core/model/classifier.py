@@ -11,9 +11,13 @@ from artifact_torch.base.model.io import (
 
 ModelInputTContr = TypeVar("ModelInputTContr", bound="ModelInput", contravariant=True)
 ModelOutputTCov = TypeVar("ModelOutputTCov", bound="ModelOutput", covariant=True)
-ClassificationParamsT = TypeVar("ClassificationParamsT", bound="ClassificationParams")
+ClassificationParamsTContr = TypeVar(
+    "ClassificationParamsTContr", bound="ClassificationParams", contravariant=True
+)
 ClassificationDataT = TypeVar("ClassificationDataT")
-ClassificationResultsT = TypeVar("ClassificationResultsT", bound=ClassificationResults)
+ClassificationResultsTCov = TypeVar(
+    "ClassificationResultsTCov", bound=ClassificationResults, covariant=True
+)
 
 
 class ClassificationParams(TypedDict):
@@ -25,9 +29,9 @@ class Classifier(
     Generic[
         ModelInputTContr,
         ModelOutputTCov,
-        ClassificationParamsT,
+        ClassificationParamsTContr,
         ClassificationDataT,
-        ClassificationResultsT,
+        ClassificationResultsTCov,
     ],
 ):
     @abstractmethod
@@ -35,5 +39,5 @@ class Classifier(
 
     @abstractmethod
     def classify(
-        self, data: ClassificationDataT, params: ClassificationParamsT
-    ) -> ClassificationResultsT: ...
+        self, data: ClassificationDataT, params: ClassificationParamsTContr
+    ) -> ClassificationResultsTCov: ...
