@@ -2,7 +2,7 @@
 name = "artifact-torch"
 packages = [{ include = "artifact-torch" }]
 version = "0.1.0"
-description = "PyTorch integration for the Artifact framework."
+description = "PyTorch integration for the Artifact-ML."
 authors = [
     {name = "Vasileios Ektor Papoulias",email = "hector.papoulias@gmail.com"}
 ]
