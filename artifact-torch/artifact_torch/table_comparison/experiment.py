@@ -20,7 +20,7 @@ from artifact_torch.table_comparison.routine import (
 
 ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
 ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
-TableSynthesizerT = TypeVar("TableSynthesizerT", bound=TableSynthesizer)
+TableSynthesizerT = TypeVar("TableSynthesizerT", bound=TableSynthesizer[Any, Any, Any])
 GenerationParamsT = TypeVar("GenerationParamsT", bound=GenerationParams)
 GenericTabularSynthesisExperimentT = TypeVar(
     "GenericTabularSynthesisExperimentT", bound="GenericTabularSynthesisExperiment"
