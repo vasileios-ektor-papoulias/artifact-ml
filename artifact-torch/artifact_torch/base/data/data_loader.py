@@ -7,17 +7,20 @@ from artifact_torch.base.data.dataset import Dataset, IterableDataset
 from artifact_torch.base.data.device_manager import DeviceManager
 from artifact_torch.base.model.io import ModelInput
 
-ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
+ModelInputTCov = TypeVar("ModelInputTCov", bound=ModelInput, covariant=True)
 
 
-class DataLoader(NativeDataLoader, Generic[ModelInputT]):
+class DataLoader(NativeDataLoader, Generic[ModelInputTCov]):
     def __init__(
-        self, dataset: Union[Dataset[ModelInputT], IterableDataset[ModelInputT]], *args, **kwargs
+        self,
+        dataset: Union[Dataset[ModelInputTCov], IterableDataset[ModelInputTCov]],
+        *args,
+        **kwargs,
     ):
         super().__init__(dataset, *args, **kwargs)
         self._device = torch.device("cpu")
 
-    def __iter__(self) -> Iterator[ModelInputT]:
+    def __iter__(self) -> Iterator[ModelInputTCov]:  # type: ignore
         for batch in super().__iter__():
             batch = DeviceManager.move_to_device(data=batch, device=self._device)
             yield batch
