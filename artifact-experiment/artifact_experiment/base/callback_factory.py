@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Dict, Generic, Type, TypeVar, Union
+from typing import Dict, Generic, Optional, Type, TypeVar, Union
 
 from artifact_core.base.artifact_dependencies import (
     ArtifactResources,
@@ -18,6 +18,7 @@ from artifact_experiment.base.callbacks.artifact import (
     ArtifactScoreCallback,
     ArtifactScoreCollectionCallback,
 )
+from artifact_experiment.base.data_split import DataSplit, DataSplitSuffixAppender
 
 ArtifactTypeT = TypeVar("ArtifactTypeT", bound=ArtifactType)
 ScoreTypeT = TypeVar("ScoreTypeT", bound=ArtifactType)
@@ -87,11 +88,14 @@ class ArtifactCallbackFactory(
 
     @classmethod
     def build_score_callback(
-        cls, score_type: Union[ScoreTypeT, str], resource_spec: ResourceSpecProtocolT
+        cls,
+        score_type: Union[ScoreTypeT, str],
+        resource_spec: ResourceSpecProtocolT,
+        data_split: Optional[DataSplit] = None,
     ) -> ArtifactScoreCallback[ArtifactResourcesT, ResourceSpecProtocolT]:
         registry = cls._get_score_registry()
         artifact = registry.get(artifact_type=score_type, resource_spec=resource_spec)
-        key = cls._get_key(artifact_type=score_type)
+        key = cls._get_key(artifact_type=score_type, data_split=data_split)
         callback = ArtifactScoreCallback[ArtifactResourcesT, ResourceSpecProtocolT](
             key=key, artifact=artifact
         )
@@ -99,11 +103,14 @@ class ArtifactCallbackFactory(
 
     @classmethod
     def build_array_callback(
-        cls, array_type: Union[ArrayTypeT, str], resource_spec: ResourceSpecProtocolT
+        cls,
+        array_type: Union[ArrayTypeT, str],
+        resource_spec: ResourceSpecProtocolT,
+        data_split: Optional[DataSplit] = None,
     ) -> ArtifactArrayCallback[ArtifactResourcesT, ResourceSpecProtocolT]:
         registry = cls._get_array_registry()
         artifact = registry.get(artifact_type=array_type, resource_spec=resource_spec)
-        key = cls._get_key(artifact_type=array_type)
+        key = cls._get_key(artifact_type=array_type, data_split=data_split)
         callback = ArtifactArrayCallback[ArtifactResourcesT, ResourceSpecProtocolT](
             key=key, artifact=artifact
         )
@@ -111,11 +118,14 @@ class ArtifactCallbackFactory(
 
     @classmethod
     def build_plot_callback(
-        cls, plot_type: Union[PlotTypeT, str], resource_spec: ResourceSpecProtocolT
+        cls,
+        plot_type: Union[PlotTypeT, str],
+        resource_spec: ResourceSpecProtocolT,
+        data_split: Optional[DataSplit] = None,
     ) -> ArtifactPlotCallback[ArtifactResourcesT, ResourceSpecProtocolT]:
         registry = cls._get_plot_registry()
         artifact = registry.get(artifact_type=plot_type, resource_spec=resource_spec)
-        key = cls._get_key(artifact_type=plot_type)
+        key = cls._get_key(artifact_type=plot_type, data_split=data_split)
         callback = ArtifactPlotCallback[ArtifactResourcesT, ResourceSpecProtocolT](
             key=key, artifact=artifact
         )
@@ -126,10 +136,11 @@ class ArtifactCallbackFactory(
         cls,
         score_collection_type: Union[ScoreCollectionTypeT, str],
         resource_spec: ResourceSpecProtocolT,
+        data_split: Optional[DataSplit] = None,
     ) -> ArtifactScoreCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT]:
         registry = cls._get_score_collection_registry()
         artifact = registry.get(artifact_type=score_collection_type, resource_spec=resource_spec)
-        key = cls._get_key(artifact_type=score_collection_type)
+        key = cls._get_key(artifact_type=score_collection_type, data_split=data_split)
         callback = ArtifactScoreCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT](
             key=key, artifact=artifact
         )
@@ -140,10 +151,11 @@ class ArtifactCallbackFactory(
         cls,
         array_collection_type: Union[ArrayCollectionTypeT, str],
         resource_spec: ResourceSpecProtocolT,
+        data_split: Optional[DataSplit] = None,
     ) -> ArtifactArrayCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT]:
         registry = cls._get_array_collection_registry()
         artifact = registry.get(artifact_type=array_collection_type, resource_spec=resource_spec)
-        key = cls._get_key(artifact_type=array_collection_type)
+        key = cls._get_key(artifact_type=array_collection_type, data_split=data_split)
         callback = ArtifactArrayCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT](
             key=key, artifact=artifact
         )
@@ -154,19 +166,24 @@ class ArtifactCallbackFactory(
         cls,
         plot_collection_type: Union[PlotCollectionTypeT, str],
         resource_spec: ResourceSpecProtocolT,
+        data_split: Optional[DataSplit] = None,
     ) -> ArtifactPlotCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT]:
         registry = cls._get_plot_collection_registry()
         artifact = registry.get(artifact_type=plot_collection_type, resource_spec=resource_spec)
-        key = cls._get_key(artifact_type=plot_collection_type)
+        key = cls._get_key(artifact_type=plot_collection_type, data_split=data_split)
         callback = ArtifactPlotCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT](
             key=key, artifact=artifact
         )
         return callback
 
     @staticmethod
-    def _get_key(artifact_type: Union[ArtifactTypeT, str]) -> str:
+    def _get_key(
+        artifact_type: Union[ArtifactTypeT, str], data_split: Optional[DataSplit] = None
+    ) -> str:
         if isinstance(artifact_type, str):
             key = artifact_type
         else:
             key = artifact_type.name
+        if data_split is not None:
+            key = DataSplitSuffixAppender.append_suffix(name=key, data_split=data_split)
         return key
