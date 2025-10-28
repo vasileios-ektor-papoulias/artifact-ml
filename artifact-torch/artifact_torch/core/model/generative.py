@@ -1,6 +1,5 @@
 from abc import abstractmethod
-from dataclasses import dataclass
-from typing import Generic, TypeVar
+from typing import Generic, TypedDict, TypeVar
 
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import (
@@ -10,21 +9,22 @@ from artifact_torch.base.model.io import (
 
 ModelInputTContr = TypeVar("ModelInputTContr", bound="ModelInput", contravariant=True)
 ModelOutputTCov = TypeVar("ModelOutputTCov", bound="ModelOutput", covariant=True)
-GenerationParamsT = TypeVar("GenerationParamsT", bound="GenerationParams")
-GenerationT = TypeVar("GenerationT")
+GenerationParamsTContr = TypeVar(
+    "GenerationParamsTContr", bound="GenerationParams", contravariant=True
+)
+GenerationTCov = TypeVar("GenerationTCov", covariant=True)
 
 
-@dataclass
-class GenerationParams:
+class GenerationParams(TypedDict):
     pass
 
 
 class GenerativeModel(
     Model[ModelInputTContr, ModelOutputTCov],
-    Generic[ModelInputTContr, ModelOutputTCov, GenerationParamsT, GenerationT],
+    Generic[ModelInputTContr, ModelOutputTCov, GenerationParamsTContr, GenerationTCov],
 ):
     @abstractmethod
     def forward(self, model_input: ModelInputTContr, *args, **kwargs) -> ModelOutputTCov: ...
 
     @abstractmethod
-    def generate(self, params: GenerationParamsT) -> GenerationT: ...
+    def generate(self, params: GenerationParamsTContr) -> GenerationTCov: ...

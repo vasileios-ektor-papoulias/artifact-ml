@@ -1,6 +1,5 @@
 from abc import abstractmethod
-from dataclasses import dataclass
-from typing import Generic, TypeVar
+from typing import Generic, TypedDict, TypeVar
 
 from artifact_core.libs.resources.classification.classification_results import ClassificationResults
 
@@ -17,8 +16,7 @@ ClassificationDataT = TypeVar("ClassificationDataT")
 ClassificationResultsT = TypeVar("ClassificationResultsT", bound=ClassificationResults)
 
 
-@dataclass
-class ClassificationParams:
+class ClassificationParams(TypedDict):
     pass
 
 
