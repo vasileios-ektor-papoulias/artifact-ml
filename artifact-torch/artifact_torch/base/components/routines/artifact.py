@@ -16,8 +16,8 @@ from artifact_torch.base.model.base import Model
 from artifact_torch.libs.utils.key_selector import KeySelector
 
 ModelTContr = TypeVar("ModelTContr", bound=Model, contravariant=True)
-ArtifactRoutineHyperparamsT = TypeVar(
-    "ArtifactRoutineHyperparamsT", bound="ArtifactRoutineHyperparams"
+ArtifactRoutineHyperparamsTCov = TypeVar(
+    "ArtifactRoutineHyperparamsTCov", bound="ArtifactRoutineHyperparams", covariant=True
 )
 ArtifactRoutineDataT = TypeVar("ArtifactRoutineDataT", bound="ArtifactRoutineData")
 ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound=ArtifactResources)
@@ -37,7 +37,7 @@ class ArtifactRoutine(
     ABC,
     Generic[
         ModelTContr,
-        ArtifactRoutineHyperparamsT,
+        ArtifactRoutineHyperparamsTCov,
         ArtifactRoutineDataT,
         ArtifactResourcesT,
         ResourceSpecProtocolT,
@@ -51,7 +51,7 @@ class ArtifactRoutine(
             DataSplit,
             ValidationPlan[Any, Any, Any, Any, Any, Any, ArtifactResourcesT, ResourceSpecProtocolT],
         ],
-        hyperparams: ArtifactRoutineHyperparamsT,
+        hyperparams: ArtifactRoutineHyperparamsTCov,
         tracking_client: Optional[TrackingClient] = None,
     ):
         self._periods = periods
@@ -151,7 +151,7 @@ class ArtifactRoutine(
 
     @classmethod
     @abstractmethod
-    def _get_hyperparams(cls) -> ArtifactRoutineHyperparamsT: ...
+    def _get_hyperparams(cls) -> ArtifactRoutineHyperparamsTCov: ...
 
     @classmethod
     @abstractmethod
@@ -163,13 +163,10 @@ class ArtifactRoutine(
         tracking_client: TrackingClient,
     ): ...
 
-    @classmethod
     @abstractmethod
     def _generate_artifact_resources(
-        cls,
+        self,
         model: ModelTContr,
-        hyperparams: ArtifactRoutineHyperparamsT,
-        data: Mapping[DataSplit, ArtifactRoutineDataT],
     ) -> Mapping[DataSplit, ArtifactResourcesT]: ...
 
     def clear_cache(self):
@@ -178,9 +175,7 @@ class ArtifactRoutine(
 
     def execute(self, model: ModelTContr, n_epochs_elapsed: int):
         splits = self._get_active_splits(n_epochs_elapsed=n_epochs_elapsed)
-        artifact_resources_by_split = self._generate_artifact_resources(
-            model=model, hyperparams=self._hyperparams, data=self._data
-        )
+        artifact_resources_by_split = self._generate_artifact_resources(model=model)
         for data_split in splits:
             validation_plan = self._validation_plans[data_split]
             artifact_resources = artifact_resources_by_split[data_split]
