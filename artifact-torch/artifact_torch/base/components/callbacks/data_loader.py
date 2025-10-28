@@ -18,6 +18,7 @@ from artifact_experiment.base.callbacks.tracking import (
     ScoreHandlerExportMixin,
     TrackingCallbackHandler,
 )
+from artifact_experiment.base.data_split import DataSplit, DataSplitSuffixAppender
 from artifact_experiment.base.tracking.client import TrackingClient
 from matplotlib.figure import Figure
 from numpy import ndarray
@@ -29,10 +30,7 @@ from artifact_torch.base.components.callbacks.periodic import (
 )
 from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.model.base import Model
-from artifact_torch.base.model.io import (
-    ModelInput,
-    ModelOutput,
-)
+from artifact_torch.base.model.io import ModelInput, ModelOutput
 
 CacheDataT = TypeVar("CacheDataT")
 BatchResultT = TypeVar("BatchResultT")
@@ -61,14 +59,14 @@ class DataLoaderCallback(
     _verbose = True
     _progressbar_message = "Processing Data Loader"
 
-    def __init__(self, period: int):
-        key = self._get_key()
+    def __init__(self, period: int, data_split: DataSplit):
+        key = self._get_key(data_split=data_split)
         super().__init__(key=key, period=period)
         self._ls_batch_results = []
 
     @classmethod
     @abstractmethod
-    def _get_key(cls) -> str: ...
+    def _get_name(cls) -> str: ...
 
     @staticmethod
     @abstractmethod
@@ -92,6 +90,14 @@ class DataLoaderCallback(
         self._ls_batch_results.clear()
         self._cache[self._key] = result
         return result
+
+    def process_batch(
+        self,
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
+    ):
+        batch_result = self._compute_on_batch(model_input=model_input, model_output=model_output)
+        self._ls_batch_results.append(batch_result)
 
     def _compute(
         self,
@@ -118,13 +124,11 @@ class DataLoaderCallback(
                 model_output = model(model_input)
                 self.process_batch(model_input=model_input, model_output=model_output)
 
-    def process_batch(
-        self,
-        model_input: ModelInputTContr,
-        model_output: ModelOutputTContr,
-    ):
-        batch_result = self._compute_on_batch(model_input=model_input, model_output=model_output)
-        self._ls_batch_results.append(batch_result)
+    @classmethod
+    def _get_key(cls, data_split: DataSplit) -> str:
+        name = cls._get_name()
+        key = DataSplitSuffixAppender.append_suffix(name=name, data_split=data_split)
+        return key
 
 
 class DataLoaderScoreCallback(
@@ -132,7 +136,7 @@ class DataLoaderScoreCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_key(cls) -> str: ...
+    def _get_name(cls) -> str: ...
 
     @staticmethod
     @abstractmethod
@@ -153,7 +157,7 @@ class DataLoaderArrayCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_key(cls) -> str: ...
+    def _get_name(cls) -> str: ...
 
     @staticmethod
     @abstractmethod
@@ -174,7 +178,7 @@ class DataLoaderPlotCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_key(cls) -> str: ...
+    def _get_name(cls) -> str: ...
 
     @staticmethod
     @abstractmethod
@@ -196,7 +200,7 @@ class DataLoaderScoreCollectionCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_key(cls) -> str: ...
+    def _get_name(cls) -> str: ...
 
     @staticmethod
     @abstractmethod
@@ -218,7 +222,7 @@ class DataLoaderArrayCollectionCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_key(cls) -> str: ...
+    def _get_name(cls) -> str: ...
 
     @staticmethod
     @abstractmethod
@@ -240,7 +244,7 @@ class DataLoaderPlotCollectionCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_key(cls) -> str: ...
+    def _get_name(cls) -> str: ...
 
     @staticmethod
     @abstractmethod
