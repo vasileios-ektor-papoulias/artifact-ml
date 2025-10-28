@@ -14,10 +14,10 @@ ModelOutputTCov = TypeVar("ModelOutputTCov", bound="ModelOutput", covariant=True
 ClassificationParamsTContr = TypeVar(
     "ClassificationParamsTContr", bound="ClassificationParams", contravariant=True
 )
-ClassificationDataT = TypeVar("ClassificationDataT")
 ClassificationResultsTCov = TypeVar(
     "ClassificationResultsTCov", bound=ClassificationResults, covariant=True
 )
+ClassificationDataT = TypeVar("ClassificationDataT")
 
 
 class ClassificationParams(TypedDict):
@@ -30,8 +30,8 @@ class Classifier(
         ModelInputTContr,
         ModelOutputTCov,
         ClassificationParamsTContr,
-        ClassificationDataT,
         ClassificationResultsTCov,
+        ClassificationDataT,
     ],
 ):
     @abstractmethod
