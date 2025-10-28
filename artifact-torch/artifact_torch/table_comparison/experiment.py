@@ -5,7 +5,6 @@ from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecPro
 from artifact_experiment.base.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 
-from artifact_torch.base.components.routines.artifact import ArtifactRoutine
 from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
 from artifact_torch.base.data.data_loader import DataLoader
@@ -22,6 +21,7 @@ from artifact_torch.table_comparison.routine import (
 ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
 ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
 TableSynthesizerT = TypeVar("TableSynthesizerT", bound=TableSynthesizer)
+GenerationParamsT = TypeVar("GenerationParamsT", bound=GenerationParams)
 GenericTabularSynthesisExperimentT = TypeVar(
     "GenericTabularSynthesisExperimentT", bound="GenericTabularSynthesisExperiment"
 )
@@ -35,7 +35,7 @@ class GenericTabularSynthesisExperiment(
         TabularDataSpecProtocol,
         TableComparisonRoutineData,
     ],
-    Generic[TableSynthesizerT, ModelInputT, ModelOutputT],
+    Generic[TableSynthesizerT, ModelInputT, ModelOutputT, GenerationParamsT],
 ):
     @classmethod
     @abstractmethod
@@ -80,10 +80,9 @@ class GenericTabularSynthesisExperiment(
         data: Mapping[DataSplit, TableComparisonRoutineData],
         data_spec: TabularDataSpecProtocol,
         tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[ArtifactRoutine[TableSynthesizerT, Any, Any, Any, Any]]: ...
+    ) -> Optional[TableComparisonRoutine[GenerationParamsT]]: ...
 
 
-GenerationParamsT = TypeVar("GenerationParamsT", bound=GenerationParams)
 TabularSynthesisExperimentT = TypeVar(
     "TabularSynthesisExperimentT", bound="TabularSynthesisExperiment"
 )
@@ -91,7 +90,10 @@ TabularSynthesisExperimentT = TypeVar(
 
 class TabularSynthesisExperiment(
     GenericTabularSynthesisExperiment[
-        TableSynthesizer[ModelInputT, ModelOutputT, GenerationParamsT], ModelInputT, ModelOutputT
+        TableSynthesizer[ModelInputT, ModelOutputT, GenerationParamsT],
+        ModelInputT,
+        ModelOutputT,
+        GenerationParamsT,
     ],
     Generic[ModelInputT, ModelOutputT, GenerationParamsT],
 ):
