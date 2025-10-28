@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Generic, List, Optional, Type, TypeVar
 
+from artifact_experiment.base.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 from matplotlib.figure import Figure
 from numpy import ndarray
@@ -38,28 +39,33 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
         dict_data_loader_handlers: Dict[
             str, DataLoaderCallbackHandler[Any, ModelInputTContr, ModelOutputTContr, Any]
         ],
+        data_split: DataSplit,
     ):
         self._data_loader = data_loader
         self._dict_handlers = dict_data_loader_handlers
+        self._data_split = data_split
 
     @classmethod
     def build(
         cls: Type[DataLoaderRoutineT],
         data_loader: DataLoader[ModelInputTContr],
+        data_split: DataSplit,
         tracking_client: Optional[TrackingClient] = None,
     ) -> DataLoaderRoutineT:
-        dict_data_loader_handlers = cls._build_data_loader_handlers(
-            ls_score_callbacks=cls._get_score_callbacks(),
-            ls_array_callbacks=cls._get_array_callbacks(),
-            ls_plot_callbacks=cls._get_plot_callbacks(),
-            ls_score_collection_callbacks=cls._get_score_collection_callbacks(),
-            ls_array_collection_callbacks=cls._get_array_collection_callbacks(),
-            ls_plot_collection_callbacks=cls._get_plot_collection_callbacks(),
-            tracking_client=tracking_client,
-        )
-        routine = cls(
+        routine = cls._build(
             data_loader=data_loader,
-            dict_data_loader_handlers=dict_data_loader_handlers,
+            ls_score_callbacks=cls._get_score_callbacks(data_split=data_split),
+            ls_array_callbacks=cls._get_array_callbacks(data_split=data_split),
+            ls_plot_callbacks=cls._get_plot_callbacks(data_split=data_split),
+            ls_score_collection_callbacks=cls._get_score_collection_callbacks(
+                data_split=data_split
+            ),
+            ls_array_collection_callbacks=cls._get_array_collection_callbacks(
+                data_split=data_split
+            ),
+            ls_plot_collection_callbacks=cls._get_plot_collection_callbacks(data_split=data_split),
+            data_split=data_split,
+            tracking_client=tracking_client,
         )
         return routine
 
@@ -104,6 +110,10 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
             return self._plot_collection_handler.active_cache.copy()
         else:
             return {}
+
+    @property
+    def data_split(self) -> DataSplit:
+        return self._data_split
 
     @property
     def _ls_handlers(
@@ -198,39 +208,39 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
 
     @staticmethod
     @abstractmethod
-    def _get_score_callbacks() -> List[
-        DataLoaderScoreCallback[ModelInputTContr, ModelOutputTContr]
-    ]: ...
+    def _get_score_callbacks(
+        data_split: DataSplit,
+    ) -> List[DataLoaderScoreCallback[ModelInputTContr, ModelOutputTContr]]: ...
 
     @staticmethod
     @abstractmethod
-    def _get_array_callbacks() -> List[
-        DataLoaderArrayCallback[ModelInputTContr, ModelOutputTContr]
-    ]: ...
+    def _get_array_callbacks(
+        data_split: DataSplit,
+    ) -> List[DataLoaderArrayCallback[ModelInputTContr, ModelOutputTContr]]: ...
 
     @staticmethod
     @abstractmethod
-    def _get_plot_callbacks() -> List[
-        DataLoaderPlotCallback[ModelInputTContr, ModelOutputTContr]
-    ]: ...
+    def _get_plot_callbacks(
+        data_split: DataSplit,
+    ) -> List[DataLoaderPlotCallback[ModelInputTContr, ModelOutputTContr]]: ...
 
     @staticmethod
     @abstractmethod
-    def _get_score_collection_callbacks() -> List[
-        DataLoaderScoreCollectionCallback[ModelInputTContr, ModelOutputTContr]
-    ]: ...
+    def _get_score_collection_callbacks(
+        data_split: DataSplit,
+    ) -> List[DataLoaderScoreCollectionCallback[ModelInputTContr, ModelOutputTContr]]: ...
 
     @staticmethod
     @abstractmethod
-    def _get_array_collection_callbacks() -> List[
-        DataLoaderArrayCollectionCallback[ModelInputTContr, ModelOutputTContr]
-    ]: ...
+    def _get_array_collection_callbacks(
+        data_split: DataSplit,
+    ) -> List[DataLoaderArrayCollectionCallback[ModelInputTContr, ModelOutputTContr]]: ...
 
     @staticmethod
     @abstractmethod
-    def _get_plot_collection_callbacks() -> List[
-        DataLoaderPlotCollectionCallback[ModelInputTContr, ModelOutputTContr]
-    ]: ...
+    def _get_plot_collection_callbacks(
+        data_split: DataSplit,
+    ) -> List[DataLoaderPlotCollectionCallback[ModelInputTContr, ModelOutputTContr]]: ...
 
     def execute(self, model: Model[ModelInputTContr, ModelOutputTContr], n_epochs_elapsed: int):
         resources = DataLoaderCallbackResources[ModelInputTContr, ModelOutputTContr](
@@ -259,6 +269,7 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
         ls_plot_collection_callbacks: List[
             DataLoaderPlotCollectionCallback[ModelInputTContr, ModelOutputTContr]
         ],
+        data_split: DataSplit,
         tracking_client: Optional[TrackingClient] = None,
     ) -> DataLoaderRoutineT:
         dict_data_loader_handlers = cls._build_data_loader_handlers(
@@ -273,6 +284,7 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
         routine = cls(
             data_loader=data_loader,
             dict_data_loader_handlers=dict_data_loader_handlers,
+            data_split=data_split,
         )
         return routine
 
