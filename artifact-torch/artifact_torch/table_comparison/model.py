@@ -11,15 +11,17 @@ from artifact_torch.core.model.generative import GenerationParams, GenerativeMod
 
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
 ModelOutputTCov = TypeVar("ModelOutputTCov", bound=ModelOutput, covariant=True)
-GenerationParamsT = TypeVar("GenerationParamsT", bound=GenerationParams)
+GenerationParamsTContr = TypeVar(
+    "GenerationParamsTContr", bound=GenerationParams, contravariant=True
+)
 
 
 class TableSynthesizer(
-    GenerativeModel[ModelInputTContr, ModelOutputTCov, GenerationParamsT, pd.DataFrame],
-    Generic[ModelInputTContr, ModelOutputTCov, GenerationParamsT],
+    GenerativeModel[ModelInputTContr, ModelOutputTCov, GenerationParamsTContr, pd.DataFrame],
+    Generic[ModelInputTContr, ModelOutputTCov, GenerationParamsTContr],
 ):
     @abstractmethod
     def forward(self, model_input: ModelInputTContr, *args, **kwargs) -> ModelOutputTCov: ...
 
     @abstractmethod
-    def generate(self, params: GenerationParamsT) -> pd.DataFrame: ...
+    def generate(self, params: GenerationParamsTContr) -> pd.DataFrame: ...
