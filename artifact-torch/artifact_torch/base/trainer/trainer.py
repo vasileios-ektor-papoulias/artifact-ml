@@ -7,9 +7,7 @@ from artifact_experiment.base.tracking.client import TrackingClient
 from torch import optim
 
 from artifact_torch.base.components.cache.cache import StandardCache
-from artifact_torch.base.components.cache.score_cache import (
-    ScoreCache,
-)
+from artifact_torch.base.components.cache.score_cache import ScoreCache
 from artifact_torch.base.components.callbacks.checkpoint import (
     CheckpointCallback,
     CheckpointCallbackResources,
@@ -20,9 +18,7 @@ from artifact_torch.base.components.model_tracking.tracker import (
     ModelTracker,
     ModelTrackingCriterion,
 )
-from artifact_torch.base.components.routines.artifact import (
-    ArtifactRoutine,
-)
+from artifact_torch.base.components.routines.artifact import ArtifactRoutine
 from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
 from artifact_torch.base.data.data_loader import DataLoader
