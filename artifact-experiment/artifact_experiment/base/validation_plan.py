@@ -30,6 +30,7 @@ from artifact_experiment.base.callbacks.tracking import (
     ScoreCollectionCallbackHandler,
     TrackingCallbackHandler,
 )
+from artifact_experiment.base.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 
 ScoreTypeT = TypeVar("ScoreTypeT", bound=ArtifactType)
@@ -83,6 +84,8 @@ class ValidationPlan(
             ArtifactPlotCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT],
             ArtifactCallbackResources[ArtifactResourcesT],
         ],
+        data_split: Optional[DataSplit] = None,
+        tracking_client: Optional[TrackingClient] = None,
     ):
         self._resource_spec = resource_spec
         self._score_handler = score_handler
@@ -91,30 +94,33 @@ class ValidationPlan(
         self._score_collection_handler = score_collection_handler
         self._array_collection_handler = array_collection_handler
         self._plot_collection_handler = plot_collection_handler
+        self._data_split = data_split
+        self._tracking_client = tracking_client
 
     @classmethod
     def build(
         cls: Type[ValidationPlanT],
         resource_spec: ResourceSpecProtocolT,
+        data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ValidationPlanT:
         score_handler = cls._build_score_handler(
-            resource_spec=resource_spec, tracking_client=tracking_client
+            resource_spec=resource_spec, data_split=data_split, tracking_client=tracking_client
         )
         array_handler = cls._build_array_handler(
-            resource_spec=resource_spec, tracking_client=tracking_client
+            resource_spec=resource_spec, data_split=data_split, tracking_client=tracking_client
         )
         plot_handler = cls._build_plot_handler(
-            resource_spec=resource_spec, tracking_client=tracking_client
+            resource_spec=resource_spec, data_split=data_split, tracking_client=tracking_client
         )
         score_collection_handler = cls._build_score_collection_handler(
-            resource_spec=resource_spec, tracking_client=tracking_client
+            resource_spec=resource_spec, data_split=data_split, tracking_client=tracking_client
         )
         array_collection_handler = cls._build_array_collection_handler(
-            resource_spec=resource_spec, tracking_client=tracking_client
+            resource_spec=resource_spec, data_split=data_split, tracking_client=tracking_client
         )
         plot_collection_handler = cls._build_plot_collection_handler(
-            resource_spec=resource_spec, tracking_client=tracking_client
+            resource_spec=resource_spec, data_split=data_split, tracking_client=tracking_client
         )
         validation_plan = cls(
             resource_spec=resource_spec,
@@ -124,6 +130,8 @@ class ValidationPlan(
             score_collection_handler=score_collection_handler,
             array_collection_handler=array_collection_handler,
             plot_collection_handler=plot_collection_handler,
+            data_split=data_split,
+            tracking_client=tracking_client,
         )
         return validation_plan
 
@@ -152,8 +160,22 @@ class ValidationPlan(
         return self._plot_collection_handler.active_cache
 
     @property
+    def data_split(self) -> Optional[DataSplit]:
+        return self._data_split
+
+    @property
     def tracking_client(self) -> Optional[TrackingClient]:
-        return self._score_handler.tracking_client
+        return self._tracking_client
+
+    @tracking_client.setter
+    def tracking_client(self, tracking_client: Optional[TrackingClient]):
+        self._tracking_client = tracking_client
+        for handler in self._ls_handlers:
+            handler.tracking_client = tracking_client
+
+    @property
+    def tracking_enabled(self) -> bool:
+        return self.tracking_client is not None
 
     @property
     def _ls_handlers(
@@ -174,15 +196,6 @@ class ValidationPlan(
             self._plot_collection_handler,
         ]
         return ls_handlers
-
-    @tracking_client.setter
-    def tracking_client(self, tracking_client: Optional[TrackingClient]):
-        for handler in self._ls_handlers:
-            handler.tracking_client = tracking_client
-
-    @property
-    def tracking_enabled(self) -> bool:
-        return self.tracking_client is not None
 
     @staticmethod
     @abstractmethod
@@ -223,6 +236,14 @@ class ValidationPlan(
         ]
     ]: ...
 
+    def execute(self, resources: ArtifactCallbackResources[ArtifactResourcesT]):
+        for handler in self._ls_handlers:
+            handler.execute(resources=resources)
+
+    def clear_cache(self):
+        for handler in self._ls_handlers:
+            handler.clear()
+
     @staticmethod
     def _get_custom_score_types() -> List[str]:
         return []
@@ -247,19 +268,12 @@ class ValidationPlan(
     def _get_custom_plot_collection_types() -> List[str]:
         return []
 
-    def execute(self, resources: ArtifactCallbackResources[ArtifactResourcesT]):
-        for handler in self._ls_handlers:
-            handler.execute(resources=resources)
-
-    def clear_cache(self):
-        for handler in self._ls_handlers:
-            handler.clear()
-
     @classmethod
     def _build_score_handler(
         cls,
         resource_spec: ResourceSpecProtocolT,
         ls_score_types: Optional[List[Union[ScoreTypeT, str]]] = None,
+        data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ScoreCallbackHandler[
         ArtifactScoreCallback[ArtifactResourcesT, ResourceSpecProtocolT],
@@ -270,7 +284,7 @@ class ValidationPlan(
             ls_score_types = cls._get_score_types() + cls._get_custom_score_types()
         ls_callbacks = [
             callback_factory.build_score_callback(
-                score_type=score_type, resource_spec=resource_spec
+                score_type=score_type, resource_spec=resource_spec, data_split=data_split
             )
             for score_type in ls_score_types
         ]
@@ -284,6 +298,7 @@ class ValidationPlan(
         cls,
         resource_spec: ResourceSpecProtocolT,
         ls_array_types: Optional[List[Union[ArrayTypeT, str]]] = None,
+        data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ArrayCallbackHandler[
         ArtifactArrayCallback[ArtifactResourcesT, ResourceSpecProtocolT],
@@ -294,7 +309,7 @@ class ValidationPlan(
             ls_array_types = cls._get_array_types() + cls._get_custom_array_types()
         ls_callbacks = [
             callback_factory.build_array_callback(
-                array_type=array_type, resource_spec=resource_spec
+                array_type=array_type, resource_spec=resource_spec, data_split=data_split
             )
             for array_type in ls_array_types
         ]
@@ -308,6 +323,7 @@ class ValidationPlan(
         cls,
         resource_spec: ResourceSpecProtocolT,
         ls_plot_types: Optional[List[Union[PlotTypeT, str]]] = None,
+        data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> PlotCallbackHandler[
         ArtifactPlotCallback[ArtifactResourcesT, ResourceSpecProtocolT],
@@ -317,7 +333,9 @@ class ValidationPlan(
         if ls_plot_types is None:
             ls_plot_types = cls._get_plot_types() + cls._get_custom_plot_types()
         ls_callbacks = [
-            callback_factory.build_plot_callback(plot_type=plot_type, resource_spec=resource_spec)
+            callback_factory.build_plot_callback(
+                plot_type=plot_type, resource_spec=resource_spec, data_split=data_split
+            )
             for plot_type in ls_plot_types
         ]
         plot_handler = PlotCallbackHandler(
@@ -330,6 +348,7 @@ class ValidationPlan(
         cls,
         resource_spec: ResourceSpecProtocolT,
         ls_score_collection_types: Optional[List[Union[ScoreCollectionTypeT, str]]] = None,
+        data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ScoreCollectionCallbackHandler[
         ArtifactScoreCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT],
@@ -342,7 +361,9 @@ class ValidationPlan(
             )
         ls_callbacks = [
             callback_factory.build_score_collection_callback(
-                score_collection_type=score_collection_type, resource_spec=resource_spec
+                score_collection_type=score_collection_type,
+                resource_spec=resource_spec,
+                data_split=data_split,
             )
             for score_collection_type in ls_score_collection_types
         ]
@@ -356,6 +377,7 @@ class ValidationPlan(
         cls,
         resource_spec: ResourceSpecProtocolT,
         ls_array_collection_types: Optional[List[Union[ArrayCollectionTypeT, str]]] = None,
+        data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ArrayCollectionCallbackHandler[
         ArtifactArrayCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT],
@@ -368,7 +390,9 @@ class ValidationPlan(
             )
         ls_callbacks = [
             callback_factory.build_array_collection_callback(
-                array_collection_type=array_collection_type, resource_spec=resource_spec
+                array_collection_type=array_collection_type,
+                resource_spec=resource_spec,
+                data_split=data_split,
             )
             for array_collection_type in ls_array_collection_types
         ]
@@ -382,6 +406,7 @@ class ValidationPlan(
         cls,
         resource_spec: ResourceSpecProtocolT,
         ls_plot_collection_types: Optional[List[Union[PlotCollectionTypeT, str]]] = None,
+        data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> PlotCollectionCallbackHandler[
         ArtifactPlotCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT],
@@ -394,7 +419,9 @@ class ValidationPlan(
             )
         ls_callbacks = [
             callback_factory.build_plot_collection_callback(
-                plot_collection_type=plot_collection_type, resource_spec=resource_spec
+                plot_collection_type=plot_collection_type,
+                resource_spec=resource_spec,
+                data_split=data_split,
             )
             for plot_collection_type in ls_plot_collection_types
         ]
