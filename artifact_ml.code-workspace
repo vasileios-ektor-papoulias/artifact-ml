@@ -28,8 +28,13 @@
     "settings": {
 
       "python.terminal.activateEnvironment": false,
+
+      "python.languageServer": "Pylance",
       
       "python.analysis.typeCheckingMode": "standard",
+      "python.analysis.diagnosticSeverityOverrides": {
+        "reportInvalidTypeVarUse": "error"
+      },
       "python.formatting.provider": "none",
       "python.linting.enabled": false,
       
@@ -48,19 +53,33 @@
       "python.testing.unittestEnabled": false,
       "python.testing.pytestEnabled": true,
       "github-actions.workflows.pinned.workflows": [
-        "CI_CORE_ON_PUSH",
-        "CI_EXPERIMENT_ON_PUSH",
-        "CI_TORCH_ON_PUSH",
-        "CI_DEV_CORE",
-        "CI_DEV_EXPERIMENT",
-        "CI_DEV_TORCH",
-        "CI_MAIN",
-        "LINT_PR_TITLE",
-        "LINT_MERGE_COMMIT_MESSAGE",
-        "LINT_MERGE_COMMIT_DESCRIPTION",
-        "BUMP_COMPONENT_VERSION",
-        "ENFORCE_BRANCH_NAMING",
-        "ENFORCE_CHANGE_DIRS"
+        "CI_PUSH[CORE]",
+        "CI_PUSH[DEV_CORE]",
+        "CI_PUSH[EXPERIMENT]",
+        "CI_PUSH[DEV_EXPERIMENT]",
+        "CI_PUSH[TORCH]",
+        "CI_PUSH[DEV_TORCH]",
+        "CI_PUSH[MAIN]",
+        "LINT_MESSAGE_PUSH[MAIN]",
+        "LINT_DESCRIPTION_PUSH[MAIN]",
+        "BUMP_COMPONENT_PUSH[MAIN]",
+
+        "ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_CORE]",
+        "ENFORCE_CHANGE_DIRS_PR[DEV_CORE]",
+        "SONAR_PR_CORE",
+
+        "ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_EXPERIMENT]",
+        "ENFORCE_CHANGE_DIRS_PR[DEV_EXPERIMENT]",
+        "SONAR_PR_EXPERIMENT",
+
+        "ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_TORCH]",
+        "ENFORCE_CHANGE_DIRS_PR[DEV_TORCH]",
+        "SONAR_PR_TORCH",
+
+        "LINT_TITLE_PR[MAIN]",
+        "ENFORCE_SOURCE_BRANCH_NAMING",
+        "ENFORCE_CHANGE_DIRS_PR[MAIN]",
+        "SONAR_PR_MAIN"
       ]
     },
     "extensions": {
