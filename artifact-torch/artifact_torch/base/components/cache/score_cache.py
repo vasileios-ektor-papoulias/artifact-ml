@@ -24,12 +24,10 @@ class ScoreCache(AlignedCache[float]):
         self._df_scores = self._build_df(self._cache)
 
     def get_latest_non_null(self, key: str) -> Optional[float]:
-        if key not in self._df_scores.columns:
-            return None
-        series = self._df_scores[key].dropna()
-        if series.empty:
-            return None
-        return float(series.iloc[-1])
+        if key in self._df_scores.columns:
+            series = self._df_scores[key].dropna()
+            if not series.empty:
+                return float(series.iloc[-1])
 
     @staticmethod
     def _build_df(cache: Dict[str, List[Optional[float]]]) -> pd.DataFrame:
