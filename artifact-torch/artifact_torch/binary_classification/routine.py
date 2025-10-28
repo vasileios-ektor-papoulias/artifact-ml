@@ -18,7 +18,9 @@ from artifact_torch.binary_classification.model import BinaryClassifier
 from artifact_torch.core.model.classifier import ClassificationParams
 from artifact_torch.libs.exports.metadata import MetadataExporter
 
-ClassificationParamsTCov = TypeVar("ClassificationParamsTCov", bound=ClassificationParams)
+ClassificationParamsTCov = TypeVar(
+    "ClassificationParamsTCov", bound=ClassificationParams, covariant=True
+)
 ClassificationDataT = TypeVar("ClassificationDataT")
 BinaryClassificationRoutineT = TypeVar(
     "BinaryClassificationRoutineT", bound="BinaryClassificationRoutine"
