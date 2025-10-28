@@ -1,24 +1,25 @@
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import Any, Generic, Optional, Type, TypeVar
+from typing import Any, Generic, Mapping, Optional, TypeVar
 
 import pandas as pd
 from artifact_core.binary_classification.artifacts.base import BinaryClassificationArtifactResources
 from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
 from artifact_core.libs.resources.categorical.category_store.binary import BinaryCategoryStore
+from artifact_experiment.base.data_split import DataSplit, DataSplitSuffixAppender
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_experiment.binary_classification.validation_plan import BinaryClassificationPlan
 
 from artifact_torch.base.components.routines.artifact import (
+    ArtifactRoutine,
     ArtifactRoutineData,
     ArtifactRoutineHyperparams,
-    ArtifactValidationRoutine,
 )
 from artifact_torch.binary_classification.model import BinaryClassifier
 from artifact_torch.core.model.classifier import ClassificationParams
 from artifact_torch.libs.exports.metadata import MetadataExporter
 
-ClassificationParamsT = TypeVar("ClassificationParamsT", bound=ClassificationParams)
+ClassificationParamsTCov = TypeVar("ClassificationParamsTCov", bound=ClassificationParams)
 BinaryClassificationRoutineT = TypeVar(
     "BinaryClassificationRoutineT", bound="BinaryClassificationRoutine"
 )
@@ -26,9 +27,9 @@ BinaryClassificationRoutineT = TypeVar(
 
 @dataclass
 class BinaryClassificationRoutineHyperparams(
-    ArtifactRoutineHyperparams, Generic[ClassificationParamsT]
+    ArtifactRoutineHyperparams, Generic[ClassificationParamsTCov]
 ):
-    classification_params: ClassificationParamsT
+    classification_params: ClassificationParamsTCov
 
 
 @dataclass
@@ -38,80 +39,63 @@ class BinaryClassificationRoutineData(ArtifactRoutineData):
 
 
 class BinaryClassificationRoutine(
-    ArtifactValidationRoutine[
-        BinaryClassifier[Any, Any, ClassificationParamsT],
-        BinaryClassificationRoutineHyperparams[ClassificationParamsT],
+    ArtifactRoutine[
+        BinaryClassifier[Any, Any, ClassificationParamsTCov],
+        BinaryClassificationRoutineHyperparams[ClassificationParamsTCov],
         BinaryClassificationRoutineData,
         BinaryClassificationArtifactResources,
         BinaryFeatureSpecProtocol,
     ],
-    Generic[ClassificationParamsT],
+    Generic[ClassificationParamsTCov],
 ):
-    _resource_export_prefix = "classification"
-
-    @classmethod
-    def build(
-        cls: Type[BinaryClassificationRoutineT],
-        true_category_store: BinaryCategoryStore,
-        classification_data: pd.DataFrame,
-        class_spec: BinaryFeatureSpecProtocol,
-        tracking_client: Optional[TrackingClient] = None,
-    ) -> BinaryClassificationRoutineT:
-        data = BinaryClassificationRoutineData(
-            true_category_store=true_category_store, classification_data=classification_data
-        )
-        routine = cls._build(
-            data=data,
-            artifact_resource_spec=class_spec,
-            tracking_client=tracking_client,
-        )
-        return routine
+    _resource_export_prefix = "CLASSIFICATION_RESULTS"
 
     @classmethod
     @abstractmethod
-    def _get_period(cls) -> int: ...
+    def _get_periods(cls) -> Mapping[DataSplit, int]: ...
 
     @classmethod
     @abstractmethod
-    def _get_classification_params(cls) -> ClassificationParamsT: ...
-
-    @classmethod
-    @abstractmethod
-    def _get_validation_plan(
+    def _get_validation_plans(
         cls,
         artifact_resource_spec: BinaryFeatureSpecProtocol,
         tracking_client: Optional[TrackingClient],
-    ) -> BinaryClassificationPlan: ...
+    ) -> Mapping[DataSplit, BinaryClassificationPlan]: ...
 
     @classmethod
-    def _get_hyperparams(cls) -> BinaryClassificationRoutineHyperparams[ClassificationParamsT]:
+    @abstractmethod
+    def _get_classification_params(cls) -> ClassificationParamsTCov: ...
+
+    @classmethod
+    def _get_hyperparams(cls) -> BinaryClassificationRoutineHyperparams[ClassificationParamsTCov]:
         classification_params = cls._get_classification_params()
-        hyperparams = BinaryClassificationRoutineHyperparams[ClassificationParamsT](
+        hyperparams = BinaryClassificationRoutineHyperparams[ClassificationParamsTCov](
             classification_params=classification_params
         )
         return hyperparams
 
-    @classmethod
     def _generate_artifact_resources(
-        cls,
-        model: BinaryClassifier[Any, Any, ClassificationParamsT],
-        hyperparams: BinaryClassificationRoutineHyperparams,
-        data: BinaryClassificationRoutineData,
-    ) -> BinaryClassificationArtifactResources:
-        classification_results = model.classify(
-            data=data.classification_data, params=hyperparams.classification_params
-        )
-        resources = BinaryClassificationArtifactResources.from_stores(
-            true_category_store=data.true_category_store,
-            classification_results=classification_results,
-        )
-        return resources
+        self, model: BinaryClassifier[Any, Any, ClassificationParamsTCov]
+    ) -> Mapping[DataSplit, BinaryClassificationArtifactResources]:
+        resources_by_split = {}
+        for data_split in self._data.keys():
+            classification_results = model.classify(
+                data=self._data[data_split].classification_data,
+                params=self._hyperparams.classification_params,
+            )
+            resources = BinaryClassificationArtifactResources.from_stores(
+                true_category_store=self._data[data_split].true_category_store,
+                classification_results=classification_results,
+            )
+            resources_by_split[data_split] = resources
+        return resources_by_split
 
     @classmethod
     def _export_artifact_resources(
         cls,
         artifact_resources: BinaryClassificationArtifactResources,
         n_epochs_elapsed: int,
+        data_split: DataSplit,
         tracking_client: TrackingClient,
     ):
         true = artifact_resources.true_category_store.id_to_category
@@ -128,9 +112,16 @@ class BinaryClassificationRoutine(
             }
             for identifier in sorted(set(true) | set(predicted) | set(probs), key=int)
         }
+        resource_export_prefix = cls._get_resource_export_prefix(data_split=data_split)
         MetadataExporter.export(
             data=dict_resources,
             tracking_client=tracking_client,
-            prefix=cls._resource_export_prefix,
+            prefix=resource_export_prefix,
             step=n_epochs_elapsed,
+        )
+
+    @classmethod
+    def _get_resource_export_prefix(cls, data_split: DataSplit) -> str:
+        return DataSplitSuffixAppender.append_suffix(
+            name=cls._resource_export_prefix, data_split=data_split
         )
