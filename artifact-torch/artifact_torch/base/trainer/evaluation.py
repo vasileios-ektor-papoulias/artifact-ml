@@ -8,16 +8,18 @@ from artifact_torch.base.components.routines.data_loader import DataLoaderRoutin
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 
-ModelT = TypeVar("ModelT", bound=Model)
-ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
-ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
+ModelTContr = TypeVar("ModelTContr", bound=Model, contravariant=True)
+ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
+ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput, contravariant=True)
 
 
-class EvaluationFlow(Generic[ModelT, ModelInputT, ModelOutputT]):
+class EvaluationFlow(Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]):
     def __init__(
         self,
-        artifact_routine: Optional[ArtifactRoutine[ModelT, Any, Any, Any, Any]] = None,
-        loader_routines: Optional[Sequence[DataLoaderRoutine[ModelInputT, ModelOutputT]]] = None,
+        artifact_routine: Optional[ArtifactRoutine[ModelTContr, Any, Any, Any, Any]] = None,
+        loader_routines: Optional[
+            Sequence[DataLoaderRoutine[ModelInputTContr, ModelOutputTContr]]
+        ] = None,
     ):
         self._artifact_routine = artifact_routine
         if loader_routines is None:
@@ -78,7 +80,7 @@ class EvaluationFlow(Generic[ModelT, ModelInputT, ModelOutputT]):
             plot_collections.update(loader_routine.plot_collections)
         return plot_collections
 
-    def execute(self, model: ModelT, n_epochs_elapsed: int):
+    def execute(self, model: ModelTContr, n_epochs_elapsed: int):
         if self._artifact_routine is not None:
             self._artifact_routine.execute(model=model, n_epochs_elapsed=n_epochs_elapsed)
         for loader_routine in self._loader_routines:
