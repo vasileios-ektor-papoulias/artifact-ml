@@ -1,7 +1,7 @@
 from typing import List
 
 from artifact_experiment.base.data_split import DataSplit
-from artifact_torch.base.components.callbacks.data_loader import (
+from artifact_torch.base.components.callbacks.loader import (
     DataLoaderArrayCallback,
     DataLoaderArrayCollectionCallback,
     DataLoaderPlotCallback,
@@ -9,8 +9,8 @@ from artifact_torch.base.components.callbacks.data_loader import (
     DataLoaderScoreCallback,
     DataLoaderScoreCollectionCallback,
 )
-from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
-from artifact_torch.libs.components.callbacks.data_loader.loss import LoaderLossCallback
+from artifact_torch.base.components.routines.loader import DataLoaderRoutine
+from artifact_torch.libs.components.callbacks.loader.loss import LoaderLossCallback
 
 from demos.table_comparison.components.routines.protocols import DemoModelInput, DemoModelOutput
 from demos.table_comparison.config.constants import TRAIN_LOADER_CALLBACK_PERIOD
