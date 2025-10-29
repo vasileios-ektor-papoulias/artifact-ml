@@ -25,32 +25,28 @@ from artifact_torch.base.model.io import (
     ModelOutput,
 )
 
-CacheDataT = TypeVar("CacheDataT")
 ModelInputTCov = TypeVar("ModelInputTCov", bound=ModelInput, covariant=True)
 ModelOutputTCov = TypeVar("ModelOutputTCov", bound=ModelOutput, covariant=True)
-ModelTCov = TypeVar("ModelTCov", bound=Model, covariant=True)
 
 
 @dataclass
-class BatchCallbackResources(
-    PeriodicCallbackResources, Generic[ModelInputTCov, ModelOutputTCov, ModelTCov]
-):
+class BatchCallbackResources(PeriodicCallbackResources, Generic[ModelInputTCov, ModelOutputTCov]):
     model_input: ModelInputTCov
     model_output: ModelOutputTCov
-    model: ModelTCov
+    model: Model[ModelInputTCov, ModelOutputTCov]
 
 
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
 ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput, contravariant=True)
-ModelTContr = TypeVar("ModelTContr", bound=Model, contravariant=True)
+CacheDataT = TypeVar("CacheDataT")
 
 
 class BatchCallback(
     PeriodicTrackingCallback[
-        BatchCallbackResources[ModelInputTContr, ModelOutputTContr, ModelTContr],
+        BatchCallbackResources[ModelInputTContr, ModelOutputTContr],
         CacheDataT,
     ],
-    Generic[ModelInputTContr, ModelOutputTContr, ModelTContr, CacheDataT],
+    Generic[ModelInputTContr, ModelOutputTContr, CacheDataT],
 ):
     def __init__(self, period: int, tracking_client: Optional[TrackingClient] = None):
         key = self._get_key()
@@ -63,7 +59,9 @@ class BatchCallback(
     @staticmethod
     @abstractmethod
     def _compute_on_batch(
-        model_input: ModelInputTContr, model_output: ModelOutputTContr, model: ModelTContr
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
+        model: Model[ModelInputTContr, ModelOutputTContr],
     ) -> CacheDataT: ...
 
     @staticmethod
@@ -71,7 +69,8 @@ class BatchCallback(
     def _export(key: str, value: CacheDataT, tracking_client: TrackingClient): ...
 
     def _compute(
-        self, resources: BatchCallbackResources[ModelInputTContr, ModelOutputTContr, ModelTContr]
+        self,
+        resources: BatchCallbackResources[ModelInputTContr, ModelOutputTContr],
     ) -> CacheDataT:
         result = self._compute_on_batch(
             model_input=resources.model_input,
@@ -83,8 +82,8 @@ class BatchCallback(
 
 class BatchScoreCallback(
     ScoreExportMixin,
-    BatchCallback[ModelInputTContr, ModelOutputTContr, ModelTContr, float],
-    Generic[ModelInputTContr, ModelOutputTContr, ModelTContr],
+    BatchCallback[ModelInputTContr, ModelOutputTContr, float],
+    Generic[ModelInputTContr, ModelOutputTContr],
 ):
     @classmethod
     @abstractmethod
@@ -93,14 +92,16 @@ class BatchScoreCallback(
     @staticmethod
     @abstractmethod
     def _compute_on_batch(
-        model_input: ModelInputTContr, model_output: ModelOutputTContr, model: ModelTContr
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
+        model: Model[ModelInputTContr, ModelOutputTContr],
     ) -> float: ...
 
 
 class BatchArrayCallback(
     ArrayExportMixin,
-    BatchCallback[ModelInputTContr, ModelOutputTContr, ModelTContr, ndarray],
-    Generic[ModelInputTContr, ModelOutputTContr, ModelTContr],
+    BatchCallback[ModelInputTContr, ModelOutputTContr, ndarray],
+    Generic[ModelInputTContr, ModelOutputTContr],
 ):
     @classmethod
     @abstractmethod
@@ -109,14 +110,16 @@ class BatchArrayCallback(
     @staticmethod
     @abstractmethod
     def _compute_on_batch(
-        model_input: ModelInputTContr, model_output: ModelOutputTContr, model: ModelTContr
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
+        model: Model[ModelInputTContr, ModelOutputTContr],
     ) -> ndarray: ...
 
 
 class BatchPlotCallback(
     PlotExportMixin,
-    BatchCallback[ModelInputTContr, ModelOutputTContr, ModelTContr, Figure],
-    Generic[ModelInputTContr, ModelOutputTContr, ModelTContr],
+    BatchCallback[ModelInputTContr, ModelOutputTContr, Figure],
+    Generic[ModelInputTContr, ModelOutputTContr],
 ):
     @classmethod
     @abstractmethod
@@ -125,14 +128,16 @@ class BatchPlotCallback(
     @staticmethod
     @abstractmethod
     def _compute_on_batch(
-        model_input: ModelInputTContr, model_output: ModelOutputTContr, model: ModelTContr
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
+        model: Model[ModelInputTContr, ModelOutputTContr],
     ) -> Figure: ...
 
 
 class BatchScoreCollectionCallback(
     ScoreCollectionExportMixin,
-    BatchCallback[ModelInputTContr, ModelOutputTContr, ModelTContr, Dict[str, float]],
-    Generic[ModelInputTContr, ModelOutputTContr, ModelTContr],
+    BatchCallback[ModelInputTContr, ModelOutputTContr, Dict[str, float]],
+    Generic[ModelInputTContr, ModelOutputTContr],
 ):
     @classmethod
     @abstractmethod
@@ -141,14 +146,16 @@ class BatchScoreCollectionCallback(
     @staticmethod
     @abstractmethod
     def _compute_on_batch(
-        model_input: ModelInputTContr, model_output: ModelOutputTContr, model: ModelTContr
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
+        model: Model[ModelInputTContr, ModelOutputTContr],
     ) -> Dict[str, float]: ...
 
 
 class BatchArrayCollectionCallback(
     ArrayCollectionExportMixin,
-    BatchCallback[ModelInputTContr, ModelOutputTContr, ModelTContr, Dict[str, ndarray]],
-    Generic[ModelInputTContr, ModelOutputTContr, ModelTContr],
+    BatchCallback[ModelInputTContr, ModelOutputTContr, Dict[str, ndarray]],
+    Generic[ModelInputTContr, ModelOutputTContr],
 ):
     @classmethod
     @abstractmethod
@@ -157,14 +164,16 @@ class BatchArrayCollectionCallback(
     @staticmethod
     @abstractmethod
     def _compute_on_batch(
-        model_input: ModelInputTContr, model_output: ModelOutputTContr, model: ModelTContr
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
+        model: Model[ModelInputTContr, ModelOutputTContr],
     ) -> Dict[str, ndarray]: ...
 
 
 class BatchPlotCollectionCallback(
     PlotCollectionExportMixin,
-    BatchCallback[ModelInputTContr, ModelOutputTContr, ModelTContr, Dict[str, Figure]],
-    Generic[ModelInputTContr, ModelOutputTContr, ModelTContr],
+    BatchCallback[ModelInputTContr, ModelOutputTContr, Dict[str, Figure]],
+    Generic[ModelInputTContr, ModelOutputTContr],
 ):
     @classmethod
     @abstractmethod
@@ -173,21 +182,22 @@ class BatchPlotCollectionCallback(
     @staticmethod
     @abstractmethod
     def _compute_on_batch(
-        model_input: ModelInputTContr, model_output: ModelOutputTContr, model: ModelTContr
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
+        model: Model[ModelInputTContr, ModelOutputTContr],
     ) -> Dict[str, Figure]: ...
 
 
 ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
 ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
-ModelT = TypeVar("ModelT", bound=Model)
 
 
 class BatchCallbackHandler(
     CacheCallbackHandler[
-        BatchCallback[ModelInputT, ModelOutputT, ModelT, CacheDataT],
-        BatchCallbackResources[ModelInputT, ModelOutputT, ModelT],
+        BatchCallback[ModelInputT, ModelOutputT, CacheDataT],
+        BatchCallbackResources[ModelInputT, ModelOutputT],
         CacheDataT,
     ],
-    Generic[ModelInputT, ModelOutputT, ModelT, CacheDataT],
+    Generic[ModelInputT, ModelOutputT, CacheDataT],
 ):
     pass

@@ -13,14 +13,13 @@ from artifact_torch.base.model.io import ModelInput, ModelOutput
 
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
 ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput, contravariant=True)
-ModelTContr = TypeVar("ModelTContr", bound=Model, contravariant=True)
 BatchRoutineT = TypeVar("BatchRoutineT", bound="BatchRoutine")
 
 
-class BatchRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr, ModelTContr]):
+class BatchRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
     def __init__(
         self,
-        handler: BatchCallbackHandler[ModelInputTContr, ModelOutputTContr, ModelTContr, Any],
+        handler: BatchCallbackHandler[ModelInputTContr, ModelOutputTContr, Any],
     ):
         self._handler = handler
 
@@ -40,26 +39,29 @@ class BatchRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr, ModelTContr
     @abstractmethod
     def _get_batch_callbacks(
         tracking_client: Optional[TrackingClient],
-    ) -> List[BatchCallback[ModelInputTContr, ModelOutputTContr, ModelTContr, Any]]: ...
+    ) -> List[BatchCallback[ModelInputTContr, ModelOutputTContr, Any]]: ...
 
     def execute(
         self,
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
-        model: ModelTContr,
+        model: Model[ModelInputTContr, ModelOutputTContr],
         batch_idx: int,
     ):
-        resources = BatchCallbackResources[ModelInputTContr, ModelOutputTContr, ModelTContr](
+        resources = BatchCallbackResources[ModelInputTContr, ModelOutputTContr](
             step=batch_idx, model_input=model_input, model_output=model_output, model=model
         )
         self._handler.execute(resources=resources)
 
+    def clear_cache(self):
+        self._handler.clear()
+
     @classmethod
     def _build(
         cls: Type[BatchRoutineT],
-        ls_callbacks: List[BatchCallback[ModelInputTContr, ModelOutputTContr, ModelTContr, Any]],
+        ls_callbacks: List[BatchCallback[ModelInputTContr, ModelOutputTContr, Any]],
     ) -> BatchRoutineT:
-        handler = BatchCallbackHandler[ModelInputTContr, ModelOutputTContr, ModelTContr, Any](
+        handler = BatchCallbackHandler[ModelInputTContr, ModelOutputTContr, Any](
             ls_callbacks=ls_callbacks,
         )
         routine = cls(handler=handler)
