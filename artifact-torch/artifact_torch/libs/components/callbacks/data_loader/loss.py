@@ -1,8 +1,6 @@
 from typing import List
 
-from artifact_torch.base.components.callbacks.data_loader import (
-    DataLoaderScoreCallback,
-)
+from artifact_torch.base.components.callbacks.loader import DataLoaderScoreCallback
 from artifact_torch.base.model.io import LossOutput, ModelInput
 
 
