@@ -4,7 +4,7 @@ from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecPro
 from artifact_experiment.base.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_torch.base.components.routines.batch import BatchRoutine
-from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
+from artifact_torch.base.components.routines.loader import DataLoaderRoutine
 from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.trainer.trainer import Trainer
 from artifact_torch.table_comparison.experiment import TabularSynthesisExperiment
@@ -54,13 +54,7 @@ class DemoTabularSynthesisExperiment(
     def _get_batch_routine(
         cls,
         tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[
-        BatchRoutine[
-            ModelInputT,
-            ModelOutputT,
-            TableSynthesizer[ModelInputT, ModelOutputT, DemoGenerationParams],
-        ]
-    ]:
+    ) -> Optional[BatchRoutine[ModelInputT, ModelOutputT]]:
         return DemoBatchRoutine.build(tracking_client=tracking_client)
 
     @classmethod
