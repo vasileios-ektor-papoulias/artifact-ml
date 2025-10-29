@@ -8,7 +8,7 @@ from artifact_experiment.base.tracking.client import TrackingClient
 
 from artifact_torch.base.components.routines.artifact import ArtifactRoutine, ArtifactRoutineData
 from artifact_torch.base.components.routines.batch import BatchRoutine
-from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
+from artifact_torch.base.components.routines.loader import DataLoaderRoutine
 from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
@@ -88,7 +88,7 @@ class Experiment(
     def _get_batch_routine(
         cls,
         tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[BatchRoutine[ModelInputT, ModelOutputT, ModelT]]: ...
+    ) -> Optional[BatchRoutine[ModelInputT, ModelOutputT]]: ...
 
     @classmethod
     @abstractmethod
