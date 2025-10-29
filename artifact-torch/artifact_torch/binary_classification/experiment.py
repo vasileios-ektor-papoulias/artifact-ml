@@ -6,7 +6,7 @@ from artifact_experiment.base.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 
 from artifact_torch.base.components.routines.batch import BatchRoutine
-from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
+from artifact_torch.base.components.routines.loader import DataLoaderRoutine
 from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.experiment.experiment import Experiment
 from artifact_torch.base.model.io import ModelInput, ModelOutput
