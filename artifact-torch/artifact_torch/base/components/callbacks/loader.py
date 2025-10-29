@@ -32,8 +32,6 @@ from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 
-CacheDataT = TypeVar("CacheDataT")
-BatchResultT = TypeVar("BatchResultT")
 ModelInputTCov = TypeVar("ModelInputTCov", bound=ModelInput, covariant=True)
 ModelOutputTCov = TypeVar("ModelOutputTCov", bound=ModelOutput, covariant=True)
 
@@ -48,6 +46,8 @@ class DataLoaderCallbackResources(
 
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
 ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput, contravariant=True)
+CacheDataT = TypeVar("CacheDataT")
+BatchResultT = TypeVar("BatchResultT")
 
 
 class DataLoaderCallback(

@@ -6,7 +6,7 @@ from artifact_experiment.base.tracking.client import TrackingClient
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-from artifact_torch.base.components.callbacks.data_loader import (
+from artifact_torch.base.components.callbacks.loader import (
     DataLoaderArrayCallback,
     DataLoaderArrayCollectionCallback,
     DataLoaderArrayCollectionHandler,
