@@ -6,7 +6,7 @@ from torch import optim
 
 from artifact_torch.base.model.base import Model
 
-ModelT = TypeVar("ModelT", bound=Model)
+ModelT = TypeVar("ModelT", bound=Model[Any, Any])
 
 
 class TrainingState(Generic[ModelT]):
