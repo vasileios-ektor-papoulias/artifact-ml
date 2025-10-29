@@ -11,9 +11,9 @@ from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.base.trainer.training_state import TrainingState
 
+ModelT = TypeVar("ModelT", bound=Model[Any, Any])
 ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
 ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
-ModelT = TypeVar("ModelT", bound=Model)
 
 
 class TrainerBase(ABC, Generic[ModelT, ModelInputT, ModelOutputT]):
