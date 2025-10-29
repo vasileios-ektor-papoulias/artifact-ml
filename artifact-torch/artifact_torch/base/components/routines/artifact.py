@@ -15,7 +15,7 @@ from artifact_torch.base.components.utils.periodic_action_trigger import Periodi
 from artifact_torch.base.model.base import Model
 from artifact_torch.libs.utils.key_selector import KeySelector
 
-ModelTContr = TypeVar("ModelTContr", bound=Model, contravariant=True)
+ModelTContr = TypeVar("ModelTContr", bound=Model[Any, Any], contravariant=True)
 ArtifactRoutineHyperparamsTCov = TypeVar(
     "ArtifactRoutineHyperparamsTCov", bound="ArtifactRoutineHyperparams", covariant=True
 )
