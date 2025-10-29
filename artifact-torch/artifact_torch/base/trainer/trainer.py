@@ -20,35 +20,30 @@ from artifact_torch.base.components.model_tracking.tracker import (
 )
 from artifact_torch.base.components.routines.artifact import ArtifactRoutine
 from artifact_torch.base.components.routines.batch import BatchRoutine
-from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
+from artifact_torch.base.components.routines.loader import DataLoaderRoutine
 from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.base.trainer.base import TrainerBase
-from artifact_torch.base.trainer.evaluation import EvaluationFlow
+from artifact_torch.base.trainer.batch_end_flow import BatchEndFlow
+from artifact_torch.base.trainer.epoch_end_flow import EpochEndFlow
 from artifact_torch.base.trainer.training_state import TrainingState
 
+ModelT = TypeVar("ModelT", bound=Model[Any, Any])
 ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
 ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
-ModelT = TypeVar("ModelT", bound=Model[Any, Any])
-ModelTrackingCriterionT = TypeVar("ModelTrackingCriterionT", bound=ModelTrackingCriterion)
 StopperUpdateDataT = TypeVar("StopperUpdateDataT", bound=StopperUpdateData)
+ModelTrackingCriterionT = TypeVar("ModelTrackingCriterionT", bound=ModelTrackingCriterion)
 TrainerT = TypeVar("TrainerT", bound="Trainer")
 
 
 class Trainer(
     TrainerBase[ModelT, ModelInputT, ModelOutputT],
-    Generic[
-        ModelT,
-        ModelInputT,
-        ModelOutputT,
-        ModelTrackingCriterionT,
-        StopperUpdateDataT,
-    ],
+    Generic[ModelT, ModelInputT, ModelOutputT, StopperUpdateDataT, ModelTrackingCriterionT],
 ):
     _train_loss_key = "loss_train"
     _val_loss_key = "loss_val"
-    _cache_batch_artifacts = False
+    _cache_batch_artifacts = True
 
     def __init__(
         self,
@@ -58,15 +53,15 @@ class Trainer(
         early_stopper: EarlyStopper[StopperUpdateDataT],
         model_tracker: Optional[ModelTracker[ModelTrackingCriterionT]],
         checkpoint_callback: Optional[CheckpointCallback],
-        batch_routine: Optional[BatchRoutine[ModelInputT, ModelOutputT, ModelT]],
-        evaluation_flow: EvaluationFlow[ModelT, ModelInputT, ModelOutputT],
+        batch_end_flow: BatchEndFlow[ModelInputT, ModelOutputT],
+        epoch_end_flow: EpochEndFlow[ModelT, ModelInputT, ModelOutputT],
     ):
         super().__init__(training_state=training_state, train_loader=train_loader, device=device)
         self._early_stopper = early_stopper
         self._model_tracker = model_tracker
         self._checkpoint_callback = checkpoint_callback
-        self._batch_routine = batch_routine
-        self._evaluation_flow = evaluation_flow
+        self._batch_end_flow = batch_end_flow
+        self._epoch_end_flow = epoch_end_flow
         self._batch_cache = StandardCache[Any]()
         self._epoch_score_cache = ScoreCache()
 
@@ -75,7 +70,7 @@ class Trainer(
         cls: Type[TrainerT],
         model: ModelT,
         train_loader: DataLoader[ModelInputT],
-        batch_routine: Optional[BatchRoutine[ModelInputT, ModelOutputT, ModelT]] = None,
+        batch_routine: Optional[BatchRoutine[ModelInputT, ModelOutputT]] = None,
         loader_routines: Optional[Sequence[DataLoaderRoutine[ModelInputT, ModelOutputT]]] = None,
         artifact_routine: Optional[ArtifactRoutine[ModelT, Any, Any, Any, Any]] = None,
         tracking_client: Optional[TrackingClient] = None,
@@ -88,22 +83,23 @@ class Trainer(
             scheduler=scheduler,
         )
         device = cls._get_device()
-        evaluation_flow = EvaluationFlow(
-            artifact_routine=artifact_routine,
-            loader_routines=loader_routines,
-        )
         early_stopper = cls._get_early_stopper()
         model_tracker = cls._get_model_tracker()
         checkpoint_callback = cls._get_checkpoint_callback(tracking_client=tracking_client)
+        batch_end_flow = BatchEndFlow(batch_routine=batch_routine)
+        epoch_end_flow = EpochEndFlow(
+            artifact_routine=artifact_routine,
+            loader_routines=loader_routines,
+        )
         trainer = cls(
             training_state=training_state,
             train_loader=train_loader,
             device=device,
-            evaluation_flow=evaluation_flow,
-            model_tracker=model_tracker,
             early_stopper=early_stopper,
+            model_tracker=model_tracker,
             checkpoint_callback=checkpoint_callback,
-            batch_routine=batch_routine,
+            batch_end_flow=batch_end_flow,
+            epoch_end_flow=epoch_end_flow,
         )
         return trainer
 
@@ -167,39 +163,38 @@ class Trainer(
         model_output: ModelOutputT,
         batch_idx: int,
     ):
-        self._execute_batch_routine(
+        self._execute_batch_end_flow(
             model_input=model_input,
             model_output=model_output,
             batch_idx=batch_idx,
         )
 
-    def _execute_epoch_postprocessing(self):
-        super()._execute_epoch_postprocessing()
-        self._execute_evaluation_flow()
-        self._execute_checkpoint_callback()
-        self._update_tracker()
-        self._update_stopper()
-
-    def _execute_batch_routine(
+    def _execute_batch_end_flow(
         self,
         model_input: ModelInputT,
         model_output: ModelOutputT,
         batch_idx: int,
     ):
-        if self._batch_routine is not None:
-            self._batch_routine.execute(
-                model_input=model_input,
-                model_output=model_output,
-                model=self.model,
-                batch_idx=batch_idx,
-            )
-            if self._cache_batch_artifacts:
-                self._batch_cache.append(items=self._batch_routine.cache)
+        self._batch_end_flow.execute(
+            model_input=model_input,
+            model_output=model_output,
+            model=self.model,
+            batch_idx=batch_idx,
+        )
+        if self._cache_batch_artifacts:
+            self._batch_cache.append(items=self._batch_end_flow.cache)
 
-    def _execute_evaluation_flow(self):
-        self._evaluation_flow.clear_cache()
-        self._evaluation_flow.execute(model=self.model, n_epochs_elapsed=self.n_epochs_elapsed)
-        self._epoch_score_cache.append(self._evaluation_flow.scores)
+    def _execute_epoch_postprocessing(self):
+        super()._execute_epoch_postprocessing()
+        self._execute_epoch_end_flow()
+        self._execute_checkpoint_callback()
+        self._update_tracker()
+        self._update_stopper()
+
+    def _execute_epoch_end_flow(self):
+        self._epoch_end_flow.clear_cache()
+        self._epoch_end_flow.execute(model=self.model, n_epochs_elapsed=self.n_epochs_elapsed)
+        self._epoch_score_cache.append(self._epoch_end_flow.scores)
 
     def _execute_checkpoint_callback(self):
         if self._checkpoint_callback is not None:
