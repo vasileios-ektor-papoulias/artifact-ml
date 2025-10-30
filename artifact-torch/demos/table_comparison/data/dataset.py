@@ -7,7 +7,7 @@ from demos.table_comparison.libs.transformers.encoder import Encoder
 from demos.table_comparison.model.protocols import TabularVAEInput
 
 
-class DemoDataset(Dataset[TabularVAEInput]):
+class TabularVAEDataset(Dataset[TabularVAEInput]):
     def __init__(self, df_raw: pd.DataFrame, discretizer: Discretizer, encoder: Encoder):
         df_discretized = discretizer.transform(df=df_raw)
         df_encoded = encoder.transform(df=df_discretized)
