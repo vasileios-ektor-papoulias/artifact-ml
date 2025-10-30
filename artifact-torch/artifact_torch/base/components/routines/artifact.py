@@ -19,9 +19,15 @@ ModelTContr = TypeVar("ModelTContr", bound=Model[Any, Any], contravariant=True)
 ArtifactRoutineHyperparamsTCov = TypeVar(
     "ArtifactRoutineHyperparamsTCov", bound="ArtifactRoutineHyperparams", covariant=True
 )
-ArtifactRoutineDataT = TypeVar("ArtifactRoutineDataT", bound="ArtifactRoutineData")
-ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound=ArtifactResources)
-ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
+ArtifactRoutineDataTContr = TypeVar(
+    "ArtifactRoutineDataTContr", bound="ArtifactRoutineData", contravariant=True
+)
+ArtifactResourcesTContr = TypeVar(
+    "ArtifactResourcesTContr", bound=ArtifactResources, contravariant=True
+)
+ResourceSpecProtocolTContr = TypeVar(
+    "ResourceSpecProtocolTContr", bound=ResourceSpecProtocol, contravariant=True
+)
 ArtifactRoutineT = TypeVar("ArtifactRoutineT", bound="ArtifactRoutine")
 
 
@@ -38,18 +44,20 @@ class ArtifactRoutine(
     Generic[
         ModelTContr,
         ArtifactRoutineHyperparamsTCov,
-        ArtifactRoutineDataT,
-        ArtifactResourcesT,
-        ResourceSpecProtocolT,
+        ArtifactRoutineDataTContr,
+        ArtifactResourcesTContr,
+        ResourceSpecProtocolTContr,
     ],
 ):
     def __init__(
         self,
         periods: Mapping[DataSplit, int],
-        data: Mapping[DataSplit, ArtifactRoutineDataT],
+        data: Mapping[DataSplit, ArtifactRoutineDataTContr],
         validation_plans: Mapping[
             DataSplit,
-            ValidationPlan[Any, Any, Any, Any, Any, Any, ArtifactResourcesT, ResourceSpecProtocolT],
+            ValidationPlan[
+                Any, Any, Any, Any, Any, Any, ArtifactResourcesTContr, ResourceSpecProtocolTContr
+            ],
         ],
         hyperparams: ArtifactRoutineHyperparamsTCov,
         tracking_client: Optional[TrackingClient] = None,
@@ -68,8 +76,8 @@ class ArtifactRoutine(
     @classmethod
     def build(
         cls: Type[ArtifactRoutineT],
-        data: Mapping[DataSplit, ArtifactRoutineDataT],
-        data_spec: ResourceSpecProtocolT,
+        data: Mapping[DataSplit, ArtifactRoutineDataTContr],
+        data_spec: ResourceSpecProtocolTContr,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ArtifactRoutineT:
         periods = cls._get_periods()
@@ -142,11 +150,13 @@ class ArtifactRoutine(
     @abstractmethod
     def _get_validation_plans(
         cls,
-        artifact_resource_spec: ResourceSpecProtocolT,
+        artifact_resource_spec: ResourceSpecProtocolTContr,
         tracking_client: Optional[TrackingClient],
     ) -> Mapping[
         DataSplit,
-        ValidationPlan[Any, Any, Any, Any, Any, Any, ArtifactResourcesT, ResourceSpecProtocolT],
+        ValidationPlan[
+            Any, Any, Any, Any, Any, Any, ArtifactResourcesTContr, ResourceSpecProtocolTContr
+        ],
     ]: ...
 
     @classmethod
@@ -157,7 +167,7 @@ class ArtifactRoutine(
     @abstractmethod
     def _export_artifact_resources(
         cls,
-        artifact_resources: ArtifactResourcesT,
+        artifact_resources: ArtifactResourcesTContr,
         n_epochs_elapsed: int,
         data_split: DataSplit,
         tracking_client: TrackingClient,
@@ -167,7 +177,7 @@ class ArtifactRoutine(
     def _generate_artifact_resources(
         self,
         model: ModelTContr,
-    ) -> Mapping[DataSplit, ArtifactResourcesT]: ...
+    ) -> Mapping[DataSplit, ArtifactResourcesTContr]: ...
 
     def clear_cache(self):
         for validation_plan in self._validation_plans.values():
