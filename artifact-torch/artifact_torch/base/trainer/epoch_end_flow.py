@@ -8,7 +8,7 @@ from artifact_torch.base.components.routines.loader import DataLoaderRoutine
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 
-ModelTContr = TypeVar("ModelTContr", bound=Model, contravariant=True)
+ModelTContr = TypeVar("ModelTContr", bound=Model[Any, Any], contravariant=True)
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
 ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput, contravariant=True)
 
