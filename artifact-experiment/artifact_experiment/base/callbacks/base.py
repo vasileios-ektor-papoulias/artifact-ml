@@ -37,7 +37,23 @@ class CallbackHandler(Generic[CallbackT, CallbackResourcesT]):
     def ls_callbacks(self) -> List[CallbackT]:
         return self._ls_callbacks
 
-    def execute(self, resources: CallbackResourcesT):
+    @property
+    def n_callbacks(self) -> int:
+        return self._n_callbacks
+
+    @property
+    def has_callbacks(self) -> bool:
+        return self._has_callbacks
+
+    @property
+    def _n_callbacks(self) -> int:
+        return len(self._ls_callbacks)
+
+    @property
+    def _has_callbacks(self) -> bool:
+        return self._n_callbacks != 0
+
+    def execute(self, resources: CallbackResourcesTContr):
         for callback in tqdm(
             self._ls_callbacks,
             desc=self._progressbar_message,
