@@ -12,7 +12,6 @@ from artifact_experiment.base.tracking.client import TrackingClient
 
 from artifact_torch.base.components.utils.periodic_action_trigger import PeriodicActionTrigger
 
-CacheDataT = TypeVar("CacheDataT")
 PeriodicCallbackResourcesTContr = TypeVar(
     "PeriodicCallbackResourcesTContr", bound="PeriodicCallbackResources", contravariant=True
 )
@@ -43,6 +42,9 @@ class PeriodicCallback(
         )
         if should_trigger:
             self._execute(resources=resources)
+
+
+CacheDataT = TypeVar("CacheDataT")
 
 
 class PeriodicCacheCallback(
