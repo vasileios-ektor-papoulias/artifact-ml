@@ -54,25 +54,29 @@ def test_build(
     assert isinstance(plan, DummyTableComparisonPlan)
     assert spy_build_score.call_count == len(expected_score_types)
     for score_type in expected_score_types:
-        spy_build_score.assert_any_call(score_type=score_type, resource_spec=tabular_data_spec)
+        spy_build_score.assert_any_call(
+            score_type=score_type, resource_spec=tabular_data_spec, data_split=None
+        )
     assert spy_build_array.call_count == 0
     assert spy_build_plot.call_count == len(expected_plot_types)
     for plot_type in expected_plot_types:
-        spy_build_plot.assert_any_call(plot_type=plot_type, resource_spec=tabular_data_spec)
+        spy_build_plot.assert_any_call(
+            plot_type=plot_type, resource_spec=tabular_data_spec, data_split=None
+        )
     assert spy_build_score_collection.call_count == len(expected_score_collection_types)
     for sct in expected_score_collection_types:
         spy_build_score_collection.assert_any_call(
-            score_collection_type=sct, resource_spec=tabular_data_spec
+            score_collection_type=sct, resource_spec=tabular_data_spec, data_split=None
         )
     assert spy_build_array_collection.call_count == len(expected_array_collection_types)
     for act in expected_array_collection_types:
         spy_build_array_collection.assert_any_call(
-            array_collection_type=act, resource_spec=tabular_data_spec
+            array_collection_type=act, resource_spec=tabular_data_spec, data_split=None
         )
     assert spy_build_plot_collection.call_count == len(expected_plot_collection_types)
     for pct in expected_plot_collection_types:
         spy_build_plot_collection.assert_any_call(
-            plot_collection_type=pct, resource_spec=tabular_data_spec
+            plot_collection_type=pct, resource_spec=tabular_data_spec, data_split=None
         )
 
 
