@@ -12,10 +12,10 @@ from artifact_experiment.base.tracking.client import TrackingClient
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-CacheDataT = TypeVar("CacheDataT")
 CallbackResourcesTContr = TypeVar(
     "CallbackResourcesTContr", bound=CallbackResources, contravariant=True
 )
+CacheDataT = TypeVar("CacheDataT")
 
 
 class TrackingCallback(
@@ -142,7 +142,6 @@ class PlotCollectionCallback(
     def _compute(self, resources: CallbackResourcesTContr) -> Dict[str, Figure]: ...
 
 
-CallbackResourcesT = TypeVar("CallbackResourcesT", bound=CallbackResources)
 TrackingCallbackT = TypeVar("TrackingCallbackT", bound=TrackingCallback)
 ScoreCallbackT = TypeVar("ScoreCallbackT", bound=TrackingCallback[Any, float])
 ArrayCallbackT = TypeVar("ArrayCallbackT", bound=TrackingCallback[Any, ndarray])
@@ -159,8 +158,8 @@ PlotCollectionCallbackT = TypeVar(
 
 
 class TrackingCallbackHandler(
-    CacheCallbackHandler[TrackingCallbackT, CallbackResourcesT, CacheDataT],
-    Generic[TrackingCallbackT, CallbackResourcesT, CacheDataT],
+    CacheCallbackHandler[TrackingCallbackT, CallbackResourcesTContr, CacheDataT],
+    Generic[TrackingCallbackT, CallbackResourcesTContr, CacheDataT],
 ):
     def __init__(
         self,
@@ -188,7 +187,7 @@ class TrackingCallbackHandler(
     def _export(cache: Dict[str, CacheDataT], tracking_client: TrackingClient):
         pass
 
-    def execute(self, resources: CallbackResourcesT):
+    def execute(self, resources: CallbackResourcesTContr):
         if self._tracking_client is not None:
             self._invalidate_callback_tracking_clients(ls_callbacks=self._ls_callbacks)
             super().execute(resources=resources)
@@ -267,24 +266,24 @@ class PlotCollectionHandlerExportMixin:
 
 class ScoreCallbackHandler(
     ScoreHandlerExportMixin,
-    TrackingCallbackHandler[ScoreCallbackT, CallbackResourcesT, float],
-    Generic[ScoreCallbackT, CallbackResourcesT],
+    TrackingCallbackHandler[ScoreCallbackT, CallbackResourcesTContr, float],
+    Generic[ScoreCallbackT, CallbackResourcesTContr],
 ):
     pass
 
 
 class ArrayCallbackHandler(
     ArrayHandlerExportMixin,
-    TrackingCallbackHandler[ArrayCallbackT, CallbackResourcesT, ndarray],
-    Generic[ArrayCallbackT, CallbackResourcesT],
+    TrackingCallbackHandler[ArrayCallbackT, CallbackResourcesTContr, ndarray],
+    Generic[ArrayCallbackT, CallbackResourcesTContr],
 ):
     pass
 
 
 class PlotCallbackHandler(
     PlotHandlerExportMixin,
-    TrackingCallbackHandler[PlotCallbackT, CallbackResourcesT, Figure],
-    Generic[PlotCallbackT, CallbackResourcesT],
+    TrackingCallbackHandler[PlotCallbackT, CallbackResourcesTContr, Figure],
+    Generic[PlotCallbackT, CallbackResourcesTContr],
 ):
     pass
 
@@ -293,10 +292,10 @@ class ScoreCollectionCallbackHandler(
     ScoreCollectionHandlerExportMixin,
     TrackingCallbackHandler[
         ScoreCollectionCallbackT,
-        CallbackResourcesT,
+        CallbackResourcesTContr,
         Dict[str, float],
     ],
-    Generic[ScoreCollectionCallbackT, CallbackResourcesT],
+    Generic[ScoreCollectionCallbackT, CallbackResourcesTContr],
 ):
     pass
 
@@ -305,10 +304,10 @@ class ArrayCollectionCallbackHandler(
     ArrayCollectionHandlerExportMixin,
     TrackingCallbackHandler[
         ArrayCollectionCallbackT,
-        CallbackResourcesT,
+        CallbackResourcesTContr,
         Dict[str, ndarray],
     ],
-    Generic[ArrayCollectionCallbackT, CallbackResourcesT],
+    Generic[ArrayCollectionCallbackT, CallbackResourcesTContr],
 ):
     pass
 
@@ -317,9 +316,9 @@ class PlotCollectionCallbackHandler(
     PlotCollectionHandlerExportMixin,
     TrackingCallbackHandler[
         PlotCollectionCallbackT,
-        CallbackResourcesT,
+        CallbackResourcesTContr,
         Dict[str, Figure],
     ],
-    Generic[PlotCollectionCallbackT, CallbackResourcesT],
+    Generic[PlotCollectionCallbackT, CallbackResourcesTContr],
 ):
     pass
