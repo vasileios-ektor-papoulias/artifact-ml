@@ -34,8 +34,8 @@ class DemoTrainer(
         TableSynthesizer[ModelInputT, ModelOutputT, Any],
         ModelInputT,
         ModelOutputT,
-        ModelTrackingCriterion,
         StopperUpdateData,
+        ModelTrackingCriterion,
     ],
     Generic[ModelInputT, ModelOutputT],
 ):

@@ -1,7 +1,9 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TypeVar
 
 import numpy as np
 import pandas as pd
+
+EncoderT = TypeVar("EncoderT", bound="Encoder")
 
 
 class Encoder:
@@ -11,15 +13,13 @@ class Encoder:
         self._mappings: Dict[str, Dict[str, int]] = {}
         self._is_fitted: bool = False
 
-    @classmethod
-    def build(cls) -> "Encoder":
-        return cls()
-
     def get_mappings(self) -> Dict[str, Dict[str, int]]:
         self._raise_if_not_fitted()
         return self._mappings
 
-    def fit(self, df: pd.DataFrame, ls_cat_features: Optional[List[str]] = None) -> "Encoder":
+    def fit(
+        self: EncoderT, df: pd.DataFrame, ls_cat_features: Optional[List[str]] = None
+    ) -> EncoderT:
         self._raise_if_fitted()
         if ls_cat_features is not None:
             self._ls_cat_features = ls_cat_features

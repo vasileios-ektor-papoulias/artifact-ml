@@ -1,7 +1,8 @@
 from dataclasses import dataclass
+from typing import List, Optional
 
 import torch
-from artifact_torch.base.model.io import LossOutput, ModelInput
+from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.core.model.generative import GenerationParams
 
 
@@ -9,10 +10,11 @@ class TabularVAEInput(ModelInput):
     t_features: torch.Tensor
 
 
-class TabularVAEOutput(LossOutput):
-    t_reconstructions: torch.Tensor
-    z_mean: torch.Tensor
-    z_log_var: torch.Tensor
+class TabularVAEOutput(ModelOutput):
+    ls_t_logits: List[torch.Tensor]
+    t_latent_mean: torch.Tensor
+    t_latent_log_var: torch.Tensor
+    t_loss: Optional[torch.Tensor]
 
 
 @dataclass

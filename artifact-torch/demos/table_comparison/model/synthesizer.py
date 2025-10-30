@@ -54,9 +54,12 @@ class TabularVAESynthesizer(
 
     def forward(self, model_input: TabularVAEInput) -> TabularVAEOutput:
         t_features = model_input.get("t_features")
-        t_recon, z_mean, z_log_var, t_loss = self._vae(t_features=t_features)
+        ls_t_logits, t_latent_mean, t_latent_log_var, t_loss = self._vae(t_features=t_features)
         model_output = TabularVAEOutput(
-            t_reconstructions=t_recon, z_mean=z_mean, z_log_var=z_log_var, t_loss=t_loss
+            ls_t_logits=ls_t_logits,
+            t_latent_mean=t_latent_mean,
+            t_latent_log_var=t_latent_log_var,
+            t_loss=t_loss,
         )
         return model_output
 
