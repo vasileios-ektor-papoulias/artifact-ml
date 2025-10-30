@@ -17,14 +17,20 @@ from artifact_torch.base.trainer.trainer import Trainer
 ModelT = TypeVar("ModelT", bound=Model[Any, Any])
 ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
 ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
-ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
 ArtifactRoutineDataT = TypeVar("ArtifactRoutineDataT", bound=ArtifactRoutineData)
+DataSpecProtocolT = TypeVar("DataSpecProtocolT", bound=ResourceSpecProtocol)
 ExperimentT = TypeVar("ExperimentT", bound="Experiment")
 
 
 class Experiment(
     ABC,
-    Generic[ModelT, ModelInputT, ModelOutputT, ResourceSpecProtocolT, ArtifactRoutineDataT],
+    Generic[
+        ModelT,
+        ModelInputT,
+        ModelOutputT,
+        ArtifactRoutineDataT,
+        DataSpecProtocolT,
+    ],
 ):
     def __init__(self, trainer: Trainer[ModelT, ModelInputT, ModelOutputT, Any, Any]):
         self._trainer = trainer
@@ -35,7 +41,7 @@ class Experiment(
         model: ModelT,
         data_loaders: Mapping[DataSplit, DataLoader[ModelInputT]],
         artifact_routine_data: Mapping[DataSplit, ArtifactRoutineDataT],
-        artifact_routine_data_spec: Optional[ResourceSpecProtocolT] = None,
+        artifact_routine_data_spec: Optional[DataSpecProtocolT] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ExperimentT:
         assert DataSplit.TRAIN in data_loaders, "Training data not provided."
@@ -104,7 +110,7 @@ class Experiment(
     def _get_artifact_routine(
         cls,
         data: Mapping[DataSplit, ArtifactRoutineDataT],
-        data_spec: ResourceSpecProtocolT,
+        data_spec: DataSpecProtocolT,
         tracking_client: Optional[TrackingClient] = None,
     ) -> Optional[ArtifactRoutine[ModelT, Any, Any, Any, Any]]: ...
 
