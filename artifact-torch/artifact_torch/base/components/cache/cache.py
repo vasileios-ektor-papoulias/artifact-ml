@@ -34,6 +34,9 @@ class Cache(Generic[CacheDataT]):
     def __getitem__(self, key: str) -> Optional[List[Optional[CacheDataT]]]:
         return self._cache.get(key)
 
+    def __repr__(self) -> str:
+        return f"Cache({list(self._cache.keys())})"
+
     def get_full_history(self, key: str) -> Optional[List[Optional[CacheDataT]]]:
         return self._cache[key]
 
