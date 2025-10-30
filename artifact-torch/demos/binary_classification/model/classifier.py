@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Dict, Hashable, List, Tuple, Type, TypeVar
 
 import pandas as pd
@@ -8,23 +7,20 @@ from artifact_core.libs.resources.classification.binary_classification_results i
     BinaryClassificationResults,
 )
 from artifact_torch.binary_classification import BinaryClassifier
-from artifact_torch.core.model.classifier import ClassificationParams
 
-from demos.binary_classification.model.io import MLPClassifierInput, MLPClassifierOutput
 from demos.binary_classification.model.mlp_encoder import MLPEncoderConfig
 from demos.binary_classification.model.mlp_predictor import MLPPredictor
+from demos.binary_classification.model.protocols import (
+    MLPClassificationParams,
+    MLPClassifierInput,
+    MLPClassifierOutput,
+)
+
+MLPClassifierT = TypeVar("MLPClassifierT", bound="MLPClassifier")
 
 
-@dataclass
-class MLPClassificationParams(ClassificationParams):
-    threshold: float
-
-
-MLPClassifierModelT = TypeVar("MLPClassifierModelT", bound="MLPClassifierModel")
-
-
-class MLPClassifierModel(
-    BinaryClassifier[MLPClassifierInput, MLPClassifierOutput, MLPClassificationParams]
+class MLPClassifier(
+    BinaryClassifier[MLPClassifierInput, MLPClassifierOutput, MLPClassificationParams, pd.DataFrame]
 ):
     _n_classes = 2
 
@@ -41,11 +37,11 @@ class MLPClassifierModel(
 
     @classmethod
     def build(
-        cls: Type[MLPClassifierModelT],
+        cls: Type[MLPClassifierT],
         class_spec: BinaryFeatureSpecProtocol,
         ls_features: List[str],
         architecture_config: MLPEncoderConfig = MLPEncoderConfig(),
-    ) -> MLPClassifierModelT:
+    ) -> MLPClassifierT:
         if not ls_features:
             raise ValueError(f"ls_features must be a nonempty list, got: {ls_features}.")
         mlp = MLPPredictor.build(
@@ -72,7 +68,7 @@ class MLPClassifierModel(
         t_features = self._to_t_features(df=data)  # (B, in_dim)
         t_prob_pos = self._infer_prob_pos(t_features=t_features)  # (B,)
         t_preds_bin = self._apply_threshold(
-            t_prob_pos=t_prob_pos, threshold=params.threshold
+            t_prob_pos=t_prob_pos, threshold=params["threshold"]
         )  # (B,)
         id_to_category, id_to_prob_pos = self._build_classification_result_maps(
             data_index=data.index.tolist(),

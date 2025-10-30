@@ -4,7 +4,7 @@ import pandas as pd
 import torch
 from artifact_torch.base.data.dataset import Dataset
 
-from demos.binary_classification.model.io import MLPClassifierInput
+from demos.binary_classification.model.protocols import MLPClassifierInput
 
 TabularVAEDatasetT = TypeVar("TabularVAEDatasetT", bound="MLPClassifierDataset")
 

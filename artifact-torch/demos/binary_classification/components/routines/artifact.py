@@ -1,5 +1,6 @@
-from typing import List, Optional
+from typing import List, Mapping, Optional
 
+import pandas as pd
 from artifact_core.binary_classification import (
     BinaryClassificationArrayCollectionType,
     BinaryClassificationArrayType,
@@ -9,15 +10,16 @@ from artifact_core.binary_classification import (
     BinaryClassificationScoreType,
     BinaryFeatureSpecProtocol,
 )
+from artifact_experiment import DataSplit
 from artifact_experiment.binary_classification import BinaryClassificationPlan
 from artifact_experiment.tracking import TrackingClient
 from artifact_torch.binary_classification import BinaryClassificationRoutine
 
+from demos.binary_classification.components.routines.protocols import DemoClassificationParams
 from demos.binary_classification.config.constants import (
     ARTIFACT_VALIDATION_PERIOD,
     CLASSIFICATION_THRESHOLD,
 )
-from demos.binary_classification.model.classifier import MLPClassificationParams
 
 
 class DemoBinaryClassificationPlan(BinaryClassificationPlan):
@@ -61,21 +63,25 @@ class DemoBinaryClassificationPlan(BinaryClassificationPlan):
         ]
 
 
-class DemoBinaryClassificationRoutine(BinaryClassificationRoutine[MLPClassificationParams]):
+class DemoBinaryClassificationRoutine(
+    BinaryClassificationRoutine[DemoClassificationParams, pd.DataFrame]
+):
     @classmethod
-    def _get_period(cls) -> int:
-        return ARTIFACT_VALIDATION_PERIOD
+    def _get_periods(cls) -> Mapping[DataSplit, int]:
+        return {DataSplit.TRAIN: ARTIFACT_VALIDATION_PERIOD}
 
     @classmethod
-    def _get_classification_params(cls) -> MLPClassificationParams:
-        return MLPClassificationParams(threshold=CLASSIFICATION_THRESHOLD)
-
-    @classmethod
-    def _get_validation_plan(
+    def _get_validation_plans(
         cls,
         artifact_resource_spec: BinaryFeatureSpecProtocol,
         tracking_client: Optional[TrackingClient],
-    ) -> BinaryClassificationPlan:
-        return DemoBinaryClassificationPlan.build(
-            resource_spec=artifact_resource_spec, tracking_client=tracking_client
-        )
+    ) -> Mapping[DataSplit, BinaryClassificationPlan]:
+        return {
+            DataSplit.TRAIN: DemoBinaryClassificationPlan.build(
+                resource_spec=artifact_resource_spec, tracking_client=tracking_client
+            )
+        }
+
+    @classmethod
+    def _get_classification_params(cls) -> DemoClassificationParams:
+        return DemoClassificationParams(threshold=CLASSIFICATION_THRESHOLD)

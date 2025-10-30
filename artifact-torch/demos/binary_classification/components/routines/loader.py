@@ -12,48 +12,51 @@ from artifact_torch.base.components.callbacks.loader import (
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
 from artifact_torch.libs.components.callbacks.loader.loss import LoaderLossCallback
 
+from demos.binary_classification.components.routines.protocols import (
+    DemoModelInput,
+    DemoModelOutput,
+)
 from demos.binary_classification.config.constants import TRAIN_LOADER_CALLBACK_PERIOD
-from demos.binary_classification.model.io import MLPClassifierInput, MLPClassifierOutput
 
 
-class DemoLoaderRoutine(DataLoaderRoutine[MLPClassifierInput, MLPClassifierOutput]):
+class DemoLoaderRoutine(DataLoaderRoutine[DemoModelInput, DemoModelOutput]):
     @staticmethod
     def _get_score_callbacks(
         data_split: DataSplit,
-    ) -> List[DataLoaderScoreCallback[MLPClassifierInput, MLPClassifierOutput]]:
+    ) -> List[DataLoaderScoreCallback[DemoModelInput, DemoModelOutput]]:
         return [LoaderLossCallback(period=TRAIN_LOADER_CALLBACK_PERIOD, data_split=data_split)]
 
     @staticmethod
     def _get_array_callbacks(
         data_split: DataSplit,
-    ) -> List[DataLoaderArrayCallback[MLPClassifierInput, MLPClassifierOutput]]:
+    ) -> List[DataLoaderArrayCallback[DemoModelInput, DemoModelOutput]]:
         _ = data_split
         return []
 
     @staticmethod
     def _get_plot_callbacks(
         data_split: DataSplit,
-    ) -> List[DataLoaderPlotCallback[MLPClassifierInput, MLPClassifierOutput]]:
+    ) -> List[DataLoaderPlotCallback[DemoModelInput, DemoModelOutput]]:
         _ = data_split
         return []
 
     @staticmethod
     def _get_score_collection_callbacks(
         data_split: DataSplit,
-    ) -> List[DataLoaderScoreCollectionCallback[MLPClassifierInput, MLPClassifierOutput]]:
+    ) -> List[DataLoaderScoreCollectionCallback[DemoModelInput, DemoModelOutput]]:
         _ = data_split
         return []
 
     @staticmethod
     def _get_array_collection_callbacks(
         data_split: DataSplit,
-    ) -> List[DataLoaderArrayCollectionCallback[MLPClassifierInput, MLPClassifierOutput]]:
+    ) -> List[DataLoaderArrayCollectionCallback[DemoModelInput, DemoModelOutput]]:
         _ = data_split
         return []
 
     @staticmethod
     def _get_plot_collection_callbacks(
         data_split: DataSplit,
-    ) -> List[DataLoaderPlotCollectionCallback[MLPClassifierInput, MLPClassifierOutput]]:
+    ) -> List[DataLoaderPlotCollectionCallback[DemoModelInput, DemoModelOutput]]:
         _ = data_split
         return []
