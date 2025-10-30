@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class DataSplit(Enum):
+    ALL = "ALL"
     TRAIN = "TRAIN"
     VALIDATION = "VALIDATION"
     TEST = "TEST"
