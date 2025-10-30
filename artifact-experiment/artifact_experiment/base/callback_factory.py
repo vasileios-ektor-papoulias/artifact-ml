@@ -176,14 +176,19 @@ class ArtifactCallbackFactory(
         )
         return callback
 
-    @staticmethod
+    @classmethod
     def _get_key(
-        artifact_type: Union[ArtifactTypeT, str], data_split: Optional[DataSplit] = None
+        cls, artifact_type: Union[ArtifactTypeT, str], data_split: Optional[DataSplit] = None
     ) -> str:
-        if isinstance(artifact_type, str):
-            key = artifact_type
-        else:
-            key = artifact_type.name
+        key = cls._get_name(artifact_type=artifact_type)
         if data_split is not None:
             key = DataSplitSuffixAppender.append_suffix(name=key, data_split=data_split)
         return key
+
+    @staticmethod
+    def _get_name(artifact_type: Union[ArtifactTypeT, str]) -> str:
+        if isinstance(artifact_type, str):
+            name = artifact_type
+        else:
+            name = artifact_type.name
+        return name
