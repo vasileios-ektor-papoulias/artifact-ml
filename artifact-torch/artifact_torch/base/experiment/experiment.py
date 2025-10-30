@@ -6,6 +6,7 @@ from artifact_core.base.artifact import ResourceSpecProtocol
 from artifact_experiment.base.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 
+from artifact_torch.base.components.cache.cache import StandardCache
 from artifact_torch.base.components.routines.artifact import ArtifactRoutine, ArtifactRoutineData
 from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
@@ -82,6 +83,10 @@ class Experiment(
     @property
     def epoch_scores(self) -> pd.DataFrame:
         return self._trainer.epoch_scores
+
+    @property
+    def batch_cache(self) -> StandardCache[Any]:
+        return self._trainer.batch_cache
 
     @classmethod
     @abstractmethod
