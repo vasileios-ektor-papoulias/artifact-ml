@@ -21,10 +21,9 @@ class Callback(ABC, Generic[CallbackResourcesTContr]):
 
 
 CallbackT = TypeVar("CallbackT", bound=Callback)
-CallbackResourcesT = TypeVar("CallbackResourcesT", bound=CallbackResources)
 
 
-class CallbackHandler(Generic[CallbackT, CallbackResourcesT]):
+class CallbackHandler(Generic[CallbackT, CallbackResourcesTContr]):
     _verbose = True
     _progressbar_message = "Executing Callbacks"
 
