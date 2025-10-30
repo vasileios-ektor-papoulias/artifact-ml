@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import Optional, TypedDict
 
 import torch
 
@@ -12,8 +12,4 @@ class ModelInput(ModelIO):
 
 
 class ModelOutput(ModelIO):
-    pass
-
-
-class LossOutput(ModelOutput):
-    t_loss: torch.Tensor
+    t_loss: Optional[torch.Tensor]
