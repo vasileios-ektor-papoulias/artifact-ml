@@ -2,7 +2,7 @@ from typing import Any, Generic, Mapping, Optional, Type, TypeVar
 
 import pandas as pd
 from artifact_core.binary_classification import BinaryFeatureSpecProtocol
-from artifact_experiment.base.data_split import DataSplit
+from artifact_experiment import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine

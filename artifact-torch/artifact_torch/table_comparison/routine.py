@@ -5,7 +5,7 @@ from typing import Any, Generic, Mapping, Optional, TypeVar
 import pandas as pd
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison.artifacts.base import TableComparisonArtifactResources
-from artifact_experiment.base.data_split import DataSplit
+from artifact_experiment import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_experiment.table_comparison.validation_plan import TableComparisonPlan
 

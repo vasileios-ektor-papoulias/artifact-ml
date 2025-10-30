@@ -1,6 +1,6 @@
 from typing import List
 
-from artifact_experiment.base.data_split import DataSplit
+from artifact_experiment import DataSplit
 from artifact_torch.base.components.callbacks.loader import (
     DataLoaderArrayCallback,
     DataLoaderArrayCollectionCallback,

@@ -1,7 +1,7 @@
 from typing import Any, Generic, Mapping, Optional, Type, TypeVar
 
 from artifact_core.table_comparison import TabularDataSpecProtocol
-from artifact_experiment.base.data_split import DataSplit
+from artifact_experiment import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine

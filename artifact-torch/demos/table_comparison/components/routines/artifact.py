@@ -9,7 +9,7 @@ from artifact_core.table_comparison import (
     TableComparisonScoreType,
     TabularDataSpecProtocol,
 )
-from artifact_experiment.base.data_split import DataSplit
+from artifact_experiment import DataSplit
 from artifact_experiment.table_comparison import TableComparisonPlan
 from artifact_experiment.tracking import TrackingClient
 from artifact_torch.table_comparison import TableComparisonRoutine
