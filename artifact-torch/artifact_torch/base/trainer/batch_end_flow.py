@@ -6,7 +6,6 @@ from artifact_torch.base.model.io import ModelInput, ModelOutput
 
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
 ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput, contravariant=True)
-ModelTContr = TypeVar("ModelTContr", bound=Model, contravariant=True)
 
 
 class BatchEndFlow(Generic[ModelInputTContr, ModelOutputTContr]):
