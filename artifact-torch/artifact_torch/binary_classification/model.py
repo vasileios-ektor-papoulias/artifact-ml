@@ -19,7 +19,7 @@ ModelOutputTCov = TypeVar("ModelOutputTCov", bound=ModelOutput, covariant=True)
 ClassificationParamsTContr = TypeVar(
     "ClassificationParamsTContr", bound=ClassificationParams, contravariant=True
 )
-ClassificationDataT = TypeVar("ClassificationDataT")
+ClassificationDataTContr = TypeVar("ClassificationDataTContr", contravariant=True)
 
 
 class BinaryClassifier(
@@ -27,15 +27,17 @@ class BinaryClassifier(
         ModelInputTContr,
         ModelOutputTCov,
         ClassificationParamsTContr,
+        ClassificationDataTContr,
         BinaryClassificationResults,
-        ClassificationDataT,
     ],
-    Generic[ModelInputTContr, ModelOutputTCov, ClassificationParamsTContr, ClassificationDataT],
+    Generic[
+        ModelInputTContr, ModelOutputTCov, ClassificationParamsTContr, ClassificationDataTContr
+    ],
 ):
     @abstractmethod
     def forward(self, model_input: ModelInputTContr, *args, **kwargs) -> ModelOutputTCov: ...
 
     @abstractmethod
     def classify(
-        self, data: ClassificationDataT, params: ClassificationParamsTContr
+        self, data: ClassificationDataTContr, params: ClassificationParamsTContr
     ) -> BinaryClassificationResults: ...
