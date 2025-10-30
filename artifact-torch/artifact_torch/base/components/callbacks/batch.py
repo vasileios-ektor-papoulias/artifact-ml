@@ -61,7 +61,6 @@ class BatchCallback(
     def _compute_on_batch(
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
-        model: Model[ModelInputTContr, ModelOutputTContr],
     ) -> CacheDataT: ...
 
     @staticmethod
@@ -75,7 +74,6 @@ class BatchCallback(
         result = self._compute_on_batch(
             model_input=resources.model_input,
             model_output=resources.model_output,
-            model=resources.model,
         )
         return result
 
@@ -94,7 +92,6 @@ class BatchScoreCallback(
     def _compute_on_batch(
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
-        model: Model[ModelInputTContr, ModelOutputTContr],
     ) -> float: ...
 
 
@@ -112,7 +109,6 @@ class BatchArrayCallback(
     def _compute_on_batch(
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
-        model: Model[ModelInputTContr, ModelOutputTContr],
     ) -> ndarray: ...
 
 
@@ -130,7 +126,6 @@ class BatchPlotCallback(
     def _compute_on_batch(
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
-        model: Model[ModelInputTContr, ModelOutputTContr],
     ) -> Figure: ...
 
 
@@ -148,7 +143,6 @@ class BatchScoreCollectionCallback(
     def _compute_on_batch(
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
-        model: Model[ModelInputTContr, ModelOutputTContr],
     ) -> Dict[str, float]: ...
 
 
@@ -166,7 +160,6 @@ class BatchArrayCollectionCallback(
     def _compute_on_batch(
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
-        model: Model[ModelInputTContr, ModelOutputTContr],
     ) -> Dict[str, ndarray]: ...
 
 
@@ -184,7 +177,6 @@ class BatchPlotCollectionCallback(
     def _compute_on_batch(
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
-        model: Model[ModelInputTContr, ModelOutputTContr],
     ) -> Dict[str, Figure]: ...
 
 

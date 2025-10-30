@@ -70,16 +70,16 @@ class DataLoaderCallback(
 
     @staticmethod
     @abstractmethod
-    def _aggregate_batch_results(
-        ls_batch_results: List[BatchResultT],
-    ) -> CacheDataT: ...
-
-    @staticmethod
-    @abstractmethod
     def _compute_on_batch(
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
     ) -> BatchResultT: ...
+
+    @staticmethod
+    @abstractmethod
+    def _aggregate_batch_results(
+        ls_batch_results: List[BatchResultT],
+    ) -> CacheDataT: ...
 
     @staticmethod
     @abstractmethod
@@ -140,15 +140,15 @@ class DataLoaderScoreCallback(
 
     @staticmethod
     @abstractmethod
-    def _aggregate_batch_results(
-        ls_batch_results: List[float],
+    def _compute_on_batch(
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
     ) -> float: ...
 
     @staticmethod
     @abstractmethod
-    def _compute_on_batch(
-        model_input: ModelInputTContr,
-        model_output: ModelOutputTContr,
+    def _aggregate_batch_results(
+        ls_batch_results: List[float],
     ) -> float: ...
 
 
@@ -161,15 +161,15 @@ class DataLoaderArrayCallback(
 
     @staticmethod
     @abstractmethod
-    def _aggregate_batch_results(
-        ls_batch_results: List[ndarray],
+    def _compute_on_batch(
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
     ) -> ndarray: ...
 
     @staticmethod
     @abstractmethod
-    def _compute_on_batch(
-        model_input: ModelInputTContr,
-        model_output: ModelOutputTContr,
+    def _aggregate_batch_results(
+        ls_batch_results: List[ndarray],
     ) -> ndarray: ...
 
 
@@ -182,16 +182,16 @@ class DataLoaderPlotCallback(
 
     @staticmethod
     @abstractmethod
-    def _aggregate_batch_results(
-        ls_batch_results: List[ndarray],
-    ) -> Figure: ...
-
-    @staticmethod
-    @abstractmethod
     def _compute_on_batch(
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
     ) -> ndarray: ...
+
+    @staticmethod
+    @abstractmethod
+    def _aggregate_batch_results(
+        ls_batch_results: List[ndarray],
+    ) -> Figure: ...
 
 
 class DataLoaderScoreCollectionCallback(
@@ -204,15 +204,15 @@ class DataLoaderScoreCollectionCallback(
 
     @staticmethod
     @abstractmethod
-    def _aggregate_batch_results(
-        ls_batch_results: List[Dict[str, float]],
+    def _compute_on_batch(
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
     ) -> Dict[str, float]: ...
 
     @staticmethod
     @abstractmethod
-    def _compute_on_batch(
-        model_input: ModelInputTContr,
-        model_output: ModelOutputTContr,
+    def _aggregate_batch_results(
+        ls_batch_results: List[Dict[str, float]],
     ) -> Dict[str, float]: ...
 
 
@@ -226,15 +226,15 @@ class DataLoaderArrayCollectionCallback(
 
     @staticmethod
     @abstractmethod
-    def _aggregate_batch_results(
-        ls_batch_results: List[Dict[str, ndarray]],
+    def _compute_on_batch(
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
     ) -> Dict[str, ndarray]: ...
 
     @staticmethod
     @abstractmethod
-    def _compute_on_batch(
-        model_input: ModelInputTContr,
-        model_output: ModelOutputTContr,
+    def _aggregate_batch_results(
+        ls_batch_results: List[Dict[str, ndarray]],
     ) -> Dict[str, ndarray]: ...
 
 
@@ -248,16 +248,16 @@ class DataLoaderPlotCollectionCallback(
 
     @staticmethod
     @abstractmethod
-    def _aggregate_batch_results(
-        ls_batch_results: List[Dict[str, ndarray]],
-    ) -> Dict[str, Figure]: ...
-
-    @staticmethod
-    @abstractmethod
     def _compute_on_batch(
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
     ) -> Dict[str, ndarray]: ...
+
+    @staticmethod
+    @abstractmethod
+    def _aggregate_batch_results(
+        ls_batch_results: List[Dict[str, ndarray]],
+    ) -> Dict[str, Figure]: ...
 
 
 ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
@@ -313,16 +313,16 @@ class DataLoaderCallbackHandler(
                 for callback in self._ls_callbacks:
                     callback.process_batch(model_input=model_input, model_output=model_output)
 
-    def _finalize(self):
-        for callback in self._ls_callbacks:
-            callback.finalize()
-        self.update_cache()
-
     def _execute_sequential(
         self,
         resources: DataLoaderCallbackResources[ModelInputT, ModelOutputT],
     ):
         super().execute(resources=resources)
+
+    def _finalize(self):
+        for callback in self._ls_callbacks:
+            callback.finalize()
+        self.update_cache()
 
 
 class DataLoaderScoreHandler(
