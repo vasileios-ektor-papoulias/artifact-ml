@@ -86,25 +86,21 @@ class DataLoaderCallback(
     def _export(key: str, value: CacheDataT, tracking_client: TrackingClient): ...
 
     def finalize(self) -> CacheDataT:
-        result = self._aggregate_batch_results(ls_batch_results=self._ls_batch_results)
-        self._ls_batch_results.clear()
-        self._cache[self._key] = result
-        return result
+        return self._finalize()
 
     def process_batch(
         self,
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
     ):
-        batch_result = self._compute_on_batch(model_input=model_input, model_output=model_output)
-        self._ls_batch_results.append(batch_result)
+        self._process_batch(model_input=model_input, model_output=model_output)
 
     def _compute(
         self,
         resources: DataLoaderCallbackResources[ModelInputTContr, ModelOutputTContr],
     ) -> CacheDataT:
         self._process_data_loader(model=resources.model, data_loader=resources.data_loader)
-        result = self.finalize()
+        result = self._finalize()
         return result
 
     def _process_data_loader(
@@ -122,7 +118,21 @@ class DataLoaderCallback(
                 leave=False,
             ):
                 model_output = model(model_input)
-                self.process_batch(model_input=model_input, model_output=model_output)
+                self._process_batch(model_input=model_input, model_output=model_output)
+
+    def _process_batch(
+        self,
+        model_input: ModelInputTContr,
+        model_output: ModelOutputTContr,
+    ):
+        batch_result = self._compute_on_batch(model_input=model_input, model_output=model_output)
+        self._ls_batch_results.append(batch_result)
+
+    def _finalize(self) -> CacheDataT:
+        result = self._aggregate_batch_results(ls_batch_results=self._ls_batch_results)
+        self._ls_batch_results.clear()
+        self._cache[self._key] = result
+        return result
 
     @classmethod
     def _get_key(cls, data_split: DataSplit) -> str:
@@ -260,12 +270,12 @@ class DataLoaderPlotCollectionCallback(
     ) -> Dict[str, Figure]: ...
 
 
-ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
-ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
 DataLoaderCallbackT = TypeVar(
     "DataLoaderCallbackT",
     bound="DataLoaderCallback",
 )
+ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
+ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
 
 
 class DataLoaderCallbackHandler(
@@ -289,30 +299,25 @@ class DataLoaderCallbackHandler(
     def _export(cache: Dict[str, CacheDataT], tracking_client: TrackingClient):
         pass
 
+    def process_batch(self, model_input: ModelInputT, model_output: ModelOutputT):
+        for callback in self._ls_callbacks:
+            callback.process_batch(model_input=model_input, model_output=model_output)
+
+    def finalize(self):
+        for callback in self._ls_callbacks:
+            callback.finalize()
+        self.update_cache()
+
+    def export(self):
+        if self._tracking_client is not None:
+            self._export(cache=self.active_cache, tracking_client=self._tracking_client)
+
     def _execute(
         self,
         resources: DataLoaderCallbackResources[ModelInputT, ModelOutputT],
     ):
-        if len(self._ls_callbacks) > 0:
+        if self._has_callbacks:
             self._execute_parallel(resources=resources)
-            self._finalize()
-
-    def _execute_parallel(
-        self,
-        resources: DataLoaderCallbackResources[ModelInputT, ModelOutputT],
-    ):
-        if self._ls_callbacks:
-            resources.model.eval()
-            with torch.no_grad():
-                for model_input in tqdm(
-                    resources.data_loader,
-                    desc=self._progressbar_message,
-                    disable=not self._verbose,
-                    leave=False,
-                ):
-                    model_output = resources.model(model_input)
-                    for callback in self._ls_callbacks:
-                        callback.process_batch(model_input=model_input, model_output=model_output)
 
     def _execute_sequential(
         self,
@@ -320,10 +325,21 @@ class DataLoaderCallbackHandler(
     ):
         super().execute(resources=resources)
 
-    def _finalize(self):
-        for callback in self._ls_callbacks:
-            callback.finalize()
-        self.update_cache()
+    def _execute_parallel(
+        self,
+        resources: DataLoaderCallbackResources[ModelInputT, ModelOutputT],
+    ):
+        resources.model.eval()
+        with torch.no_grad():
+            for model_input in tqdm(
+                resources.data_loader,
+                desc=self._progressbar_message,
+                disable=not self._verbose,
+                leave=False,
+            ):
+                model_output = resources.model(model_input)
+                self.process_batch(model_input=model_input, model_output=model_output)
+        self.finalize()
 
 
 class DataLoaderScoreHandler(

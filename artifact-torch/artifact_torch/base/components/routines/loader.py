@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Generic, List, Optional, Type, TypeVar
 
+import torch
 from artifact_experiment.base.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 from matplotlib.figure import Figure
 from numpy import ndarray
+from tqdm import tqdm
 
 from artifact_torch.base.components.callbacks.loader import (
     DataLoaderArrayCallback,
@@ -33,6 +35,9 @@ DataLoaderRoutineT = TypeVar("DataLoaderRoutineT", bound="DataLoaderRoutine")
 
 
 class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
+    _verbose = True
+    _progressbar_message = "Processing Data Loader"
+
     def __init__(
         self,
         data_loader: DataLoader[ModelInputTContr],
@@ -206,6 +211,14 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
     ]:
         return self._dict_handlers.get("plot_collecitons")
 
+    @property
+    def _n_callbacks(self) -> int:
+        return sum([handler.n_callbacks for handler in self._ls_handlers])
+
+    @property
+    def _has_callbacks(self) -> bool:
+        return self._n_callbacks != 0
+
     @staticmethod
     @abstractmethod
     def _get_score_callbacks(
@@ -242,16 +255,52 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
         data_split: DataSplit,
     ) -> List[DataLoaderPlotCollectionCallback[ModelInputTContr, ModelOutputTContr]]: ...
 
+    def clear_cache(self):
+        for loader_handler in self._ls_handlers:
+            loader_handler.clear()
+
     def execute(self, model: Model[ModelInputTContr, ModelOutputTContr], n_epochs_elapsed: int):
         resources = DataLoaderCallbackResources[ModelInputTContr, ModelOutputTContr](
             step=n_epochs_elapsed, model=model, data_loader=self._data_loader
         )
-        for loader_handler in self._ls_handlers:
-            loader_handler.execute(resources=resources)
+        if self._has_callbacks:
+            self._execute_parallel(resources=resources)
 
-    def clear_cache(self):
-        for loader_handler in self._ls_handlers:
-            loader_handler.clear()
+    def _execute_sequential(
+        self,
+        resources: DataLoaderCallbackResources[ModelInputTContr, ModelOutputTContr],
+    ):
+        for handler in self._ls_handlers:
+            handler.execute(resources=resources)
+
+    def _execute_parallel(
+        self,
+        resources: DataLoaderCallbackResources[ModelInputTContr, ModelOutputTContr],
+    ):
+        resources.model.eval()
+        with torch.no_grad():
+            for model_input in tqdm(
+                resources.data_loader,
+                desc=self._progressbar_message,
+                disable=not self._verbose,
+                leave=False,
+            ):
+                model_output = resources.model(model_input)
+                self._process_batch(model_input=model_input, model_output=model_output)
+        self._finalize()
+        self._export()
+
+    def _process_batch(self, model_input: ModelInputTContr, model_output: ModelOutputTContr):
+        for handler in self._ls_handlers:
+            handler.process_batch(model_input=model_input, model_output=model_output)
+
+    def _finalize(self):
+        for handler in self._ls_handlers:
+            handler.finalize()
+
+    def _export(self):
+        for handler in self._ls_handlers:
+            handler.export()
 
     @classmethod
     def _build(
