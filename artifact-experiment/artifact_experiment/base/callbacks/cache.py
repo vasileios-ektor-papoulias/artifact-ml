@@ -7,10 +7,10 @@ from artifact_experiment.base.callbacks.base import (
     CallbackResources,
 )
 
-CacheDataT = TypeVar("CacheDataT")
 CallbackResourcesTContr = TypeVar(
     "CallbackResourcesTContr", bound=CallbackResources, contravariant=True
 )
+CacheDataT = TypeVar("CacheDataT")
 
 
 class CacheCallback(
@@ -44,12 +44,11 @@ class CacheCallback(
 
 
 CacheCallbackT = TypeVar("CacheCallbackT", bound=CacheCallback)
-CallbackResourcesT = TypeVar("CallbackResourcesT", bound=CallbackResources)
 
 
 class CacheCallbackHandler(
-    CallbackHandler[CacheCallbackT, CallbackResourcesT],
-    Generic[CacheCallbackT, CallbackResourcesT, CacheDataT],
+    CallbackHandler[CacheCallbackT, CallbackResourcesTContr],
+    Generic[CacheCallbackT, CallbackResourcesTContr, CacheDataT],
 ):
     def __init__(
         self,
@@ -69,7 +68,7 @@ class CacheCallbackHandler(
         active_cache = self._get_active_cache(cache=self._cache)
         return active_cache
 
-    def execute(self, resources: CallbackResourcesT):
+    def execute(self, resources: CallbackResourcesTContr):
         self._execute(resources=resources)
         self.update_cache()
 
@@ -83,7 +82,7 @@ class CacheCallbackHandler(
             callback.clear()
         self.update_cache()
 
-    def _execute(self, resources: CallbackResourcesT):
+    def _execute(self, resources: CallbackResourcesTContr):
         super().execute(resources=resources)
 
     @staticmethod
