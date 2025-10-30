@@ -22,78 +22,18 @@ ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
 ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
 TableSynthesizerT = TypeVar("TableSynthesizerT", bound=TableSynthesizer[Any, Any, Any])
 GenerationParamsT = TypeVar("GenerationParamsT", bound=GenerationParams)
-GenericTabularSynthesisExperimentT = TypeVar(
-    "GenericTabularSynthesisExperimentT", bound="GenericTabularSynthesisExperiment"
-)
-
-
-class GenericTabularSynthesisExperiment(
-    Experiment[
-        TableSynthesizerT,
-        ModelInputT,
-        ModelOutputT,
-        TabularDataSpecProtocol,
-        TableComparisonRoutineData,
-    ],
-    Generic[TableSynthesizerT, ModelInputT, ModelOutputT, GenerationParamsT],
-):
-    @classmethod
-    @abstractmethod
-    def _get_trainer_type(
-        cls,
-    ) -> Type[
-        Trainer[
-            TableSynthesizerT,
-            ModelInputT,
-            ModelOutputT,
-            Any,
-            Any,
-        ]
-    ]: ...
-
-    @classmethod
-    @abstractmethod
-    def _get_batch_routine(
-        cls,
-        tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[
-        BatchRoutine[
-            ModelInputT,
-            ModelOutputT,
-            TableSynthesizerT,
-        ]
-    ]: ...
-
-    @classmethod
-    @abstractmethod
-    def _get_loader_routine(
-        cls,
-        data_loader: DataLoader[ModelInputT],
-        data_split: DataSplit,
-        tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[DataLoaderRoutine[ModelInputT, ModelOutputT]]: ...
-
-    @classmethod
-    @abstractmethod
-    def _get_artifact_routine(
-        cls,
-        data: Mapping[DataSplit, TableComparisonRoutineData],
-        data_spec: TabularDataSpecProtocol,
-        tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[TableComparisonRoutine[GenerationParamsT]]: ...
-
-
 TabularSynthesisExperimentT = TypeVar(
     "TabularSynthesisExperimentT", bound="TabularSynthesisExperiment"
 )
 
 
 class TabularSynthesisExperiment(
-    GenericTabularSynthesisExperiment[
+    Experiment[
         TableSynthesizer[ModelInputT, ModelOutputT, GenerationParamsT],
         ModelInputT,
         ModelOutputT,
-        GenerationParamsT,
+        TableComparisonRoutineData,
+        TabularDataSpecProtocol,
     ],
     Generic[ModelInputT, ModelOutputT, GenerationParamsT],
 ):
@@ -116,13 +56,7 @@ class TabularSynthesisExperiment(
     def _get_batch_routine(
         cls,
         tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[
-        BatchRoutine[
-            ModelInputT,
-            ModelOutputT,
-            TableSynthesizer[ModelInputT, ModelOutputT, GenerationParamsT],
-        ]
-    ]: ...
+    ) -> Optional[BatchRoutine[ModelInputT, ModelOutputT]]: ...
 
     @classmethod
     @abstractmethod
