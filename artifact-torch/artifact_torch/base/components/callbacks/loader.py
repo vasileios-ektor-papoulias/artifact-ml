@@ -301,17 +301,18 @@ class DataLoaderCallbackHandler(
         self,
         resources: DataLoaderCallbackResources[ModelInputT, ModelOutputT],
     ):
-        resources.model.eval()
-        with torch.no_grad():
-            for model_input in tqdm(
-                resources.data_loader,
-                desc=self._progressbar_message,
-                disable=not self._verbose,
-                leave=False,
-            ):
-                model_output = resources.model(model_input)
-                for callback in self._ls_callbacks:
-                    callback.process_batch(model_input=model_input, model_output=model_output)
+        if self._ls_callbacks:
+            resources.model.eval()
+            with torch.no_grad():
+                for model_input in tqdm(
+                    resources.data_loader,
+                    desc=self._progressbar_message,
+                    disable=not self._verbose,
+                    leave=False,
+                ):
+                    model_output = resources.model(model_input)
+                    for callback in self._ls_callbacks:
+                        callback.process_batch(model_input=model_input, model_output=model_output)
 
     def _execute_sequential(
         self,
