@@ -62,22 +62,24 @@ class DataLoaderCallback(
     def __init__(self, period: int, data_split: DataSplit):
         key = self._get_key(data_split=data_split)
         super().__init__(key=key, period=period)
-        self._ls_batch_results = []
+        self._ls_batch_results: List[BatchResultT] = []
 
     @classmethod
     @abstractmethod
     def _get_name(cls) -> str: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _compute_on_batch(
+        cls,
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
     ) -> BatchResultT: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _aggregate_batch_results(
+        cls,
         ls_batch_results: List[BatchResultT],
     ) -> CacheDataT: ...
 
@@ -85,15 +87,21 @@ class DataLoaderCallback(
     @abstractmethod
     def _export(key: str, value: CacheDataT, tracking_client: TrackingClient): ...
 
-    def finalize(self) -> CacheDataT:
-        return self._finalize()
+    def finalize(
+        self,
+        n_epochs_elapsed: int,
+    ):
+        if self._should_trigger(step=n_epochs_elapsed):
+            self._finalize()
 
     def process_batch(
         self,
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
+        n_epochs_elapsed: int,
     ):
-        self._process_batch(model_input=model_input, model_output=model_output)
+        if self._should_trigger(step=n_epochs_elapsed):
+            self._process_batch(model_input=model_input, model_output=model_output)
 
     def _compute(
         self,
@@ -142,131 +150,152 @@ class DataLoaderCallback(
 
 
 class DataLoaderScoreCallback(
-    ScoreExportMixin, DataLoaderCallback[ModelInputTContr, ModelOutputTContr, float, float]
+    ScoreExportMixin,
+    DataLoaderCallback[ModelInputTContr, ModelOutputTContr, float, Dict[str, torch.Tensor]],
 ):
     @classmethod
     @abstractmethod
     def _get_name(cls) -> str: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _compute_on_batch(
+        cls,
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
-    ) -> float: ...
+    ) -> Dict[str, torch.Tensor]: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _aggregate_batch_results(
-        ls_batch_results: List[float],
+        cls,
+        ls_batch_results: List[Dict[str, torch.Tensor]],
     ) -> float: ...
 
 
 class DataLoaderArrayCallback(
-    ArrayExportMixin, DataLoaderCallback[ModelInputTContr, ModelOutputTContr, ndarray, ndarray]
+    ArrayExportMixin,
+    DataLoaderCallback[ModelInputTContr, ModelOutputTContr, ndarray, Dict[str, torch.Tensor]],
 ):
     @classmethod
     @abstractmethod
     def _get_name(cls) -> str: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _compute_on_batch(
+        cls,
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
-    ) -> ndarray: ...
+    ) -> Dict[str, torch.Tensor]: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _aggregate_batch_results(
-        ls_batch_results: List[ndarray],
+        cls,
+        ls_batch_results: List[Dict[str, torch.Tensor]],
     ) -> ndarray: ...
 
 
 class DataLoaderPlotCallback(
-    PlotExportMixin, DataLoaderCallback[ModelInputTContr, ModelOutputTContr, Figure, ndarray]
+    PlotExportMixin,
+    DataLoaderCallback[ModelInputTContr, ModelOutputTContr, Figure, Dict[str, torch.Tensor]],
 ):
     @classmethod
     @abstractmethod
     def _get_name(cls) -> str: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _compute_on_batch(
+        cls,
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
-    ) -> ndarray: ...
+    ) -> Dict[str, torch.Tensor]: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _aggregate_batch_results(
-        ls_batch_results: List[ndarray],
+        cls,
+        ls_batch_results: List[Dict[str, torch.Tensor]],
     ) -> Figure: ...
 
 
 class DataLoaderScoreCollectionCallback(
     ScoreCollectionExportMixin,
-    DataLoaderCallback[ModelInputTContr, ModelOutputTContr, Dict[str, float], Dict[str, float]],
+    DataLoaderCallback[
+        ModelInputTContr, ModelOutputTContr, Dict[str, float], Dict[str, torch.Tensor]
+    ],
 ):
     @classmethod
     @abstractmethod
     def _get_name(cls) -> str: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _compute_on_batch(
+        cls,
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
-    ) -> Dict[str, float]: ...
+    ) -> Dict[str, torch.Tensor]: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _aggregate_batch_results(
-        ls_batch_results: List[Dict[str, float]],
+        cls,
+        ls_batch_results: List[Dict[str, torch.Tensor]],
     ) -> Dict[str, float]: ...
 
 
 class DataLoaderArrayCollectionCallback(
     ArrayCollectionExportMixin,
-    DataLoaderCallback[ModelInputTContr, ModelOutputTContr, Dict[str, ndarray], Dict[str, ndarray]],
+    DataLoaderCallback[
+        ModelInputTContr, ModelOutputTContr, Dict[str, ndarray], Dict[str, torch.Tensor]
+    ],
 ):
     @classmethod
     @abstractmethod
     def _get_name(cls) -> str: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _compute_on_batch(
+        cls,
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
-    ) -> Dict[str, ndarray]: ...
+    ) -> Dict[str, torch.Tensor]: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _aggregate_batch_results(
-        ls_batch_results: List[Dict[str, ndarray]],
+        cls,
+        ls_batch_results: List[Dict[str, torch.Tensor]],
     ) -> Dict[str, ndarray]: ...
 
 
 class DataLoaderPlotCollectionCallback(
     PlotCollectionExportMixin,
-    DataLoaderCallback[ModelInputTContr, ModelOutputTContr, Dict[str, Figure], Dict[str, ndarray]],
+    DataLoaderCallback[
+        ModelInputTContr, ModelOutputTContr, Dict[str, Figure], Dict[str, torch.Tensor]
+    ],
 ):
     @classmethod
     @abstractmethod
     def _get_name(cls) -> str: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _compute_on_batch(
+        cls,
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
-    ) -> Dict[str, ndarray]: ...
+    ) -> Dict[str, torch.Tensor]: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _aggregate_batch_results(
-        ls_batch_results: List[Dict[str, ndarray]],
+        cls,
+        ls_batch_results: List[Dict[str, torch.Tensor]],
     ) -> Dict[str, Figure]: ...
 
 
@@ -299,14 +328,18 @@ class DataLoaderCallbackHandler(
     def _export(cache: Dict[str, CacheDataT], tracking_client: TrackingClient):
         pass
 
-    def process_batch(self, model_input: ModelInputT, model_output: ModelOutputT):
-        for callback in self._ls_callbacks:
-            callback.process_batch(model_input=model_input, model_output=model_output)
+    def should_trigger(self, n_epochs_elapsed: int) -> bool:
+        return self._should_trigger(n_epochs_elapsed=n_epochs_elapsed)
 
-    def finalize(self):
-        for callback in self._ls_callbacks:
-            callback.finalize()
-        self.update_cache()
+    def process_batch(
+        self, model_input: ModelInputT, model_output: ModelOutputT, n_epochs_elapsed: int
+    ):
+        self._process_batch(
+            model_input=model_input, model_output=model_output, n_epochs_elapsed=n_epochs_elapsed
+        )
+
+    def finalize(self, n_epochs_elapsed: int):
+        self._finalize(n_epochs_elapsed=n_epochs_elapsed)
 
     def export(self):
         if self._tracking_client is not None:
@@ -316,8 +349,7 @@ class DataLoaderCallbackHandler(
         self,
         resources: DataLoaderCallbackResources[ModelInputT, ModelOutputT],
     ):
-        if self._has_callbacks:
-            self._execute_parallel(resources=resources)
+        self._execute_parallel(resources=resources)
 
     def _execute_sequential(
         self,
@@ -329,17 +361,45 @@ class DataLoaderCallbackHandler(
         self,
         resources: DataLoaderCallbackResources[ModelInputT, ModelOutputT],
     ):
-        resources.model.eval()
-        with torch.no_grad():
-            for model_input in tqdm(
-                resources.data_loader,
-                desc=self._progressbar_message,
-                disable=not self._verbose,
-                leave=False,
-            ):
-                model_output = resources.model(model_input)
-                self.process_batch(model_input=model_input, model_output=model_output)
-        self.finalize()
+        if self._should_trigger(n_epochs_elapsed=resources.step):
+            resources.model.eval()
+            with torch.no_grad():
+                for model_input in tqdm(
+                    resources.data_loader,
+                    desc=self._progressbar_message,
+                    disable=not self._verbose,
+                    leave=False,
+                ):
+                    model_output = resources.model(model_input)
+                    self._process_batch(
+                        model_input=model_input,
+                        model_output=model_output,
+                        n_epochs_elapsed=resources.step,
+                    )
+            self._finalize(n_epochs_elapsed=resources.step)
+
+    def _should_trigger(self, n_epochs_elapsed: int) -> bool:
+        ls_active_callbacks = [
+            callback
+            for callback in self._ls_callbacks
+            if callback.should_trigger(step=n_epochs_elapsed)
+        ]
+        return len(ls_active_callbacks) > 0
+
+    def _process_batch(
+        self, model_input: ModelInputT, model_output: ModelOutputT, n_epochs_elapsed: int
+    ):
+        for callback in self._ls_callbacks:
+            callback.process_batch(
+                model_input=model_input,
+                model_output=model_output,
+                n_epochs_elapsed=n_epochs_elapsed,
+            )
+
+    def _finalize(self, n_epochs_elapsed: int):
+        for callback in self._ls_callbacks:
+            callback.finalize(n_epochs_elapsed=n_epochs_elapsed)
+        self.update_cache()
 
 
 class DataLoaderScoreHandler(
