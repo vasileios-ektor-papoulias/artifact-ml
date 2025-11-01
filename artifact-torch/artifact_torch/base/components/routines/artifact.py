@@ -80,10 +80,24 @@ class ArtifactRoutine(
         data_spec: ResourceSpecProtocolTContr,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ArtifactRoutineT:
-        periods = cls._get_periods()
-        validation_plans = cls._get_validation_plans(
-            artifact_resource_spec=data_spec, tracking_client=tracking_client
-        )
+        periods = {
+            data_split: period
+            for data_split in DataSplit
+            if (period := cls._get_period(data_split=data_split)) is not None
+        }
+
+        validation_plans = {
+            data_split: plan
+            for data_split in DataSplit
+            if (
+                plan := cls._get_validation_plan(
+                    artifact_resource_spec=data_spec,
+                    data_split=data_split,
+                    tracking_client=tracking_client,
+                )
+            )
+            is not None
+        }
         hyperparams = cls._get_hyperparams()
         routine = cls(
             periods=periods,
@@ -144,19 +158,19 @@ class ArtifactRoutine(
 
     @classmethod
     @abstractmethod
-    def _get_periods(cls) -> Mapping[DataSplit, int]: ...
+    def _get_period(cls, data_split: DataSplit) -> Optional[int]: ...
 
     @classmethod
     @abstractmethod
-    def _get_validation_plans(
+    def _get_validation_plan(
         cls,
         artifact_resource_spec: ResourceSpecProtocolTContr,
+        data_split: DataSplit,
         tracking_client: Optional[TrackingClient],
-    ) -> Mapping[
-        DataSplit,
+    ) -> Optional[
         ValidationPlan[
             Any, Any, Any, Any, Any, Any, ArtifactResourcesTContr, ResourceSpecProtocolTContr
-        ],
+        ]
     ]: ...
 
     @classmethod
