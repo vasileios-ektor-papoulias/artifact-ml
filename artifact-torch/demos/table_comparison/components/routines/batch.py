@@ -6,7 +6,7 @@ from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.libs.components.callbacks.batch.loss import BatchLossCallback
 
 from demos.table_comparison.components.routines.protocols import DemoModelInput, DemoModelOutput
-from demos.table_comparison.config.constants import BATCH_LOSS_PERIOD
+from demos.table_comparison.config.constants import BATCH_ROUTINE_PERIOD
 
 
 class DemoBatchRoutine(BatchRoutine[DemoModelInput, DemoModelOutput]):
@@ -15,4 +15,4 @@ class DemoBatchRoutine(BatchRoutine[DemoModelInput, DemoModelOutput]):
         tracking_client: Optional[TrackingClient],
     ) -> List[BatchCallback[DemoModelInput, DemoModelOutput, Any]]:
         _ = tracking_client
-        return [BatchLossCallback(period=BATCH_LOSS_PERIOD, tracking_client=None)]
+        return [BatchLossCallback(period=BATCH_ROUTINE_PERIOD, tracking_client=None)]

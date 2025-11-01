@@ -1,4 +1,4 @@
-from typing import Any, Generic, Optional, TypeVar
+from typing import Any, Optional, TypeVar
 
 import torch
 from artifact_experiment.tracking import TrackingClient
@@ -36,8 +36,7 @@ class DemoTrainer(
         ModelOutputT,
         StopperUpdateData,
         ModelTrackingCriterion,
-    ],
-    Generic[ModelInputT, ModelOutputT],
+    ]
 ):
     @staticmethod
     def _get_optimizer(

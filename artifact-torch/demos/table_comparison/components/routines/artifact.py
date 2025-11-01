@@ -1,4 +1,4 @@
-from typing import List, Mapping, Optional
+from typing import List, Optional
 
 from artifact_core.table_comparison import (
     TableComparisonArrayCollectionType,
@@ -18,7 +18,7 @@ from demos.table_comparison.components.routines.protocols import (
     DemoGenerationParams,
 )
 from demos.table_comparison.config.constants import (
-    ARTIFACT_VALIDATION_PERIOD,
+    ARTIFACT_ROUTINE_PERIOD,
     GENERATION_N_RECORDS,
     GENERATION_TEMPERATURE,
 )
@@ -71,22 +71,23 @@ class DemoTableComparisonPlan(TableComparisonPlan):
 
 class DemoTableComparisonRoutine(TableComparisonRoutine[DemoGenerationParams]):
     @classmethod
-    def _get_periods(cls) -> Mapping[DataSplit, int]:
-        return {DataSplit.TRAIN: ARTIFACT_VALIDATION_PERIOD}
+    def _get_period(cls, data_split: DataSplit) -> Optional[int]:
+        if data_split is DataSplit.TRAIN:
+            return ARTIFACT_ROUTINE_PERIOD
 
     @classmethod
-    def _get_validation_plans(
+    def _get_validation_plan(
         cls,
         artifact_resource_spec: TabularDataSpecProtocol,
+        data_split: DataSplit,
         tracking_client: Optional[TrackingClient],
-    ) -> Mapping[DataSplit, TableComparisonPlan]:
-        return {
-            DataSplit.TRAIN: DemoTableComparisonPlan.build(
+    ) -> Optional[TableComparisonPlan]:
+        if data_split is DataSplit.TRAIN:
+            return DemoTableComparisonPlan.build(
                 resource_spec=artifact_resource_spec,
                 data_split=DataSplit.TRAIN,
                 tracking_client=tracking_client,
             )
-        }
 
     @classmethod
     def _get_generation_params(cls) -> DemoGenerationParams:
