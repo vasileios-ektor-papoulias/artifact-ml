@@ -36,10 +36,14 @@ class CacheCallback(
         return self._cache.copy()
 
     def execute(self, resources: CallbackResourcesTContr):
+        self._clear()
         value = self._compute(resources=resources)
         self._cache[self._key] = value
 
     def clear(self):
+        self._clear()
+
+    def _clear(self):
         self._cache = {self._key: None}
 
 
@@ -69,21 +73,28 @@ class CacheCallbackHandler(
         return active_cache
 
     def execute(self, resources: CallbackResourcesTContr):
+        self._clear()
         self._execute(resources=resources)
-        self.update_cache()
+        self._update_cache()
 
     def update_cache(self):
+        self._update_cache()
+
+    def clear(self):
+        self._clear()
+
+    def _execute(self, resources: CallbackResourcesTContr):
+        super().execute(resources=resources)
+
+    def _update_cache(self):
         self._cache = {}
         for callback in self._ls_callbacks:
             self._cache.update(callback.cache)
 
-    def clear(self):
+    def _clear(self):
         for callback in self._ls_callbacks:
             callback.clear()
         self.update_cache()
-
-    def _execute(self, resources: CallbackResourcesTContr):
-        super().execute(resources=resources)
 
     @staticmethod
     def _get_active_cache(
