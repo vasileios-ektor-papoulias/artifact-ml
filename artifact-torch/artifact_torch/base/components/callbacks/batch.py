@@ -56,9 +56,10 @@ class BatchCallback(
     @abstractmethod
     def _get_key(cls) -> str: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _compute_on_batch(
+        cls,
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
     ) -> CacheDataT: ...
@@ -87,9 +88,10 @@ class BatchScoreCallback(
     @abstractmethod
     def _get_key(cls) -> str: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _compute_on_batch(
+        cls,
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
     ) -> float: ...
@@ -104,9 +106,10 @@ class BatchArrayCallback(
     @abstractmethod
     def _get_key(cls) -> str: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _compute_on_batch(
+        cls,
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
     ) -> ndarray: ...
@@ -121,9 +124,10 @@ class BatchPlotCallback(
     @abstractmethod
     def _get_key(cls) -> str: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _compute_on_batch(
+        cls,
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
     ) -> Figure: ...
@@ -138,9 +142,10 @@ class BatchScoreCollectionCallback(
     @abstractmethod
     def _get_key(cls) -> str: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _compute_on_batch(
+        cls,
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
     ) -> Dict[str, float]: ...
@@ -155,9 +160,10 @@ class BatchArrayCollectionCallback(
     @abstractmethod
     def _get_key(cls) -> str: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _compute_on_batch(
+        cls,
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
     ) -> Dict[str, ndarray]: ...
@@ -172,9 +178,10 @@ class BatchPlotCollectionCallback(
     @abstractmethod
     def _get_key(cls) -> str: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _compute_on_batch(
+        cls,
         model_input: ModelInputTContr,
         model_output: ModelOutputTContr,
     ) -> Dict[str, Figure]: ...
