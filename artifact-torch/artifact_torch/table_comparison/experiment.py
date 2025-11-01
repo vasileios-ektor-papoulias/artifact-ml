@@ -7,7 +7,7 @@ from artifact_experiment.base.tracking.client import TrackingClient
 
 from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
-from artifact_torch.base.data.data_loader import DataLoader
+from artifact_torch.base.components.routines.loader_hook import DataLoaderHookRoutine
 from artifact_torch.base.experiment.experiment import Experiment
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.base.trainer.trainer import Trainer
@@ -18,9 +18,9 @@ from artifact_torch.table_comparison.routine import (
     TableComparisonRoutineData,
 )
 
+TableSynthesizerT = TypeVar("TableSynthesizerT", bound=TableSynthesizer[Any, Any, Any])
 ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
 ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
-TableSynthesizerT = TypeVar("TableSynthesizerT", bound=TableSynthesizer[Any, Any, Any])
 GenerationParamsT = TypeVar("GenerationParamsT", bound=GenerationParams)
 TabularSynthesisExperimentT = TypeVar(
     "TabularSynthesisExperimentT", bound="TabularSynthesisExperiment"
@@ -29,13 +29,13 @@ TabularSynthesisExperimentT = TypeVar(
 
 class TabularSynthesisExperiment(
     Experiment[
-        TableSynthesizer[ModelInputT, ModelOutputT, GenerationParamsT],
+        TableSynthesizerT,
         ModelInputT,
         ModelOutputT,
         TableComparisonRoutineData,
         TabularDataSpecProtocol,
     ],
-    Generic[ModelInputT, ModelOutputT, GenerationParamsT],
+    Generic[TableSynthesizerT, ModelInputT, ModelOutputT, GenerationParamsT],
 ):
     @classmethod
     @abstractmethod
@@ -43,7 +43,7 @@ class TabularSynthesisExperiment(
         cls,
     ) -> Type[
         Trainer[
-            TableSynthesizer[ModelInputT, ModelOutputT, GenerationParamsT],
+            TableSynthesizerT,
             ModelInputT,
             ModelOutputT,
             Any,
@@ -62,10 +62,17 @@ class TabularSynthesisExperiment(
     @abstractmethod
     def _get_loader_routine(
         cls,
-        data_loader: DataLoader[ModelInputT],
         data_split: DataSplit,
         tracking_client: Optional[TrackingClient] = None,
     ) -> Optional[DataLoaderRoutine[ModelInputT, ModelOutputT]]: ...
+
+    @classmethod
+    @abstractmethod
+    def _get_loader_hook_routine(
+        cls,
+        data_split: DataSplit,
+        tracking_client: Optional[TrackingClient] = None,
+    ) -> Optional[DataLoaderHookRoutine[TableSynthesizerT, ModelInputT, ModelOutputT]]: ...
 
     @classmethod
     @abstractmethod
