@@ -11,7 +11,9 @@ class DataSplit(Enum):
 class DataSplitSuffixAppender:
     @staticmethod
     def append_suffix(name: str, data_split: DataSplit) -> str:
-        if data_split is DataSplit.TRAIN:
+        if data_split is DataSplit.ALL:
+            return name
+        elif data_split is DataSplit.TRAIN:
             return f"{name}_TRAIN"
         elif data_split is DataSplit.VALIDATION:
             return f"{name}_VAL"
