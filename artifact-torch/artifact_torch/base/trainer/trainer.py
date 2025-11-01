@@ -1,8 +1,9 @@
 from abc import abstractmethod
-from typing import Any, Dict, Generic, Optional, Sequence, Type, TypeVar
+from typing import Any, Dict, Generic, Mapping, Optional, Type, TypeVar
 
 import pandas as pd
 import torch
+from artifact_experiment.base.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 from torch import optim
 
@@ -20,7 +21,7 @@ from artifact_torch.base.components.model_tracking.tracker import (
 )
 from artifact_torch.base.components.routines.artifact import ArtifactRoutine
 from artifact_torch.base.components.routines.batch import BatchRoutine
-from artifact_torch.base.components.routines.loader import DataLoaderRoutine
+from artifact_torch.base.components.routines.joint_loader import JointDataLoaderRoutine
 from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
@@ -71,7 +72,9 @@ class Trainer(
         model: ModelT,
         train_loader: DataLoader[ModelInputT],
         batch_routine: Optional[BatchRoutine[ModelInputT, ModelOutputT]] = None,
-        loader_routines: Optional[Sequence[DataLoaderRoutine[ModelInputT, ModelOutputT]]] = None,
+        loader_routines: Optional[
+            Mapping[DataSplit, JointDataLoaderRoutine[ModelT, ModelInputT, ModelOutputT]]
+        ] = None,
         artifact_routine: Optional[ArtifactRoutine[ModelT, Any, Any, Any, Any]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> TrainerT:
@@ -88,8 +91,7 @@ class Trainer(
         checkpoint_callback = cls._get_checkpoint_callback(tracking_client=tracking_client)
         batch_end_flow = BatchEndFlow(batch_routine=batch_routine)
         epoch_end_flow = EpochEndFlow(
-            artifact_routine=artifact_routine,
-            loader_routines=loader_routines,
+            artifact_routine=artifact_routine, loader_routines=loader_routines
         )
         trainer = cls(
             training_state=training_state,
