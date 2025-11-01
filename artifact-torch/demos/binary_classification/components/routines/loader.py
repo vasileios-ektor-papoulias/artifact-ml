@@ -16,7 +16,7 @@ from demos.binary_classification.components.routines.protocols import (
     DemoModelInput,
     DemoModelOutput,
 )
-from demos.binary_classification.config.constants import TRAIN_LOADER_CALLBACK_PERIOD
+from demos.binary_classification.config.constants import TRAIN_LOADER_ROUTINE_PERIOD
 
 
 class DemoLoaderRoutine(DataLoaderRoutine[DemoModelInput, DemoModelOutput]):
@@ -24,7 +24,7 @@ class DemoLoaderRoutine(DataLoaderRoutine[DemoModelInput, DemoModelOutput]):
     def _get_score_callbacks(
         data_split: DataSplit,
     ) -> List[DataLoaderScoreCallback[DemoModelInput, DemoModelOutput]]:
-        return [LoaderLossCallback(period=TRAIN_LOADER_CALLBACK_PERIOD, data_split=data_split)]
+        return [LoaderLossCallback(period=TRAIN_LOADER_ROUTINE_PERIOD, data_split=data_split)]
 
     @staticmethod
     def _get_array_callbacks(

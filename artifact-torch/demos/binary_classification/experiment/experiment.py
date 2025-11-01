@@ -1,4 +1,4 @@
-from typing import Any, Generic, Mapping, Optional, Type, TypeVar
+from typing import Any, Mapping, Optional, Type, TypeVar
 
 import pandas as pd
 from artifact_core.binary_classification import BinaryFeatureSpecProtocol
@@ -6,7 +6,7 @@ from artifact_experiment import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
-from artifact_torch.base.data.data_loader import DataLoader
+from artifact_torch.base.components.routines.loader_hook import DataLoaderHookRoutine
 from artifact_torch.base.trainer.trainer import Trainer
 from artifact_torch.binary_classification.experiment import BinaryClassificationExperiment
 from artifact_torch.binary_classification.model import BinaryClassifier
@@ -18,6 +18,7 @@ from artifact_torch.binary_classification.routine import (
 from demos.binary_classification.components.routines.artifact import DemoBinaryClassificationRoutine
 from demos.binary_classification.components.routines.batch import DemoBatchRoutine
 from demos.binary_classification.components.routines.loader import DemoLoaderRoutine
+from demos.binary_classification.components.routines.loader_hook import DemoLoaderHookRoutine
 from demos.binary_classification.components.routines.protocols import (
     DemoClassificationParams,
     DemoModelInput,
@@ -31,9 +32,17 @@ ModelOutputT = TypeVar("ModelOutputT", bound=DemoModelOutput)
 
 class DemoBinaryClassificationExperiment(
     BinaryClassificationExperiment[
-        ModelInputT, ModelOutputT, DemoClassificationParams, pd.DataFrame
-    ],
-    Generic[ModelInputT, ModelOutputT],
+        BinaryClassifier[
+            ModelInputT,
+            ModelOutputT,
+            DemoClassificationParams,
+            pd.DataFrame,
+        ],
+        ModelInputT,
+        ModelOutputT,
+        DemoClassificationParams,
+        pd.DataFrame,
+    ]
 ):
     @classmethod
     def _get_trainer_type(
@@ -59,13 +68,32 @@ class DemoBinaryClassificationExperiment(
     @classmethod
     def _get_loader_routine(
         cls,
-        data_loader: DataLoader[ModelInputT],
         data_split: DataSplit,
         tracking_client: Optional[TrackingClient] = None,
     ) -> Optional[DataLoaderRoutine[ModelInputT, ModelOutputT]]:
         if data_split is DataSplit.TRAIN:
-            return DemoLoaderRoutine.build(
-                data_loader=data_loader, data_split=data_split, tracking_client=tracking_client
+            return DemoLoaderRoutine.build(data_split=data_split, tracking_client=tracking_client)
+
+    @classmethod
+    def _get_loader_hook_routine(
+        cls,
+        data_split: DataSplit,
+        tracking_client: Optional[TrackingClient] = None,
+    ) -> Optional[
+        DataLoaderHookRoutine[
+            BinaryClassifier[
+                ModelInputT,
+                ModelOutputT,
+                DemoClassificationParams,
+                pd.DataFrame,
+            ],
+            ModelInputT,
+            ModelOutputT,
+        ]
+    ]:
+        if data_split is DataSplit.TRAIN:
+            return DemoLoaderHookRoutine.build(
+                data_split=data_split, tracking_client=tracking_client
             )
 
     @classmethod

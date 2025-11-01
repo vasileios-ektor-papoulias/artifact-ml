@@ -19,17 +19,17 @@
     },
     "training": {
         "device": "cpu",
-        "max_n_epochs": 100,
+        "max_n_epochs": 50,
         "learning_rate": 0.001,
-        "batch_size": 512,
+        "batch_size": 64,
         "drop_last": false,
         "shuffle": true,
-        "checkpoint_period": 5,
-        "batch_loss_period": 1
+        "checkpoint_period": 5
     },
     "validation": {
-        "train_loader_callback_period": 1,
-        "validation_plan_callback_period": 5,
+        "batch_routine_period": 10,
+        "train_loader_routine_period": 5,
+        "artifact_routine_period": 5,
         "classification_threshold": 0.5
     },
     "tracking":{

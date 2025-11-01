@@ -38,14 +38,14 @@ with _config_file.open() as f:
     MAX_N_EPOCHS: int = _training_config["max_n_epochs"]
     LEARNING_RATE: float = _training_config["learning_rate"]
     CHECKPOINT_PERIOD: int = _training_config["checkpoint_period"]
-    BATCH_LOSS_PERIOD: int = _training_config["batch_loss_period"]
     BATCH_SIZE: int = _training_config["batch_size"]
     DROP_LAST: float = _training_config["drop_last"]
     SHUFFLE: bool = _training_config["shuffle"]
 
     # Validation Config
-    TRAIN_LOADER_CALLBACK_PERIOD: int = _validation_config["train_loader_callback_period"]
-    ARTIFACT_VALIDATION_PERIOD: int = _validation_config["validation_plan_callback_period"]
+    BATCH_ROUTINE_PERIOD: int = _validation_config["batch_routine_period"]
+    TRAIN_LOADER_ROUTINE_PERIOD: int = _validation_config["train_loader_routine_period"]
+    ARTIFACT_ROUTINE_PERIOD: int = _validation_config["artifact_routine_period"]
     CLASSIFICATION_THRESHOLD: float = _validation_config["classification_threshold"]
 
     # Tracking Config
