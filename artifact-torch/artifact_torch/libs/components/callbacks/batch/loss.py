@@ -5,12 +5,15 @@ from artifact_torch.base.model.io import ModelInput, ModelOutput
 
 
 class BatchLossCallback(BatchScoreCallback[ModelInput, ModelOutput]):
+    _name = "BATCH_LOSS"
+
     @classmethod
     def _get_key(cls):
-        return "BATCH_LOSS"
+        return cls._name
 
-    @staticmethod
+    @classmethod
     def _compute_on_batch(
+        cls,
         model_input: ModelInput,
         model_output: ModelOutput,
     ) -> float:
