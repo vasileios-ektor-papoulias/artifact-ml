@@ -54,15 +54,19 @@ class BinaryClassificationRoutine(
 
     @classmethod
     @abstractmethod
-    def _get_periods(cls) -> Mapping[DataSplit, int]: ...
+    def _get_period(
+        cls,
+        data_split: DataSplit,
+    ) -> Optional[int]: ...
 
     @classmethod
     @abstractmethod
-    def _get_validation_plans(
+    def _get_validation_plan(
         cls,
         artifact_resource_spec: BinaryFeatureSpecProtocol,
+        data_split: DataSplit,
         tracking_client: Optional[TrackingClient],
-    ) -> Mapping[DataSplit, BinaryClassificationPlan]: ...
+    ) -> Optional[BinaryClassificationPlan]: ...
 
     @classmethod
     @abstractmethod
