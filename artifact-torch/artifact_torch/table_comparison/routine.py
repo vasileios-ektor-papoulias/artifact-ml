@@ -46,15 +46,19 @@ class TableComparisonRoutine(
 
     @classmethod
     @abstractmethod
-    def _get_periods(cls) -> Mapping[DataSplit, int]: ...
+    def _get_period(
+        cls,
+        data_split: DataSplit,
+    ) -> Optional[int]: ...
 
     @classmethod
     @abstractmethod
-    def _get_validation_plans(
+    def _get_validation_plan(
         cls,
         artifact_resource_spec: TabularDataSpecProtocol,
+        data_split: DataSplit,
         tracking_client: Optional[TrackingClient],
-    ) -> Mapping[DataSplit, TableComparisonPlan]: ...
+    ) -> Optional[TableComparisonPlan]: ...
 
     @classmethod
     @abstractmethod
