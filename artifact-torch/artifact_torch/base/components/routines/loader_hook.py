@@ -8,52 +8,56 @@ from matplotlib.figure import Figure
 from numpy import ndarray
 from tqdm import tqdm
 
-from artifact_torch.base.components.callbacks.loader import (
-    DataLoaderArrayCallback,
-    DataLoaderArrayCollectionCallback,
-    DataLoaderArrayCollectionHandler,
-    DataLoaderArrayHandler,
-    DataLoaderCallback,
-    DataLoaderCallbackHandler,
-    DataLoaderCallbackResources,
-    DataLoaderPlotCallback,
-    DataLoaderPlotCollectionCallback,
-    DataLoaderPlotCollectionHandler,
-    DataLoaderPlotHandler,
-    DataLoaderScoreCallback,
-    DataLoaderScoreCollectionCallback,
-    DataLoaderScoreCollectionHandler,
-    DataLoaderScoreHandler,
+from artifact_torch.base.components.callbacks.loader_hook import (
+    DataLoaderHookArrayCallback,
+    DataLoaderHookArrayCollectionCallback,
+    DataLoaderHookArrayCollectionHandler,
+    DataLoaderHookArrayHandler,
+    DataLoaderHookCallback,
+    DataLoaderHookCallbackHandler,
+    DataLoaderHookCallbackResources,
+    DataLoaderHookPlotCallback,
+    DataLoaderHookPlotCollectionCallback,
+    DataLoaderHookPlotCollectionHandler,
+    DataLoaderHookPlotHandler,
+    DataLoaderHookScoreCallback,
+    DataLoaderHookScoreCollectionCallback,
+    DataLoaderHookScoreCollectionHandler,
+    DataLoaderHookScoreHandler,
 )
 from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 
+ModelTContr = TypeVar("ModelTContr", bound=Model, contravariant=True)
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
 ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput, contravariant=True)
-DataLoaderRoutineT = TypeVar("DataLoaderRoutineT", bound="DataLoaderRoutine")
+DataLoaderHookRoutineT = TypeVar("DataLoaderHookRoutineT", bound="DataLoaderHookRoutine")
 
 
-class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
+class DataLoaderHookRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]):
     _verbose = True
-    _progressbar_message = "Processing Data Loader"
+    _progressbar_message = "Processing Data Loader (Hooks)"
 
     def __init__(
         self,
-        dict_data_loader_handlers: Dict[
-            str, DataLoaderCallbackHandler[Any, ModelInputTContr, ModelOutputTContr, Any]
+        dict_data_loader_hook_handlers: Dict[
+            str,
+            DataLoaderHookCallbackHandler[
+                Any, ModelTContr, ModelInputTContr, ModelOutputTContr, Any
+            ],
         ],
         data_split: DataSplit,
     ):
-        self._dict_handlers = dict_data_loader_handlers
+        self._dict_handlers = dict_data_loader_hook_handlers
         self._data_split = data_split
 
     @classmethod
     def build(
-        cls: Type[DataLoaderRoutineT],
+        cls: Type[DataLoaderHookRoutineT],
         data_split: DataSplit,
         tracking_client: Optional[TrackingClient] = None,
-    ) -> DataLoaderRoutineT:
+    ) -> DataLoaderHookRoutineT:
         routine = cls._build(
             ls_score_callbacks=cls._get_score_callbacks(data_split=data_split),
             ls_array_callbacks=cls._get_array_callbacks(data_split=data_split),
@@ -136,8 +140,9 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
     def _ls_handlers(
         self,
     ) -> List[
-        DataLoaderCallbackHandler[
-            DataLoaderCallback[ModelInputTContr, ModelOutputTContr, Any, Any],
+        DataLoaderHookCallbackHandler[
+            DataLoaderHookCallback[ModelTContr, ModelInputTContr, ModelOutputTContr, Any, Any],
+            ModelTContr,
             ModelInputTContr,
             ModelOutputTContr,
             Any,
@@ -149,8 +154,9 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
     def _score_handler(
         self,
     ) -> Optional[
-        DataLoaderCallbackHandler[
-            DataLoaderScoreCallback[ModelInputTContr, ModelOutputTContr],
+        DataLoaderHookCallbackHandler[
+            DataLoaderHookScoreCallback[ModelTContr, ModelInputTContr, ModelOutputTContr],
+            ModelTContr,
             ModelInputTContr,
             ModelOutputTContr,
             float,
@@ -162,8 +168,9 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
     def _array_handler(
         self,
     ) -> Optional[
-        DataLoaderCallbackHandler[
-            DataLoaderArrayCallback[ModelInputTContr, ModelOutputTContr],
+        DataLoaderHookCallbackHandler[
+            DataLoaderHookArrayCallback[ModelTContr, ModelInputTContr, ModelOutputTContr],
+            ModelTContr,
             ModelInputTContr,
             ModelOutputTContr,
             ndarray,
@@ -175,8 +182,9 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
     def _plot_handler(
         self,
     ) -> Optional[
-        DataLoaderCallbackHandler[
-            DataLoaderPlotCallback[ModelInputTContr, ModelOutputTContr],
+        DataLoaderHookCallbackHandler[
+            DataLoaderHookPlotCallback[ModelTContr, ModelInputTContr, ModelOutputTContr],
+            ModelTContr,
             ModelInputTContr,
             ModelOutputTContr,
             Figure,
@@ -188,8 +196,9 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
     def _score_collection_handler(
         self,
     ) -> Optional[
-        DataLoaderCallbackHandler[
-            DataLoaderScoreCollectionCallback[ModelInputTContr, ModelOutputTContr],
+        DataLoaderHookCallbackHandler[
+            DataLoaderHookScoreCollectionCallback[ModelTContr, ModelInputTContr, ModelOutputTContr],
+            ModelTContr,
             ModelInputTContr,
             ModelOutputTContr,
             Dict[str, float],
@@ -201,8 +210,9 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
     def _array_collection_handler(
         self,
     ) -> Optional[
-        DataLoaderCallbackHandler[
-            DataLoaderArrayCallback[ModelInputTContr, ModelOutputTContr],
+        DataLoaderHookCallbackHandler[
+            DataLoaderHookArrayCollectionCallback[ModelTContr, ModelInputTContr, ModelOutputTContr],
+            ModelTContr,
             ModelInputTContr,
             ModelOutputTContr,
             Dict[str, ndarray],
@@ -214,50 +224,57 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
     def _plot_collection_handler(
         self,
     ) -> Optional[
-        DataLoaderCallbackHandler[
-            DataLoaderPlotCallback[ModelInputTContr, ModelOutputTContr],
+        DataLoaderHookCallbackHandler[
+            DataLoaderHookPlotCollectionCallback[ModelTContr, ModelInputTContr, ModelOutputTContr],
+            ModelTContr,
             ModelInputTContr,
             ModelOutputTContr,
             Dict[str, Figure],
         ]
     ]:
-        return self._dict_handlers.get("plot_collecitons")
+        return self._dict_handlers.get("plot_collections")
 
     @staticmethod
     @abstractmethod
     def _get_score_callbacks(
         data_split: DataSplit,
-    ) -> List[DataLoaderScoreCallback[ModelInputTContr, ModelOutputTContr]]: ...
+    ) -> List[DataLoaderHookScoreCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]]: ...
 
     @staticmethod
     @abstractmethod
     def _get_array_callbacks(
         data_split: DataSplit,
-    ) -> List[DataLoaderArrayCallback[ModelInputTContr, ModelOutputTContr]]: ...
+    ) -> List[DataLoaderHookArrayCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]]: ...
 
     @staticmethod
     @abstractmethod
     def _get_plot_callbacks(
         data_split: DataSplit,
-    ) -> List[DataLoaderPlotCallback[ModelInputTContr, ModelOutputTContr]]: ...
+    ) -> List[DataLoaderHookPlotCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]]: ...
 
     @staticmethod
     @abstractmethod
     def _get_score_collection_callbacks(
         data_split: DataSplit,
-    ) -> List[DataLoaderScoreCollectionCallback[ModelInputTContr, ModelOutputTContr]]: ...
+    ) -> List[
+        DataLoaderHookScoreCollectionCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]
+    ]: ...
 
     @staticmethod
     @abstractmethod
     def _get_array_collection_callbacks(
         data_split: DataSplit,
-    ) -> List[DataLoaderArrayCollectionCallback[ModelInputTContr, ModelOutputTContr]]: ...
+    ) -> List[
+        DataLoaderHookArrayCollectionCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]
+    ]: ...
 
     @staticmethod
     @abstractmethod
     def _get_plot_collection_callbacks(
         data_split: DataSplit,
-    ) -> List[DataLoaderPlotCollectionCallback[ModelInputTContr, ModelOutputTContr]]: ...
+    ) -> List[
+        DataLoaderHookPlotCollectionCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]
+    ]: ...
 
     def clear_cache(self):
         self._clear_cache()
@@ -265,12 +282,11 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
     def should_trigger(self, n_epochs_elapsed: int) -> bool:
         return self._should_trigger(n_epochs_elapsed=n_epochs_elapsed)
 
-    def process_batch(
-        self, model_input: ModelInputTContr, model_output: ModelOutputTContr, n_epochs_elapsed: int
-    ):
-        self._process_batch(
-            model_input=model_input, model_output=model_output, n_epochs_elapsed=n_epochs_elapsed
-        )
+    def attach_hooks(self, model: ModelTContr, n_epochs_elapsed: int):
+        self._attach_hooks(model=model, n_epochs_elapsed=n_epochs_elapsed)
+
+    def detach_hooks(self, n_epochs_elapsed: int):
+        self._detach_hooks(n_epochs_elapsed=n_epochs_elapsed)
 
     def finalize(self, n_epochs_elapsed: int):
         self._finalize(n_epochs_elapsed=n_epochs_elapsed)
@@ -279,12 +295,9 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
         self._export()
 
     def execute(
-        self,
-        model: Model[ModelInputTContr, ModelOutputTContr],
-        data_loader: DataLoader[ModelInputTContr],
-        n_epochs_elapsed: int,
+        self, model: ModelTContr, data_loader: DataLoader[ModelInputTContr], n_epochs_elapsed: int
     ):
-        resources = DataLoaderCallbackResources[ModelInputTContr, ModelOutputTContr](
+        resources = DataLoaderHookCallbackResources[ModelTContr, ModelInputTContr](
             step=n_epochs_elapsed, model=model, data_loader=data_loader
         )
         if self._has_callbacks:
@@ -292,33 +305,36 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
 
     def _execute_sequential(
         self,
-        resources: DataLoaderCallbackResources[ModelInputTContr, ModelOutputTContr],
+        resources: DataLoaderHookCallbackResources[ModelTContr, ModelInputTContr],
     ):
         for handler in self._ls_handlers:
             handler.execute(resources=resources)
 
     def _execute_parallel(
         self,
-        resources: DataLoaderCallbackResources[ModelInputTContr, ModelOutputTContr],
+        resources: DataLoaderHookCallbackResources[ModelTContr, ModelInputTContr],
     ):
         self._clear_cache()
         if self._should_trigger(n_epochs_elapsed=resources.step):
+            self._attach_hooks(model=resources.model, n_epochs_elapsed=resources.step)
             resources.model.eval()
-            with torch.no_grad():
-                for model_input in tqdm(
-                    resources.data_loader,
-                    desc=self._progressbar_message,
-                    disable=not self._verbose,
-                    leave=False,
-                ):
-                    model_output = resources.model(model_input)
-                    self._process_batch(
-                        model_input=model_input,
-                        model_output=model_output,
-                        n_epochs_elapsed=resources.step,
-                    )
+            try:
+                with torch.no_grad():
+                    for model_input in tqdm(
+                        resources.data_loader,
+                        desc=self._progressbar_message,
+                        disable=not self._verbose,
+                        leave=False,
+                    ):
+                        _ = resources.model(model_input)
+            finally:
+                self._detach_hooks(n_epochs_elapsed=resources.step)
             self._finalize(n_epochs_elapsed=resources.step)
             self._export()
+
+    def _clear_cache(self):
+        for loader_handler in self._ls_handlers:
+            loader_handler.clear()
 
     def _should_trigger(self, n_epochs_elapsed: int) -> bool:
         ls_active_handlers = [
@@ -328,19 +344,13 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
         ]
         return len(ls_active_handlers) > 0
 
-    def _clear_cache(self):
-        for loader_handler in self._ls_handlers:
-            loader_handler.clear()
-
-    def _process_batch(
-        self, model_input: ModelInputTContr, model_output: ModelOutputTContr, n_epochs_elapsed: int
-    ):
+    def _attach_hooks(self, model: ModelTContr, n_epochs_elapsed: int):
         for handler in self._ls_handlers:
-            handler.process_batch(
-                model_input=model_input,
-                model_output=model_output,
-                n_epochs_elapsed=n_epochs_elapsed,
-            )
+            handler.attach_hooks(model=model, n_epochs_elapsed=n_epochs_elapsed)
+
+    def _detach_hooks(self, n_epochs_elapsed: int):
+        for handler in self._ls_handlers:
+            handler.detach_hooks(n_epochs_elapsed=n_epochs_elapsed)
 
     def _finalize(self, n_epochs_elapsed: int):
         for handler in self._ls_handlers:
@@ -352,23 +362,29 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
 
     @classmethod
     def _build(
-        cls: Type[DataLoaderRoutineT],
-        ls_score_callbacks: List[DataLoaderScoreCallback[ModelInputTContr, ModelOutputTContr]],
-        ls_array_callbacks: List[DataLoaderArrayCallback[ModelInputTContr, ModelOutputTContr]],
-        ls_plot_callbacks: List[DataLoaderPlotCallback[ModelInputTContr, ModelOutputTContr]],
+        cls: Type[DataLoaderHookRoutineT],
+        ls_score_callbacks: List[
+            DataLoaderHookScoreCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]
+        ],
+        ls_array_callbacks: List[
+            DataLoaderHookArrayCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]
+        ],
+        ls_plot_callbacks: List[
+            DataLoaderHookPlotCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]
+        ],
         ls_score_collection_callbacks: List[
-            DataLoaderScoreCollectionCallback[ModelInputTContr, ModelOutputTContr]
+            DataLoaderHookScoreCollectionCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]
         ],
         ls_array_collection_callbacks: List[
-            DataLoaderArrayCollectionCallback[ModelInputTContr, ModelOutputTContr]
+            DataLoaderHookArrayCollectionCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]
         ],
         ls_plot_collection_callbacks: List[
-            DataLoaderPlotCollectionCallback[ModelInputTContr, ModelOutputTContr]
+            DataLoaderHookPlotCollectionCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]
         ],
         data_split: DataSplit,
         tracking_client: Optional[TrackingClient] = None,
-    ) -> DataLoaderRoutineT:
-        dict_data_loader_handlers = cls._build_data_loader_handlers(
+    ) -> DataLoaderHookRoutineT:
+        dict_data_loader_hook_handlers = cls._build_data_loader_hook_handlers(
             ls_score_callbacks=ls_score_callbacks,
             ls_array_callbacks=ls_array_callbacks,
             ls_plot_callbacks=ls_plot_callbacks,
@@ -378,56 +394,66 @@ class DataLoaderRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
             tracking_client=tracking_client,
         )
         routine = cls(
-            dict_data_loader_handlers=dict_data_loader_handlers,
+            dict_data_loader_hook_handlers=dict_data_loader_hook_handlers,
             data_split=data_split,
         )
         return routine
 
     @staticmethod
-    def _build_data_loader_handlers(
-        ls_score_callbacks: List[DataLoaderScoreCallback[ModelInputTContr, ModelOutputTContr]],
-        ls_array_callbacks: List[DataLoaderArrayCallback[ModelInputTContr, ModelOutputTContr]],
-        ls_plot_callbacks: List[DataLoaderPlotCallback[ModelInputTContr, ModelOutputTContr]],
+    def _build_data_loader_hook_handlers(
+        ls_score_callbacks: List[
+            DataLoaderHookScoreCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]
+        ],
+        ls_array_callbacks: List[
+            DataLoaderHookArrayCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]
+        ],
+        ls_plot_callbacks: List[
+            DataLoaderHookPlotCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]
+        ],
         ls_score_collection_callbacks: List[
-            DataLoaderScoreCollectionCallback[ModelInputTContr, ModelOutputTContr]
+            DataLoaderHookScoreCollectionCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]
         ],
         ls_array_collection_callbacks: List[
-            DataLoaderArrayCollectionCallback[ModelInputTContr, ModelOutputTContr]
+            DataLoaderHookArrayCollectionCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]
         ],
         ls_plot_collection_callbacks: List[
-            DataLoaderPlotCollectionCallback[ModelInputTContr, ModelOutputTContr]
+            DataLoaderHookPlotCollectionCallback[ModelTContr, ModelInputTContr, ModelOutputTContr]
         ],
         tracking_client: Optional[TrackingClient] = None,
-    ) -> Dict[str, DataLoaderCallbackHandler[Any, ModelInputTContr, ModelOutputTContr, Any]]:
-        dict_data_loader_handlers = {
-            "scores": DataLoaderScoreHandler[ModelInputTContr, ModelOutputTContr](
+    ) -> Dict[
+        str,
+        DataLoaderHookCallbackHandler[Any, ModelTContr, ModelInputTContr, ModelOutputTContr, Any],
+    ]:
+        dict_data_loader_hook_handlers = {
+            "scores": DataLoaderHookScoreHandler[ModelTContr, ModelInputTContr, ModelOutputTContr](
                 ls_callbacks=ls_score_callbacks,
                 tracking_client=tracking_client,
             ),
-            "arrays": DataLoaderArrayHandler[ModelInputTContr, ModelOutputTContr](
+            "arrays": DataLoaderHookArrayHandler[ModelTContr, ModelInputTContr, ModelOutputTContr](
                 ls_callbacks=ls_array_callbacks,
                 tracking_client=tracking_client,
             ),
-            "plots": DataLoaderPlotHandler[ModelInputTContr, ModelOutputTContr](
-                ls_callbacks=ls_plot_callbacks, tracking_client=tracking_client
+            "plots": DataLoaderHookPlotHandler[ModelTContr, ModelInputTContr, ModelOutputTContr](
+                ls_callbacks=ls_plot_callbacks,
+                tracking_client=tracking_client,
             ),
-            "score_collections": DataLoaderScoreCollectionHandler[
-                ModelInputTContr, ModelOutputTContr
+            "score_collections": DataLoaderHookScoreCollectionHandler[
+                ModelTContr, ModelInputTContr, ModelOutputTContr
             ](
                 ls_callbacks=ls_score_collection_callbacks,
                 tracking_client=tracking_client,
             ),
-            "array_collections": DataLoaderArrayCollectionHandler[
-                ModelInputTContr, ModelOutputTContr
+            "array_collections": DataLoaderHookArrayCollectionHandler[
+                ModelTContr, ModelInputTContr, ModelOutputTContr
             ](
                 ls_callbacks=ls_array_collection_callbacks,
                 tracking_client=tracking_client,
             ),
-            "plot_collections": DataLoaderPlotCollectionHandler[
-                ModelInputTContr, ModelOutputTContr
+            "plot_collections": DataLoaderHookPlotCollectionHandler[
+                ModelTContr, ModelInputTContr, ModelOutputTContr
             ](
                 ls_callbacks=ls_plot_collection_callbacks,
                 tracking_client=tracking_client,
             ),
         }
-        return dict_data_loader_handlers
+        return dict_data_loader_hook_handlers
