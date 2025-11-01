@@ -1,24 +1,30 @@
-from typing import List
+from typing import Dict, List
+
+import torch
 
 from artifact_torch.base.components.callbacks.loader import DataLoaderScoreCallback
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 
 
 class LoaderLossCallback(DataLoaderScoreCallback[ModelInput, ModelOutput]):
+    _name = "LOSS"
+
     @classmethod
     def _get_name(cls):
-        return "LOSS"
+        return cls._name
 
-    @staticmethod
+    @classmethod
     def _compute_on_batch(
+        cls,
         model_input: ModelInput,
         model_output: ModelOutput,
-    ) -> float:
+    ) -> Dict[str, torch.Tensor]:
         _ = model_input
         t_loss = model_output.get("t_loss")
-        assert t_loss is not None
-        return t_loss.item()
+        assert t_loss is not None, "Loss tensor not provided"
+        return {"t_loss": t_loss}
 
-    @staticmethod
-    def _aggregate_batch_results(ls_batch_results: List[float]) -> float:
-        return sum(ls_batch_results) / len(ls_batch_results) if ls_batch_results else float("nan")
+    @classmethod
+    def _aggregate_batch_results(cls, ls_batch_results: List[Dict[str, torch.Tensor]]) -> float:
+        ls_batch_losses = [result["t_loss"].item() for result in ls_batch_results]
+        return sum(ls_batch_losses) / len(ls_batch_losses) if ls_batch_losses else float("nan")
