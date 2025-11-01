@@ -88,11 +88,11 @@ class Cache(Generic[CacheDataT]):
         cache[key] = [None] * n_entries
 
 
-class StandardCache(Cache[CacheDataT], Generic[CacheDataT]):
+class StandardCache(Cache[CacheDataT]):
     def __init__(self):
         super().__init__(mode=CacheMode.STANDARD)
 
 
-class AlignedCache(Cache[CacheDataT], Generic[CacheDataT]):
+class AlignedCache(Cache[CacheDataT]):
     def __init__(self):
         super().__init__(mode=CacheMode.ALIGNED)
