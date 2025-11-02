@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Tuple, TypeVar
+from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 import torch
@@ -7,22 +7,12 @@ from matplotlib.figure import Figure
 from torch import Tensor
 from torch.nn import Module
 
-from artifact_torch.base.components.callbacks.loader_hook import DataLoaderHookPlotCallback
+from artifact_torch.base.components.callbacks.forward_hook import ForwardHookPlot
 from artifact_torch.base.model.base import Model
-from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.libs.utils.tensor_flattener import TensorFlattener
 
-ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
-ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
 
-
-class AllActivationsPDFCallback(
-    DataLoaderHookPlotCallback[
-        Model[ModelInputT, ModelOutputT],
-        ModelInputT,
-        ModelOutputT,
-    ]
-):
+class AllActivationsPDF(ForwardHookPlot[Model[Any, Any]]):
     _name = "ACTIVATIONS_PDF"
     _hook_result_key = "layer_activations"
     _plot_feature_name = "All Layers — Activations"
@@ -33,7 +23,7 @@ class AllActivationsPDFCallback(
         return cls._name
 
     @classmethod
-    def _get_target_modules(cls, model: Module) -> List[Module]:
+    def _get_layers(cls, model: Module) -> List[Module]:
         return [m for m in model.modules() if not any(m.children())]
 
     @classmethod
@@ -50,7 +40,7 @@ class AllActivationsPDFCallback(
             return {cls._hook_result_key: t_layer_activations}
 
     @classmethod
-    def _aggregate_hook_results(
+    def _aggregate(
         cls,
         hook_results: Dict[str, List[Dict[str, Tensor]]],
     ) -> Figure:
