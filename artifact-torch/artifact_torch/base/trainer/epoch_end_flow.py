@@ -5,7 +5,7 @@ from matplotlib.figure import Figure
 from numpy import ndarray
 
 from artifact_torch.base.components.routines.artifact import ArtifactRoutine
-from artifact_torch.base.components.routines.joint_loader import JointDataLoaderRoutine
+from artifact_torch.base.components.routines.loader import DataLoaderRoutine
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 
@@ -19,9 +19,7 @@ class EpochEndFlow(Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]):
         self,
         artifact_routine: Optional[ArtifactRoutine[ModelTContr, Any, Any, Any, Any]] = None,
         loader_routines: Optional[
-            Mapping[
-                DataSplit, JointDataLoaderRoutine[ModelTContr, ModelInputTContr, ModelOutputTContr]
-            ]
+            Mapping[DataSplit, DataLoaderRoutine[ModelTContr, ModelInputTContr, ModelOutputTContr]]
         ] = None,
     ):
         if loader_routines is None:
