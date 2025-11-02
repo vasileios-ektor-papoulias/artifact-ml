@@ -41,9 +41,6 @@ class PeriodicCallback(
         if should_trigger:
             self._execute(resources=resources)
 
-    def should_trigger(self, step: int):
-        return self._should_trigger(step=step)
-
     def _should_trigger(self, step: int):
         should_trigger = PeriodicActionTrigger.should_trigger(step=step, period=self._period)
         return should_trigger
@@ -72,9 +69,6 @@ class PeriodicCacheCallback(
         should_trigger = self._should_trigger(step=resources.step)
         if should_trigger:
             super().execute(resources=resources)
-
-    def should_trigger(self, step: int):
-        return self._should_trigger(step=step)
 
     def _should_trigger(self, step: int):
         should_trigger = PeriodicActionTrigger.should_trigger(step=step, period=self._period)
@@ -105,9 +99,6 @@ class PeriodicTrackingCallback(
         should_trigger = self._should_trigger(step=resources.step)
         if should_trigger:
             super().execute(resources=resources)
-
-    def should_trigger(self, step: int):
-        return self._should_trigger(step=step)
 
     def _should_trigger(self, step: int):
         should_trigger = PeriodicActionTrigger.should_trigger(step=step, period=self._period)
