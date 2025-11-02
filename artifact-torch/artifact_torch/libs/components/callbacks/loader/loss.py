@@ -2,11 +2,11 @@ from typing import Dict, List
 
 import torch
 
-from artifact_torch.base.components.callbacks.loader import DataLoaderScoreCallback
+from artifact_torch.base.components.callbacks.loader import DataLoaderScore
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 
 
-class LoaderLossCallback(DataLoaderScoreCallback[ModelInput, ModelOutput]):
+class LoaderLossCallback(DataLoaderScore[ModelInput, ModelOutput]):
     _name = "LOSS"
 
     @classmethod
