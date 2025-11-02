@@ -21,7 +21,7 @@ from artifact_torch.base.components.model_tracking.tracker import (
 )
 from artifact_torch.base.components.routines.artifact import ArtifactRoutine
 from artifact_torch.base.components.routines.batch import BatchRoutine
-from artifact_torch.base.components.routines.joint_loader import JointDataLoaderRoutine
+from artifact_torch.base.components.routines.loader import DataLoaderRoutine
 from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
@@ -73,7 +73,7 @@ class Trainer(
         train_loader: DataLoader[ModelInputT],
         batch_routine: Optional[BatchRoutine[ModelInputT, ModelOutputT]] = None,
         loader_routines: Optional[
-            Mapping[DataSplit, JointDataLoaderRoutine[ModelT, ModelInputT, ModelOutputT]]
+            Mapping[DataSplit, DataLoaderRoutine[ModelT, ModelInputT, ModelOutputT]]
         ] = None,
         artifact_routine: Optional[ArtifactRoutine[ModelT, Any, Any, Any, Any]] = None,
         tracking_client: Optional[TrackingClient] = None,
