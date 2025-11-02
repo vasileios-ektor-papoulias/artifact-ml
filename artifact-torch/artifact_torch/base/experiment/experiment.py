@@ -9,9 +9,7 @@ from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_torch.base.components.cache.cache import StandardCache
 from artifact_torch.base.components.routines.artifact import ArtifactRoutine, ArtifactRoutineData
 from artifact_torch.base.components.routines.batch import BatchRoutine
-from artifact_torch.base.components.routines.joint_loader import JointDataLoaderRoutine
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
-from artifact_torch.base.components.routines.loader_hook import DataLoaderHookRoutine
 from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
@@ -50,32 +48,26 @@ class Experiment(
         assert DataSplit.TRAIN in data_loaders, "Training data not provided."
         batch_routine = cls._get_batch_routine(tracking_client=tracking_client)
         loader_routines = {
-            data_split: JointDataLoaderRoutine[ModelT, ModelInputT, ModelOutputT](
-                data_loader=data_loader,
-                loader_routine=cls._get_loader_routine(
-                    data_split=data_split, tracking_client=tracking_client
-                ),
-                loader_hook_routine=cls._get_loader_hook_routine(
-                    data_split=data_split, tracking_client=tracking_client
-                ),
+            data_split: cls._get_loader_routine(
+                data_loader=data_loader, data_split=data_split, tracking_client=tracking_client
             )
             for data_split, data_loader in data_loaders.items()
         }
-        artifact_routine = (
-            cls._get_artifact_routine(
-                data=artifact_routine_data,
-                data_spec=artifact_routine_data_spec,
-                tracking_client=tracking_client,
-            )
-            if artifact_routine_data_spec is not None
-            else None
+        artifact_routine = cls._get_artifact_routine(
+            data=artifact_routine_data,
+            data_spec=artifact_routine_data_spec,
+            tracking_client=tracking_client,
         )
         trainer = cls._get_trainer_type().build(
             model=model,
             train_loader=data_loaders[DataSplit.TRAIN],
             batch_routine=batch_routine,
-            loader_routines=loader_routines,
-            artifact_routine=artifact_routine,
+            loader_routines={
+                data_split: loader_routine
+                for data_split, loader_routine in loader_routines.items()
+                if loader_routine is not None
+            },
+            artifact_routine=artifact_routine if artifact_routine is not None else None,
         )
         experiment = cls(trainer=trainer)
         return experiment
@@ -109,17 +101,10 @@ class Experiment(
     @abstractmethod
     def _get_loader_routine(
         cls,
+        data_loader: DataLoader[ModelInputT],
         data_split: DataSplit,
         tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[DataLoaderRoutine[ModelInputT, ModelOutputT]]: ...
-
-    @classmethod
-    @abstractmethod
-    def _get_loader_hook_routine(
-        cls,
-        data_split: DataSplit,
-        tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[DataLoaderHookRoutine[ModelT, ModelInputT, ModelOutputT]]: ...
+    ) -> Optional[DataLoaderRoutine[ModelT, ModelInputT, ModelOutputT]]: ...
 
     @classmethod
     @abstractmethod
