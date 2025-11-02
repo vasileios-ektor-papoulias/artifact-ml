@@ -184,8 +184,7 @@ class TrackingCallbackHandler(
 
     @staticmethod
     @abstractmethod
-    def _export(cache: Dict[str, CacheDataT], tracking_client: TrackingClient):
-        pass
+    def _export(cache: Dict[str, CacheDataT], tracking_client: TrackingClient): ...
 
     def execute(self, resources: CallbackResourcesTContr):
         if self._tracking_client is not None:
