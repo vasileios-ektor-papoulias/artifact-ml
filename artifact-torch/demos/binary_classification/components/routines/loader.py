@@ -1,15 +1,25 @@
-from typing import List
+from typing import Any, List
 
 from artifact_experiment import DataSplit
+from artifact_torch.base.components.callbacks.forward_hook import (
+    ForwardHookArray,
+    ForwardHookArrayCollection,
+    ForwardHookPlot,
+    ForwardHookPlotCollection,
+    ForwardHookScore,
+    ForwardHookScoreCollection,
+)
 from artifact_torch.base.components.callbacks.loader import (
-    DataLoaderArrayCallback,
-    DataLoaderArrayCollectionCallback,
-    DataLoaderPlotCallback,
-    DataLoaderPlotCollectionCallback,
-    DataLoaderScoreCallback,
-    DataLoaderScoreCollectionCallback,
+    DataLoaderArray,
+    DataLoaderArrayCollection,
+    DataLoaderPlot,
+    DataLoaderPlotCollection,
+    DataLoaderScore,
+    DataLoaderScoreCollection,
 )
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
+from artifact_torch.base.model.base import Model
+from artifact_torch.libs.components.callbacks.forward_hook.activation_pdf import AllActivationsPDF
 from artifact_torch.libs.components.callbacks.loader.loss import LoaderLossCallback
 
 from demos.binary_classification.components.routines.protocols import (
@@ -19,44 +29,88 @@ from demos.binary_classification.components.routines.protocols import (
 from demos.binary_classification.config.constants import TRAIN_LOADER_ROUTINE_PERIOD
 
 
-class DemoLoaderRoutine(DataLoaderRoutine[DemoModelInput, DemoModelOutput]):
+class DemoLoaderRoutine(
+    DataLoaderRoutine[Model[Any, DemoModelOutput], DemoModelInput, DemoModelOutput]
+):
     @staticmethod
-    def _get_score_callbacks(
+    def _get_scores(
         data_split: DataSplit,
-    ) -> List[DataLoaderScoreCallback[DemoModelInput, DemoModelOutput]]:
+    ) -> List[DataLoaderScore[DemoModelInput, DemoModelOutput]]:
         return [LoaderLossCallback(period=TRAIN_LOADER_ROUTINE_PERIOD, data_split=data_split)]
 
     @staticmethod
-    def _get_array_callbacks(
+    def _get_arrays(
         data_split: DataSplit,
-    ) -> List[DataLoaderArrayCallback[DemoModelInput, DemoModelOutput]]:
+    ) -> List[DataLoaderArray[DemoModelInput, DemoModelOutput]]:
         _ = data_split
         return []
 
     @staticmethod
-    def _get_plot_callbacks(
+    def _get_plots(
         data_split: DataSplit,
-    ) -> List[DataLoaderPlotCallback[DemoModelInput, DemoModelOutput]]:
+    ) -> List[DataLoaderPlot[DemoModelInput, DemoModelOutput]]:
         _ = data_split
         return []
 
     @staticmethod
-    def _get_score_collection_callbacks(
+    def _get_score_collections(
         data_split: DataSplit,
-    ) -> List[DataLoaderScoreCollectionCallback[DemoModelInput, DemoModelOutput]]:
+    ) -> List[DataLoaderScoreCollection[DemoModelInput, DemoModelOutput]]:
         _ = data_split
         return []
 
     @staticmethod
-    def _get_array_collection_callbacks(
+    def _get_array_collections(
         data_split: DataSplit,
-    ) -> List[DataLoaderArrayCollectionCallback[DemoModelInput, DemoModelOutput]]:
+    ) -> List[DataLoaderArrayCollection[DemoModelInput, DemoModelOutput]]:
         _ = data_split
         return []
 
     @staticmethod
-    def _get_plot_collection_callbacks(
+    def _get_plot_collections(
         data_split: DataSplit,
-    ) -> List[DataLoaderPlotCollectionCallback[DemoModelInput, DemoModelOutput]]:
+    ) -> List[DataLoaderPlotCollection[DemoModelInput, DemoModelOutput]]:
+        _ = data_split
+        return []
+
+    @staticmethod
+    def _get_score_hooks(
+        data_split: DataSplit,
+    ) -> List[ForwardHookScore[Model[Any, DemoModelOutput]]]:
+        _ = data_split
+        return []
+
+    @staticmethod
+    def _get_array_hooks(
+        data_split: DataSplit,
+    ) -> List[ForwardHookArray[Model[Any, DemoModelOutput]]]:
+        _ = data_split
+        return []
+
+    @staticmethod
+    def _get_plot_hooks(
+        data_split: DataSplit,
+    ) -> List[ForwardHookPlot[Model[Any, DemoModelOutput]]]:
+        _ = data_split
+        return [AllActivationsPDF(period=TRAIN_LOADER_ROUTINE_PERIOD, data_split=data_split)]
+
+    @staticmethod
+    def _get_score_collection_hooks(
+        data_split: DataSplit,
+    ) -> List[ForwardHookScoreCollection[Model[Any, DemoModelOutput]]]:
+        _ = data_split
+        return []
+
+    @staticmethod
+    def _get_array_collection_hooks(
+        data_split: DataSplit,
+    ) -> List[ForwardHookArrayCollection[Model[Any, DemoModelOutput]]]:
+        _ = data_split
+        return []
+
+    @staticmethod
+    def _get_plot_collection_hooks(
+        data_split: DataSplit,
+    ) -> List[ForwardHookPlotCollection[Model[Any, DemoModelOutput]]]:
         _ = data_split
         return []
