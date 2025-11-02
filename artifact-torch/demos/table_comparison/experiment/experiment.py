@@ -5,7 +5,7 @@ from artifact_experiment import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
-from artifact_torch.base.components.routines.loader_hook import DataLoaderHookRoutine
+from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.trainer.trainer import Trainer
 from artifact_torch.table_comparison.experiment import TabularSynthesisExperiment
 from artifact_torch.table_comparison.model import TableSynthesizer
@@ -17,7 +17,6 @@ from artifact_torch.table_comparison.routine import (
 from demos.table_comparison.components.routines.artifact import DemoTableComparisonRoutine
 from demos.table_comparison.components.routines.batch import DemoBatchRoutine
 from demos.table_comparison.components.routines.loader import DemoLoaderRoutine
-from demos.table_comparison.components.routines.loader_hook import DemoLoaderHookRoutine
 from demos.table_comparison.components.routines.protocols import (
     DemoGenerationParams,
     DemoModelInput,
@@ -61,27 +60,19 @@ class DemoTabularSynthesisExperiment(
     @classmethod
     def _get_loader_routine(
         cls,
-        data_split: DataSplit,
-        tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[DataLoaderRoutine[ModelInputT, ModelOutputT]]:
-        if data_split is DataSplit.TRAIN:
-            return DemoLoaderRoutine.build(data_split=data_split, tracking_client=tracking_client)
-
-    @classmethod
-    def _get_loader_hook_routine(
-        cls,
+        data_loader: DataLoader[ModelInputT],
         data_split: DataSplit,
         tracking_client: Optional[TrackingClient] = None,
     ) -> Optional[
-        DataLoaderHookRoutine[
+        DataLoaderRoutine[
             TableSynthesizer[ModelInputT, ModelOutputT, DemoGenerationParams],
             ModelInputT,
             ModelOutputT,
         ]
     ]:
         if data_split is DataSplit.TRAIN:
-            return DemoLoaderHookRoutine.build(
-                data_split=data_split, tracking_client=tracking_client
+            return DemoLoaderRoutine.build(
+                data_loader=data_loader, data_split=data_split, tracking_client=tracking_client
             )
 
     @classmethod

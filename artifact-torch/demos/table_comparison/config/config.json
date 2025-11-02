@@ -31,7 +31,7 @@
     },
     "validation": {
         "batch_routine_period": 1,
-        "train_loader_routine_period": 1,
+        "train_loader_routine_period": 5,
         "artifact_routine_period": 5,
         "generation_n_records": 1000,
         "generation_temperature": 1
