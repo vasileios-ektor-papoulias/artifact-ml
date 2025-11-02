@@ -7,7 +7,7 @@ from artifact_experiment.base.tracking.client import TrackingClient
 
 from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
-from artifact_torch.base.components.routines.loader_hook import DataLoaderHookRoutine
+from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.experiment.experiment import Experiment
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.base.trainer.trainer import Trainer
@@ -65,17 +65,10 @@ class BinaryClassificationExperiment(
     @abstractmethod
     def _get_loader_routine(
         cls,
+        data_loader: DataLoader[ModelInputT],
         data_split: DataSplit,
         tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[DataLoaderRoutine[ModelInputT, ModelOutputT]]: ...
-
-    @classmethod
-    @abstractmethod
-    def _get_loader_hook_routine(
-        cls,
-        data_split: DataSplit,
-        tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[DataLoaderHookRoutine[BinaryClassifierT, ModelInputT, ModelOutputT]]: ...
+    ) -> Optional[DataLoaderRoutine[BinaryClassifierT, ModelInputT, ModelOutputT]]: ...
 
     @classmethod
     @abstractmethod
