@@ -8,7 +8,7 @@ from artifact_torch.libs.exports.exporter import Exporter
 
 
 class TableExporter(Exporter[pd.DataFrame]):
-    _tabular_data_target_dir = "tabular_data"
+    _target_dir = "tabular_data"
 
     @classmethod
     def _export(
@@ -21,4 +21,4 @@ class TableExporter(Exporter[pd.DataFrame]):
 
     @classmethod
     def _get_target_dir(cls) -> str:
-        return cls._tabular_data_target_dir
+        return cls._target_dir

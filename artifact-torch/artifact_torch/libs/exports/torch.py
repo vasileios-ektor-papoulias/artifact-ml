@@ -9,7 +9,7 @@ from artifact_torch.libs.exports.exporter import Exporter
 
 
 class TorchCheckpointExporter(Exporter[Dict[str, Any]]):
-    _checkpoints_target_dir = "torch_checkpoints"
+    _target_dir = "torch_checkpoints"
 
     @classmethod
     def _export(
@@ -22,4 +22,4 @@ class TorchCheckpointExporter(Exporter[Dict[str, Any]]):
 
     @classmethod
     def _get_target_dir(cls) -> str:
-        return cls._checkpoints_target_dir
+        return cls._target_dir
