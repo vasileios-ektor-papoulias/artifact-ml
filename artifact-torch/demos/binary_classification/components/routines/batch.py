@@ -5,7 +5,7 @@ from artifact_torch.base.components.callbacks.batch import BatchCallback
 from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.libs.components.callbacks.batch.loss import BatchLossCallback
 
-from demos.binary_classification.components.routines.protocols import (
+from demos.binary_classification.components.protocols import (
     DemoModelInput,
     DemoModelOutput,
 )

@@ -14,7 +14,7 @@ from artifact_torch.libs.components.callbacks.checkpoint.standard import Standar
 from artifact_torch.libs.components.early_stopping.epoch_bound import EpochBoundStopper
 from torch import optim
 
-from demos.binary_classification.components.routines.protocols import (
+from demos.binary_classification.components.protocols import (
     DemoModelInput,
     DemoModelOutput,
 )

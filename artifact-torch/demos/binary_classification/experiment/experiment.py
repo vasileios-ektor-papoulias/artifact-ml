@@ -15,14 +15,14 @@ from artifact_torch.binary_classification.routine import (
     BinaryClassificationRoutineData,
 )
 
-from demos.binary_classification.components.routines.artifact import DemoBinaryClassificationRoutine
-from demos.binary_classification.components.routines.batch import DemoBatchRoutine
-from demos.binary_classification.components.routines.loader import DemoLoaderRoutine
-from demos.binary_classification.components.routines.protocols import (
+from demos.binary_classification.components.protocols import (
     DemoClassificationParams,
     DemoModelInput,
     DemoModelOutput,
 )
+from demos.binary_classification.components.routines.artifact import DemoBinaryClassificationRoutine
+from demos.binary_classification.components.routines.batch import DemoBatchRoutine
+from demos.binary_classification.components.routines.loader import DemoLoaderRoutine
 from demos.binary_classification.trainer.trainer import DemoTrainer
 
 ModelInputT = TypeVar("ModelInputT", bound=DemoModelInput)
@@ -67,8 +67,7 @@ class DemoBinaryClassificationExperiment(
     @classmethod
     def _get_loader_routine(
         cls,
-        data_loader: DataLoader[ModelInputT],
-        data_split: DataSplit,
+        data_loaders: Mapping[DataSplit, DataLoader[ModelInputT]],
         tracking_client: Optional[TrackingClient] = None,
     ) -> Optional[
         DataLoaderRoutine[
@@ -82,10 +81,7 @@ class DemoBinaryClassificationExperiment(
             ModelOutputT,
         ]
     ]:
-        if data_split is DataSplit.TRAIN:
-            return DemoLoaderRoutine.build(
-                data_loader=data_loader, data_split=data_split, tracking_client=tracking_client
-            )
+        return DemoLoaderRoutine.build(data_loaders=data_loaders, tracking_client=tracking_client)
 
     @classmethod
     def _get_artifact_routine(
