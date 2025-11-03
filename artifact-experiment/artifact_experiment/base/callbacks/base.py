@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Generic, List, Optional, TypeVar
+from typing import Any, Generic, Optional, Sequence, TypeVar
 
 from tqdm import tqdm
 
@@ -20,21 +20,17 @@ class Callback(ABC, Generic[CallbackResourcesTContr]):
     def execute(self, resources: CallbackResourcesTContr): ...
 
 
-CallbackT = TypeVar("CallbackT", bound=Callback)
+CallbackTCov = TypeVar("CallbackTCov", bound=Callback, covariant=True)
 
 
-class CallbackHandler(Generic[CallbackT, CallbackResourcesTContr]):
+class CallbackHandler(Generic[CallbackTCov, CallbackResourcesTContr]):
     _verbose = True
     _progressbar_message = "Executing Callbacks"
 
-    def __init__(self, ls_callbacks: Optional[List[CallbackT]] = None):
-        if ls_callbacks is None:
-            ls_callbacks = []
-        self._ls_callbacks = ls_callbacks
-
-    @property
-    def ls_callbacks(self) -> List[CallbackT]:
-        return self._ls_callbacks
+    def __init__(self, callbacks: Optional[Sequence[CallbackTCov]] = None):
+        if callbacks is None:
+            callbacks = []
+        self._ls_callbacks = list(callbacks)
 
     @property
     def n_callbacks(self) -> int:
@@ -61,5 +57,17 @@ class CallbackHandler(Generic[CallbackT, CallbackResourcesTContr]):
         ):
             callback.execute(resources=resources)
 
-    def add(self, callback: CallbackT):
-        self._ls_callbacks.append(callback)
+
+CallbackHandlerTCov = TypeVar(
+    "CallbackHandlerTCov", bound=CallbackHandler[Any, Any], covariant=True
+)
+
+
+@dataclass(frozen=True)
+class CallbackHandlerSuite(Generic[CallbackHandlerTCov]):
+    score_handler: CallbackHandlerTCov
+    array_handler: CallbackHandlerTCov
+    plot_handler: CallbackHandlerTCov
+    score_collection_handler: CallbackHandlerTCov
+    array_collection_handler: CallbackHandlerTCov
+    plot_collection_handler: CallbackHandlerTCov

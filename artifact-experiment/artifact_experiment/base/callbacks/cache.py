@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Dict, Generic, List, Optional, TypeVar
+from typing import Dict, Generic, Optional, Sequence, TypeVar
 
 from artifact_experiment.base.callbacks.base import (
     Callback,
@@ -47,18 +47,15 @@ class CacheCallback(
         self._cache = {self._key: None}
 
 
-CacheCallbackT = TypeVar("CacheCallbackT", bound=CacheCallback)
+CacheCallbackTCov = TypeVar("CacheCallbackTCov", bound=CacheCallback, covariant=True)
 
 
 class CacheCallbackHandler(
-    CallbackHandler[CacheCallbackT, CallbackResourcesTContr],
-    Generic[CacheCallbackT, CallbackResourcesTContr, CacheDataT],
+    CallbackHandler[CacheCallbackTCov, CallbackResourcesTContr],
+    Generic[CacheCallbackTCov, CallbackResourcesTContr, CacheDataT],
 ):
-    def __init__(
-        self,
-        ls_callbacks: Optional[List[CacheCallbackT]] = None,
-    ):
-        super().__init__(ls_callbacks=ls_callbacks)
+    def __init__(self, callbacks: Optional[Sequence[CacheCallbackTCov]] = None):
+        super().__init__(callbacks=callbacks)
         self._cache: Dict[str, Optional[CacheDataT]] = {
             callback.key: callback.value for callback in self._ls_callbacks
         }
