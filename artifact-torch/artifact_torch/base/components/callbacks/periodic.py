@@ -8,6 +8,7 @@ from artifact_experiment.base.callbacks.base import (
 )
 from artifact_experiment.base.callbacks.cache import CacheCallback
 from artifact_experiment.base.callbacks.tracking import TrackingCallback
+from artifact_experiment.base.entities.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 
 from artifact_torch.base.components.utils.periodic_action_trigger import PeriodicActionTrigger
@@ -79,8 +80,14 @@ class PeriodicTrackingCallback(
     TrackingCallback[PeriodicCallbackResourcesTContr, CacheDataT],
     Generic[PeriodicCallbackResourcesTContr, CacheDataT],
 ):
-    def __init__(self, key: str, period: int, tracking_client: Optional[TrackingClient] = None):
-        super().__init__(key=key, tracking_client=tracking_client)
+    def __init__(
+        self,
+        name: str,
+        period: int,
+        data_split: Optional[DataSplit] = None,
+        tracking_client: Optional[TrackingClient] = None,
+    ):
+        super().__init__(name=name, data_split=data_split, tracking_client=tracking_client)
         self._period = period
 
     @abstractmethod

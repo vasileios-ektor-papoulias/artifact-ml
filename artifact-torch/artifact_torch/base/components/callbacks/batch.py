@@ -49,12 +49,12 @@ class BatchCallback(
     Generic[ModelInputTContr, ModelOutputTContr, CacheDataT],
 ):
     def __init__(self, period: int, tracking_client: Optional[TrackingClient] = None):
-        key = self._get_key()
-        super().__init__(key=key, period=period, tracking_client=tracking_client)
+        name = self._get_name()
+        super().__init__(name=name, period=period, tracking_client=tracking_client)
 
     @classmethod
     @abstractmethod
-    def _get_key(cls) -> str: ...
+    def _get_name(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -86,7 +86,7 @@ class BatchScoreCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_key(cls) -> str: ...
+    def _get_name(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -104,7 +104,7 @@ class BatchArrayCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_key(cls) -> str: ...
+    def _get_name(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -122,7 +122,7 @@ class BatchPlotCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_key(cls) -> str: ...
+    def _get_name(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -140,7 +140,7 @@ class BatchScoreCollectionCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_key(cls) -> str: ...
+    def _get_name(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -158,7 +158,7 @@ class BatchArrayCollectionCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_key(cls) -> str: ...
+    def _get_name(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -176,7 +176,7 @@ class BatchPlotCollectionCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_key(cls) -> str: ...
+    def _get_name(cls) -> str: ...
 
     @classmethod
     @abstractmethod
