@@ -17,7 +17,7 @@ from artifact_torch.base.components.callbacks.model_io import (
 )
 from artifact_torch.base.components.handlers.model_io import (
     ModelIOCallbackHandler,
-    ModelIOHandlerSuite,
+    ModelIOCallbackHandlerSuite,
 )
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 
@@ -40,12 +40,12 @@ class ModelIOPlan(
 ):
     def __init__(
         self,
-        callback_handlers: ModelIOHandlerSuite[ModelInputTContr, ModelOutputTContr],
+        handler_suite: ModelIOCallbackHandlerSuite[ModelInputTContr, ModelOutputTContr],
         data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ):
         super().__init__(
-            callback_handlers=callback_handlers,
+            handler_suite=handler_suite,
             data_split=data_split,
             tracking_client=tracking_client,
         )
@@ -62,7 +62,7 @@ class ModelIOPlan(
         score_collection_callbacks = cls._get_score_collection_callbacks(data_split=data_split)
         array_collection_callbacks = cls._get_array_collection_callbacks(data_split=data_split)
         plot_collection_callbacks = cls._get_plot_collection_callbacks(data_split=data_split)
-        callback_handlers = ModelIOHandlerSuite[ModelInputTContr, ModelOutputTContr].build(
+        handler_suite = ModelIOCallbackHandlerSuite[ModelInputTContr, ModelOutputTContr].build(
             score_callbacks=score_callbacks,
             array_callbacks=array_callbacks,
             plot_callbacks=plot_callbacks,
@@ -72,7 +72,7 @@ class ModelIOPlan(
             tracking_client=tracking_client,
         )
         plan = cls(
-            callback_handlers=callback_handlers,
+            handler_suite=handler_suite,
             data_split=data_split,
             tracking_client=tracking_client,
         )
