@@ -5,6 +5,7 @@ from typing import Any, Dict, Generic, List, Optional, Tuple, Type, TypeVar
 
 import torch
 import torch.nn as nn
+from artifact_experiment.base.callbacks.base import CallbackHandlerSuite
 from artifact_experiment.base.callbacks.tracking import (
     ArrayCollectionExportMixin,
     ArrayCollectionHandlerExportMixin,
@@ -20,7 +21,7 @@ from artifact_experiment.base.callbacks.tracking import (
     ScoreHandlerExportMixin,
     TrackingCallbackHandler,
 )
-from artifact_experiment.base.data_split import DataSplit, DataSplitSuffixAppender
+from artifact_experiment.base.entities.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 from matplotlib.figure import Figure
 from numpy import ndarray
@@ -55,8 +56,8 @@ class ForwardHookCallback(
     _progressbar_message = "Processing Data Loader (Hooks)"
 
     def __init__(self, period: int, data_split: DataSplit):
-        key = self._get_key(data_split=data_split)
-        super().__init__(key=key, period=period)
+        name = self._get_name()
+        super().__init__(name=name, period=period, data_split=data_split)
         self._hook_results: Dict[str, List[HookResultT]] = {}
         self._handles: List[RemovableHandle] = []
 
@@ -120,14 +121,8 @@ class ForwardHookCallback(
             h.remove()
         self._handles.clear()
 
-    @classmethod
-    def _get_key(cls, data_split: DataSplit) -> str:
-        name = cls._get_name()
-        key = DataSplitSuffixAppender.append_suffix(name=name, data_split=data_split)
-        return key
 
-
-class ForwardHookScore(
+class ForwardHookScoreCallback(
     ScoreExportMixin,
     ForwardHookCallback[ModelTContr, float, Dict[str, torch.Tensor]],
 ):
@@ -150,7 +145,7 @@ class ForwardHookScore(
     def _aggregate(cls, hook_results: Dict[str, List[Dict[str, torch.Tensor]]]) -> float: ...
 
 
-class ForwardHookArray(
+class ForwardHookArrayCallback(
     ArrayExportMixin,
     ForwardHookCallback[ModelTContr, ndarray, Dict[str, torch.Tensor]],
 ):
@@ -173,7 +168,7 @@ class ForwardHookArray(
     def _aggregate(cls, hook_results: Dict[str, List[Dict[str, torch.Tensor]]]) -> ndarray: ...
 
 
-class ForwardHookPlot(
+class ForwardHookPlotCallback(
     PlotExportMixin,
     ForwardHookCallback[ModelTContr, Figure, Dict[str, torch.Tensor]],
 ):
@@ -196,7 +191,7 @@ class ForwardHookPlot(
     def _aggregate(cls, hook_results: Dict[str, List[Dict[str, torch.Tensor]]]) -> Figure: ...
 
 
-class ForwardHookScoreCollection(
+class ForwardHookScoreCollectionCallback(
     ScoreCollectionExportMixin,
     ForwardHookCallback[
         ModelTContr,
@@ -225,7 +220,7 @@ class ForwardHookScoreCollection(
     ) -> Dict[str, float]: ...
 
 
-class ForwardHookArrayCollection(
+class ForwardHookArrayCollectionCallback(
     ArrayCollectionExportMixin,
     ForwardHookCallback[
         ModelTContr,
@@ -254,7 +249,7 @@ class ForwardHookArrayCollection(
     ) -> Dict[str, ndarray]: ...
 
 
-class ForwardHookPlotCollection(
+class ForwardHookPlotCollectionCallback(
     PlotCollectionExportMixin,
     ForwardHookCallback[
         ModelTContr,
@@ -283,19 +278,20 @@ class ForwardHookPlotCollection(
     ) -> Dict[str, Figure]: ...
 
 
-ForwardHookCallbackT = TypeVar("ForwardHookCallbackT", bound="ForwardHookCallback")
-ModelT = TypeVar("ModelT", bound=Model)
+ForwardHookCallbackTCov = TypeVar(
+    "ForwardHookCallbackTCov", bound=ForwardHookCallback, covariant=True
+)
 
 
 class ForwardHookCallbackHandler(
     TrackingCallbackHandler[
-        ForwardHookCallbackT,
-        ForwardHookCallbackResources[ModelT],
+        ForwardHookCallbackTCov,
+        ForwardHookCallbackResources[ModelTContr],
         CacheDataT,
     ],
     Generic[
-        ForwardHookCallbackT,
-        ModelT,
+        ForwardHookCallbackTCov,
+        ModelTContr,
         CacheDataT,
     ],
 ):
@@ -312,93 +308,102 @@ class ForwardHookCallbackHandler(
 
 class ForwardHookScoreHandler(
     ScoreHandlerExportMixin,
-    ForwardHookCallbackHandler[ForwardHookScore[ModelT], ModelT, float],
-    Generic[ModelT],
+    ForwardHookCallbackHandler[ForwardHookScoreCallback[ModelTContr], ModelTContr, float],
+    Generic[ModelTContr],
 ):
     pass
 
 
 class ForwardHookArrayHandler(
     ArrayHandlerExportMixin,
-    ForwardHookCallbackHandler[ForwardHookArray[ModelT], ModelT, ndarray],
-    Generic[ModelT],
+    ForwardHookCallbackHandler[ForwardHookArrayCallback[ModelTContr], ModelTContr, ndarray],
+    Generic[ModelTContr],
 ):
     pass
 
 
 class ForwardHookPlotHandler(
     PlotHandlerExportMixin,
-    ForwardHookCallbackHandler[ForwardHookPlot[ModelT], ModelT, Figure],
-    Generic[ModelT],
+    ForwardHookCallbackHandler[ForwardHookPlotCallback[ModelTContr], ModelTContr, Figure],
+    Generic[ModelTContr],
 ):
     pass
 
 
 class ForwardHookScoreCollectionHandler(
     ScoreCollectionHandlerExportMixin,
-    ForwardHookCallbackHandler[ForwardHookScoreCollection[ModelT], ModelT, Dict[str, float]],
-    Generic[ModelT],
+    ForwardHookCallbackHandler[
+        ForwardHookScoreCollectionCallback[ModelTContr], ModelTContr, Dict[str, float]
+    ],
+    Generic[ModelTContr],
 ):
     pass
 
 
 class ForwardHookArrayCollectionHandler(
     ArrayCollectionHandlerExportMixin,
-    ForwardHookCallbackHandler[ForwardHookArrayCollection[ModelT], ModelT, Dict[str, ndarray]],
-    Generic[ModelT],
+    ForwardHookCallbackHandler[
+        ForwardHookArrayCollectionCallback[ModelTContr], ModelTContr, Dict[str, ndarray]
+    ],
+    Generic[ModelTContr],
 ):
     pass
 
 
 class ForwardHookPlotCollectionHandler(
     PlotCollectionHandlerExportMixin,
-    ForwardHookCallbackHandler[ForwardHookPlotCollection[ModelT], ModelT, Dict[str, Figure]],
-    Generic[ModelT],
+    ForwardHookCallbackHandler[
+        ForwardHookPlotCollectionCallback[ModelTContr], ModelTContr, Dict[str, Figure]
+    ],
+    Generic[ModelTContr],
 ):
     pass
 
 
-ForwardHookHandlersT = TypeVar("ForwardHookHandlersT", bound="ForwardHookHandlers")
+ForwardHookHandlerSuiteT = TypeVar("ForwardHookHandlerSuiteT", bound="ForwardHookHandlerSuite")
 
 
-@dataclass
-class ForwardHookHandlers(Generic[ModelT]):
-    score_handler: ForwardHookScoreHandler[ModelT]
-    array_handler: ForwardHookArrayHandler[ModelT]
-    plot_handler: ForwardHookPlotHandler[ModelT]
-    score_collection_handler: ForwardHookScoreCollectionHandler[ModelT]
-    array_collection_handler: ForwardHookArrayCollectionHandler[ModelT]
-    plot_collection_handler: ForwardHookPlotCollectionHandler[ModelT]
+@dataclass(frozen=True)
+class ForwardHookHandlerSuite(
+    CallbackHandlerSuite[ForwardHookCallbackHandler[Any, ModelTContr, Any]],
+    Generic[ModelTContr],
+):
+    score_handler: ForwardHookScoreHandler[ModelTContr]
+    array_handler: ForwardHookArrayHandler[ModelTContr]
+    plot_handler: ForwardHookPlotHandler[ModelTContr]
+    score_collection_handler: ForwardHookScoreCollectionHandler[ModelTContr]
+    array_collection_handler: ForwardHookArrayCollectionHandler[ModelTContr]
+    plot_collection_handler: ForwardHookPlotCollectionHandler[ModelTContr]
 
     @classmethod
     def build(
-        cls: Type[ForwardHookHandlersT],
-        ls_score_callbacks: List[ForwardHookScore[ModelT]],
-        ls_array_callbacks: List[ForwardHookArray[ModelT]],
-        ls_plot_callbacks: List[ForwardHookPlot[ModelT]],
-        ls_score_collection_callbacks: List[ForwardHookScoreCollection[ModelT]],
-        ls_array_collection_callbacks: List[ForwardHookArrayCollection[ModelT]],
-        ls_plot_collection_callbacks: List[ForwardHookPlotCollection[ModelT]],
+        cls: Type[ForwardHookHandlerSuiteT],
+        score_callbacks: Sequence[ForwardHookScoreCallback[ModelTContr]],
+        array_callbacks: Sequence[ForwardHookArrayCallback[ModelTContr]],
+        plot_callbacks: Sequence[ForwardHookPlotCallback[ModelTContr]],
+        score_collection_callbacks: Sequence[ForwardHookScoreCollectionCallback[ModelTContr]],
+        array_collection_callbacks: Sequence[ForwardHookArrayCollectionCallback[ModelTContr]],
+        plot_collection_callbacks: Sequence[ForwardHookPlotCollectionCallback[ModelTContr]],
         tracking_client: Optional[TrackingClient] = None,
-    ) -> ForwardHookHandlersT:
+    ) -> ForwardHookHandlerSuiteT:
         handlers = cls(
-            score_handler=ForwardHookScoreHandler[ModelT](
-                ls_callbacks=ls_score_callbacks, tracking_client=tracking_client
+            score_handler=ForwardHookScoreHandler[ModelTContr](
+                callbacks=score_callbacks, tracking_client=tracking_client
             ),
-            array_handler=ForwardHookArrayHandler[ModelT](
-                ls_callbacks=ls_array_callbacks, tracking_client=tracking_client
+            array_handler=ForwardHookArrayHandler[ModelTContr](
+                callbacks=array_callbacks, tracking_client=tracking_client
             ),
-            plot_handler=ForwardHookPlotHandler[ModelT](
-                ls_callbacks=ls_plot_callbacks, tracking_client=tracking_client
+            plot_handler=ForwardHookPlotHandler[ModelTContr](
+                callbacks=plot_callbacks, tracking_client=tracking_client
             ),
-            score_collection_handler=ForwardHookScoreCollectionHandler[ModelT](
-                ls_callbacks=ls_score_collection_callbacks, tracking_client=tracking_client
+            score_collection_handler=ForwardHookScoreCollectionHandler[ModelTContr](
+                callbacks=score_collection_callbacks, tracking_client=tracking_client
             ),
-            array_collection_handler=ForwardHookArrayCollectionHandler[ModelT](
-                ls_callbacks=ls_array_collection_callbacks, tracking_client=tracking_client
+            array_collection_handler=ForwardHookArrayCollectionHandler[ModelTContr](
+                callbacks=array_collection_callbacks, tracking_client=tracking_client
             ),
-            plot_collection_handler=ForwardHookPlotCollectionHandler[ModelT](
-                ls_callbacks=ls_plot_collection_callbacks, tracking_client=tracking_client
+            plot_collection_handler=ForwardHookPlotCollectionHandler[ModelTContr](
+                callbacks=plot_collection_callbacks, tracking_client=tracking_client
             ),
         )
         return handlers
