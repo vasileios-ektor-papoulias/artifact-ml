@@ -9,7 +9,7 @@ from artifact_torch.libs.exports.exporter import Exporter
 
 
 class MetadataExporter(Exporter[Dict[str, Any]]):
-    _metadata_target_dir = "metadata"
+    _target_dir = "metadata"
 
     @classmethod
     def _export(
@@ -23,4 +23,4 @@ class MetadataExporter(Exporter[Dict[str, Any]]):
 
     @classmethod
     def _get_target_dir(cls) -> str:
-        return cls._metadata_target_dir
+        return cls._target_dir
