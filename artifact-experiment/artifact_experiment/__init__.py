@@ -1,1 +1,1 @@
-from artifact_experiment.base.data_split import DataSplit
+from artifact_experiment.base.entities.data_split import DataSplit
