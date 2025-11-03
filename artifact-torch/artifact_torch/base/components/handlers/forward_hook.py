@@ -21,12 +21,12 @@ from artifact_torch.base.components.callbacks.forward_hook import (
     ForwardHookArrayCallback,
     ForwardHookArrayCollectionCallback,
     ForwardHookCallback,
-    ForwardHookCallbackResources,
     ForwardHookPlotCallback,
     ForwardHookPlotCollectionCallback,
     ForwardHookScoreCallback,
     ForwardHookScoreCollectionCallback,
 )
+from artifact_torch.base.components.callbacks.hook import HookCallbackResources
 from artifact_torch.base.model.base import Model
 
 ForwardHookCallbackTCov = TypeVar(
@@ -39,7 +39,7 @@ CacheDataT = TypeVar("CacheDataT")
 class ForwardHookCallbackHandler(
     TrackingCallbackHandler[
         ForwardHookCallbackTCov,
-        ForwardHookCallbackResources[ModelTContr],
+        HookCallbackResources[ModelTContr],
         CacheDataT,
     ],
     Generic[
@@ -52,7 +52,7 @@ class ForwardHookCallbackHandler(
     @abstractmethod
     def _export(cache: Dict[str, CacheDataT], tracking_client: TrackingClient): ...
 
-    def attach(self, resources: ForwardHookCallbackResources[ModelTContr]) -> bool:
+    def attach(self, resources: HookCallbackResources[ModelTContr]) -> bool:
         any_attached = False
         for callback in self._ls_callbacks:
             any_attached |= callback.attach(resources=resources)
@@ -113,11 +113,13 @@ class ForwardHookPlotCollectionHandler(
     pass
 
 
-ForwardHookHandlerSuiteT = TypeVar("ForwardHookHandlerSuiteT", bound="ForwardHookHandlerSuite")
+ForwardHookCallbackHandlerSuiteT = TypeVar(
+    "ForwardHookCallbackHandlerSuiteT", bound="ForwardHookCallbackHandlerSuite"
+)
 
 
 @dataclass(frozen=True)
-class ForwardHookHandlerSuite(
+class ForwardHookCallbackHandlerSuite(
     CallbackHandlerSuite[ForwardHookCallbackHandler[Any, ModelTContr, Any]],
     Generic[ModelTContr],
 ):
@@ -130,7 +132,7 @@ class ForwardHookHandlerSuite(
 
     @classmethod
     def build(
-        cls: Type[ForwardHookHandlerSuiteT],
+        cls: Type[ForwardHookCallbackHandlerSuiteT],
         score_callbacks: Sequence[ForwardHookScoreCallback[ModelTContr]],
         array_callbacks: Sequence[ForwardHookArrayCallback[ModelTContr]],
         plot_callbacks: Sequence[ForwardHookPlotCallback[ModelTContr]],
@@ -138,8 +140,8 @@ class ForwardHookHandlerSuite(
         array_collection_callbacks: Sequence[ForwardHookArrayCollectionCallback[ModelTContr]],
         plot_collection_callbacks: Sequence[ForwardHookPlotCollectionCallback[ModelTContr]],
         tracking_client: Optional[TrackingClient] = None,
-    ) -> ForwardHookHandlerSuiteT:
-        handlers = cls(
+    ) -> ForwardHookCallbackHandlerSuiteT:
+        suite = cls(
             score_handler=ForwardHookScoreHandler[ModelTContr](
                 callbacks=score_callbacks, tracking_client=tracking_client
             ),
@@ -159,4 +161,4 @@ class ForwardHookHandlerSuite(
                 callbacks=plot_collection_callbacks, tracking_client=tracking_client
             ),
         )
-        return handlers
+        return suite

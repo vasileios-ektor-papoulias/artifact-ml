@@ -16,17 +16,15 @@ from artifact_experiment.base.tracking.client import TrackingClient
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-from artifact_torch.base.components.callbacks.forward_hook import (
-    ForwardHookCallback,
-    ForwardHookCallbackResources,
-)
+from artifact_torch.base.components.callbacks.forward_hook import ForwardHookCallback
+from artifact_torch.base.components.callbacks.hook import HookCallbackResources
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 
 ModelOutputTCov = TypeVar("ModelOutputTCov", bound=ModelOutput, covariant=True)
 
 
-ModelIOCallbackResources = ForwardHookCallbackResources[Model[Any, ModelOutputTCov]]
+ModelIOCallbackResources = HookCallbackResources[Model[Any, ModelOutputTCov]]
 
 
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
