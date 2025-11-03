@@ -1,9 +1,8 @@
 from abc import abstractmethod
-from typing import Any, Dict, Generic, Mapping, Optional, Type, TypeVar
+from typing import Any, Dict, Generic, Optional, Type, TypeVar
 
 import pandas as pd
 import torch
-from artifact_experiment.base.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 from torch import optim
 
@@ -72,9 +71,7 @@ class Trainer(
         model: ModelT,
         train_loader: DataLoader[ModelInputT],
         batch_routine: Optional[BatchRoutine[ModelInputT, ModelOutputT]] = None,
-        loader_routines: Optional[
-            Mapping[DataSplit, DataLoaderRoutine[ModelT, ModelInputT, ModelOutputT]]
-        ] = None,
+        loader_routine: Optional[DataLoaderRoutine[ModelT, ModelInputT, ModelOutputT]] = None,
         artifact_routine: Optional[ArtifactRoutine[ModelT, Any, Any, Any, Any]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> TrainerT:
@@ -91,7 +88,7 @@ class Trainer(
         checkpoint_callback = cls._get_checkpoint_callback(tracking_client=tracking_client)
         batch_end_flow = BatchEndFlow(batch_routine=batch_routine)
         epoch_end_flow = EpochEndFlow(
-            artifact_routine=artifact_routine, loader_routines=loader_routines
+            artifact_routine=artifact_routine, loader_routine=loader_routine
         )
         trainer = cls(
             training_state=training_state,
