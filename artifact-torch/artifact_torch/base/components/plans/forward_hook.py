@@ -9,13 +9,15 @@ from artifact_torch.base.components.callbacks.forward_hook import (
     ForwardHookArrayCallback,
     ForwardHookArrayCollectionCallback,
     ForwardHookCallback,
-    ForwardHookCallbackHandler,
     ForwardHookCallbackResources,
-    ForwardHookHandlerSuite,
     ForwardHookPlotCallback,
     ForwardHookPlotCollectionCallback,
     ForwardHookScoreCallback,
     ForwardHookScoreCollectionCallback,
+)
+from artifact_torch.base.components.handlers.forward_hook import (
+    ForwardHookCallbackHandler,
+    ForwardHookHandlerSuite,
 )
 from artifact_torch.base.model.base import Model
 

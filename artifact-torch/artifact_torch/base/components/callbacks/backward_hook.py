@@ -19,7 +19,7 @@ from artifact_experiment.base.callbacks.tracking import (
     ScoreHandlerExportMixin,
     TrackingCallbackHandler,
 )
-from artifact_experiment.base.data_split import DataSplit, DataSplitSuffixAppender
+from artifact_experiment.base.entities.data_split import DataSplit, DataSplitSuffixAppender
 from artifact_experiment.base.tracking.client import TrackingClient
 from matplotlib.figure import Figure
 from numpy import ndarray

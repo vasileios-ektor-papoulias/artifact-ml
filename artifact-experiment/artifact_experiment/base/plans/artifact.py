@@ -8,15 +8,14 @@ from artifact_experiment.base.callbacks.artifact import (
     ArtifactArrayCallback,
     ArtifactArrayCollectionCallback,
     ArtifactCallback,
-    ArtifactCallbackHandler,
     ArtifactCallbackResources,
-    ArtifactHandlerSuite,
     ArtifactPlotCallback,
     ArtifactPlotCollectionCallback,
     ArtifactScoreCallback,
     ArtifactScoreCollectionCallback,
 )
 from artifact_experiment.base.entities.data_split import DataSplit
+from artifact_experiment.base.handlers.artifact import ArtifactCallbackHandler, ArtifactHandlerSuite
 from artifact_experiment.base.plans.base import CallbackExecutionPlan
 from artifact_experiment.base.plans.callback_factory import ArtifactCallbackFactory
 from artifact_experiment.base.tracking.client import TrackingClient
@@ -75,20 +74,22 @@ class ArtifactPlan(
         data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ArtifactPlanT:
-        score_callbacks = cls._get_score_callbacks(
+        score_callbacks = cls._build_score_callbacks(
             resource_spec=resource_spec, data_split=data_split
         )
-        array_callbacks = cls._get_array_callbacks(
+        array_callbacks = cls._build_array_callbacks(
             resource_spec=resource_spec, data_split=data_split
         )
-        plot_callbacks = cls._get_plot_callbacks(resource_spec=resource_spec, data_split=data_split)
-        score_collection_callbacks = cls._get_score_collection_callbacks(
+        plot_callbacks = cls._build_plot_callbacks(
             resource_spec=resource_spec, data_split=data_split
         )
-        array_collection_callbacks = cls._get_array_collection_callbacks(
+        score_collection_callbacks = cls._build_score_collection_callbacks(
             resource_spec=resource_spec, data_split=data_split
         )
-        plot_collection_callbacks = cls._get_plot_collection_callbacks(
+        array_collection_callbacks = cls._build_array_collection_callbacks(
+            resource_spec=resource_spec, data_split=data_split
+        )
+        plot_collection_callbacks = cls._build_plot_collection_callbacks(
             resource_spec=resource_spec, data_split=data_split
         )
         callback_handlers = ArtifactHandlerSuite.build(
@@ -178,7 +179,7 @@ class ArtifactPlan(
         self.execute(resources=callback_resources)
 
     @classmethod
-    def _get_score_callbacks(
+    def _build_score_callbacks(
         cls,
         resource_spec: ResourceSpecProtocolT,
         ls_score_types: Optional[List[Union[ScoreTypeT, str]]] = None,
@@ -198,7 +199,7 @@ class ArtifactPlan(
         return ls_callbacks
 
     @classmethod
-    def _get_array_callbacks(
+    def _build_array_callbacks(
         cls,
         resource_spec: ResourceSpecProtocolT,
         ls_array_types: Optional[List[Union[ArrayTypeT, str]]] = None,
@@ -218,7 +219,7 @@ class ArtifactPlan(
         return ls_callbacks
 
     @classmethod
-    def _get_plot_callbacks(
+    def _build_plot_callbacks(
         cls,
         resource_spec: ResourceSpecProtocolT,
         ls_plot_types: Optional[List[Union[PlotTypeT, str]]] = None,
@@ -238,7 +239,7 @@ class ArtifactPlan(
         return ls_callbacks
 
     @classmethod
-    def _get_score_collection_callbacks(
+    def _build_score_collection_callbacks(
         cls,
         resource_spec: ResourceSpecProtocolT,
         ls_score_collection_types: Optional[List[Union[ScoreCollectionTypeT, str]]] = None,
@@ -260,7 +261,7 @@ class ArtifactPlan(
         return ls_callbacks
 
     @classmethod
-    def _get_array_collection_callbacks(
+    def _build_array_collection_callbacks(
         cls,
         resource_spec: ResourceSpecProtocolT,
         ls_array_collection_types: Optional[List[Union[ArrayCollectionTypeT, str]]] = None,
@@ -282,7 +283,7 @@ class ArtifactPlan(
         return ls_callbacks
 
     @classmethod
-    def _get_plot_collection_callbacks(
+    def _build_plot_collection_callbacks(
         cls,
         resource_spec: ResourceSpecProtocolT,
         ls_plot_collection_types: Optional[List[Union[PlotCollectionTypeT, str]]] = None,

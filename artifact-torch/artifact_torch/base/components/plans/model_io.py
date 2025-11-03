@@ -9,13 +9,15 @@ from artifact_torch.base.components.callbacks.model_io import (
     ModelIOArrayCallback,
     ModelIOArrayCollectionCallback,
     ModelIOCallback,
-    ModelIOCallbackHandler,
     ModelIOCallbackResources,
-    ModelIOHandlerSuite,
     ModelIOPlotCallback,
     ModelIOPlotCollectionCallback,
     ModelIOScoreCallback,
     ModelIOScoreCollectionCallback,
+)
+from artifact_torch.base.components.handlers.model_io import (
+    ModelIOCallbackHandler,
+    ModelIOHandlerSuite,
 )
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 

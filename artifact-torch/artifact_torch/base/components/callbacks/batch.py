@@ -5,12 +5,12 @@ from typing import Dict, Generic, Optional, TypeVar
 from artifact_experiment.base.callbacks.tracking import (
     ArrayCollectionExportMixin,
     ArrayExportMixin,
-    CacheCallbackHandler,
     PlotCollectionExportMixin,
     PlotExportMixin,
     ScoreCollectionExportMixin,
     ScoreExportMixin,
 )
+from artifact_experiment.base.handlers.cache import CacheCallbackHandler
 from artifact_experiment.base.tracking.client import TrackingClient
 from matplotlib.figure import Figure
 from numpy import ndarray

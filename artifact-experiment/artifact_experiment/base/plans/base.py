@@ -4,9 +4,11 @@ from typing import Any, Dict, Generic, Optional, Sequence, TypeVar
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-from artifact_experiment.base.callbacks.base import CallbackHandlerSuite, CallbackResources
-from artifact_experiment.base.callbacks.tracking import TrackingCallback, TrackingCallbackHandler
+from artifact_experiment.base.callbacks.base import CallbackResources
+from artifact_experiment.base.callbacks.tracking import TrackingCallback
 from artifact_experiment.base.entities.data_split import DataSplit
+from artifact_experiment.base.handlers.base import CallbackHandlerSuite
+from artifact_experiment.base.handlers.tracking import TrackingCallbackHandler
 from artifact_experiment.base.tracking.client import TrackingClient
 
 TrackingCallbackHandlerTCov = TypeVar(
