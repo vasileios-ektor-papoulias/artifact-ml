@@ -5,9 +5,9 @@ from typing import Any, Generic, Mapping, Optional, TypeVar
 from artifact_core.binary_classification.artifacts.base import BinaryClassificationArtifactResources
 from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
 from artifact_core.libs.resources.categorical.category_store.binary import BinaryCategoryStore
-from artifact_experiment.base.data_split import DataSplit, DataSplitSuffixAppender
+from artifact_experiment.base.entities.data_split import DataSplit, DataSplitSuffixAppender
 from artifact_experiment.base.tracking.client import TrackingClient
-from artifact_experiment.binary_classification.validation_plan import BinaryClassificationPlan
+from artifact_experiment.binary_classification.plan import BinaryClassificationPlan
 
 from artifact_torch.base.components.routines.artifact import (
     ArtifactRoutine,
@@ -16,7 +16,7 @@ from artifact_torch.base.components.routines.artifact import (
 )
 from artifact_torch.binary_classification.model import BinaryClassifier
 from artifact_torch.core.model.classifier import ClassificationParams
-from artifact_torch.libs.exports.metadata import MetadataExporter
+from artifact_torch.libs.exports.classification_results import ClassificationResultsExporter
 
 ClassificationParamsTCov = TypeVar(
     "ClassificationParamsTCov", bound=ClassificationParams, covariant=True
@@ -61,7 +61,7 @@ class BinaryClassificationRoutine(
 
     @classmethod
     @abstractmethod
-    def _get_validation_plan(
+    def _get_artifact_plan(
         cls,
         artifact_resource_spec: BinaryFeatureSpecProtocol,
         data_split: DataSplit,
@@ -119,7 +119,7 @@ class BinaryClassificationRoutine(
             for identifier in sorted(set(true) | set(predicted) | set(probs), key=int)
         }
         resource_export_prefix = cls._get_resource_export_prefix(data_split=data_split)
-        MetadataExporter.export(
+        ClassificationResultsExporter.export(
             data=dict_resources,
             tracking_client=tracking_client,
             prefix=resource_export_prefix,
