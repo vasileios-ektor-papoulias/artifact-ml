@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import Any, Dict, Generic, Optional, TypeVar
+from typing import Any, Dict, Generic, Optional, Sequence, Type, TypeVar
 
 from artifact_core.base.artifact import Artifact
 from artifact_core.base.artifact_dependencies import (
@@ -8,91 +8,107 @@ from artifact_core.base.artifact_dependencies import (
     ArtifactResult,
     ResourceSpecProtocol,
 )
-from artifact_experiment.base.callbacks.base import (
-    CallbackResources,
-)
+from artifact_experiment.base.callbacks.base import CallbackHandlerSuite, CallbackResources
 from artifact_experiment.base.callbacks.tracking import (
     ArrayCollectionExportMixin,
+    ArrayCollectionHandlerExportMixin,
     ArrayExportMixin,
+    ArrayHandlerExportMixin,
     PlotCollectionExportMixin,
+    PlotCollectionHandlerExportMixin,
     PlotExportMixin,
+    PlotHandlerExportMixin,
     ScoreCollectionExportMixin,
+    ScoreCollectionHandlerExportMixin,
     ScoreExportMixin,
+    ScoreHandlerExportMixin,
     TrackingCallback,
+    TrackingCallbackHandler,
 )
+from artifact_experiment.base.entities.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
-ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound=ArtifactResources)
-ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
+ArtifactResourcesTCov = TypeVar("ArtifactResourcesTCov", bound=ArtifactResources, covariant=True)
 
 
 @dataclass
-class ArtifactCallbackResources(CallbackResources, Generic[ArtifactResourcesT]):
-    artifact_resources: ArtifactResourcesT
+class ArtifactCallbackResources(CallbackResources, Generic[ArtifactResourcesTCov]):
+    artifact_resources: ArtifactResourcesTCov
+
+
+ArtifactResourcesTContr = TypeVar(
+    "ArtifactResourcesTContr", bound=ArtifactResources, contravariant=True
+)
+ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
+ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 
 class ArtifactCallback(
-    TrackingCallback[ArtifactCallbackResources[ArtifactResourcesT], ArtifactResultT],
-    Generic[ArtifactResourcesT, ArtifactResultT, ResourceSpecProtocolT],
+    TrackingCallback[ArtifactCallbackResources[ArtifactResourcesTContr], ArtifactResultT],
+    Generic[ArtifactResourcesTContr, ResourceSpecProtocolT, ArtifactResultT],
 ):
     def __init__(
         self,
-        key: str,
-        artifact: Artifact[ArtifactResourcesT, ArtifactResultT, Any, ResourceSpecProtocolT],
+        name: str,
+        artifact: Artifact[ArtifactResourcesTContr, ResourceSpecProtocolT, Any, ArtifactResultT],
+        data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ):
-        super().__init__(key=key, tracking_client=tracking_client)
+        super().__init__(name=name, data_split=data_split, tracking_client=tracking_client)
         self._artifact = artifact
 
     @staticmethod
     @abstractmethod
     def _export(key: str, value: ArtifactResultT, tracking_client: TrackingClient): ...
 
-    def _compute(self, resources: ArtifactCallbackResources[ArtifactResourcesT]) -> ArtifactResultT:
+    def _compute(
+        self, resources: ArtifactCallbackResources[ArtifactResourcesTContr]
+    ) -> ArtifactResultT:
         result = self._artifact.compute(resources=resources.artifact_resources)
         return result
 
 
 class ArtifactScoreCallback(
     ScoreExportMixin,
-    ArtifactCallback[ArtifactResourcesT, float, ResourceSpecProtocolT],
+    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolT, float],
 ):
     pass
 
 
 class ArtifactArrayCallback(
     ArrayExportMixin,
-    ArtifactCallback[ArtifactResourcesT, ndarray, ResourceSpecProtocolT],
+    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolT, ndarray],
 ):
     pass
 
 
 class ArtifactPlotCallback(
     PlotExportMixin,
-    ArtifactCallback[ArtifactResourcesT, Figure, ResourceSpecProtocolT],
+    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolT, Figure],
 ):
     pass
 
 
 class ArtifactScoreCollectionCallback(
     ScoreCollectionExportMixin,
-    ArtifactCallback[ArtifactResourcesT, Dict[str, float], ResourceSpecProtocolT],
+    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolT, Dict[str, float]],
 ):
     pass
 
 
 class ArtifactArrayCollectionCallback(
     ArrayCollectionExportMixin,
-    ArtifactCallback[ArtifactResourcesT, Dict[str, ndarray], ResourceSpecProtocolT],
+    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolT, Dict[str, ndarray]],
 ):
     pass
 
 
 class ArtifactPlotCollectionCallback(
     PlotCollectionExportMixin,
-    ArtifactCallback[ArtifactResourcesT, Dict[str, Figure], ResourceSpecProtocolT],
+    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolT, Dict[str, Figure]],
+):
+    pass
 ):
     pass
