@@ -259,10 +259,10 @@ class DataLoaderRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelOutputT
         )
         if any_attached:
             cls._process_data_loader(model=callback_resources.model, data_loader=data_loader)
-        if model_io_plan is not None:
-            model_io_plan.execute(resources=callback_resources)
-        if forward_hook_plan is not None:
-            forward_hook_plan.execute(resources=callback_resources)
+            if model_io_plan is not None:
+                model_io_plan.execute(resources=callback_resources)
+            if forward_hook_plan is not None:
+                forward_hook_plan.execute(resources=callback_resources)
 
     @staticmethod
     def _attach(
