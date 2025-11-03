@@ -2,7 +2,7 @@ from abc import abstractmethod
 from typing import Any, Generic, Mapping, Optional, Type, TypeVar
 
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_experiment.base.data_split import DataSplit
+from artifact_experiment.base.entities.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 
 from artifact_torch.base.components.routines.batch import BatchRoutine
@@ -62,8 +62,7 @@ class TabularSynthesisExperiment(
     @abstractmethod
     def _get_loader_routine(
         cls,
-        data_loader: DataLoader[ModelInputT],
-        data_split: DataSplit,
+        data_loaders: Mapping[DataSplit, DataLoader[ModelInputT]],
         tracking_client: Optional[TrackingClient] = None,
     ) -> Optional[DataLoaderRoutine[TableSynthesizerT, ModelInputT, ModelOutputT]]: ...
 

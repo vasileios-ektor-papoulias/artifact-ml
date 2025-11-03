@@ -7,7 +7,7 @@ from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecPro
 from artifact_core.table_comparison.artifacts.base import TableComparisonArtifactResources
 from artifact_experiment import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
-from artifact_experiment.table_comparison.validation_plan import TableComparisonPlan
+from artifact_experiment.table_comparison.plan import TableComparisonPlan
 
 from artifact_torch.base.components.routines.artifact import (
     ArtifactRoutine,
@@ -53,7 +53,7 @@ class TableComparisonRoutine(
 
     @classmethod
     @abstractmethod
-    def _get_validation_plan(
+    def _get_artifact_plan(
         cls,
         artifact_resource_spec: TabularDataSpecProtocol,
         data_split: DataSplit,
