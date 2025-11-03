@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, Dict, Generic, List, Optional, TypeVar
+from typing import Any, Dict, Generic, List, Optional, Sequence, TypeVar
 
 from artifact_experiment.base.callbacks.base import (
     CallbackResources,
@@ -8,6 +8,7 @@ from artifact_experiment.base.callbacks.cache import (
     CacheCallback,
     CacheCallbackHandler,
 )
+from artifact_experiment.base.entities.data_split import DataSplit, DataSplitSuffixAppender
 from artifact_experiment.base.tracking.client import TrackingClient
 from matplotlib.figure import Figure
 from numpy import ndarray
@@ -22,8 +23,15 @@ class TrackingCallback(
     CacheCallback[CallbackResourcesTContr, CacheDataT],
     Generic[CallbackResourcesTContr, CacheDataT],
 ):
-    def __init__(self, key: str, tracking_client: Optional[TrackingClient] = None):
+    def __init__(
+        self,
+        name: str,
+        data_split: Optional[DataSplit] = None,
+        tracking_client: Optional[TrackingClient] = None,
+    ):
+        key = self._get_key(name=name, data_split=data_split)
         super().__init__(key=key)
+        self._data_split = data_split
         self._tracking_client = tracking_client
 
     @property
@@ -38,6 +46,10 @@ class TrackingCallback(
     def tracking_enabled(self) -> bool:
         return self._tracking_client is not None
 
+    @property
+    def data_split(self) -> Optional[DataSplit]:
+        return self._data_split
+
     @abstractmethod
     def _compute(self, resources: CallbackResourcesTContr) -> CacheDataT: ...
 
@@ -50,6 +62,14 @@ class TrackingCallback(
         if self._tracking_client is not None:
             assert self.value is not None
             self._export(key=self.key, value=self.value, tracking_client=self._tracking_client)
+
+    @classmethod
+    def _get_key(cls, name: str, data_split: Optional[DataSplit]) -> str:
+        if data_split is not None:
+            key = DataSplitSuffixAppender.append_suffix(name=name, data_split=data_split)
+        else:
+            key = name
+        return key
 
 
 class ScoreExportMixin:
@@ -142,31 +162,19 @@ class PlotCollectionCallback(
     def _compute(self, resources: CallbackResourcesTContr) -> Dict[str, Figure]: ...
 
 
-TrackingCallbackT = TypeVar("TrackingCallbackT", bound=TrackingCallback)
-ScoreCallbackT = TypeVar("ScoreCallbackT", bound=TrackingCallback[Any, float])
-ArrayCallbackT = TypeVar("ArrayCallbackT", bound=TrackingCallback[Any, ndarray])
-PlotCallbackT = TypeVar("PlotCallbackT", bound=TrackingCallback[Any, Figure])
-ScoreCollectionCallbackT = TypeVar(
-    "ScoreCollectionCallbackT", bound=TrackingCallback[Any, Dict[str, float]]
-)
-ArrayCollectionCallbackT = TypeVar(
-    "ArrayCollectionCallbackT", bound=TrackingCallback[Any, Dict[str, ndarray]]
-)
-PlotCollectionCallbackT = TypeVar(
-    "PlotCollectionCallbackT", bound=TrackingCallback[Any, Dict[str, Figure]]
-)
+TrackingCallbackTCov = TypeVar("TrackingCallbackTCov", bound=TrackingCallback, covariant=True)
 
 
 class TrackingCallbackHandler(
-    CacheCallbackHandler[TrackingCallbackT, CallbackResourcesTContr, CacheDataT],
-    Generic[TrackingCallbackT, CallbackResourcesTContr, CacheDataT],
+    CacheCallbackHandler[TrackingCallbackTCov, CallbackResourcesTContr, CacheDataT],
+    Generic[TrackingCallbackTCov, CallbackResourcesTContr, CacheDataT],
 ):
     def __init__(
         self,
-        ls_callbacks: Optional[List[TrackingCallbackT]] = None,
+        callbacks: Optional[Sequence[TrackingCallbackTCov]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ):
-        super().__init__(ls_callbacks=ls_callbacks)
+        super().__init__(callbacks=callbacks)
         self._tracking_client = tracking_client
 
     @property
@@ -198,7 +206,7 @@ class TrackingCallbackHandler(
             super().execute(resources=resources)
 
     @staticmethod
-    def _invalidate_callback_tracking_clients(ls_callbacks: List[TrackingCallbackT]):
+    def _invalidate_callback_tracking_clients(ls_callbacks: List[TrackingCallbackTCov]):
         for callback in ls_callbacks:
             callback.tracking_client = None
 
@@ -263,61 +271,87 @@ class PlotCollectionHandlerExportMixin:
             )
 
 
+ScoreCallbackTCov = TypeVar("ScoreCallbackTCov", bound=TrackingCallback[Any, float], covariant=True)
+
+
 class ScoreCallbackHandler(
     ScoreHandlerExportMixin,
-    TrackingCallbackHandler[ScoreCallbackT, CallbackResourcesTContr, float],
-    Generic[ScoreCallbackT, CallbackResourcesTContr],
+    TrackingCallbackHandler[ScoreCallbackTCov, CallbackResourcesTContr, float],
+    Generic[ScoreCallbackTCov, CallbackResourcesTContr],
 ):
     pass
+
+
+ArrayCallbackTCov = TypeVar(
+    "ArrayCallbackTCov", bound=TrackingCallback[Any, ndarray], covariant=True
+)
 
 
 class ArrayCallbackHandler(
     ArrayHandlerExportMixin,
-    TrackingCallbackHandler[ArrayCallbackT, CallbackResourcesTContr, ndarray],
-    Generic[ArrayCallbackT, CallbackResourcesTContr],
+    TrackingCallbackHandler[ArrayCallbackTCov, CallbackResourcesTContr, ndarray],
+    Generic[ArrayCallbackTCov, CallbackResourcesTContr],
 ):
     pass
+
+
+PlotCallbackTCov = TypeVar("PlotCallbackTCov", bound=TrackingCallback[Any, Figure], covariant=True)
 
 
 class PlotCallbackHandler(
     PlotHandlerExportMixin,
-    TrackingCallbackHandler[PlotCallbackT, CallbackResourcesTContr, Figure],
-    Generic[PlotCallbackT, CallbackResourcesTContr],
+    TrackingCallbackHandler[PlotCallbackTCov, CallbackResourcesTContr, Figure],
+    Generic[PlotCallbackTCov, CallbackResourcesTContr],
 ):
     pass
+
+
+ScoreCollectionCallbackTCov = TypeVar(
+    "ScoreCollectionCallbackTCov", bound=TrackingCallback[Any, Dict[str, float]], covariant=True
+)
 
 
 class ScoreCollectionCallbackHandler(
     ScoreCollectionHandlerExportMixin,
     TrackingCallbackHandler[
-        ScoreCollectionCallbackT,
+        ScoreCollectionCallbackTCov,
         CallbackResourcesTContr,
         Dict[str, float],
     ],
-    Generic[ScoreCollectionCallbackT, CallbackResourcesTContr],
+    Generic[ScoreCollectionCallbackTCov, CallbackResourcesTContr],
 ):
     pass
+
+
+ArrayCollectionCallbackTCov = TypeVar(
+    "ArrayCollectionCallbackTCov", bound=TrackingCallback[Any, Dict[str, ndarray]], covariant=True
+)
 
 
 class ArrayCollectionCallbackHandler(
     ArrayCollectionHandlerExportMixin,
     TrackingCallbackHandler[
-        ArrayCollectionCallbackT,
+        ArrayCollectionCallbackTCov,
         CallbackResourcesTContr,
         Dict[str, ndarray],
     ],
-    Generic[ArrayCollectionCallbackT, CallbackResourcesTContr],
+    Generic[ArrayCollectionCallbackTCov, CallbackResourcesTContr],
 ):
     pass
+
+
+PlotCollectionCallbackTCov = TypeVar(
+    "PlotCollectionCallbackTCov", bound=TrackingCallback[Any, Dict[str, Figure]], covariant=True
+)
 
 
 class PlotCollectionCallbackHandler(
     PlotCollectionHandlerExportMixin,
     TrackingCallbackHandler[
-        PlotCollectionCallbackT,
+        PlotCollectionCallbackTCov,
         CallbackResourcesTContr,
         Dict[str, Figure],
     ],
-    Generic[PlotCollectionCallbackT, CallbackResourcesTContr],
+    Generic[PlotCollectionCallbackTCov, CallbackResourcesTContr],
 ):
     pass
