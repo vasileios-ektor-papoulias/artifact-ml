@@ -15,7 +15,10 @@ from artifact_experiment.base.callbacks.artifact import (
     ArtifactScoreCollectionCallback,
 )
 from artifact_experiment.base.entities.data_split import DataSplit
-from artifact_experiment.base.handlers.artifact import ArtifactCallbackHandler, ArtifactHandlerSuite
+from artifact_experiment.base.handlers.artifact import (
+    ArtifactCallbackHandler,
+    ArtifactCallbackHandlerSuite,
+)
 from artifact_experiment.base.plans.base import CallbackExecutionPlan
 from artifact_experiment.base.plans.callback_factory import ArtifactCallbackFactory
 from artifact_experiment.base.tracking.client import TrackingClient
@@ -55,14 +58,14 @@ class ArtifactPlan(
 ):
     def __init__(
         self,
+        handler_suite: ArtifactCallbackHandlerSuite[ArtifactResourcesT, ResourceSpecProtocolT],
         resource_spec: ResourceSpecProtocolT,
-        callback_handlers: ArtifactHandlerSuite[ArtifactResourcesT, ResourceSpecProtocolT],
         data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ):
         self._resource_spec = resource_spec
         super().__init__(
-            callback_handlers=callback_handlers,
+            handler_suite=handler_suite,
             data_split=data_split,
             tracking_client=tracking_client,
         )
@@ -92,7 +95,7 @@ class ArtifactPlan(
         plot_collection_callbacks = cls._build_plot_collection_callbacks(
             resource_spec=resource_spec, data_split=data_split
         )
-        callback_handlers = ArtifactHandlerSuite.build(
+        handler_suite = ArtifactCallbackHandlerSuite.build(
             score_callbacks=score_callbacks,
             array_callbacks=array_callbacks,
             plot_callbacks=plot_callbacks,
@@ -102,8 +105,8 @@ class ArtifactPlan(
             tracking_client=tracking_client,
         )
         plan = cls(
+            handler_suite=handler_suite,
             resource_spec=resource_spec,
-            callback_handlers=callback_handlers,
             data_split=data_split,
             tracking_client=tracking_client,
         )

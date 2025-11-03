@@ -25,11 +25,11 @@ class CallbackExecutionPlan(
 ):
     def __init__(
         self,
-        callback_handlers: CallbackHandlerSuite[TrackingCallbackHandlerTCov],
+        handler_suite: CallbackHandlerSuite[TrackingCallbackHandlerTCov],
         data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ):
-        self._callback_handlers = callback_handlers
+        self._handler_suite = handler_suite
         self._data_split = data_split
         self._tracking_client = tracking_client
 
@@ -88,27 +88,27 @@ class CallbackExecutionPlan(
 
     @property
     def _score_handler(self) -> TrackingCallbackHandlerTCov:
-        return self._callback_handlers.score_handler
+        return self._handler_suite.score_handler
 
     @property
     def _array_handler(self) -> TrackingCallbackHandlerTCov:
-        return self._callback_handlers.array_handler
+        return self._handler_suite.array_handler
 
     @property
     def _plot_handler(self) -> TrackingCallbackHandlerTCov:
-        return self._callback_handlers.plot_handler
+        return self._handler_suite.plot_handler
 
     @property
     def _score_collection_handler(self) -> TrackingCallbackHandlerTCov:
-        return self._callback_handlers.score_collection_handler
+        return self._handler_suite.score_collection_handler
 
     @property
     def _array_collection_handler(self) -> TrackingCallbackHandlerTCov:
-        return self._callback_handlers.array_collection_handler
+        return self._handler_suite.array_collection_handler
 
     @property
     def _plot_collection_handler(self) -> TrackingCallbackHandlerTCov:
-        return self._callback_handlers.plot_collection_handler
+        return self._handler_suite.plot_collection_handler
 
     def execute(self, resources: CallbackResourcesTContr):
         for handler in self._ls_handlers:

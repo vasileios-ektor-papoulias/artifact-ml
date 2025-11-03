@@ -89,11 +89,13 @@ class ModelIOPlotCollectionHandler(
 ): ...
 
 
-ModelIOHandlerSuiteT = TypeVar("ModelIOHandlerSuiteT", bound="ModelIOHandlerSuite")
+ModelIOCallbackHandlerSuiteT = TypeVar(
+    "ModelIOCallbackHandlerSuiteT", bound="ModelIOCallbackHandlerSuite"
+)
 
 
 @dataclass(frozen=True)
-class ModelIOHandlerSuite(
+class ModelIOCallbackHandlerSuite(
     CallbackHandlerSuite[ModelIOCallbackHandler[ModelInputTContr, ModelOutputTContr, Any]],
     Generic[ModelInputTContr, ModelOutputTContr],
 ):
@@ -106,7 +108,7 @@ class ModelIOHandlerSuite(
 
     @classmethod
     def build(
-        cls: Type[ModelIOHandlerSuiteT],
+        cls: Type[ModelIOCallbackHandlerSuiteT],
         score_callbacks: Sequence[ModelIOScoreCallback[ModelInputTContr, ModelOutputTContr]],
         array_callbacks: Sequence[ModelIOArrayCallback[ModelInputTContr, ModelOutputTContr]],
         plot_callbacks: Sequence[ModelIOPlotCallback[ModelInputTContr, ModelOutputTContr]],
@@ -120,8 +122,8 @@ class ModelIOHandlerSuite(
             ModelIOPlotCollectionCallback[ModelInputTContr, ModelOutputTContr]
         ],
         tracking_client: Optional[TrackingClient] = None,
-    ) -> ModelIOHandlerSuiteT:
-        handlers = cls(
+    ) -> ModelIOCallbackHandlerSuiteT:
+        handler_suite = cls(
             score_handler=ModelIOScoreHandler[ModelInputTContr, ModelOutputTContr](
                 callbacks=score_callbacks, tracking_client=tracking_client
             ),
@@ -141,4 +143,4 @@ class ModelIOHandlerSuite(
                 ModelInputTContr, ModelOutputTContr
             ](callbacks=plot_collection_callbacks, tracking_client=tracking_client),
         )
-        return handlers
+        return handler_suite

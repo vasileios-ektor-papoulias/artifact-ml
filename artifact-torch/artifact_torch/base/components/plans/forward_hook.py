@@ -9,15 +9,15 @@ from artifact_torch.base.components.callbacks.forward_hook import (
     ForwardHookArrayCallback,
     ForwardHookArrayCollectionCallback,
     ForwardHookCallback,
-    ForwardHookCallbackResources,
     ForwardHookPlotCallback,
     ForwardHookPlotCollectionCallback,
     ForwardHookScoreCallback,
     ForwardHookScoreCollectionCallback,
 )
+from artifact_torch.base.components.callbacks.hook import HookCallbackResources
 from artifact_torch.base.components.handlers.forward_hook import (
     ForwardHookCallbackHandler,
-    ForwardHookHandlerSuite,
+    ForwardHookCallbackHandlerSuite,
 )
 from artifact_torch.base.model.base import Model
 
@@ -29,18 +29,18 @@ class ForwardHookPlan(
     CallbackExecutionPlan[
         ForwardHookCallbackHandler[ForwardHookCallback[ModelTContr, Any, Any], ModelTContr, Any],
         ForwardHookCallback[ModelTContr, Any, Any],
-        ForwardHookCallbackResources[ModelTContr],
+        HookCallbackResources[ModelTContr],
     ],
     Generic[ModelTContr],
 ):
     def __init__(
         self,
-        callback_handlers: ForwardHookHandlerSuite[ModelTContr],
+        handler_suite: ForwardHookCallbackHandlerSuite[ModelTContr],
         data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ):
         super().__init__(
-            callback_handlers=callback_handlers,
+            handler_suite=handler_suite,
             data_split=data_split,
             tracking_client=tracking_client,
         )
@@ -57,7 +57,7 @@ class ForwardHookPlan(
         score_collection_callbacks = cls._get_score_collection_callbacks(data_split=data_split)
         array_collection_callbacks = cls._get_array_collection_callbacks(data_split=data_split)
         plot_collection_callbacks = cls._get_plot_collection_callbacks(data_split=data_split)
-        callback_handlers = ForwardHookHandlerSuite[ModelTContr].build(
+        handler_suite = ForwardHookCallbackHandlerSuite[ModelTContr].build(
             score_callbacks=score_callbacks,
             array_callbacks=array_callbacks,
             plot_callbacks=plot_callbacks,
@@ -67,7 +67,7 @@ class ForwardHookPlan(
             tracking_client=tracking_client,
         )
         plan = cls(
-            callback_handlers=callback_handlers,
+            handler_suite=handler_suite,
             data_split=data_split,
             tracking_client=tracking_client,
         )
@@ -109,7 +109,7 @@ class ForwardHookPlan(
         data_split: DataSplit,
     ) -> Sequence[ForwardHookPlotCollectionCallback[ModelTContr]]: ...
 
-    def attach(self, resources: ForwardHookCallbackResources[ModelTContr]) -> bool:
+    def attach(self, resources: HookCallbackResources[ModelTContr]) -> bool:
         any_attached = False
         for handler in self._ls_handlers:
             any_attached |= handler.attach(resources=resources)

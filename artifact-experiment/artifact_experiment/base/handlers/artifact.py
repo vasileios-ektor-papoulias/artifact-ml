@@ -95,11 +95,13 @@ class ArtifactPlotCollectionHandler(
     pass
 
 
-ArtifactHandlerSuiteT = TypeVar("ArtifactHandlerSuiteT", bound="ArtifactHandlerSuite")
+ArtifactCallbackHandlerSuiteT = TypeVar(
+    "ArtifactCallbackHandlerSuiteT", bound="ArtifactCallbackHandlerSuite"
+)
 
 
 @dataclass(frozen=True)
-class ArtifactHandlerSuite(
+class ArtifactCallbackHandlerSuite(
     CallbackHandlerSuite[ArtifactCallbackHandler[ArtifactResourcesT, ResourceSpecProtocolT, Any]],
     Generic[ArtifactResourcesT, ResourceSpecProtocolT],
 ):
@@ -118,7 +120,7 @@ class ArtifactHandlerSuite(
 
     @classmethod
     def build(
-        cls: Type[ArtifactHandlerSuiteT],
+        cls: Type[ArtifactCallbackHandlerSuiteT],
         score_callbacks: Sequence[ArtifactScoreCallback[ArtifactResourcesT, ResourceSpecProtocolT]],
         array_callbacks: Sequence[ArtifactArrayCallback[ArtifactResourcesT, ResourceSpecProtocolT]],
         plot_callbacks: Sequence[ArtifactPlotCallback[ArtifactResourcesT, ResourceSpecProtocolT]],
@@ -132,8 +134,8 @@ class ArtifactHandlerSuite(
             ArtifactPlotCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT]
         ],
         tracking_client: Optional[TrackingClient] = None,
-    ) -> ArtifactHandlerSuiteT:
-        handler_collection = cls(
+    ) -> ArtifactCallbackHandlerSuiteT:
+        handler_suite = cls(
             score_handler=ArtifactScoreHandler(
                 callbacks=score_callbacks, tracking_client=tracking_client
             ),
@@ -153,4 +155,4 @@ class ArtifactHandlerSuite(
                 callbacks=plot_collection_callbacks, tracking_client=tracking_client
             ),
         )
-        return handler_collection
+        return handler_suite
