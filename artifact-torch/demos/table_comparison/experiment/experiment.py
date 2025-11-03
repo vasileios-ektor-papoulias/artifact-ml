@@ -14,14 +14,14 @@ from artifact_torch.table_comparison.routine import (
     TableComparisonRoutineData,
 )
 
-from demos.table_comparison.components.routines.artifact import DemoTableComparisonRoutine
-from demos.table_comparison.components.routines.batch import DemoBatchRoutine
-from demos.table_comparison.components.routines.loader import DemoLoaderRoutine
-from demos.table_comparison.components.routines.protocols import (
+from demos.table_comparison.components.protocols import (
     DemoGenerationParams,
     DemoModelInput,
     DemoModelOutput,
 )
+from demos.table_comparison.components.routines.artifact import DemoTableComparisonRoutine
+from demos.table_comparison.components.routines.batch import DemoBatchRoutine
+from demos.table_comparison.components.routines.loader import DemoLoaderRoutine
 from demos.table_comparison.trainer.trainer import DemoTrainer
 
 ModelInputT = TypeVar("ModelInputT", bound=DemoModelInput)
@@ -60,8 +60,7 @@ class DemoTabularSynthesisExperiment(
     @classmethod
     def _get_loader_routine(
         cls,
-        data_loader: DataLoader[ModelInputT],
-        data_split: DataSplit,
+        data_loaders: Mapping[DataSplit, DataLoader[ModelInputT]],
         tracking_client: Optional[TrackingClient] = None,
     ) -> Optional[
         DataLoaderRoutine[
@@ -70,10 +69,7 @@ class DemoTabularSynthesisExperiment(
             ModelOutputT,
         ]
     ]:
-        if data_split is DataSplit.TRAIN:
-            return DemoLoaderRoutine.build(
-                data_loader=data_loader, data_split=data_split, tracking_client=tracking_client
-            )
+        return DemoLoaderRoutine.build(data_loaders=data_loaders, tracking_client=tracking_client)
 
     @classmethod
     def _get_artifact_routine(

@@ -14,7 +14,7 @@ from artifact_torch.libs.components.early_stopping.epoch_bound import EpochBound
 from artifact_torch.table_comparison.model import TableSynthesizer
 from torch import optim
 
-from demos.table_comparison.components.routines.protocols import (
+from demos.table_comparison.components.protocols import (
     DemoModelInput,
     DemoModelOutput,
 )

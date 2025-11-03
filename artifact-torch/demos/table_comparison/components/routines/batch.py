@@ -5,7 +5,7 @@ from artifact_torch.base.components.callbacks.batch import BatchCallback
 from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.libs.components.callbacks.batch.loss import BatchLossCallback
 
-from demos.table_comparison.components.routines.protocols import DemoModelInput, DemoModelOutput
+from demos.table_comparison.components.protocols import DemoModelInput, DemoModelOutput
 from demos.table_comparison.config.constants import BATCH_ROUTINE_PERIOD
 
 

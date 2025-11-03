@@ -1,113 +1,30 @@
-from typing import Any, List
+from typing import Any, Optional
 
 from artifact_experiment import DataSplit
-from artifact_torch.base.components.callbacks.forward_hook import (
-    ForwardHookArray,
-    ForwardHookArrayCollection,
-    ForwardHookPlot,
-    ForwardHookPlotCollection,
-    ForwardHookScore,
-    ForwardHookScoreCollection,
-)
-from artifact_torch.base.components.callbacks.loader import (
-    DataLoaderArray,
-    DataLoaderArrayCollection,
-    DataLoaderPlot,
-    DataLoaderPlotCollection,
-    DataLoaderScore,
-    DataLoaderScoreCollection,
-)
+from artifact_experiment.tracking import TrackingClient
+from artifact_torch.base.components.plans.forward_hook import ForwardHookPlan
+from artifact_torch.base.components.plans.model_io import ModelIOPlan
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
 from artifact_torch.base.model.base import Model
-from artifact_torch.libs.components.callbacks.forward_hook.activation_pdf import AllActivationsPDF
-from artifact_torch.libs.components.callbacks.loader.loss import LoaderLossCallback
 
-from demos.table_comparison.components.routines.protocols import DemoModelInput, DemoModelOutput
-from demos.table_comparison.config.constants import TRAIN_LOADER_ROUTINE_PERIOD
+from demos.table_comparison.components.plans.forward_hook import DemoForwardHookPlan
+from demos.table_comparison.components.plans.model_io import DemoModelIOPlan
+from demos.table_comparison.components.protocols import DemoModelInput, DemoModelOutput
 
 
 class DemoLoaderRoutine(
     DataLoaderRoutine[Model[Any, DemoModelOutput], DemoModelInput, DemoModelOutput]
 ):
     @staticmethod
-    def _get_scores(
-        data_split: DataSplit,
-    ) -> List[DataLoaderScore[DemoModelInput, DemoModelOutput]]:
-        return [LoaderLossCallback(period=TRAIN_LOADER_ROUTINE_PERIOD, data_split=data_split)]
+    def _get_model_io_plan(
+        data_split: DataSplit, tracking_client: Optional[TrackingClient]
+    ) -> Optional[ModelIOPlan[DemoModelInput, DemoModelOutput]]:
+        if data_split is DataSplit.TRAIN:
+            return DemoModelIOPlan.build(data_split=data_split, tracking_client=tracking_client)
 
     @staticmethod
-    def _get_arrays(
-        data_split: DataSplit,
-    ) -> List[DataLoaderArray[DemoModelInput, DemoModelOutput]]:
-        _ = data_split
-        return []
-
-    @staticmethod
-    def _get_plots(
-        data_split: DataSplit,
-    ) -> List[DataLoaderPlot[DemoModelInput, DemoModelOutput]]:
-        _ = data_split
-        return []
-
-    @staticmethod
-    def _get_score_collections(
-        data_split: DataSplit,
-    ) -> List[DataLoaderScoreCollection[DemoModelInput, DemoModelOutput]]:
-        _ = data_split
-        return []
-
-    @staticmethod
-    def _get_array_collections(
-        data_split: DataSplit,
-    ) -> List[DataLoaderArrayCollection[DemoModelInput, DemoModelOutput]]:
-        _ = data_split
-        return []
-
-    @staticmethod
-    def _get_plot_collections(
-        data_split: DataSplit,
-    ) -> List[DataLoaderPlotCollection[DemoModelInput, DemoModelOutput]]:
-        _ = data_split
-        return []
-
-    @staticmethod
-    def _get_score_hooks(
-        data_split: DataSplit,
-    ) -> List[ForwardHookScore[Model[Any, DemoModelOutput]]]:
-        _ = data_split
-        return []
-
-    @staticmethod
-    def _get_array_hooks(
-        data_split: DataSplit,
-    ) -> List[ForwardHookArray[Model[Any, DemoModelOutput]]]:
-        _ = data_split
-        return []
-
-    @staticmethod
-    def _get_plot_hooks(
-        data_split: DataSplit,
-    ) -> List[ForwardHookPlot[Model[Any, DemoModelOutput]]]:
-        _ = data_split
-        return [AllActivationsPDF(period=TRAIN_LOADER_ROUTINE_PERIOD, data_split=data_split)]
-
-    @staticmethod
-    def _get_score_collection_hooks(
-        data_split: DataSplit,
-    ) -> List[ForwardHookScoreCollection[Model[Any, DemoModelOutput]]]:
-        _ = data_split
-        return []
-
-    @staticmethod
-    def _get_array_collection_hooks(
-        data_split: DataSplit,
-    ) -> List[ForwardHookArrayCollection[Model[Any, DemoModelOutput]]]:
-        _ = data_split
-        return []
-
-    @staticmethod
-    def _get_plot_collection_hooks(
-        data_split: DataSplit,
-    ) -> List[ForwardHookPlotCollection[Model[Any, DemoModelOutput]]]:
-        _ = data_split
-        return []
+    def _get_forward_hook_plan(
+        data_split: DataSplit, tracking_client: Optional[TrackingClient]
+    ) -> Optional[ForwardHookPlan[Model[Any, Any]]]:
+        if data_split is DataSplit.TRAIN:
+            return DemoForwardHookPlan.build(data_split=data_split, tracking_client=tracking_client)
