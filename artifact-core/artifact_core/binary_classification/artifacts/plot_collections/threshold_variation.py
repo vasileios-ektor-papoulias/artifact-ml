@@ -24,8 +24,7 @@ from artifact_core.libs.resources.classification.binary_classification_results i
 )
 
 ThresholdVariationCurvesHyperparamsT = TypeVar(
-    "ThresholdVariationCurvesHyperparamsT",
-    bound="ThresholdVariationCurvesHyperparams",
+    "ThresholdVariationCurvesHyperparamsT", bound="ThresholdVariationCurvesHyperparams"
 )
 
 

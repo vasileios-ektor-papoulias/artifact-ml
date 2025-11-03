@@ -15,11 +15,6 @@ from artifact_core.libs.resource_validation.classification.resource_validator im
 from artifact_core.libs.resources.categorical.category_store.category_store import CategoryStore
 from artifact_core.libs.resources.classification.classification_results import ClassificationResults
 
-ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound="ArtifactHyperparams")
-ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
-CategoricalFeatureSpecProtocolT = TypeVar(
-    "CategoricalFeatureSpecProtocolT", bound=CategoricalFeatureSpecProtocol
-)
 CategoryStoreT = TypeVar("CategoryStoreT", bound=CategoryStore)
 ClassificationResultsT = TypeVar("ClassificationResultsT", bound=ClassificationResults)
 ClassificationArtifactResourcesT = TypeVar(
@@ -35,22 +30,29 @@ class ClassificationArtifactResources(
     classification_results: ClassificationResultsT
 
 
+CategoricalFeatureSpecProtocolT = TypeVar(
+    "CategoricalFeatureSpecProtocolT", bound=CategoricalFeatureSpecProtocol
+)
+ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound=ArtifactHyperparams)
+ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
+
+
 class ClassificationArtifact(
     Artifact[
         ClassificationArtifactResources[
             CategoryStoreT,
             ClassificationResultsT,
         ],
-        ArtifactResultT,
-        ArtifactHyperparamsT,
         CategoricalFeatureSpecProtocolT,
+        ArtifactHyperparamsT,
+        ArtifactResultT,
     ],
     Generic[
-        ArtifactResultT,
-        ArtifactHyperparamsT,
-        CategoricalFeatureSpecProtocolT,
         CategoryStoreT,
         ClassificationResultsT,
+        CategoricalFeatureSpecProtocolT,
+        ArtifactHyperparamsT,
+        ArtifactResultT,
     ],
 ):
     @abstractmethod

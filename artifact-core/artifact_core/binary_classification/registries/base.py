@@ -14,10 +14,7 @@ ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 
 BinaryClassificationArtifactRegistry = ClassificationArtifactRegistry[
-    ArtifactTypeT,
-    BinaryClassificationArtifactResources,
-    ArtifactResultT,
-    BinaryFeatureSpecProtocol,
+    BinaryClassificationArtifactResources, BinaryFeatureSpecProtocol, ArtifactTypeT, ArtifactResultT
 ]
 
 BinaryClassificationScoreRegistryBase = BinaryClassificationArtifactRegistry[ArtifactTypeT, float]

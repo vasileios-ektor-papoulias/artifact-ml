@@ -40,10 +40,5 @@ class ArtifactResources:
 
 
 ArtifactResult = Union[
-    float,
-    ndarray,
-    Figure,
-    Dict[str, float],
-    Dict[str, ndarray],
-    Dict[str, Figure],
+    float, ndarray, Figure, Dict[str, float], Dict[str, ndarray], Dict[str, Figure]
 ]

@@ -18,10 +18,7 @@ ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 
 TableComparisonArtifactRegistry = DatasetComparisonArtifactRegistry[
-    ArtifactTypeT,
-    pd.DataFrame,
-    ArtifactResultT,
-    TabularDataSpecProtocol,
+    pd.DataFrame, TabularDataSpecProtocol, ArtifactTypeT, ArtifactResultT
 ]
 
 TableComparisonScoreRegistryBase = TableComparisonArtifactRegistry[ArtifactTypeT, float]

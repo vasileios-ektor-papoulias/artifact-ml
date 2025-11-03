@@ -28,8 +28,7 @@ from artifact_core.libs.resources.classification.binary_classification_results i
 )
 
 ScoreDistributionPlotsHyperparamsT = TypeVar(
-    "ScoreDistributionPlotsHyperparamsT",
-    bound="ScoreDistributionPlotsHyperparams",
+    "ScoreDistributionPlotsHyperparamsT", bound="ScoreDistributionPlotsHyperparams"
 )
 
 

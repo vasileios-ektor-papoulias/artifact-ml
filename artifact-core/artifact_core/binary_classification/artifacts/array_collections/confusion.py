@@ -26,8 +26,7 @@ from artifact_core.libs.resources.classification.binary_classification_results i
 )
 
 ConfusionMatrixCollectionHyperparamsT = TypeVar(
-    "ConfusionMatrixCollectionHyperparamsT",
-    bound="ConfusionMatrixCollectionHyperparams",
+    "ConfusionMatrixCollectionHyperparamsT", bound="ConfusionMatrixCollectionHyperparams"
 )
 
 

@@ -20,20 +20,18 @@ from artifact_core.libs.resource_validation.tabular.table_validator import (
     TableValidator,
 )
 
-ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound=ArtifactHyperparams)
+ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
+
 
 TableComparisonArtifactResources = DatasetComparisonArtifactResources[pd.DataFrame]
 
 
 class TableComparisonArtifact(
     DatasetComparisonArtifact[
-        pd.DataFrame,
-        ArtifactResultT,
-        ArtifactHyperparamsT,
-        TabularDataSpecProtocol,
+        pd.DataFrame, TabularDataSpecProtocol, ArtifactHyperparamsT, ArtifactResultT
     ],
-    Generic[ArtifactResultT, ArtifactHyperparamsT],
+    Generic[ArtifactHyperparamsT, ArtifactResultT],
 ):
     @abstractmethod
     def _compare_datasets(
@@ -64,9 +62,9 @@ class TableComparisonArtifact(
         return dataset_real_validated, dataset_synthetic_validated
 
 
-TableComparisonScore = TableComparisonArtifact[float, ArtifactHyperparamsT]
-TableComparisonArray = TableComparisonArtifact[ndarray, ArtifactHyperparamsT]
-TableComparisonPlot = TableComparisonArtifact[Figure, ArtifactHyperparamsT]
-TableComparisonScoreCollection = TableComparisonArtifact[Dict[str, float], ArtifactHyperparamsT]
-TableComparisonArrayCollection = TableComparisonArtifact[Dict[str, ndarray], ArtifactHyperparamsT]
-TableComparisonPlotCollection = TableComparisonArtifact[Dict[str, Figure], ArtifactHyperparamsT]
+TableComparisonScore = TableComparisonArtifact[ArtifactHyperparamsT, float]
+TableComparisonArray = TableComparisonArtifact[ArtifactHyperparamsT, ndarray]
+TableComparisonPlot = TableComparisonArtifact[ArtifactHyperparamsT, Figure]
+TableComparisonScoreCollection = TableComparisonArtifact[ArtifactHyperparamsT, Dict[str, float]]
+TableComparisonArrayCollection = TableComparisonArtifact[ArtifactHyperparamsT, Dict[str, ndarray]]
+TableComparisonPlotCollection = TableComparisonArtifact[ArtifactHyperparamsT, Dict[str, Figure]]

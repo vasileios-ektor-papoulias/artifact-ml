@@ -20,8 +20,6 @@ from artifact_core.libs.resources.classification.binary_classification_results i
 )
 from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
 
-ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
-ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound=ArtifactHyperparams)
 BinaryClassificationArtifactResourcesT = TypeVar(
     "BinaryClassificationArtifactResourcesT", bound="BinaryClassificationArtifactResources"
 )
@@ -78,15 +76,19 @@ class BinaryClassificationArtifactResources(
         return artifact_resources
 
 
+ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
+ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound=ArtifactHyperparams)
+
+
 class BinaryClassificationArtifact(
     ClassificationArtifact[
-        ArtifactResultT,
-        ArtifactHyperparamsT,
-        BinaryFeatureSpecProtocol,
         BinaryCategoryStore,
         BinaryClassificationResults,
+        BinaryFeatureSpecProtocol,
+        ArtifactHyperparamsT,
+        ArtifactResultT,
     ],
-    Generic[ArtifactResultT, ArtifactHyperparamsT],
+    Generic[ArtifactHyperparamsT, ArtifactResultT],
 ):
     @abstractmethod
     def _evaluate_classification(
@@ -96,15 +98,15 @@ class BinaryClassificationArtifact(
     ) -> ArtifactResultT: ...
 
 
-BinaryClassificationScore = BinaryClassificationArtifact[float, ArtifactHyperparamsT]
-BinaryClassificationArray = BinaryClassificationArtifact[ndarray, ArtifactHyperparamsT]
-BinaryClassificationPlot = BinaryClassificationArtifact[Figure, ArtifactHyperparamsT]
+BinaryClassificationScore = BinaryClassificationArtifact[ArtifactHyperparamsT, float]
+BinaryClassificationArray = BinaryClassificationArtifact[ArtifactHyperparamsT, ndarray]
+BinaryClassificationPlot = BinaryClassificationArtifact[ArtifactHyperparamsT, Figure]
 BinaryClassificationScoreCollection = BinaryClassificationArtifact[
-    Dict[str, float], ArtifactHyperparamsT
+    ArtifactHyperparamsT, Dict[str, float]
 ]
 BinaryClassificationArrayCollection = BinaryClassificationArtifact[
-    Dict[str, ndarray], ArtifactHyperparamsT
+    ArtifactHyperparamsT, Dict[str, ndarray]
 ]
 BinaryClassificationPlotCollection = BinaryClassificationArtifact[
-    Dict[str, Figure], ArtifactHyperparamsT
+    ArtifactHyperparamsT, Dict[str, Figure]
 ]

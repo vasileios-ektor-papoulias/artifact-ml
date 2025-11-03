@@ -24,8 +24,7 @@ from artifact_core.libs.resources.classification.binary_classification_results i
 )
 
 BinaryPredictionScoresHyperparamsT = TypeVar(
-    "BinaryPredictionScoresHyperparamsT",
-    bound="BinaryPredictionScoresHyperparams",
+    "BinaryPredictionScoresHyperparamsT", bound="BinaryPredictionScoresHyperparams"
 )
 
 

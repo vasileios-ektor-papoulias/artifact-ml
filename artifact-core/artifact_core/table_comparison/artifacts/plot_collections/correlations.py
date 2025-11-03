@@ -21,8 +21,7 @@ from artifact_core.table_comparison.registries.plot_collections.registry import 
 )
 
 CorrelationHeatmapsHyperparamsT = TypeVar(
-    "CorrelationHeatmapsHyperparamsT",
-    bound="CorrelationHeatmapsHyperparams",
+    "CorrelationHeatmapsHyperparamsT", bound="CorrelationHeatmapsHyperparams"
 )
 
 

@@ -8,20 +8,15 @@ from artifact_core.base.artifact_dependencies import (
     ResourceSpecProtocol,
 )
 
+ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound=ArtifactResources)
 ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
-ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound="ArtifactHyperparams")
-ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound="ArtifactResources")
+ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound=ArtifactHyperparams)
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 
 class Artifact(
     ABC,
-    Generic[
-        ArtifactResourcesT,
-        ArtifactResultT,
-        ArtifactHyperparamsT,
-        ResourceSpecProtocolT,
-    ],
+    Generic[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparamsT, ArtifactResultT],
 ):
     def __init__(
         self,

@@ -26,8 +26,7 @@ from artifact_core.libs.resources.classification.binary_classification_results i
 )
 
 ConfusionCountsHyperparamsT = TypeVar(
-    "ConfusionCountsHyperparamsT",
-    bound="NormalizedConfusionCountsHyperparams",
+    "ConfusionCountsHyperparamsT", bound="NormalizedConfusionCountsHyperparams"
 )
 
 

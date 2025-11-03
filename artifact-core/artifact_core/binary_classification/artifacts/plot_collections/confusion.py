@@ -30,8 +30,7 @@ from artifact_core.libs.resources.classification.binary_classification_results i
 )
 
 ConfusionMatrixPlotCollectionHyperparamsT = TypeVar(
-    "ConfusionMatrixPlotCollectionHyperparamsT",
-    bound="ConfusionMatrixPlotCollectionHyperparams",
+    "ConfusionMatrixPlotCollectionHyperparamsT", bound="ConfusionMatrixPlotCollectionHyperparams"
 )
 
 
