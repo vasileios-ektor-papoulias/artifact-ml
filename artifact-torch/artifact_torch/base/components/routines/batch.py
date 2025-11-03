@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar
+from typing import Any, Dict, Generic, List, Optional, Sequence, Type, TypeVar
 
 from artifact_experiment.base.tracking.client import TrackingClient
 
@@ -27,8 +27,8 @@ class BatchRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
     def build(
         cls: Type[BatchRoutineT], tracking_client: Optional[TrackingClient] = None
     ) -> BatchRoutineT:
-        ls_callbacks = cls._get_batch_callbacks(tracking_client=tracking_client)
-        routine = cls._build(ls_callbacks=ls_callbacks)
+        callbacks = cls._get_batch_callbacks(tracking_client=tracking_client)
+        routine = cls._build(callbacks=callbacks)
         return routine
 
     @property
@@ -59,10 +59,10 @@ class BatchRoutine(ABC, Generic[ModelInputTContr, ModelOutputTContr]):
     @classmethod
     def _build(
         cls: Type[BatchRoutineT],
-        ls_callbacks: List[BatchCallback[ModelInputTContr, ModelOutputTContr, Any]],
+        callbacks: Sequence[BatchCallback[ModelInputTContr, ModelOutputTContr, Any]],
     ) -> BatchRoutineT:
         handler = BatchCallbackHandler[ModelInputTContr, ModelOutputTContr, Any](
-            ls_callbacks=ls_callbacks,
+            callbacks=callbacks,
         )
         routine = cls(handler=handler)
         return routine
