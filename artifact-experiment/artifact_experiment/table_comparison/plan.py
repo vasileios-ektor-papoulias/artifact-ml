@@ -7,8 +7,8 @@ from artifact_core.table_comparison.artifacts.base import (
     TabularDataSpecProtocol,
 )
 
-from artifact_experiment.base.callback_factory import ArtifactCallbackFactory
-from artifact_experiment.base.validation_plan import ValidationPlan
+from artifact_experiment.base.plans.artifact import ArtifactPlan
+from artifact_experiment.base.plans.callback_factory import ArtifactCallbackFactory
 from artifact_experiment.table_comparison.callback_factory import (
     TableComparisonArrayCollectionType,
     TableComparisonArrayType,
@@ -18,19 +18,18 @@ from artifact_experiment.table_comparison.callback_factory import (
     TableComparisonScoreCollectionType,
     TableComparisonScoreType,
 )
-from artifact_experiment.table_comparison.callback_resources import TableComparisonCallbackResources
 
 
 class TableComparisonPlan(
-    ValidationPlan[
+    ArtifactPlan[
+        TableComparisonArtifactResources,
+        TabularDataSpecProtocol,
         TableComparisonScoreType,
         TableComparisonArrayType,
         TableComparisonPlotType,
         TableComparisonScoreCollectionType,
         TableComparisonArrayCollectionType,
         TableComparisonPlotCollectionType,
-        TableComparisonArtifactResources,
-        TabularDataSpecProtocol,
     ]
 ):
     @staticmethod
@@ -58,22 +57,22 @@ class TableComparisonPlan(
     def _get_plot_collection_types() -> List[TableComparisonPlotCollectionType]: ...
 
     def execute_table_comparison(self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame):
-        callback_resources = TableComparisonCallbackResources.build(
+        callback_resources = TableComparisonArtifactResources(
             dataset_real=dataset_real, dataset_synthetic=dataset_synthetic
         )
-        super().execute(resources=callback_resources)
+        super().execute_artifacts(resources=callback_resources)
 
     @staticmethod
     def _get_callback_factory() -> Type[
         ArtifactCallbackFactory[
+            TableComparisonArtifactResources,
+            TabularDataSpecProtocol,
             TableComparisonScoreType,
             TableComparisonArrayType,
             TableComparisonPlotType,
             TableComparisonScoreCollectionType,
             TableComparisonArrayCollectionType,
             TableComparisonPlotCollectionType,
-            TableComparisonArtifactResources,
-            TabularDataSpecProtocol,
         ]
     ]:
         return TableComparisonCallbackFactory

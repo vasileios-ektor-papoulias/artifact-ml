@@ -35,19 +35,19 @@ from artifact_core.table_comparison.registries.scores.registry import (
     TableComparisonScoreType,
 )
 
-from artifact_experiment.base.callback_factory import ArtifactCallbackFactory
+from artifact_experiment.base.plans.callback_factory import ArtifactCallbackFactory
 
 
 class TableComparisonCallbackFactory(
     ArtifactCallbackFactory[
+        TableComparisonArtifactResources,
+        TabularDataSpecProtocol,
         TableComparisonScoreType,
         TableComparisonArrayType,
         TableComparisonPlotType,
         TableComparisonScoreCollectionType,
         TableComparisonArrayCollectionType,
         TableComparisonPlotCollectionType,
-        TableComparisonArtifactResources,
-        TabularDataSpecProtocol,
     ]
 ):
     @staticmethod

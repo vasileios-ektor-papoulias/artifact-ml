@@ -1,1 +1,1 @@
-from artifact_experiment.table_comparison.validation_plan import TableComparisonPlan
+from artifact_experiment.table_comparison.plan import TableComparisonPlan
