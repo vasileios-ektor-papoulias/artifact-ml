@@ -1,1 +1,1 @@
-from artifact_experiment.binary_classification.validation_plan import BinaryClassificationPlan
+from artifact_experiment.binary_classification.plan import BinaryClassificationPlan

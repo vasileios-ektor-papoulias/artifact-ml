@@ -35,19 +35,19 @@ from artifact_core.binary_classification.registries.scores.registry import (
     BinaryClassificationScoreType,
 )
 
-from artifact_experiment.base.callback_factory import ArtifactCallbackFactory
+from artifact_experiment.base.plans.callback_factory import ArtifactCallbackFactory
 
 
 class BinaryClassificationCallbackFactory(
     ArtifactCallbackFactory[
+        BinaryClassificationArtifactResources,
+        BinaryFeatureSpecProtocol,
         BinaryClassificationScoreType,
         BinaryClassificationArrayType,
         BinaryClassificationPlotType,
         BinaryClassificationScoreCollectionType,
         BinaryClassificationArrayCollectionType,
         BinaryClassificationPlotCollectionType,
-        BinaryClassificationArtifactResources,
-        BinaryFeatureSpecProtocol,
     ]
 ):
     @staticmethod
