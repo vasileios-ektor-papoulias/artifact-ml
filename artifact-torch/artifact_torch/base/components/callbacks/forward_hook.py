@@ -1,6 +1,5 @@
 from abc import abstractmethod
 from collections.abc import Sequence
-from dataclasses import dataclass
 from typing import Any, Dict, Generic, List, Optional, Tuple, TypeVar
 
 import torch
@@ -13,27 +12,13 @@ from artifact_experiment.base.callbacks.tracking import (
     ScoreCollectionExportMixin,
     ScoreExportMixin,
 )
-from artifact_experiment.base.entities.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 from matplotlib.figure import Figure
 from numpy import ndarray
 from torch.utils.hooks import RemovableHandle
 
-from artifact_torch.base.components.callbacks.periodic import (
-    PeriodicCallbackResources,
-    PeriodicTrackingCallback,
-)
+from artifact_torch.base.components.callbacks.hook import HookCallback
 from artifact_torch.base.model.base import Model
-from artifact_torch.base.model.io import ModelInput
-
-ModelTCov = TypeVar("ModelTCov", bound=Model, covariant=True)
-ModelInputTCov = TypeVar("ModelInputTCov", bound=ModelInput, covariant=True)
-
-
-@dataclass
-class ForwardHookCallbackResources(PeriodicCallbackResources, Generic[ModelTCov]):
-    model: ModelTCov
-
 
 ModelTContr = TypeVar("ModelTContr", bound=Model, contravariant=True)
 CacheDataT = TypeVar("CacheDataT")
@@ -41,18 +26,9 @@ HookResultT = TypeVar("HookResultT")
 
 
 class ForwardHookCallback(
-    PeriodicTrackingCallback[ForwardHookCallbackResources[ModelTContr], CacheDataT],
+    HookCallback[ModelTContr, CacheDataT, HookResultT],
     Generic[ModelTContr, CacheDataT, HookResultT],
 ):
-    _verbose = True
-    _progressbar_message = "Processing Data Loader (Hooks)"
-
-    def __init__(self, period: int, data_split: DataSplit):
-        name = self._get_name()
-        super().__init__(name=name, period=period, data_split=data_split)
-        self._hook_results: Dict[str, List[HookResultT]] = {}
-        self._handles: List[RemovableHandle] = []
-
     @classmethod
     @abstractmethod
     def _get_name(cls) -> str: ...
@@ -75,43 +51,20 @@ class ForwardHookCallback(
     @abstractmethod
     def _export(key: str, value: CacheDataT, tracking_client: TrackingClient): ...
 
-    def attach(self, resources: ForwardHookCallbackResources[ModelTContr]) -> bool:
-        if self._should_trigger(step=resources.step):
-            self._attach(model=resources.model)
-            return True
-        else:
-            return False
-
-    def _compute(self, resources: ForwardHookCallbackResources[ModelTContr]) -> CacheDataT:
-        _ = resources
-        result = self._finalize()
-        self._detach()
-        return result
-
-    def _attach(self, model: ModelTContr):
-        sink = self._hook_results
-
+    @classmethod
+    def _attach(
+        cls, model: ModelTContr, sink: Dict[str, List[HookResultT]], handles: List[RemovableHandle]
+    ):
         def _wrapped_hook(module: nn.Module, inputs: Tuple[Any, ...], output: Any) -> None:
-            hook_return_value = self._hook(module, inputs, output)
+            hook_return_value = cls._hook(module, inputs, output)
             if hook_return_value is not None:
                 module_name = f"{module.__class__.__name__}"
                 if module_name not in sink:
                     sink[module_name] = []
                 sink[module_name].append(hook_return_value)
 
-        for module in self._get_layers(model):
-            self._handles.append(module.register_forward_hook(_wrapped_hook))
-
-    def _finalize(self) -> CacheDataT:
-        result = self._aggregate(hook_results=self._hook_results)
-        self._hook_results.clear()
-        self._cache[self._key] = result
-        return result
-
-    def _detach(self):
-        for h in self._handles:
-            h.remove()
-        self._handles.clear()
+        for module in cls._get_layers(model):
+            handles.append(module.register_forward_hook(_wrapped_hook))
 
 
 class ForwardHookScoreCallback(
@@ -124,7 +77,7 @@ class ForwardHookScoreCallback(
 
     @classmethod
     @abstractmethod
-    def _get_layers(cls, model: ModelTContr) -> List[nn.Module]: ...
+    def _get_layers(cls, model: ModelTContr) -> Sequence[nn.Module]: ...
 
     @classmethod
     @abstractmethod
@@ -147,7 +100,7 @@ class ForwardHookArrayCallback(
 
     @classmethod
     @abstractmethod
-    def _get_layers(cls, model: ModelTContr) -> List[nn.Module]: ...
+    def _get_layers(cls, model: ModelTContr) -> Sequence[nn.Module]: ...
 
     @classmethod
     @abstractmethod
@@ -170,7 +123,7 @@ class ForwardHookPlotCallback(
 
     @classmethod
     @abstractmethod
-    def _get_layers(cls, model: ModelTContr) -> List[nn.Module]: ...
+    def _get_layers(cls, model: ModelTContr) -> Sequence[nn.Module]: ...
 
     @classmethod
     @abstractmethod
@@ -197,7 +150,7 @@ class ForwardHookScoreCollectionCallback(
 
     @classmethod
     @abstractmethod
-    def _get_layers(cls, model: ModelTContr) -> List[nn.Module]: ...
+    def _get_layers(cls, model: ModelTContr) -> Sequence[nn.Module]: ...
 
     @classmethod
     @abstractmethod
@@ -226,7 +179,7 @@ class ForwardHookArrayCollectionCallback(
 
     @classmethod
     @abstractmethod
-    def _get_layers(cls, model: ModelTContr) -> List[nn.Module]: ...
+    def _get_layers(cls, model: ModelTContr) -> Sequence[nn.Module]: ...
 
     @classmethod
     @abstractmethod
@@ -255,7 +208,7 @@ class ForwardHookPlotCollectionCallback(
 
     @classmethod
     @abstractmethod
-    def _get_layers(cls, model: ModelTContr) -> List[nn.Module]: ...
+    def _get_layers(cls, model: ModelTContr) -> Sequence[nn.Module]: ...
 
     @classmethod
     @abstractmethod
