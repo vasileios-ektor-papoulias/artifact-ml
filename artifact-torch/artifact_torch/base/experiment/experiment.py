@@ -3,7 +3,7 @@ from typing import Any, Generic, Mapping, Optional, Type, TypeVar
 
 import pandas as pd
 from artifact_core.base.artifact import ResourceSpecProtocol
-from artifact_experiment.base.data_split import DataSplit
+from artifact_experiment.base.entities.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 
 from artifact_torch.base.components.cache.cache import StandardCache
@@ -47,12 +47,9 @@ class Experiment(
     ) -> ExperimentT:
         assert DataSplit.TRAIN in data_loaders, "Training data not provided."
         batch_routine = cls._get_batch_routine(tracking_client=tracking_client)
-        loader_routines = {
-            data_split: cls._get_loader_routine(
-                data_loader=data_loader, data_split=data_split, tracking_client=tracking_client
-            )
-            for data_split, data_loader in data_loaders.items()
-        }
+        loader_routine = cls._get_loader_routine(
+            data_loaders=data_loaders, tracking_client=tracking_client
+        )
         artifact_routine = cls._get_artifact_routine(
             data=artifact_routine_data,
             data_spec=artifact_routine_data_spec,
@@ -62,12 +59,8 @@ class Experiment(
             model=model,
             train_loader=data_loaders[DataSplit.TRAIN],
             batch_routine=batch_routine,
-            loader_routines={
-                data_split: loader_routine
-                for data_split, loader_routine in loader_routines.items()
-                if loader_routine is not None
-            },
-            artifact_routine=artifact_routine if artifact_routine is not None else None,
+            loader_routine=loader_routine,
+            artifact_routine=artifact_routine,
         )
         experiment = cls(trainer=trainer)
         return experiment
@@ -101,8 +94,7 @@ class Experiment(
     @abstractmethod
     def _get_loader_routine(
         cls,
-        data_loader: DataLoader[ModelInputT],
-        data_split: DataSplit,
+        data_loaders: Mapping[DataSplit, DataLoader[ModelInputT]],
         tracking_client: Optional[TrackingClient] = None,
     ) -> Optional[DataLoaderRoutine[ModelT, ModelInputT, ModelOutputT]]: ...
 
