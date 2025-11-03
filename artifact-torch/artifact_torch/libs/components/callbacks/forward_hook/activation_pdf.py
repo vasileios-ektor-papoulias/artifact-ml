@@ -7,12 +7,12 @@ from matplotlib.figure import Figure
 from torch import Tensor
 from torch.nn import Module
 
-from artifact_torch.base.components.callbacks.forward_hook import ForwardHookPlot
+from artifact_torch.base.components.callbacks.forward_hook import ForwardHookPlotCallback
 from artifact_torch.base.model.base import Model
 from artifact_torch.libs.utils.tensor_flattener import TensorFlattener
 
 
-class AllActivationsPDF(ForwardHookPlot[Model[Any, Any]]):
+class AllActivationsPDF(ForwardHookPlotCallback[Model[Any, Any]]):
     _name = "ACTIVATIONS_PDF"
     _hook_result_key = "layer_activations"
     _plot_feature_name = "All Layers — Activations"

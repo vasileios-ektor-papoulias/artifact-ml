@@ -8,7 +8,7 @@ class BatchLossCallback(BatchScoreCallback[ModelInput, ModelOutput]):
     _name = "BATCH_LOSS"
 
     @classmethod
-    def _get_key(cls):
+    def _get_name(cls) -> str:
         return cls._name
 
     @classmethod
