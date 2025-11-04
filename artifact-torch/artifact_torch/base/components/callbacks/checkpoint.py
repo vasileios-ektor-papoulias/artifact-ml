@@ -10,7 +10,7 @@ from artifact_torch.base.components.callbacks.periodic import (
 )
 
 
-@dataclass
+@dataclass(frozen=True)
 class CheckpointCallbackResources(PeriodicCallbackResources):
     checkpoint: Dict[str, Any]
 
