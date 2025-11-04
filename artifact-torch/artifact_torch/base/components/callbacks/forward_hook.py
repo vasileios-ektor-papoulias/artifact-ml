@@ -31,7 +31,7 @@ class ForwardHookCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -73,7 +73,7 @@ class ForwardHookScoreCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -96,7 +96,7 @@ class ForwardHookArrayCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -119,7 +119,7 @@ class ForwardHookPlotCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -146,7 +146,7 @@ class ForwardHookScoreCollectionCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -175,7 +175,7 @@ class ForwardHookArrayCollectionCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -204,7 +204,7 @@ class ForwardHookPlotCollectionCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod

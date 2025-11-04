@@ -31,7 +31,7 @@ class BackwardHookCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -81,7 +81,7 @@ class BackwardHookScoreCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -107,7 +107,7 @@ class BackwardHookArrayCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -133,7 +133,7 @@ class BackwardHookPlotCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -163,7 +163,7 @@ class BackwardHookScoreCollectionCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -195,7 +195,7 @@ class BackwardHookArrayCollectionCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -227,7 +227,7 @@ class BackwardHookPlotCollectionCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
