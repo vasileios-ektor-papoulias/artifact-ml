@@ -4,25 +4,22 @@ from typing import Any, Dict, Generic, List, Optional, Sequence, TypeVar
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-from artifact_experiment.base.callbacks.base import (
-    CallbackResources,
-)
-from artifact_experiment.base.callbacks.tracking import TrackingCallback
+from artifact_experiment.base.callbacks.tracking import TrackingCallback, TrackingCallbackResources
 from artifact_experiment.base.handlers.cache import CacheCallbackHandler
 from artifact_experiment.base.tracking.client import TrackingClient
 
 TrackingCallbackTCov = TypeVar(
     "TrackingCallbackTCov", bound=TrackingCallback[Any, Any], covariant=True
 )
-CallbackResourcesTContr = TypeVar(
-    "CallbackResourcesTContr", bound=CallbackResources, contravariant=True
+TrackingCallbackResourcesTContr = TypeVar(
+    "TrackingCallbackResourcesTContr", bound=TrackingCallbackResources, contravariant=True
 )
 CacheDataT = TypeVar("CacheDataT", covariant=True)
 
 
 class TrackingCallbackHandler(
-    CacheCallbackHandler[TrackingCallbackTCov, CallbackResourcesTContr, CacheDataT],
-    Generic[TrackingCallbackTCov, CallbackResourcesTContr, CacheDataT],
+    CacheCallbackHandler[TrackingCallbackTCov, TrackingCallbackResourcesTContr, CacheDataT],
+    Generic[TrackingCallbackTCov, TrackingCallbackResourcesTContr, CacheDataT],
 ):
     def __init__(
         self,
@@ -49,7 +46,7 @@ class TrackingCallbackHandler(
     @abstractmethod
     def _export(cache: Dict[str, CacheDataT], tracking_client: TrackingClient): ...
 
-    def execute(self, resources: CallbackResourcesTContr):
+    def execute(self, resources: TrackingCallbackResourcesTContr):
         if self._tracking_client is not None:
             self._invalidate_callback_tracking_clients(ls_callbacks=self._ls_callbacks)
             super().execute(resources=resources)
@@ -131,8 +128,8 @@ ScoreCallbackTCov = TypeVar("ScoreCallbackTCov", bound=TrackingCallback[Any, flo
 
 class ScoreCallbackHandler(
     ScoreHandlerExportMixin,
-    TrackingCallbackHandler[ScoreCallbackTCov, CallbackResourcesTContr, float],
-    Generic[ScoreCallbackTCov, CallbackResourcesTContr],
+    TrackingCallbackHandler[ScoreCallbackTCov, TrackingCallbackResourcesTContr, float],
+    Generic[ScoreCallbackTCov, TrackingCallbackResourcesTContr],
 ):
     pass
 
@@ -144,8 +141,8 @@ ArrayCallbackTCov = TypeVar(
 
 class ArrayCallbackHandler(
     ArrayHandlerExportMixin,
-    TrackingCallbackHandler[ArrayCallbackTCov, CallbackResourcesTContr, ndarray],
-    Generic[ArrayCallbackTCov, CallbackResourcesTContr],
+    TrackingCallbackHandler[ArrayCallbackTCov, TrackingCallbackResourcesTContr, ndarray],
+    Generic[ArrayCallbackTCov, TrackingCallbackResourcesTContr],
 ):
     pass
 
@@ -155,8 +152,8 @@ PlotCallbackTCov = TypeVar("PlotCallbackTCov", bound=TrackingCallback[Any, Figur
 
 class PlotCallbackHandler(
     PlotHandlerExportMixin,
-    TrackingCallbackHandler[PlotCallbackTCov, CallbackResourcesTContr, Figure],
-    Generic[PlotCallbackTCov, CallbackResourcesTContr],
+    TrackingCallbackHandler[PlotCallbackTCov, TrackingCallbackResourcesTContr, Figure],
+    Generic[PlotCallbackTCov, TrackingCallbackResourcesTContr],
 ):
     pass
 
@@ -170,10 +167,10 @@ class ScoreCollectionCallbackHandler(
     ScoreCollectionHandlerExportMixin,
     TrackingCallbackHandler[
         ScoreCollectionCallbackTCov,
-        CallbackResourcesTContr,
+        TrackingCallbackResourcesTContr,
         Dict[str, float],
     ],
-    Generic[ScoreCollectionCallbackTCov, CallbackResourcesTContr],
+    Generic[ScoreCollectionCallbackTCov, TrackingCallbackResourcesTContr],
 ):
     pass
 
@@ -187,10 +184,10 @@ class ArrayCollectionCallbackHandler(
     ArrayCollectionHandlerExportMixin,
     TrackingCallbackHandler[
         ArrayCollectionCallbackTCov,
-        CallbackResourcesTContr,
+        TrackingCallbackResourcesTContr,
         Dict[str, ndarray],
     ],
-    Generic[ArrayCollectionCallbackTCov, CallbackResourcesTContr],
+    Generic[ArrayCollectionCallbackTCov, TrackingCallbackResourcesTContr],
 ):
     pass
 
@@ -204,9 +201,9 @@ class PlotCollectionCallbackHandler(
     PlotCollectionHandlerExportMixin,
     TrackingCallbackHandler[
         PlotCollectionCallbackTCov,
-        CallbackResourcesTContr,
+        TrackingCallbackResourcesTContr,
         Dict[str, Figure],
     ],
-    Generic[PlotCollectionCallbackTCov, CallbackResourcesTContr],
+    Generic[PlotCollectionCallbackTCov, TrackingCallbackResourcesTContr],
 ):
     pass
