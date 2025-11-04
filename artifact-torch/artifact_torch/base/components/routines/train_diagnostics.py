@@ -15,10 +15,14 @@ from artifact_torch.base.model.io import ModelInput, ModelOutput
 ModelTContr = TypeVar("ModelTContr", bound=Model[Any, Any], contravariant=True)
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
 ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput, contravariant=True)
-TrainDiagnosticsRoutineT = TypeVar("TrainDiagnosticsRoutineT", bound="TrainDiagnosticsRoutine")
+TrainDiagnosticsRoutineT = TypeVar(
+    "TrainDiagnosticsRoutineT", bound="TrainDiagnosticsRoutine[Any, Any, Any]"
+)
 
 
 class TrainDiagnosticsRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]):
+    _callback_trigger_identifier = "EPOCH"
+
     def __init__(
         self,
         model_io_plan: Optional[ModelIOPlan[ModelInputTContr, ModelOutputTContr]],
@@ -205,23 +209,25 @@ class TrainDiagnosticsRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelO
         self._clear_backward_hook_cache()
 
     def execute(self, model: ModelTContr, n_epochs_elapsed: int):
-        callback_resources = HookCallbackResources[ModelTContr](step=n_epochs_elapsed, model=model)
+        resources = HookCallbackResources[ModelTContr](
+            model=model, step=n_epochs_elapsed, trigger=self._callback_trigger_identifier
+        )
         if self._model_io_plan is not None:
-            self._model_io_plan.execute(resources=callback_resources)
+            self._model_io_plan.execute(resources=resources)
         if self._forward_hook_plan is not None:
-            self._forward_hook_plan.execute(resources=callback_resources)
+            self._forward_hook_plan.execute(resources=resources)
         if self._backward_hook_plan is not None:
-            self._backward_hook_plan.execute(resources=callback_resources)
+            self._backward_hook_plan.execute(resources=resources)
 
     def attach(self, model: ModelTContr, n_epochs_elapsed: int) -> bool:
-        callback_resources = HookCallbackResources[ModelTContr](step=n_epochs_elapsed, model=model)
+        resources = HookCallbackResources[ModelTContr](model=model, step=n_epochs_elapsed)
         any_attached = False
         if self._model_io_plan is not None:
-            any_attached |= self._model_io_plan.attach(resources=callback_resources)
+            any_attached |= self._model_io_plan.attach(resources=resources)
         if self._forward_hook_plan is not None:
-            any_attached |= self._forward_hook_plan.attach(resources=callback_resources)
+            any_attached |= self._forward_hook_plan.attach(resources=resources)
         if self._backward_hook_plan is not None:
-            any_attached |= self._backward_hook_plan.attach(resources=callback_resources)
+            any_attached |= self._backward_hook_plan.attach(resources=resources)
         return any_attached
 
     def _clear_model_io_cache(self):

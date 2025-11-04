@@ -19,7 +19,7 @@ from artifact_torch.libs.utils.key_selector import KeySelector
 ModelTContr = TypeVar("ModelTContr", bound=Model[Any, Any], contravariant=True)
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
 ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput, contravariant=True)
-DataLoaderRoutineT = TypeVar("DataLoaderRoutineT", bound="DataLoaderRoutine")
+DataLoaderRoutineT = TypeVar("DataLoaderRoutineT", bound="DataLoaderRoutine[Any, Any, Any]")
 
 
 class DataLoaderRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]):
@@ -216,13 +216,15 @@ class DataLoaderRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelOutputT
     @staticmethod
     @abstractmethod
     def _get_model_io_plan(
-        data_split: DataSplit, tracking_client: Optional[TrackingClient]
+        data_split: DataSplit,
+        tracking_client: Optional[TrackingClient],
     ) -> Optional[ModelIOPlan[ModelInputTContr, ModelOutputTContr]]: ...
 
     @staticmethod
     @abstractmethod
     def _get_forward_hook_plan(
-        data_split: DataSplit, tracking_client: Optional[TrackingClient]
+        data_split: DataSplit,
+        tracking_client: Optional[TrackingClient],
     ) -> Optional[ForwardHookPlan[ModelTContr]]: ...
 
     def clear_cache(self):
@@ -230,51 +232,51 @@ class DataLoaderRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelOutputT
         self._clear_forward_hook_cache()
 
     def execute(self, model: ModelTContr, n_epochs_elapsed: int):
-        callback_resources = HookCallbackResources[ModelTContr](
-            step=n_epochs_elapsed, model=model
-        )
         for data_split in self._data_splits:
+            resources = HookCallbackResources[ModelTContr](
+                model=model, step=n_epochs_elapsed, data_split=data_split
+            )
             data_loader = self._data_loaders[data_split]
             model_io_plan = self._model_io_plans.get(data_split)
             forward_hook_plan = self._forward_hook_plans.get(data_split)
             self._execute(
+                resources=resources,
                 model_io_plan=model_io_plan,
                 forward_hook_plan=forward_hook_plan,
-                callback_resources=callback_resources,
                 data_loader=data_loader,
             )
 
     @classmethod
     def _execute(
         cls,
+        resources: HookCallbackResources[ModelTContr],
         model_io_plan: Optional[ModelIOPlan[ModelInputTContr, ModelOutputTContr]],
         forward_hook_plan: Optional[ForwardHookPlan[ModelTContr]],
-        callback_resources: HookCallbackResources[ModelTContr],
         data_loader: DataLoader[ModelInputTContr],
     ):
         any_attached = cls._attach(
+            resources=resources,
             model_io_plan=model_io_plan,
             forward_hook_plan=forward_hook_plan,
-            callback_resources=callback_resources,
         )
         if any_attached:
-            cls._process_data_loader(model=callback_resources.model, data_loader=data_loader)
+            cls._process_data_loader(model=resources.model, data_loader=data_loader)
             if model_io_plan is not None:
-                model_io_plan.execute(resources=callback_resources)
+                model_io_plan.execute(resources=resources)
             if forward_hook_plan is not None:
-                forward_hook_plan.execute(resources=callback_resources)
+                forward_hook_plan.execute(resources=resources)
 
     @staticmethod
     def _attach(
+        resources: HookCallbackResources[ModelTContr],
         model_io_plan: Optional[ModelIOPlan[ModelInputTContr, ModelOutputTContr]],
         forward_hook_plan: Optional[ForwardHookPlan[ModelTContr]],
-        callback_resources: HookCallbackResources[ModelTContr],
     ) -> bool:
         any_attached = False
         if model_io_plan is not None:
-            any_attached |= model_io_plan.attach(resources=callback_resources)
+            any_attached |= model_io_plan.attach(resources=resources)
         if forward_hook_plan is not None:
-            any_attached |= forward_hook_plan.attach(resources=callback_resources)
+            any_attached |= forward_hook_plan.attach(resources=resources)
         return any_attached
 
     @classmethod
