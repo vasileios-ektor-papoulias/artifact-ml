@@ -39,7 +39,7 @@ class ModelIOCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -80,7 +80,7 @@ class ModelIOScoreCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -99,7 +99,7 @@ class ModelIOArrayCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -120,7 +120,7 @@ class ModelIOPlotCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -141,7 +141,7 @@ class ModelIOScoreCollectionCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -164,7 +164,7 @@ class ModelIOArrayCollectionCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -187,7 +187,7 @@ class ModelIOPlotCollectionCallback(
 ):
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
