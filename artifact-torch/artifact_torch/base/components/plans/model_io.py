@@ -28,11 +28,7 @@ ModelIOPlanT = TypeVar("ModelIOPlanT", bound="ModelIOPlan")
 
 class ModelIOPlan(
     CallbackExecutionPlan[
-        ModelIOCallbackHandler[
-            ModelInputTContr,
-            ModelOutputTContr,
-            Any,
-        ],
+        ModelIOCallbackHandler[ModelOutputTContr, Any],
         ModelIOCallback[ModelInputTContr, ModelOutputTContr, Any, Any],
         ModelIOCallbackResources[ModelOutputTContr],
     ],
@@ -53,7 +49,7 @@ class ModelIOPlan(
     @classmethod
     def build(
         cls: Type[ModelIOPlanT],
-        data_split: DataSplit,
+        data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ModelIOPlanT:
         score_callbacks = cls._get_score_callbacks(data_split=data_split)
@@ -81,37 +77,37 @@ class ModelIOPlan(
     @staticmethod
     @abstractmethod
     def _get_score_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> Sequence[ModelIOScoreCallback[ModelInputTContr, ModelOutputTContr]]: ...
 
     @staticmethod
     @abstractmethod
     def _get_array_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> Sequence[ModelIOArrayCallback[ModelInputTContr, ModelOutputTContr]]: ...
 
     @staticmethod
     @abstractmethod
     def _get_plot_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> Sequence[ModelIOPlotCallback[ModelInputTContr, ModelOutputTContr]]: ...
 
     @staticmethod
     @abstractmethod
     def _get_score_collection_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> Sequence[ModelIOScoreCollectionCallback[ModelInputTContr, ModelOutputTContr]]: ...
 
     @staticmethod
     @abstractmethod
     def _get_array_collection_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> Sequence[ModelIOArrayCollectionCallback[ModelInputTContr, ModelOutputTContr]]: ...
 
     @staticmethod
     @abstractmethod
     def _get_plot_collection_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> Sequence[ModelIOPlotCollectionCallback[ModelInputTContr, ModelOutputTContr]]: ...
 
     def attach(self, resources: ModelIOCallbackResources[ModelOutputTContr]) -> bool:
