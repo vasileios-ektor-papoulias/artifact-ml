@@ -27,7 +27,7 @@ ArtifactResourcesTContr = TypeVar(
 ResourceSpecProtocolTContr = TypeVar(
     "ResourceSpecProtocolTContr", bound=ResourceSpecProtocol, contravariant=True
 )
-ArtifactRoutineT = TypeVar("ArtifactRoutineT", bound="ArtifactRoutine")
+ArtifactRoutineT = TypeVar("ArtifactRoutineT", bound="ArtifactRoutine[Any, Any, Any, Any, Any]")
 
 
 @dataclass
@@ -202,7 +202,7 @@ class ArtifactRoutine(
         for data_split in data_splits:
             artifact_plan = self._artifact_plans[data_split]
             artifact_resources = artifact_resources_by_split[data_split]
-            artifact_plan.execute_artifacts(resources=artifact_resources)
+            artifact_plan.execute_artifacts(resources=artifact_resources, data_split=data_split)
             if self._tracking_client is not None:
                 self._export_artifact_resources(
                     artifact_resources=artifact_resources,
