@@ -8,7 +8,7 @@ from matplotlib.figure import Figure
 from numpy import ndarray
 from tqdm import tqdm
 
-from artifact_torch.base.components.callbacks.forward_hook import ForwardHookCallbackResources
+from artifact_torch.base.components.callbacks.hook import HookCallbackResources
 from artifact_torch.base.components.plans.forward_hook import ForwardHookPlan
 from artifact_torch.base.components.plans.model_io import ModelIOPlan
 from artifact_torch.base.data.data_loader import DataLoader
@@ -230,7 +230,7 @@ class DataLoaderRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelOutputT
         self._clear_forward_hook_cache()
 
     def execute(self, model: ModelTContr, n_epochs_elapsed: int):
-        callback_resources = ForwardHookCallbackResources[ModelTContr](
+        callback_resources = HookCallbackResources[ModelTContr](
             step=n_epochs_elapsed, model=model
         )
         for data_split in self._data_splits:
@@ -249,7 +249,7 @@ class DataLoaderRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelOutputT
         cls,
         model_io_plan: Optional[ModelIOPlan[ModelInputTContr, ModelOutputTContr]],
         forward_hook_plan: Optional[ForwardHookPlan[ModelTContr]],
-        callback_resources: ForwardHookCallbackResources[ModelTContr],
+        callback_resources: HookCallbackResources[ModelTContr],
         data_loader: DataLoader[ModelInputTContr],
     ):
         any_attached = cls._attach(
@@ -268,7 +268,7 @@ class DataLoaderRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelOutputT
     def _attach(
         model_io_plan: Optional[ModelIOPlan[ModelInputTContr, ModelOutputTContr]],
         forward_hook_plan: Optional[ForwardHookPlan[ModelTContr]],
-        callback_resources: ForwardHookCallbackResources[ModelTContr],
+        callback_resources: HookCallbackResources[ModelTContr],
     ) -> bool:
         any_attached = False
         if model_io_plan is not None:
