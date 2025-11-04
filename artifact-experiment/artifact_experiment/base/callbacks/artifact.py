@@ -8,7 +8,6 @@ from artifact_core.base.artifact_dependencies import (
     ArtifactResult,
     ResourceSpecProtocol,
 )
-from artifact_experiment.base.callbacks.base import CallbackResources
 from artifact_experiment.base.callbacks.tracking import (
     ArrayCollectionExportMixin,
     ArrayExportMixin,
@@ -17,8 +16,8 @@ from artifact_experiment.base.callbacks.tracking import (
     ScoreCollectionExportMixin,
     ScoreExportMixin,
     TrackingCallback,
+    TrackingCallbackResources,
 )
-from artifact_experiment.base.entities.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 from matplotlib.figure import Figure
 from numpy import ndarray
@@ -26,8 +25,8 @@ from numpy import ndarray
 ArtifactResourcesTCov = TypeVar("ArtifactResourcesTCov", bound=ArtifactResources, covariant=True)
 
 
-@dataclass
-class ArtifactCallbackResources(CallbackResources, Generic[ArtifactResourcesTCov]):
+@dataclass(frozen=True)
+class ArtifactCallbackResources(TrackingCallbackResources, Generic[ArtifactResourcesTCov]):
     artifact_resources: ArtifactResourcesTCov
 
 
@@ -46,14 +45,13 @@ class ArtifactCallback(
 ):
     def __init__(
         self,
-        name: str,
+        base_key: str,
         artifact: Artifact[
             ArtifactResourcesTContr, ResourceSpecProtocolTContr, Any, ArtifactResultT
         ],
-        data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ):
-        super().__init__(name=name, data_split=data_split, tracking_client=tracking_client)
+        super().__init__(base_key=base_key, tracking_client=tracking_client)
         self._artifact = artifact
 
     @staticmethod
