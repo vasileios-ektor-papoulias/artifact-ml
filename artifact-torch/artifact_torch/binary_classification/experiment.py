@@ -5,8 +5,8 @@ from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecPr
 from artifact_experiment.base.entities.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 
-from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
+from artifact_torch.base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
 from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.experiment.experiment import Experiment
 from artifact_torch.base.model.io import ModelInput, ModelOutput
@@ -18,11 +18,13 @@ from artifact_torch.binary_classification.routine import (
 )
 from artifact_torch.core.model.classifier import ClassificationParams
 
-BinaryClassifierT = TypeVar("BinaryClassifierT", bound=BinaryClassifier[Any, Any, Any, Any])
-ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
-ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
-ClassificationParamsT = TypeVar("ClassificationParamsT", bound=ClassificationParams)
-ClassificationDataT = TypeVar("ClassificationDataT")
+BinaryClassifierTContr = TypeVar(
+    "BinaryClassifierTContr", bound=BinaryClassifier[Any, Any, Any, Any]
+)
+ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput)
+ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput)
+ClassificationParamsTContr = TypeVar("ClassificationParamsTContr", bound=ClassificationParams)
+ClassificationDataTContr = TypeVar("ClassificationDataTContr")
 BinaryClassificationExperimentT = TypeVar(
     "BinaryClassificationExperimentT", bound="BinaryClassificationExperiment"
 )
@@ -30,14 +32,18 @@ BinaryClassificationExperimentT = TypeVar(
 
 class BinaryClassificationExperiment(
     Experiment[
-        BinaryClassifierT,
-        ModelInputT,
-        ModelOutputT,
-        BinaryClassificationRoutineData[ClassificationDataT],
+        BinaryClassifierTContr,
+        ModelInputTContr,
+        ModelOutputTContr,
+        BinaryClassificationRoutineData[ClassificationDataTContr],
         BinaryFeatureSpecProtocol,
     ],
     Generic[
-        BinaryClassifierT, ModelInputT, ModelOutputT, ClassificationParamsT, ClassificationDataT
+        BinaryClassifierTContr,
+        ModelInputTContr,
+        ModelOutputTContr,
+        ClassificationParamsTContr,
+        ClassificationDataTContr,
     ],
 ):
     @classmethod
@@ -46,9 +52,9 @@ class BinaryClassificationExperiment(
         cls,
     ) -> Type[
         Trainer[
-            BinaryClassifierT,
-            ModelInputT,
-            ModelOutputT,
+            BinaryClassifierTContr,
+            ModelInputTContr,
+            ModelOutputTContr,
             Any,
             Any,
         ]
@@ -59,21 +65,27 @@ class BinaryClassificationExperiment(
     def _get_batch_routine(
         cls,
         tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[BatchRoutine[ModelInputT, ModelOutputT]]: ...
+    ) -> Optional[
+        TrainDiagnosticsRoutine[BinaryClassifierTContr, ModelInputTContr, ModelOutputTContr]
+    ]: ...
 
     @classmethod
     @abstractmethod
     def _get_loader_routine(
         cls,
-        data_loaders: Mapping[DataSplit, DataLoader[ModelInputT]],
+        data_loaders: Mapping[DataSplit, DataLoader[ModelInputTContr]],
         tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[DataLoaderRoutine[BinaryClassifierT, ModelInputT, ModelOutputT]]: ...
+    ) -> Optional[
+        DataLoaderRoutine[BinaryClassifierTContr, ModelInputTContr, ModelOutputTContr]
+    ]: ...
 
     @classmethod
     @abstractmethod
     def _get_artifact_routine(
         cls,
-        data: Mapping[DataSplit, BinaryClassificationRoutineData[ClassificationDataT]],
+        data: Mapping[DataSplit, BinaryClassificationRoutineData[ClassificationDataTContr]],
         data_spec: BinaryFeatureSpecProtocol,
         tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[BinaryClassificationRoutine[ClassificationParamsT, ClassificationDataT]]: ...
+    ) -> Optional[
+        BinaryClassificationRoutine[ClassificationParamsTContr, ClassificationDataTContr]
+    ]: ...
