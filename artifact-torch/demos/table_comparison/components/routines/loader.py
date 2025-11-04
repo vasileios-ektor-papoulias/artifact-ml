@@ -20,11 +20,11 @@ class DemoLoaderRoutine(
         data_split: DataSplit, tracking_client: Optional[TrackingClient]
     ) -> Optional[ModelIOPlan[DemoModelInput, DemoModelOutput]]:
         if data_split is DataSplit.TRAIN:
-            return DemoModelIOPlan.build(data_split=data_split, tracking_client=tracking_client)
+            return DemoModelIOPlan.build(tracking_client=tracking_client)
 
     @staticmethod
     def _get_forward_hook_plan(
         data_split: DataSplit, tracking_client: Optional[TrackingClient]
     ) -> Optional[ForwardHookPlan[Model[Any, Any]]]:
         if data_split is DataSplit.TRAIN:
-            return DemoForwardHookPlan.build(data_split=data_split, tracking_client=tracking_client)
+            return DemoForwardHookPlan.build(tracking_client=tracking_client)

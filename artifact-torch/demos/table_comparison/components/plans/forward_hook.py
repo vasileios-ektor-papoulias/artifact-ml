@@ -1,6 +1,5 @@
-from typing import Any, Optional, Sequence
+from typing import Any, Sequence
 
-from artifact_experiment import DataSplit
 from artifact_torch.base.components.callbacks.forward_hook import (
     ForwardHookArrayCallback,
     ForwardHookArrayCollectionCallback,
@@ -18,43 +17,31 @@ from demos.table_comparison.config.constants import TRAIN_LOADER_ROUTINE_PERIOD
 
 class DemoForwardHookPlan(ForwardHookPlan[Model[Any, Any]]):
     @staticmethod
-    def _get_score_callbacks(
-        data_split: Optional[DataSplit],
-    ) -> Sequence[ForwardHookScoreCallback[Model[Any, Any]]]:
-        _ = data_split
+    def _get_score_callbacks() -> Sequence[ForwardHookScoreCallback[Model[Any, Any]]]:
         return []
 
     @staticmethod
-    def _get_array_callbacks(
-        data_split: Optional[DataSplit],
-    ) -> Sequence[ForwardHookArrayCallback[Model[Any, Any]]]:
-        _ = data_split
+    def _get_array_callbacks() -> Sequence[ForwardHookArrayCallback[Model[Any, Any]]]:
         return []
 
     @staticmethod
-    def _get_plot_callbacks(
-        data_split: Optional[DataSplit],
-    ) -> Sequence[ForwardHookPlotCallback[Model[Any, Any]]]:
-        _ = data_split
-        return [AllActivationsPDF(period=TRAIN_LOADER_ROUTINE_PERIOD, data_split=data_split)]
+    def _get_plot_callbacks() -> Sequence[ForwardHookPlotCallback[Model[Any, Any]]]:
+        return [AllActivationsPDF(period=TRAIN_LOADER_ROUTINE_PERIOD)]
 
     @staticmethod
-    def _get_score_collection_callbacks(
-        data_split: Optional[DataSplit],
-    ) -> Sequence[ForwardHookScoreCollectionCallback[Model[Any, Any]]]:
-        _ = data_split
+    def _get_score_collection_callbacks() -> Sequence[
+        ForwardHookScoreCollectionCallback[Model[Any, Any]]
+    ]:
         return []
 
     @staticmethod
-    def _get_array_collection_callbacks(
-        data_split: Optional[DataSplit],
-    ) -> Sequence[ForwardHookArrayCollectionCallback[Model[Any, Any]]]:
-        _ = data_split
+    def _get_array_collection_callbacks() -> Sequence[
+        ForwardHookArrayCollectionCallback[Model[Any, Any]]
+    ]:
         return []
 
     @staticmethod
-    def _get_plot_collection_callbacks(
-        data_split: Optional[DataSplit],
-    ) -> Sequence[ForwardHookPlotCollectionCallback[Model[Any, Any]]]:
-        _ = data_split
+    def _get_plot_collection_callbacks() -> Sequence[
+        ForwardHookPlotCollectionCallback[Model[Any, Any]]
+    ]:
         return []
