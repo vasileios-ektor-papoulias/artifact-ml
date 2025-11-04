@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import Dict, Generic, List, Sequence, TypeVar
+from typing import Dict, Generic, List, Optional, Sequence, TypeVar
 
 import torch.nn as nn
 from artifact_experiment.base.entities.data_split import DataSplit
@@ -32,7 +32,7 @@ class HookCallback(
     PeriodicTrackingCallback[HookCallbackResources[ModelTContr], CacheDataT],
     Generic[ModelTContr, CacheDataT, HookResultT],
 ):
-    def __init__(self, period: int, data_split: DataSplit):
+    def __init__(self, period: int, data_split: Optional[DataSplit] = None):
         name = self._get_name()
         super().__init__(name=name, period=period, data_split=data_split)
         self._hook_results: Dict[str, List[HookResultT]] = {}
