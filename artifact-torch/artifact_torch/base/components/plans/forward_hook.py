@@ -15,9 +15,9 @@ from artifact_torch.base.components.callbacks.forward_hook import (
     ForwardHookScoreCollectionCallback,
 )
 from artifact_torch.base.components.callbacks.hook import HookCallbackResources
-from artifact_torch.base.components.handlers.forward_hook import (
-    ForwardHookCallbackHandler,
-    ForwardHookCallbackHandlerSuite,
+from artifact_torch.base.components.handlers.hook import (
+    HookCallbackHandler,
+    HookCallbackHandlerSuite,
 )
 from artifact_torch.base.model.base import Model
 
@@ -27,7 +27,7 @@ ForwardHookPlanT = TypeVar("ForwardHookPlanT", bound="ForwardHookPlan")
 
 class ForwardHookPlan(
     CallbackExecutionPlan[
-        ForwardHookCallbackHandler[ForwardHookCallback[ModelTContr, Any, Any], ModelTContr, Any],
+        HookCallbackHandler[ModelTContr, Any],
         ForwardHookCallback[ModelTContr, Any, Any],
         HookCallbackResources[ModelTContr],
     ],
@@ -35,7 +35,7 @@ class ForwardHookPlan(
 ):
     def __init__(
         self,
-        handler_suite: ForwardHookCallbackHandlerSuite[ModelTContr],
+        handler_suite: HookCallbackHandlerSuite[ModelTContr],
         data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ):
@@ -48,7 +48,7 @@ class ForwardHookPlan(
     @classmethod
     def build(
         cls: Type[ForwardHookPlanT],
-        data_split: DataSplit,
+        data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ForwardHookPlanT:
         score_callbacks = cls._get_score_callbacks(data_split=data_split)
@@ -57,7 +57,7 @@ class ForwardHookPlan(
         score_collection_callbacks = cls._get_score_collection_callbacks(data_split=data_split)
         array_collection_callbacks = cls._get_array_collection_callbacks(data_split=data_split)
         plot_collection_callbacks = cls._get_plot_collection_callbacks(data_split=data_split)
-        handler_suite = ForwardHookCallbackHandlerSuite[ModelTContr].build(
+        handler_suite = HookCallbackHandlerSuite[ModelTContr].build(
             score_callbacks=score_callbacks,
             array_callbacks=array_callbacks,
             plot_callbacks=plot_callbacks,
@@ -76,37 +76,37 @@ class ForwardHookPlan(
     @staticmethod
     @abstractmethod
     def _get_score_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> Sequence[ForwardHookScoreCallback[ModelTContr]]: ...
 
     @staticmethod
     @abstractmethod
     def _get_array_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> Sequence[ForwardHookArrayCallback[ModelTContr]]: ...
 
     @staticmethod
     @abstractmethod
     def _get_plot_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> Sequence[ForwardHookPlotCallback[ModelTContr]]: ...
 
     @staticmethod
     @abstractmethod
     def _get_score_collection_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> Sequence[ForwardHookScoreCollectionCallback[ModelTContr]]: ...
 
     @staticmethod
     @abstractmethod
     def _get_array_collection_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> Sequence[ForwardHookArrayCollectionCallback[ModelTContr]]: ...
 
     @staticmethod
     @abstractmethod
     def _get_plot_collection_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> Sequence[ForwardHookPlotCollectionCallback[ModelTContr]]: ...
 
     def attach(self, resources: HookCallbackResources[ModelTContr]) -> bool:
