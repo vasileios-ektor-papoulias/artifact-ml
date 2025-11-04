@@ -141,7 +141,7 @@ class ForwardHookCallbackHandlerSuite(
         plot_collection_callbacks: Sequence[ForwardHookPlotCollectionCallback[ModelTContr]],
         tracking_client: Optional[TrackingClient] = None,
     ) -> ForwardHookCallbackHandlerSuiteT:
-        suite = cls(
+        handler_suite = cls(
             score_handler=ForwardHookScoreHandler[ModelTContr](
                 callbacks=score_callbacks, tracking_client=tracking_client
             ),
@@ -161,4 +161,4 @@ class ForwardHookCallbackHandlerSuite(
                 callbacks=plot_collection_callbacks, tracking_client=tracking_client
             ),
         )
-        return suite
+        return handler_suite
