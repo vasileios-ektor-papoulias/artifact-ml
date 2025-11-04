@@ -1,36 +1,36 @@
 from abc import abstractmethod
+from dataclasses import KW_ONLY, dataclass
 from typing import Dict, Generic, Optional, TypeVar
 
-from artifact_experiment.base.callbacks.base import (
-    CallbackResources,
-)
-from artifact_experiment.base.callbacks.cache import (
-    CacheCallback,
-)
+from artifact_experiment.base.callbacks.cache import CacheCallback, CacheCallbackResources
 from artifact_experiment.base.entities.data_split import DataSplit, DataSplitSuffixAppender
 from artifact_experiment.base.tracking.client import TrackingClient
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-CallbackResourcesTContr = TypeVar(
-    "CallbackResourcesTContr", bound=CallbackResources, contravariant=True
+
+@dataclass(frozen=True)
+class TrackingCallbackResources(CacheCallbackResources):
+    _: KW_ONLY
+    data_split: Optional[DataSplit] = None
+
+
+TrackingCallbackResourcesTContr = TypeVar(
+    "TrackingCallbackResourcesTContr", bound=TrackingCallbackResources, contravariant=True
 )
 CacheDataT = TypeVar("CacheDataT")
 
 
 class TrackingCallback(
-    CacheCallback[CallbackResourcesTContr, CacheDataT],
-    Generic[CallbackResourcesTContr, CacheDataT],
+    CacheCallback[TrackingCallbackResourcesTContr, CacheDataT],
+    Generic[TrackingCallbackResourcesTContr, CacheDataT],
 ):
     def __init__(
         self,
-        name: str,
-        data_split: Optional[DataSplit] = None,
+        base_key: str,
         tracking_client: Optional[TrackingClient] = None,
     ):
-        key = self._get_key(name=name, data_split=data_split)
-        super().__init__(key=key)
-        self._data_split = data_split
+        super().__init__(base_key=base_key)
         self._tracking_client = tracking_client
 
     @property
@@ -45,29 +45,24 @@ class TrackingCallback(
     def tracking_enabled(self) -> bool:
         return self._tracking_client is not None
 
-    @property
-    def data_split(self) -> Optional[DataSplit]:
-        return self._data_split
-
     @abstractmethod
-    def _compute(self, resources: CallbackResourcesTContr) -> CacheDataT: ...
+    def _compute(self, resources: TrackingCallbackResourcesTContr) -> CacheDataT: ...
 
     @staticmethod
     @abstractmethod
     def _export(key: str, value: CacheDataT, tracking_client: TrackingClient): ...
 
-    def execute(self, resources: CallbackResourcesTContr):
+    def execute(self, resources: TrackingCallbackResourcesTContr):
         super().execute(resources=resources)
         if self._tracking_client is not None:
             assert self.value is not None
             self._export(key=self.key, value=self.value, tracking_client=self._tracking_client)
 
     @classmethod
-    def _get_key(cls, name: str, data_split: Optional[DataSplit]) -> str:
-        if data_split is not None:
-            key = DataSplitSuffixAppender.append_suffix(name=name, data_split=data_split)
-        else:
-            key = name
+    def _qualify_base_key(cls, base_key: str, resources: TrackingCallbackResourcesTContr) -> str:
+        key = super()._qualify_base_key(base_key=base_key, resources=resources)
+        if resources.data_split is not None:
+            key = DataSplitSuffixAppender.append_suffix(name=key, data_split=resources.data_split)
         return key
 
 
@@ -109,53 +104,53 @@ class PlotCollectionExportMixin:
 
 class ScoreCallback(
     ScoreExportMixin,
-    TrackingCallback[CallbackResourcesTContr, float],
-    Generic[CallbackResourcesTContr],
+    TrackingCallback[TrackingCallbackResourcesTContr, float],
+    Generic[TrackingCallbackResourcesTContr],
 ):
     @abstractmethod
-    def _compute(self, resources: CallbackResourcesTContr) -> float: ...
+    def _compute(self, resources: TrackingCallbackResourcesTContr) -> float: ...
 
 
 class ArrayCallback(
     ArrayExportMixin,
-    TrackingCallback[CallbackResourcesTContr, ndarray],
-    Generic[CallbackResourcesTContr],
+    TrackingCallback[TrackingCallbackResourcesTContr, ndarray],
+    Generic[TrackingCallbackResourcesTContr],
 ):
     @abstractmethod
-    def _compute(self, resources: CallbackResourcesTContr) -> ndarray: ...
+    def _compute(self, resources: TrackingCallbackResourcesTContr) -> ndarray: ...
 
 
 class PlotCallback(
     PlotExportMixin,
-    TrackingCallback[CallbackResourcesTContr, Figure],
-    Generic[CallbackResourcesTContr],
+    TrackingCallback[TrackingCallbackResourcesTContr, Figure],
+    Generic[TrackingCallbackResourcesTContr],
 ):
     @abstractmethod
-    def _compute(self, resources: CallbackResourcesTContr) -> Figure: ...
+    def _compute(self, resources: TrackingCallbackResourcesTContr) -> Figure: ...
 
 
 class ScoreCollectionCallback(
     ScoreCollectionExportMixin,
-    TrackingCallback[CallbackResourcesTContr, Dict[str, float]],
-    Generic[CallbackResourcesTContr],
+    TrackingCallback[TrackingCallbackResourcesTContr, Dict[str, float]],
+    Generic[TrackingCallbackResourcesTContr],
 ):
     @abstractmethod
-    def _compute(self, resources: CallbackResourcesTContr) -> Dict[str, float]: ...
+    def _compute(self, resources: TrackingCallbackResourcesTContr) -> Dict[str, float]: ...
 
 
 class ArrayCollectionCallback(
     ArrayCollectionExportMixin,
-    TrackingCallback[CallbackResourcesTContr, Dict[str, ndarray]],
-    Generic[CallbackResourcesTContr],
+    TrackingCallback[TrackingCallbackResourcesTContr, Dict[str, ndarray]],
+    Generic[TrackingCallbackResourcesTContr],
 ):
     @abstractmethod
-    def _compute(self, resources: CallbackResourcesTContr) -> Dict[str, ndarray]: ...
+    def _compute(self, resources: TrackingCallbackResourcesTContr) -> Dict[str, ndarray]: ...
 
 
 class PlotCollectionCallback(
     PlotCollectionExportMixin,
-    TrackingCallback[CallbackResourcesTContr, Dict[str, Figure]],
-    Generic[CallbackResourcesTContr],
+    TrackingCallback[TrackingCallbackResourcesTContr, Dict[str, Figure]],
+    Generic[TrackingCallbackResourcesTContr],
 ):
     @abstractmethod
-    def _compute(self, resources: CallbackResourcesTContr) -> Dict[str, Figure]: ...
+    def _compute(self, resources: TrackingCallbackResourcesTContr) -> Dict[str, Figure]: ...
