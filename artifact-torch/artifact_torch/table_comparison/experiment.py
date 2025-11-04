@@ -5,8 +5,8 @@ from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecPro
 from artifact_experiment.base.entities.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 
-from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
+from artifact_torch.base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
 from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.experiment.experiment import Experiment
 from artifact_torch.base.model.io import ModelInput, ModelOutput
@@ -18,10 +18,14 @@ from artifact_torch.table_comparison.routine import (
     TableComparisonRoutineData,
 )
 
-TableSynthesizerT = TypeVar("TableSynthesizerT", bound=TableSynthesizer[Any, Any, Any])
-ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
-ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
-GenerationParamsT = TypeVar("GenerationParamsT", bound=GenerationParams)
+TableSynthesizerTContr = TypeVar(
+    "TableSynthesizerTContr", bound=TableSynthesizer[Any, Any, Any], contravariant=True
+)
+ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
+ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput, contravariant=True)
+GenerationParamsTContr = TypeVar(
+    "GenerationParamsTContr", bound=GenerationParams, contravariant=True
+)
 TabularSynthesisExperimentT = TypeVar(
     "TabularSynthesisExperimentT", bound="TabularSynthesisExperiment"
 )
@@ -29,13 +33,13 @@ TabularSynthesisExperimentT = TypeVar(
 
 class TabularSynthesisExperiment(
     Experiment[
-        TableSynthesizerT,
-        ModelInputT,
-        ModelOutputT,
+        TableSynthesizerTContr,
+        ModelInputTContr,
+        ModelOutputTContr,
         TableComparisonRoutineData,
         TabularDataSpecProtocol,
     ],
-    Generic[TableSynthesizerT, ModelInputT, ModelOutputT, GenerationParamsT],
+    Generic[TableSynthesizerTContr, ModelInputTContr, ModelOutputTContr, GenerationParamsTContr],
 ):
     @classmethod
     @abstractmethod
@@ -43,9 +47,9 @@ class TabularSynthesisExperiment(
         cls,
     ) -> Type[
         Trainer[
-            TableSynthesizerT,
-            ModelInputT,
-            ModelOutputT,
+            TableSynthesizerTContr,
+            ModelInputTContr,
+            ModelOutputTContr,
             Any,
             Any,
         ]
@@ -53,18 +57,22 @@ class TabularSynthesisExperiment(
 
     @classmethod
     @abstractmethod
-    def _get_batch_routine(
+    def _get_train_diagnostics_routine(
         cls,
         tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[BatchRoutine[ModelInputT, ModelOutputT]]: ...
+    ) -> Optional[
+        TrainDiagnosticsRoutine[TableSynthesizerTContr, ModelInputTContr, ModelOutputTContr]
+    ]: ...
 
     @classmethod
     @abstractmethod
     def _get_loader_routine(
         cls,
-        data_loaders: Mapping[DataSplit, DataLoader[ModelInputT]],
+        data_loaders: Mapping[DataSplit, DataLoader[ModelInputTContr]],
         tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[DataLoaderRoutine[TableSynthesizerT, ModelInputT, ModelOutputT]]: ...
+    ) -> Optional[
+        DataLoaderRoutine[TableSynthesizerTContr, ModelInputTContr, ModelOutputTContr]
+    ]: ...
 
     @classmethod
     @abstractmethod
@@ -73,4 +81,4 @@ class TabularSynthesisExperiment(
         data: Mapping[DataSplit, TableComparisonRoutineData],
         data_spec: TabularDataSpecProtocol,
         tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[TableComparisonRoutine[GenerationParamsT]]: ...
+    ) -> Optional[TableComparisonRoutine[GenerationParamsTContr]]: ...
