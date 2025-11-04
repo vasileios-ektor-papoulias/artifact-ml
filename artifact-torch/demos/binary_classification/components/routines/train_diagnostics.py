@@ -7,7 +7,12 @@ from artifact_torch.base.components.plans.model_io import ModelIOPlan
 from artifact_torch.base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
 from artifact_torch.base.model.base import Model
 
-from demos.binary_classification.components.plans.model_io import DemoModelIOPlan
+from demos.binary_classification.components.plans.forward_hook import (
+    TrainDiagnosticsForwardHookPlan,
+)
+from demos.binary_classification.components.plans.model_io import (
+    TrainDiagnosticsModelIOPlan,
+)
 from demos.binary_classification.components.protocols import DemoModelInput, DemoModelOutput
 
 
@@ -18,13 +23,13 @@ class DemoTrainDiagnosticsRoutine(
     def _get_model_io_plan(
         tracking_client: Optional[TrackingClient],
     ) -> Optional[ModelIOPlan[DemoModelInput, DemoModelOutput]]:
-        return DemoModelIOPlan.build(tracking_client=tracking_client)
+        return TrainDiagnosticsModelIOPlan.build(tracking_client=tracking_client)
 
     @staticmethod
     def _get_forward_hook_plan(
         tracking_client: Optional[TrackingClient],
     ) -> Optional[ForwardHookPlan[Model[Any, Any]]]:
-        _ = tracking_client
+        return TrainDiagnosticsForwardHookPlan.build(tracking_client=tracking_client)
 
     @staticmethod
     def _get_backward_hook_plan(

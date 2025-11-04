@@ -27,6 +27,8 @@ class DemoBinaryClassificationRoutine(
     ) -> Optional[int]:
         if data_split is DataSplit.TRAIN:
             return ARTIFACT_ROUTINE_PERIOD
+        elif data_split is DataSplit.VALIDATION:
+            return ARTIFACT_ROUTINE_PERIOD
 
     @classmethod
     def _get_artifact_plan(
@@ -36,6 +38,10 @@ class DemoBinaryClassificationRoutine(
         tracking_client: Optional[TrackingClient],
     ) -> Optional[BinaryClassificationPlan]:
         if data_split is DataSplit.TRAIN:
+            return DemoBinaryClassificationPlan.build(
+                resource_spec=artifact_resource_spec, tracking_client=tracking_client
+            )
+        elif data_split is DataSplit.VALIDATION:
             return DemoBinaryClassificationPlan.build(
                 resource_spec=artifact_resource_spec, tracking_client=tracking_client
             )

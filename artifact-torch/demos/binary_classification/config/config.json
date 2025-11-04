@@ -1,6 +1,7 @@
 {
     "data": {
         "training_dataset_path": "assets/binary_classification.csv",
+        "val_data_proportion": 0.2,
         "ls_features": ["weight", "height", "age", "bmi"],
         "label_feature": "arthritis_true",
         "ls_categories": ["0", "1"],
@@ -27,8 +28,8 @@
         "checkpoint_period": 5
     },
     "validation": {
-        "batch_routine_period": 10,
-        "train_loader_routine_period": 5,
+        "train_diagnostics_period": 1,
+        "loader_validation_period": 5,
         "artifact_routine_period": 5,
         "classification_threshold": 0.5
     },

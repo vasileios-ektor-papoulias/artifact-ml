@@ -21,6 +21,7 @@ with _config_file.open() as f:
 
     # Data Config
     TRAINING_DATASET_PATH: Path = _artifact_torch_root / Path(_data_config["training_dataset_path"])
+    VAL_DATA_PROPORTION: float = _data_config["val_data_proportion"]
     LS_FEATURES: List[str] = _data_config["ls_features"]
     LABEL_FEATURE: str = _data_config["label_feature"]
     LS_CATEGORIES: List[str] = _data_config["ls_categories"]
@@ -43,8 +44,8 @@ with _config_file.open() as f:
     SHUFFLE: bool = _training_config["shuffle"]
 
     # Validation Config
-    BATCH_ROUTINE_PERIOD: int = _validation_config["batch_routine_period"]
-    TRAIN_LOADER_ROUTINE_PERIOD: int = _validation_config["train_loader_routine_period"]
+    TRAIN_DIAGNOSTICS_PERIOD: int = _validation_config["train_diagnostics_period"]
+    LOADER_VALIDATION_PERIOD: int = _validation_config["loader_validation_period"]
     ARTIFACT_ROUTINE_PERIOD: int = _validation_config["artifact_routine_period"]
     CLASSIFICATION_THRESHOLD: float = _validation_config["classification_threshold"]
 

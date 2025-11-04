@@ -62,7 +62,7 @@ class BinaryClassificationExperiment(
 
     @classmethod
     @abstractmethod
-    def _get_batch_routine(
+    def _get_train_diagnostics_routine(
         cls,
         tracking_client: Optional[TrackingClient] = None,
     ) -> Optional[
