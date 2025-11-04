@@ -5,14 +5,8 @@ from artifact_core.libs.resources.classification.binary_classification_results i
     BinaryClassificationResults,
 )
 
-from artifact_torch.base.model.io import (
-    ModelInput,
-    ModelOutput,
-)
-from artifact_torch.core.model.classifier import (
-    ClassificationParams,
-    Classifier,
-)
+from artifact_torch.base.model.io import ModelInput, ModelOutput
+from artifact_torch.core.model.classifier import ClassificationParams, Classifier
 
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
 ModelOutputTCov = TypeVar("ModelOutputTCov", bound=ModelOutput, covariant=True)
