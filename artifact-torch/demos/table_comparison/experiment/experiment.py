@@ -1,11 +1,12 @@
-from typing import Any, Mapping, Optional, Type, TypeVar
+from typing import Any, Mapping, Optional, Type
 
 from artifact_core.table_comparison import TabularDataSpecProtocol
 from artifact_experiment import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
-from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
+from artifact_torch.base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
 from artifact_torch.base.data.data_loader import DataLoader
+from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.base.trainer.trainer import Trainer
 from artifact_torch.table_comparison.experiment import TabularSynthesisExperiment
 from artifact_torch.table_comparison.model import TableSynthesizer
@@ -16,23 +17,18 @@ from artifact_torch.table_comparison.routine import (
 
 from demos.table_comparison.components.protocols import (
     DemoGenerationParams,
-    DemoModelInput,
-    DemoModelOutput,
 )
 from demos.table_comparison.components.routines.artifact import DemoTableComparisonRoutine
-from demos.table_comparison.components.routines.batch import DemoBatchRoutine
 from demos.table_comparison.components.routines.loader import DemoLoaderRoutine
+from demos.table_comparison.components.routines.train_diagnostics import DemoTrainDiagnosticsRoutine
 from demos.table_comparison.trainer.trainer import DemoTrainer
-
-ModelInputT = TypeVar("ModelInputT", bound=DemoModelInput)
-ModelOutputT = TypeVar("ModelOutputT", bound=DemoModelOutput)
 
 
 class DemoTabularSynthesisExperiment(
     TabularSynthesisExperiment[
-        TableSynthesizer[ModelInputT, ModelOutputT, DemoGenerationParams],
-        ModelInputT,
-        ModelOutputT,
+        TableSynthesizer[Any, ModelOutput, DemoGenerationParams],
+        ModelInput,
+        ModelOutput,
         DemoGenerationParams,
     ]
 ):
@@ -41,32 +37,38 @@ class DemoTabularSynthesisExperiment(
         cls,
     ) -> Type[
         Trainer[
-            TableSynthesizer[ModelInputT, ModelOutputT, DemoGenerationParams],
-            ModelInputT,
-            ModelOutputT,
+            TableSynthesizer[Any, ModelOutput, DemoGenerationParams],
+            ModelInput,
+            ModelOutput,
             Any,
             Any,
         ]
     ]:
-        return DemoTrainer[ModelInputT, ModelOutputT]
+        return DemoTrainer
 
     @classmethod
-    def _get_batch_routine(
+    def _get_train_diagnostics_routine(
         cls,
         tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[BatchRoutine[ModelInputT, ModelOutputT]]:
-        return DemoBatchRoutine.build(tracking_client=tracking_client)
+    ) -> Optional[
+        TrainDiagnosticsRoutine[
+            TableSynthesizer[Any, ModelOutput, DemoGenerationParams],
+            ModelInput,
+            ModelOutput,
+        ]
+    ]:
+        return DemoTrainDiagnosticsRoutine.build(tracking_client=tracking_client)
 
     @classmethod
     def _get_loader_routine(
         cls,
-        data_loaders: Mapping[DataSplit, DataLoader[ModelInputT]],
+        data_loaders: Mapping[DataSplit, DataLoader[ModelInput]],
         tracking_client: Optional[TrackingClient] = None,
     ) -> Optional[
         DataLoaderRoutine[
-            TableSynthesizer[ModelInputT, ModelOutputT, DemoGenerationParams],
-            ModelInputT,
-            ModelOutputT,
+            TableSynthesizer[Any, ModelOutput, DemoGenerationParams],
+            ModelInput,
+            ModelOutput,
         ]
     ]:
         return DemoLoaderRoutine.build(data_loaders=data_loaders, tracking_client=tracking_client)

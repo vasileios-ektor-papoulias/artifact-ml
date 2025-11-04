@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from artifact_experiment import DataSplit
 from artifact_torch.base.components.callbacks.model_io import (
@@ -19,41 +19,41 @@ from demos.table_comparison.config.constants import TRAIN_LOADER_ROUTINE_PERIOD
 class DemoModelIOPlan(ModelIOPlan[DemoModelInput, DemoModelOutput]):
     @staticmethod
     def _get_score_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> List[ModelIOScoreCallback[DemoModelInput, DemoModelOutput]]:
         return [LoaderLossCallback(period=TRAIN_LOADER_ROUTINE_PERIOD, data_split=data_split)]
 
     @staticmethod
     def _get_array_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> List[ModelIOArrayCallback[DemoModelInput, DemoModelOutput]]:
         _ = data_split
         return []
 
     @staticmethod
     def _get_plot_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> List[ModelIOPlotCallback[DemoModelInput, DemoModelOutput]]:
         _ = data_split
         return []
 
     @staticmethod
     def _get_score_collection_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> List[ModelIOScoreCollectionCallback[DemoModelInput, DemoModelOutput]]:
         _ = data_split
         return []
 
     @staticmethod
     def _get_array_collection_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> List[ModelIOArrayCollectionCallback[DemoModelInput, DemoModelOutput]]:
         _ = data_split
         return []
 
     @staticmethod
     def _get_plot_collection_callbacks(
-        data_split: DataSplit,
+        data_split: Optional[DataSplit],
     ) -> List[ModelIOPlotCollectionCallback[DemoModelInput, DemoModelOutput]]:
         _ = data_split
         return []

@@ -1,4 +1,4 @@
-from typing import Any, Optional, TypeVar
+from typing import Any, Optional
 
 import torch
 from artifact_experiment.tracking import TrackingClient
@@ -8,16 +8,13 @@ from artifact_torch.base.components.model_tracking.tracker import (
     ModelTracker,
     ModelTrackingCriterion,
 )
+from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.base.trainer.trainer import Trainer
 from artifact_torch.libs.components.callbacks.checkpoint.standard import StandardCheckpointCallback
 from artifact_torch.libs.components.early_stopping.epoch_bound import EpochBoundStopper
 from artifact_torch.table_comparison.model import TableSynthesizer
 from torch import optim
 
-from demos.table_comparison.components.protocols import (
-    DemoModelInput,
-    DemoModelOutput,
-)
 from demos.table_comparison.config.constants import (
     CHECKPOINT_PERIOD,
     DEVICE,
@@ -25,22 +22,19 @@ from demos.table_comparison.config.constants import (
     MAX_N_EPOCHS,
 )
 
-ModelInputT = TypeVar("ModelInputT", bound=DemoModelInput)
-ModelOutputT = TypeVar("ModelOutputT", bound=DemoModelOutput)
-
 
 class DemoTrainer(
     Trainer[
-        TableSynthesizer[ModelInputT, ModelOutputT, Any],
-        ModelInputT,
-        ModelOutputT,
+        TableSynthesizer[Any, Any, Any],
+        ModelInput,
+        ModelOutput,
         StopperUpdateData,
         ModelTrackingCriterion,
     ]
 ):
     @staticmethod
     def _get_optimizer(
-        model: TableSynthesizer[ModelInputT, ModelOutputT, Any],
+        model: TableSynthesizer[Any, Any, Any],
     ) -> optim.Optimizer:
         return optim.Adam(params=model.parameters(), lr=LEARNING_RATE)
 
