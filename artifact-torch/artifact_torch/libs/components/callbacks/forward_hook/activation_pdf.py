@@ -13,14 +13,14 @@ from artifact_torch.libs.utils.tensor_flattener import TensorFlattener
 
 
 class AllActivationsPDF(ForwardHookPlotCallback[Model[Any, Any]]):
-    _name = "ACTIVATIONS_PDF"
+    _base_key = "ACTIVATIONS_PDF"
     _hook_result_key = "layer_activations"
     _plot_feature_name = "All Layers — Activations"
     _max_activation_samples = 1_000_000
 
     @classmethod
-    def _get_name(cls) -> str:
-        return cls._name
+    def _get_base_key(cls) -> str:
+        return cls._base_key
 
     @classmethod
     def _get_layers(cls, model: Module) -> List[Module]:

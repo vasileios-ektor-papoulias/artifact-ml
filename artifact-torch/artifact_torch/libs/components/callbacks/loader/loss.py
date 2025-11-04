@@ -6,12 +6,12 @@ from artifact_torch.base.components.callbacks.model_io import ModelIOScoreCallba
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 
 
-class LoaderLossCallback(ModelIOScoreCallback[ModelInput, ModelOutput]):
-    _name = "LOSS"
+class LossCallback(ModelIOScoreCallback[ModelInput, ModelOutput]):
+    _base_key = "LOSS"
 
     @classmethod
-    def _get_name(cls):
-        return cls._name
+    def _get_base_key(cls):
+        return cls._base_key
 
     @classmethod
     def _compute_on_batch(
