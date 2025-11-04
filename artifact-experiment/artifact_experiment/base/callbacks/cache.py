@@ -1,30 +1,39 @@
 from abc import abstractmethod
+from dataclasses import KW_ONLY, dataclass
 from typing import Dict, Generic, Optional, TypeVar
 
-from artifact_experiment.base.callbacks.base import (
-    Callback,
-    CallbackResources,
-)
+from artifact_experiment.base.callbacks.base import Callback, CallbackResources
 
-CallbackResourcesTContr = TypeVar(
-    "CallbackResourcesTContr", bound=CallbackResources, contravariant=True
+
+@dataclass(frozen=True)
+class CacheCallbackResources(CallbackResources):
+    _: KW_ONLY
+    trigger: Optional[str] = None
+
+
+CacheCallbackResourcesTContr = TypeVar(
+    "CacheCallbackResourcesTContr", bound=CacheCallbackResources, contravariant=True
 )
 CacheDataTCov = TypeVar("CacheDataTCov", covariant=True)
 
 
 class CacheCallback(
-    Callback[CallbackResourcesTContr], Generic[CallbackResourcesTContr, CacheDataTCov]
+    Callback[CacheCallbackResourcesTContr], Generic[CacheCallbackResourcesTContr, CacheDataTCov]
 ):
-    def __init__(self, key: str):
-        self._key = key
-        self._cache: Dict[str, Optional[CacheDataTCov]] = {self._key: None}
+    def __init__(self, base_key: str):
+        self._base_key = base_key
+        self._cache: Dict[str, Optional[CacheDataTCov]] = {self._base_key: None}
 
     @abstractmethod
-    def _compute(self, resources: CallbackResourcesTContr) -> CacheDataTCov: ...
+    def _compute(self, resources: CacheCallbackResourcesTContr) -> CacheDataTCov: ...
+
+    @property
+    def base_key(self) -> str:
+        return self._base_key
 
     @property
     def key(self) -> str:
-        return self._key
+        return next(iter(self._cache.keys()), self._base_key)
 
     @property
     def value(self) -> Optional[CacheDataTCov]:
@@ -34,13 +43,21 @@ class CacheCallback(
     def cache(self) -> Dict[str, Optional[CacheDataTCov]]:
         return self._cache.copy()
 
-    def execute(self, resources: CallbackResourcesTContr):
+    def execute(self, resources: CacheCallbackResourcesTContr):
         self._clear()
+        qualified_key = self._qualify_base_key(base_key=self._base_key, resources=resources)
         value = self._compute(resources=resources)
-        self._cache[self._key] = value
+        self._cache[qualified_key] = value
 
     def clear(self):
-        self._clear()
+        self._cache = {self._base_key: None}
 
     def _clear(self):
-        self._cache = {self._key: None}
+        self._cache = {}
+
+    @classmethod
+    def _qualify_base_key(cls, base_key: str, resources: CacheCallbackResourcesTContr) -> str:
+        key = base_key
+        if resources.trigger is not None:
+            key = f"{key}_{resources.trigger}"
+        return key
