@@ -19,13 +19,12 @@ from numpy import ndarray
 from artifact_torch.base.components.callbacks.model_io import (
     ModelIOArrayCallback,
     ModelIOArrayCollectionCallback,
-    ModelIOCallback,
     ModelIOPlotCallback,
     ModelIOPlotCollectionCallback,
     ModelIOScoreCallback,
     ModelIOScoreCollectionCallback,
 )
-from artifact_torch.base.components.handlers.forward_hook import ForwardHookCallbackHandler
+from artifact_torch.base.components.handlers.hook import HookCallbackHandler
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 
@@ -35,12 +34,8 @@ CacheDataT = TypeVar("CacheDataT")
 
 
 class ModelIOCallbackHandler(
-    ForwardHookCallbackHandler[
-        ModelIOCallback[ModelInputTContr, ModelOutputTContr, CacheDataT, Any],
-        Model[Any, ModelOutputTContr],
-        CacheDataT,
-    ],
-    Generic[ModelInputTContr, ModelOutputTContr, CacheDataT],
+    HookCallbackHandler[Model[Any, ModelOutputTContr], CacheDataT],
+    Generic[ModelOutputTContr, CacheDataT],
 ):
     @staticmethod
     @abstractmethod
@@ -49,43 +44,43 @@ class ModelIOCallbackHandler(
 
 class ModelIOScoreHandler(
     ScoreHandlerExportMixin,
-    ModelIOCallbackHandler[ModelInputTContr, ModelOutputTContr, float],
-    Generic[ModelInputTContr, ModelOutputTContr],
+    ModelIOCallbackHandler[ModelOutputTContr, float],
+    Generic[ModelOutputTContr],
 ): ...
 
 
 class ModelIOArrayHandler(
     ArrayHandlerExportMixin,
-    ModelIOCallbackHandler[ModelInputTContr, ModelOutputTContr, ndarray],
-    Generic[ModelInputTContr, ModelOutputTContr],
+    ModelIOCallbackHandler[ModelOutputTContr, ndarray],
+    Generic[ModelOutputTContr],
 ): ...
 
 
 class ModelIOPlotHandler(
     PlotHandlerExportMixin,
-    ModelIOCallbackHandler[ModelInputTContr, ModelOutputTContr, Figure],
-    Generic[ModelInputTContr, ModelOutputTContr],
+    ModelIOCallbackHandler[ModelOutputTContr, Figure],
+    Generic[ModelOutputTContr],
 ): ...
 
 
 class ModelIOScoreCollectionHandler(
     ScoreCollectionHandlerExportMixin,
-    ModelIOCallbackHandler[ModelInputTContr, ModelOutputTContr, Dict[str, float]],
-    Generic[ModelInputTContr, ModelOutputTContr],
+    ModelIOCallbackHandler[ModelOutputTContr, Dict[str, float]],
+    Generic[ModelOutputTContr],
 ): ...
 
 
 class ModelIOArrayCollectionHandler(
     ArrayCollectionHandlerExportMixin,
-    ModelIOCallbackHandler[ModelInputTContr, ModelOutputTContr, Dict[str, ndarray]],
-    Generic[ModelInputTContr, ModelOutputTContr],
+    ModelIOCallbackHandler[ModelOutputTContr, Dict[str, ndarray]],
+    Generic[ModelOutputTContr],
 ): ...
 
 
 class ModelIOPlotCollectionHandler(
     PlotCollectionHandlerExportMixin,
-    ModelIOCallbackHandler[ModelInputTContr, ModelOutputTContr, Dict[str, Figure]],
-    Generic[ModelInputTContr, ModelOutputTContr],
+    ModelIOCallbackHandler[ModelOutputTContr, Dict[str, Figure]],
+    Generic[ModelOutputTContr],
 ): ...
 
 
@@ -96,15 +91,15 @@ ModelIOCallbackHandlerSuiteT = TypeVar(
 
 @dataclass(frozen=True)
 class ModelIOCallbackHandlerSuite(
-    CallbackHandlerSuite[ModelIOCallbackHandler[ModelInputTContr, ModelOutputTContr, Any]],
+    CallbackHandlerSuite[ModelIOCallbackHandler[ModelOutputTContr, Any]],
     Generic[ModelInputTContr, ModelOutputTContr],
 ):
-    score_handler: ModelIOScoreHandler[ModelInputTContr, ModelOutputTContr]
-    array_handler: ModelIOArrayHandler[ModelInputTContr, ModelOutputTContr]
-    plot_handler: ModelIOPlotHandler[ModelInputTContr, ModelOutputTContr]
-    score_collection_handler: ModelIOScoreCollectionHandler[ModelInputTContr, ModelOutputTContr]
-    array_collection_handler: ModelIOArrayCollectionHandler[ModelInputTContr, ModelOutputTContr]
-    plot_collection_handler: ModelIOPlotCollectionHandler[ModelInputTContr, ModelOutputTContr]
+    score_handler: ModelIOScoreHandler[ModelOutputTContr]
+    array_handler: ModelIOArrayHandler[ModelOutputTContr]
+    plot_handler: ModelIOPlotHandler[ModelOutputTContr]
+    score_collection_handler: ModelIOScoreCollectionHandler[ModelOutputTContr]
+    array_collection_handler: ModelIOArrayCollectionHandler[ModelOutputTContr]
+    plot_collection_handler: ModelIOPlotCollectionHandler[ModelOutputTContr]
 
     @classmethod
     def build(
@@ -124,23 +119,23 @@ class ModelIOCallbackHandlerSuite(
         tracking_client: Optional[TrackingClient] = None,
     ) -> ModelIOCallbackHandlerSuiteT:
         handler_suite = cls(
-            score_handler=ModelIOScoreHandler[ModelInputTContr, ModelOutputTContr](
+            score_handler=ModelIOScoreHandler[ModelOutputTContr](
                 callbacks=score_callbacks, tracking_client=tracking_client
             ),
-            array_handler=ModelIOArrayHandler[ModelInputTContr, ModelOutputTContr](
+            array_handler=ModelIOArrayHandler[ModelOutputTContr](
                 callbacks=array_callbacks, tracking_client=tracking_client
             ),
-            plot_handler=ModelIOPlotHandler[ModelInputTContr, ModelOutputTContr](
+            plot_handler=ModelIOPlotHandler[ModelOutputTContr](
                 callbacks=plot_callbacks, tracking_client=tracking_client
             ),
-            score_collection_handler=ModelIOScoreCollectionHandler[
-                ModelInputTContr, ModelOutputTContr
-            ](callbacks=score_collection_callbacks, tracking_client=tracking_client),
-            array_collection_handler=ModelIOArrayCollectionHandler[
-                ModelInputTContr, ModelOutputTContr
-            ](callbacks=array_collection_callbacks, tracking_client=tracking_client),
-            plot_collection_handler=ModelIOPlotCollectionHandler[
-                ModelInputTContr, ModelOutputTContr
-            ](callbacks=plot_collection_callbacks, tracking_client=tracking_client),
+            score_collection_handler=ModelIOScoreCollectionHandler[ModelOutputTContr](
+                callbacks=score_collection_callbacks, tracking_client=tracking_client
+            ),
+            array_collection_handler=ModelIOArrayCollectionHandler[ModelOutputTContr](
+                callbacks=array_collection_callbacks, tracking_client=tracking_client
+            ),
+            plot_collection_handler=ModelIOPlotCollectionHandler[ModelOutputTContr](
+                callbacks=plot_collection_callbacks, tracking_client=tracking_client
+            ),
         )
         return handler_suite
