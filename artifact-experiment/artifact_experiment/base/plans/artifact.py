@@ -83,23 +83,17 @@ class ArtifactPlan(
         data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ArtifactPlanT:
-        score_callbacks = cls._build_score_callbacks(
-            resource_spec=resource_spec, data_split=data_split
-        )
-        array_callbacks = cls._build_array_callbacks(
-            resource_spec=resource_spec, data_split=data_split
-        )
-        plot_callbacks = cls._build_plot_callbacks(
-            resource_spec=resource_spec, data_split=data_split
-        )
+        score_callbacks = cls._build_score_callbacks(resource_spec=resource_spec)
+        array_callbacks = cls._build_array_callbacks(resource_spec=resource_spec)
+        plot_callbacks = cls._build_plot_callbacks(resource_spec=resource_spec)
         score_collection_callbacks = cls._build_score_collection_callbacks(
-            resource_spec=resource_spec, data_split=data_split
+            resource_spec=resource_spec
         )
         array_collection_callbacks = cls._build_array_collection_callbacks(
-            resource_spec=resource_spec, data_split=data_split
+            resource_spec=resource_spec
         )
         plot_collection_callbacks = cls._build_plot_collection_callbacks(
-            resource_spec=resource_spec, data_split=data_split
+            resource_spec=resource_spec
         )
         handler_suite = ArtifactCallbackHandlerSuite.build(
             score_callbacks=score_callbacks,
@@ -181,9 +175,11 @@ class ArtifactPlan(
     def _get_custom_plot_collection_types() -> Sequence[str]:
         return []
 
-    def execute_artifacts(self, resources: ArtifactResourcesTContr):
+    def execute_artifacts(
+        self, resources: ArtifactResourcesTContr, data_split: Optional[DataSplit] = None
+    ):
         callback_resources = ArtifactCallbackResources[ArtifactResourcesTContr](
-            artifact_resources=resources
+            artifact_resources=resources, data_split=data_split
         )
         self.execute(resources=callback_resources)
 
@@ -192,7 +188,6 @@ class ArtifactPlan(
         cls,
         resource_spec: ResourceSpecProtocolTContr,
         ls_score_types: Optional[List[Union[ScoreTypeT, str]]] = None,
-        data_split: Optional[DataSplit] = None,
     ) -> Sequence[ArtifactScoreCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]]:
         callback_factory = cls._get_callback_factory()
         if ls_score_types is None:
@@ -201,7 +196,7 @@ class ArtifactPlan(
             )
         ls_callbacks = [
             callback_factory.build_score_callback(
-                score_type=score_type, resource_spec=resource_spec, data_split=data_split
+                score_type=score_type, resource_spec=resource_spec
             )
             for score_type in ls_score_types
         ]
@@ -212,7 +207,6 @@ class ArtifactPlan(
         cls,
         resource_spec: ResourceSpecProtocolTContr,
         ls_array_types: Optional[List[Union[ArrayTypeT, str]]] = None,
-        data_split: Optional[DataSplit] = None,
     ) -> Sequence[ArtifactArrayCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]]:
         callback_factory = cls._get_callback_factory()
         if ls_array_types is None:
@@ -221,7 +215,7 @@ class ArtifactPlan(
             )
         ls_callbacks = [
             callback_factory.build_array_callback(
-                array_type=array_type, resource_spec=resource_spec, data_split=data_split
+                array_type=array_type, resource_spec=resource_spec
             )
             for array_type in ls_array_types
         ]
@@ -232,7 +226,6 @@ class ArtifactPlan(
         cls,
         resource_spec: ResourceSpecProtocolTContr,
         ls_plot_types: Optional[List[Union[PlotTypeT, str]]] = None,
-        data_split: Optional[DataSplit] = None,
     ) -> Sequence[ArtifactPlotCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]]:
         callback_factory = cls._get_callback_factory()
         if ls_plot_types is None:
@@ -240,9 +233,7 @@ class ArtifactPlan(
                 cls._get_plot_types(), cls._get_custom_plot_types()
             )
         ls_callbacks = [
-            callback_factory.build_plot_callback(
-                plot_type=plot_type, resource_spec=resource_spec, data_split=data_split
-            )
+            callback_factory.build_plot_callback(plot_type=plot_type, resource_spec=resource_spec)
             for plot_type in ls_plot_types
         ]
         return ls_callbacks
@@ -252,7 +243,6 @@ class ArtifactPlan(
         cls,
         resource_spec: ResourceSpecProtocolTContr,
         ls_score_collection_types: Optional[List[Union[ScoreCollectionTypeT, str]]] = None,
-        data_split: Optional[DataSplit] = None,
     ) -> Sequence[
         ArtifactScoreCollectionCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]
     ]:
@@ -263,9 +253,7 @@ class ArtifactPlan(
             )
         ls_callbacks = [
             callback_factory.build_score_collection_callback(
-                score_collection_type=score_collection_type,
-                resource_spec=resource_spec,
-                data_split=data_split,
+                score_collection_type=score_collection_type, resource_spec=resource_spec
             )
             for score_collection_type in ls_score_collection_types
         ]
@@ -276,7 +264,6 @@ class ArtifactPlan(
         cls,
         resource_spec: ResourceSpecProtocolTContr,
         ls_array_collection_types: Optional[List[Union[ArrayCollectionTypeT, str]]] = None,
-        data_split: Optional[DataSplit] = None,
     ) -> Sequence[
         ArtifactArrayCollectionCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]
     ]:
@@ -287,9 +274,7 @@ class ArtifactPlan(
             )
         ls_callbacks = [
             callback_factory.build_array_collection_callback(
-                array_collection_type=array_collection_type,
-                resource_spec=resource_spec,
-                data_split=data_split,
+                array_collection_type=array_collection_type, resource_spec=resource_spec
             )
             for array_collection_type in ls_array_collection_types
         ]
@@ -300,7 +285,6 @@ class ArtifactPlan(
         cls,
         resource_spec: ResourceSpecProtocolTContr,
         ls_plot_collection_types: Optional[List[Union[PlotCollectionTypeT, str]]] = None,
-        data_split: Optional[DataSplit] = None,
     ) -> Sequence[
         ArtifactPlotCollectionCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]
     ]:
@@ -311,9 +295,7 @@ class ArtifactPlan(
             )
         ls_callbacks = [
             callback_factory.build_plot_collection_callback(
-                plot_collection_type=plot_collection_type,
-                resource_spec=resource_spec,
-                data_split=data_split,
+                plot_collection_type=plot_collection_type, resource_spec=resource_spec
             )
             for plot_collection_type in ls_plot_collection_types
         ]
