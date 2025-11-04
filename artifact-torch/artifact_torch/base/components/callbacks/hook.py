@@ -1,15 +1,14 @@
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import Dict, Generic, List, Optional, Sequence, TypeVar
+from typing import Dict, Generic, List, Sequence, TypeVar
 
 import torch.nn as nn
-from artifact_experiment.base.entities.data_split import DataSplit
 from artifact_experiment.base.tracking.client import TrackingClient
 from torch.utils.hooks import RemovableHandle
 
 from artifact_torch.base.components.callbacks.periodic import (
-    PeriodicCallbackResources,
     PeriodicTrackingCallback,
+    PeriodicTrackingCallbackResources,
 )
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput
@@ -18,8 +17,8 @@ ModelTCov = TypeVar("ModelTCov", bound=Model, covariant=True)
 ModelInputTCov = TypeVar("ModelInputTCov", bound=ModelInput, covariant=True)
 
 
-@dataclass
-class HookCallbackResources(PeriodicCallbackResources, Generic[ModelTCov]):
+@dataclass(frozen=True)
+class HookCallbackResources(PeriodicTrackingCallbackResources, Generic[ModelTCov]):
     model: ModelTCov
 
 
@@ -32,15 +31,15 @@ class HookCallback(
     PeriodicTrackingCallback[HookCallbackResources[ModelTContr], CacheDataT],
     Generic[ModelTContr, CacheDataT, HookResultT],
 ):
-    def __init__(self, period: int, data_split: Optional[DataSplit] = None):
-        name = self._get_name()
-        super().__init__(name=name, period=period, data_split=data_split)
+    def __init__(self, period: int):
+        base_key = self._get_base_key()
+        super().__init__(base_key=base_key, period=period)
         self._hook_results: Dict[str, List[HookResultT]] = {}
         self._handles: List[RemovableHandle] = []
 
     @classmethod
     @abstractmethod
-    def _get_name(cls) -> str: ...
+    def _get_base_key(cls) -> str: ...
 
     @classmethod
     @abstractmethod
@@ -69,14 +68,9 @@ class HookCallback(
 
     def _compute(self, resources: HookCallbackResources[ModelTContr]) -> CacheDataT:
         _ = resources
-        result = self._finalize()
-        self._detach()
-        return result
-
-    def _finalize(self) -> CacheDataT:
         result = self._aggregate(hook_results=self._hook_results)
         self._hook_results.clear()
-        self._cache[self._key] = result
+        self._detach()
         return result
 
     def _detach(self):
