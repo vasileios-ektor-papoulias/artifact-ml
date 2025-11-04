@@ -11,16 +11,16 @@ from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.base.trainer.training_state import TrainingState
 
-ModelT = TypeVar("ModelT", bound=Model[Any, Any])
-ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
-ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
+ModelTContr = TypeVar("ModelTContr", bound=Model[Any, Any], contravariant=True)
+ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
+ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput, contravariant=True)
 
 
-class TrainerBase(ABC, Generic[ModelT, ModelInputT, ModelOutputT]):
+class TrainerBase(ABC, Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]):
     def __init__(
         self,
-        training_state: TrainingState[ModelT],
-        train_loader: DataLoader[ModelInputT],
+        training_state: TrainingState[ModelTContr],
+        train_loader: DataLoader[ModelInputTContr],
         device: torch.device,
     ):
         self._training_state = training_state
@@ -29,16 +29,12 @@ class TrainerBase(ABC, Generic[ModelT, ModelInputT, ModelOutputT]):
         self._n_epochs_elapsed = 0
 
     @property
-    def training_state(self) -> TrainingState[ModelT]:
+    def training_state(self) -> TrainingState[ModelTContr]:
         return self._training_state
 
     @property
-    def train_loader(self) -> DataLoader[ModelInputT]:
+    def train_loader(self) -> DataLoader[ModelInputTContr]:
         return self._train_loader
-
-    @property
-    def model(self) -> ModelT:
-        return self._training_state.model
 
     @property
     def optimizer(self) -> optim.Optimizer:
@@ -64,16 +60,11 @@ class TrainerBase(ABC, Generic[ModelT, ModelInputT, ModelOutputT]):
     def _should_stop(self) -> bool: ...
 
     @abstractmethod
-    def _execute_epoch_postprocessing(self):
-        self._n_epochs_elapsed += 1
+    def _execute_epoch_preprocessing(self): ...
 
     @abstractmethod
-    def _execute_batch_postprocessing(
-        self,
-        model_input: ModelInputT,
-        model_output: ModelOutputT,
-        batch_idx: int,
-    ): ...
+    def _execute_epoch_postprocessing(self):
+        self._n_epochs_elapsed += 1
 
     @abstractmethod
     def _get_progress_bar_description(self) -> str: ...
@@ -82,6 +73,7 @@ class TrainerBase(ABC, Generic[ModelT, ModelInputT, ModelOutputT]):
         self._training_state.model.device = self.device
         print(f"Training on device: {self.device}")
         while not self._should_stop():
+            self._execute_epoch_preprocessing()
             self._train_one_epoch()
             self._execute_epoch_postprocessing()
 
@@ -92,19 +84,11 @@ class TrainerBase(ABC, Generic[ModelT, ModelInputT, ModelOutputT]):
         self._training_state.model.train()
         self._train_loader.device = self._training_state.model.device
         progress_bar_desc = self._get_progress_bar_description()
-        for batch_idx, batch in tqdm(
-            enumerate(self._train_loader), desc=progress_bar_desc, leave=False
-        ):
-            model_output = self._train_one_batch(batch=batch)
-            self._execute_batch_postprocessing(
-                model_input=batch, model_output=model_output, batch_idx=batch_idx
-            )
+        for batch in tqdm(self._train_loader, desc=progress_bar_desc, leave=False):
+            self._train_one_batch(batch=batch)
         self._training_state.model.eval()
 
-    def _train_one_batch(
-        self,
-        batch: ModelInputT,
-    ) -> ModelOutputT:
+    def _train_one_batch(self, batch: ModelInputTContr):
         model_output = self._training_state.model(batch)
         t_loss = self._get_loss(model_output=model_output)
         self._training_step(
@@ -127,7 +111,7 @@ class TrainerBase(ABC, Generic[ModelT, ModelInputT, ModelOutputT]):
             scheduler.step()
 
     @staticmethod
-    def _get_loss(model_output: ModelOutputT) -> torch.Tensor:
+    def _get_loss(model_output: ModelOutputTContr) -> torch.Tensor:
         loss = model_output.get("t_loss")
         assert loss is not None
         return loss
