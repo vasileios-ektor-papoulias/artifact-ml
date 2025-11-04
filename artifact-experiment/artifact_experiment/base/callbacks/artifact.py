@@ -34,18 +34,22 @@ class ArtifactCallbackResources(CallbackResources, Generic[ArtifactResourcesTCov
 ArtifactResourcesTContr = TypeVar(
     "ArtifactResourcesTContr", bound=ArtifactResources, contravariant=True
 )
-ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
+ResourceSpecProtocolTContr = TypeVar(
+    "ResourceSpecProtocolTContr", bound=ResourceSpecProtocol, contravariant=True
+)
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 
 class ArtifactCallback(
     TrackingCallback[ArtifactCallbackResources[ArtifactResourcesTContr], ArtifactResultT],
-    Generic[ArtifactResourcesTContr, ResourceSpecProtocolT, ArtifactResultT],
+    Generic[ArtifactResourcesTContr, ResourceSpecProtocolTContr, ArtifactResultT],
 ):
     def __init__(
         self,
         name: str,
-        artifact: Artifact[ArtifactResourcesTContr, ResourceSpecProtocolT, Any, ArtifactResultT],
+        artifact: Artifact[
+            ArtifactResourcesTContr, ResourceSpecProtocolTContr, Any, ArtifactResultT
+        ],
         data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ):
@@ -65,41 +69,41 @@ class ArtifactCallback(
 
 class ArtifactScoreCallback(
     ScoreExportMixin,
-    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolT, float],
+    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr, float],
 ):
     pass
 
 
 class ArtifactArrayCallback(
     ArrayExportMixin,
-    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolT, ndarray],
+    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr, ndarray],
 ):
     pass
 
 
 class ArtifactPlotCallback(
     PlotExportMixin,
-    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolT, Figure],
+    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr, Figure],
 ):
     pass
 
 
 class ArtifactScoreCollectionCallback(
     ScoreCollectionExportMixin,
-    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolT, Dict[str, float]],
+    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr, Dict[str, float]],
 ):
     pass
 
 
 class ArtifactArrayCollectionCallback(
     ArrayCollectionExportMixin,
-    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolT, Dict[str, ndarray]],
+    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr, Dict[str, ndarray]],
 ):
     pass
 
 
 class ArtifactPlotCollectionCallback(
     PlotCollectionExportMixin,
-    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolT, Dict[str, Figure]],
+    ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr, Dict[str, Figure]],
 ):
     pass

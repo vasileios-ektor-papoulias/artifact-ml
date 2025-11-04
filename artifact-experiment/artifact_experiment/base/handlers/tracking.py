@@ -17,7 +17,7 @@ TrackingCallbackTCov = TypeVar(
 CallbackResourcesTContr = TypeVar(
     "CallbackResourcesTContr", bound=CallbackResources, contravariant=True
 )
-CacheDataT = TypeVar("CacheDataT")
+CacheDataT = TypeVar("CacheDataT", covariant=True)
 
 
 class TrackingCallbackHandler(

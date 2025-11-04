@@ -8,25 +8,25 @@ CacheCallbackTCov = TypeVar("CacheCallbackTCov", bound=CacheCallback[Any, Any], 
 CallbackResourcesTContr = TypeVar(
     "CallbackResourcesTContr", bound=CallbackResources, contravariant=True
 )
-CacheDataT = TypeVar("CacheDataT")
+CacheDataTCov = TypeVar("CacheDataTCov", covariant=True)
 
 
 class CacheCallbackHandler(
     CallbackHandler[CacheCallbackTCov, CallbackResourcesTContr],
-    Generic[CacheCallbackTCov, CallbackResourcesTContr, CacheDataT],
+    Generic[CacheCallbackTCov, CallbackResourcesTContr, CacheDataTCov],
 ):
     def __init__(self, callbacks: Optional[Sequence[CacheCallbackTCov]] = None):
         super().__init__(callbacks=callbacks)
-        self._cache: Dict[str, Optional[CacheDataT]] = {
+        self._cache: Dict[str, Optional[CacheDataTCov]] = {
             callback.key: callback.value for callback in self._ls_callbacks
         }
 
     @property
-    def cache(self) -> Dict[str, Optional[CacheDataT]]:
+    def cache(self) -> Dict[str, Optional[CacheDataTCov]]:
         return self._cache
 
     @property
-    def active_cache(self) -> Dict[str, CacheDataT]:
+    def active_cache(self) -> Dict[str, CacheDataTCov]:
         active_cache = self._get_active_cache(cache=self._cache)
         return active_cache
 
@@ -56,7 +56,7 @@ class CacheCallbackHandler(
 
     @staticmethod
     def _get_active_cache(
-        cache: Dict[str, Optional[CacheDataT]],
-    ) -> Dict[str, CacheDataT]:
+        cache: Dict[str, Optional[CacheDataTCov]],
+    ) -> Dict[str, CacheDataTCov]:
         active_cache = {key: value for key, value in cache.items() if value is not None}
         return active_cache

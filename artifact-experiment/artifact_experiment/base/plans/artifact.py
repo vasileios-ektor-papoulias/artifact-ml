@@ -24,8 +24,12 @@ from artifact_experiment.base.plans.callback_factory import ArtifactCallbackFact
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_experiment.libs.utils.sequence_concatenator import SequenceConcatenator
 
-ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound=ArtifactResources)
-ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
+ArtifactResourcesTContr = TypeVar(
+    "ArtifactResourcesTContr", bound=ArtifactResources, contravariant=True
+)
+ResourceSpecProtocolTContr = TypeVar(
+    "ResourceSpecProtocolTContr", bound=ResourceSpecProtocol, contravariant=True
+)
 ScoreTypeT = TypeVar("ScoreTypeT", bound=ArtifactType)
 ArrayTypeT = TypeVar("ArrayTypeT", bound=ArtifactType)
 PlotTypeT = TypeVar("PlotTypeT", bound=ArtifactType)
@@ -38,16 +42,16 @@ ArtifactPlanT = TypeVar("ArtifactPlanT", bound="ArtifactPlan")
 class ArtifactPlan(
     CallbackExecutionPlan[
         ArtifactCallbackHandler[
-            ArtifactResourcesT,
-            ResourceSpecProtocolT,
+            ArtifactResourcesTContr,
+            ResourceSpecProtocolTContr,
             Any,
         ],
-        ArtifactCallback[ArtifactResourcesT, ResourceSpecProtocolT, Any],
-        ArtifactCallbackResources[ArtifactResourcesT],
+        ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr, Any],
+        ArtifactCallbackResources[ArtifactResourcesTContr],
     ],
     Generic[
-        ArtifactResourcesT,
-        ResourceSpecProtocolT,
+        ArtifactResourcesTContr,
+        ResourceSpecProtocolTContr,
         ScoreTypeT,
         ArrayTypeT,
         PlotTypeT,
@@ -58,8 +62,10 @@ class ArtifactPlan(
 ):
     def __init__(
         self,
-        handler_suite: ArtifactCallbackHandlerSuite[ArtifactResourcesT, ResourceSpecProtocolT],
-        resource_spec: ResourceSpecProtocolT,
+        handler_suite: ArtifactCallbackHandlerSuite[
+            ArtifactResourcesTContr, ResourceSpecProtocolTContr
+        ],
+        resource_spec: ResourceSpecProtocolTContr,
         data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ):
@@ -73,7 +79,7 @@ class ArtifactPlan(
     @classmethod
     def build(
         cls: Type[ArtifactPlanT],
-        resource_spec: ResourceSpecProtocolT,
+        resource_spec: ResourceSpecProtocolTContr,
         data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> ArtifactPlanT:
@@ -116,8 +122,8 @@ class ArtifactPlan(
     @abstractmethod
     def _get_callback_factory() -> Type[
         ArtifactCallbackFactory[
-            ArtifactResourcesT,
-            ResourceSpecProtocolT,
+            ArtifactResourcesTContr,
+            ResourceSpecProtocolTContr,
             ScoreTypeT,
             ArrayTypeT,
             PlotTypeT,
@@ -175,8 +181,8 @@ class ArtifactPlan(
     def _get_custom_plot_collection_types() -> Sequence[str]:
         return []
 
-    def execute_artifacts(self, resources: ArtifactResourcesT):
-        callback_resources = ArtifactCallbackResources[ArtifactResourcesT](
+    def execute_artifacts(self, resources: ArtifactResourcesTContr):
+        callback_resources = ArtifactCallbackResources[ArtifactResourcesTContr](
             artifact_resources=resources
         )
         self.execute(resources=callback_resources)
@@ -184,10 +190,10 @@ class ArtifactPlan(
     @classmethod
     def _build_score_callbacks(
         cls,
-        resource_spec: ResourceSpecProtocolT,
+        resource_spec: ResourceSpecProtocolTContr,
         ls_score_types: Optional[List[Union[ScoreTypeT, str]]] = None,
         data_split: Optional[DataSplit] = None,
-    ) -> Sequence[ArtifactScoreCallback[ArtifactResourcesT, ResourceSpecProtocolT]]:
+    ) -> Sequence[ArtifactScoreCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]]:
         callback_factory = cls._get_callback_factory()
         if ls_score_types is None:
             ls_score_types = SequenceConcatenator.concatenate(
@@ -204,10 +210,10 @@ class ArtifactPlan(
     @classmethod
     def _build_array_callbacks(
         cls,
-        resource_spec: ResourceSpecProtocolT,
+        resource_spec: ResourceSpecProtocolTContr,
         ls_array_types: Optional[List[Union[ArrayTypeT, str]]] = None,
         data_split: Optional[DataSplit] = None,
-    ) -> Sequence[ArtifactArrayCallback[ArtifactResourcesT, ResourceSpecProtocolT]]:
+    ) -> Sequence[ArtifactArrayCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]]:
         callback_factory = cls._get_callback_factory()
         if ls_array_types is None:
             ls_array_types = SequenceConcatenator.concatenate(
@@ -224,10 +230,10 @@ class ArtifactPlan(
     @classmethod
     def _build_plot_callbacks(
         cls,
-        resource_spec: ResourceSpecProtocolT,
+        resource_spec: ResourceSpecProtocolTContr,
         ls_plot_types: Optional[List[Union[PlotTypeT, str]]] = None,
         data_split: Optional[DataSplit] = None,
-    ) -> Sequence[ArtifactPlotCallback[ArtifactResourcesT, ResourceSpecProtocolT]]:
+    ) -> Sequence[ArtifactPlotCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]]:
         callback_factory = cls._get_callback_factory()
         if ls_plot_types is None:
             ls_plot_types = SequenceConcatenator.concatenate(
@@ -244,10 +250,12 @@ class ArtifactPlan(
     @classmethod
     def _build_score_collection_callbacks(
         cls,
-        resource_spec: ResourceSpecProtocolT,
+        resource_spec: ResourceSpecProtocolTContr,
         ls_score_collection_types: Optional[List[Union[ScoreCollectionTypeT, str]]] = None,
         data_split: Optional[DataSplit] = None,
-    ) -> Sequence[ArtifactScoreCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT]]:
+    ) -> Sequence[
+        ArtifactScoreCollectionCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]
+    ]:
         callback_factory = cls._get_callback_factory()
         if ls_score_collection_types is None:
             ls_score_collection_types = SequenceConcatenator.concatenate(
@@ -266,10 +274,12 @@ class ArtifactPlan(
     @classmethod
     def _build_array_collection_callbacks(
         cls,
-        resource_spec: ResourceSpecProtocolT,
+        resource_spec: ResourceSpecProtocolTContr,
         ls_array_collection_types: Optional[List[Union[ArrayCollectionTypeT, str]]] = None,
         data_split: Optional[DataSplit] = None,
-    ) -> Sequence[ArtifactArrayCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT]]:
+    ) -> Sequence[
+        ArtifactArrayCollectionCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]
+    ]:
         callback_factory = cls._get_callback_factory()
         if ls_array_collection_types is None:
             ls_array_collection_types = SequenceConcatenator.concatenate(
@@ -288,10 +298,12 @@ class ArtifactPlan(
     @classmethod
     def _build_plot_collection_callbacks(
         cls,
-        resource_spec: ResourceSpecProtocolT,
+        resource_spec: ResourceSpecProtocolTContr,
         ls_plot_collection_types: Optional[List[Union[PlotCollectionTypeT, str]]] = None,
         data_split: Optional[DataSplit] = None,
-    ) -> Sequence[ArtifactPlotCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT]]:
+    ) -> Sequence[
+        ArtifactPlotCollectionCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]
+    ]:
         callback_factory = cls._get_callback_factory()
         if ls_plot_collection_types is None:
             ls_plot_collection_types = SequenceConcatenator.concatenate(

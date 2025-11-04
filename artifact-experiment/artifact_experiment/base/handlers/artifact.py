@@ -31,66 +31,72 @@ from artifact_experiment.base.handlers.tracking import (
 )
 from artifact_experiment.base.tracking.client import TrackingClient
 
-ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound=ArtifactResources)
-ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
+ArtifactResourcesTContr = TypeVar(
+    "ArtifactResourcesTContr", bound=ArtifactResources, contravariant=True
+)
+ResourceSpecProtocolTContr = TypeVar(
+    "ResourceSpecProtocolTContr", bound=ResourceSpecProtocol, contravariant=True
+)
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 
 class ArtifactCallbackHandler(
     TrackingCallbackHandler[
-        ArtifactCallback[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactResultT],
-        ArtifactCallbackResources[ArtifactResourcesT],
+        ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr, ArtifactResultT],
+        ArtifactCallbackResources[ArtifactResourcesTContr],
         Any,
     ],
-    Generic[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactResultT],
+    Generic[ArtifactResourcesTContr, ResourceSpecProtocolTContr, ArtifactResultT],
 ):
     pass
 
 
 class ArtifactScoreHandler(
     ScoreHandlerExportMixin,
-    ArtifactCallbackHandler[ArtifactResourcesT, ResourceSpecProtocolT, float],
-    Generic[ArtifactResourcesT, ResourceSpecProtocolT],
+    ArtifactCallbackHandler[ArtifactResourcesTContr, ResourceSpecProtocolTContr, float],
+    Generic[ArtifactResourcesTContr, ResourceSpecProtocolTContr],
 ):
     pass
 
 
 class ArtifactArrayHandler(
     ArrayHandlerExportMixin,
-    ArtifactCallbackHandler[ArtifactResourcesT, ResourceSpecProtocolT, ndarray],
-    Generic[ArtifactResourcesT, ResourceSpecProtocolT],
+    ArtifactCallbackHandler[ArtifactResourcesTContr, ResourceSpecProtocolTContr, ndarray],
+    Generic[ArtifactResourcesTContr, ResourceSpecProtocolTContr],
 ):
     pass
 
 
 class ArtifactPlotHandler(
     PlotHandlerExportMixin,
-    ArtifactCallbackHandler[ArtifactResourcesT, ResourceSpecProtocolT, Figure],
-    Generic[ArtifactResourcesT, ResourceSpecProtocolT],
+    ArtifactCallbackHandler[ArtifactResourcesTContr, ResourceSpecProtocolTContr, Figure],
+    Generic[ArtifactResourcesTContr, ResourceSpecProtocolTContr],
 ):
     pass
 
 
 class ArtifactScoreCollectionHandler(
     ScoreCollectionHandlerExportMixin,
-    ArtifactCallbackHandler[ArtifactResourcesT, ResourceSpecProtocolT, Dict[str, float]],
-    Generic[ArtifactResourcesT, ResourceSpecProtocolT],
+    ArtifactCallbackHandler[ArtifactResourcesTContr, ResourceSpecProtocolTContr, Dict[str, float]],
+    Generic[ArtifactResourcesTContr, ResourceSpecProtocolTContr],
 ):
     pass
 
 
 class ArtifactArrayCollectionHandler(
     ArrayCollectionHandlerExportMixin,
-    ArtifactCallbackHandler[ArtifactResourcesT, ResourceSpecProtocolT, Dict[str, ndarray]],
-    Generic[ArtifactResourcesT, ResourceSpecProtocolT],
+    ArtifactCallbackHandler[
+        ArtifactResourcesTContr, ResourceSpecProtocolTContr, Dict[str, ndarray]
+    ],
+    Generic[ArtifactResourcesTContr, ResourceSpecProtocolTContr],
 ):
     pass
 
 
 class ArtifactPlotCollectionHandler(
     PlotCollectionHandlerExportMixin,
-    ArtifactCallbackHandler[ArtifactResourcesT, ResourceSpecProtocolT, Dict[str, Figure]],
-    Generic[ArtifactResourcesT, ResourceSpecProtocolT],
+    ArtifactCallbackHandler[ArtifactResourcesTContr, ResourceSpecProtocolTContr, Dict[str, Figure]],
+    Generic[ArtifactResourcesTContr, ResourceSpecProtocolTContr],
 ):
     pass
 
@@ -102,36 +108,44 @@ ArtifactCallbackHandlerSuiteT = TypeVar(
 
 @dataclass(frozen=True)
 class ArtifactCallbackHandlerSuite(
-    CallbackHandlerSuite[ArtifactCallbackHandler[ArtifactResourcesT, ResourceSpecProtocolT, Any]],
-    Generic[ArtifactResourcesT, ResourceSpecProtocolT],
+    CallbackHandlerSuite[
+        ArtifactCallbackHandler[ArtifactResourcesTContr, ResourceSpecProtocolTContr, Any]
+    ],
+    Generic[ArtifactResourcesTContr, ResourceSpecProtocolTContr],
 ):
-    score_handler: ArtifactScoreHandler[ArtifactResourcesT, ResourceSpecProtocolT]
-    array_handler: ArtifactArrayHandler[ArtifactResourcesT, ResourceSpecProtocolT]
-    plot_handler: ArtifactPlotHandler[ArtifactResourcesT, ResourceSpecProtocolT]
+    score_handler: ArtifactScoreHandler[ArtifactResourcesTContr, ResourceSpecProtocolTContr]
+    array_handler: ArtifactArrayHandler[ArtifactResourcesTContr, ResourceSpecProtocolTContr]
+    plot_handler: ArtifactPlotHandler[ArtifactResourcesTContr, ResourceSpecProtocolTContr]
     score_collection_handler: ArtifactScoreCollectionHandler[
-        ArtifactResourcesT, ResourceSpecProtocolT
+        ArtifactResourcesTContr, ResourceSpecProtocolTContr
     ]
     array_collection_handler: ArtifactArrayCollectionHandler[
-        ArtifactResourcesT, ResourceSpecProtocolT
+        ArtifactResourcesTContr, ResourceSpecProtocolTContr
     ]
     plot_collection_handler: ArtifactPlotCollectionHandler[
-        ArtifactResourcesT, ResourceSpecProtocolT
+        ArtifactResourcesTContr, ResourceSpecProtocolTContr
     ]
 
     @classmethod
     def build(
         cls: Type[ArtifactCallbackHandlerSuiteT],
-        score_callbacks: Sequence[ArtifactScoreCallback[ArtifactResourcesT, ResourceSpecProtocolT]],
-        array_callbacks: Sequence[ArtifactArrayCallback[ArtifactResourcesT, ResourceSpecProtocolT]],
-        plot_callbacks: Sequence[ArtifactPlotCallback[ArtifactResourcesT, ResourceSpecProtocolT]],
+        score_callbacks: Sequence[
+            ArtifactScoreCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]
+        ],
+        array_callbacks: Sequence[
+            ArtifactArrayCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]
+        ],
+        plot_callbacks: Sequence[
+            ArtifactPlotCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]
+        ],
         score_collection_callbacks: Sequence[
-            ArtifactScoreCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT]
+            ArtifactScoreCollectionCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]
         ],
         array_collection_callbacks: Sequence[
-            ArtifactArrayCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT]
+            ArtifactArrayCollectionCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]
         ],
         plot_collection_callbacks: Sequence[
-            ArtifactPlotCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT]
+            ArtifactPlotCollectionCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr]
         ],
         tracking_client: Optional[TrackingClient] = None,
     ) -> ArtifactCallbackHandlerSuiteT:
