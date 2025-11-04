@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Generic, TypeVar
 
 
-@dataclass
+@dataclass(frozen=True)
 class CallbackResources:
     pass
 
