@@ -1,7 +1,6 @@
 from abc import abstractmethod
 from typing import Any, Generic, Optional, Sequence, Type, TypeVar
 
-from artifact_experiment.base.entities.data_split import DataSplit
 from artifact_experiment.base.plans.base import CallbackExecutionPlan
 from artifact_experiment.base.tracking.client import TrackingClient
 
@@ -22,7 +21,7 @@ from artifact_torch.base.components.handlers.hook import (
 from artifact_torch.base.model.base import Model
 
 ModelTContr = TypeVar("ModelTContr", bound=Model[Any, Any], contravariant=True)
-BackwardHookPlanT = TypeVar("BackwardHookPlanT", bound="BackwardHookPlan")
+BackwardHookPlanT = TypeVar("BackwardHookPlanT", bound="BackwardHookPlan[Any]")
 
 
 class BackwardHookPlan(
@@ -36,27 +35,21 @@ class BackwardHookPlan(
     def __init__(
         self,
         handler_suite: HookCallbackHandlerSuite[ModelTContr],
-        data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ):
-        super().__init__(
-            handler_suite=handler_suite,
-            data_split=data_split,
-            tracking_client=tracking_client,
-        )
+        super().__init__(handler_suite=handler_suite, tracking_client=tracking_client)
 
     @classmethod
     def build(
         cls: Type[BackwardHookPlanT],
-        data_split: Optional[DataSplit] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> BackwardHookPlanT:
-        score_callbacks = cls._get_score_callbacks(data_split=data_split)
-        array_callbacks = cls._get_array_callbacks(data_split=data_split)
-        plot_callbacks = cls._get_plot_callbacks(data_split=data_split)
-        score_collection_callbacks = cls._get_score_collection_callbacks(data_split=data_split)
-        array_collection_callbacks = cls._get_array_collection_callbacks(data_split=data_split)
-        plot_collection_callbacks = cls._get_plot_collection_callbacks(data_split=data_split)
+        score_callbacks = cls._get_score_callbacks()
+        array_callbacks = cls._get_array_callbacks()
+        plot_callbacks = cls._get_plot_callbacks()
+        score_collection_callbacks = cls._get_score_collection_callbacks()
+        array_collection_callbacks = cls._get_array_collection_callbacks()
+        plot_collection_callbacks = cls._get_plot_collection_callbacks()
         handler_suite = HookCallbackHandlerSuite[ModelTContr].build(
             score_callbacks=score_callbacks,
             array_callbacks=array_callbacks,
@@ -66,48 +59,38 @@ class BackwardHookPlan(
             plot_collection_callbacks=plot_collection_callbacks,
             tracking_client=tracking_client,
         )
-        plan = cls(
-            handler_suite=handler_suite,
-            data_split=data_split,
-            tracking_client=tracking_client,
-        )
+        plan = cls(handler_suite=handler_suite, tracking_client=tracking_client)
         return plan
 
     @staticmethod
     @abstractmethod
-    def _get_score_callbacks(
-        data_split: Optional[DataSplit],
-    ) -> Sequence[BackwardHookScoreCallback[ModelTContr]]: ...
+    def _get_score_callbacks() -> Sequence[BackwardHookScoreCallback[ModelTContr]]: ...
 
     @staticmethod
     @abstractmethod
-    def _get_array_callbacks(
-        data_split: Optional[DataSplit],
-    ) -> Sequence[BackwardHookArrayCallback[ModelTContr]]: ...
+    def _get_array_callbacks() -> Sequence[BackwardHookArrayCallback[ModelTContr]]: ...
 
     @staticmethod
     @abstractmethod
-    def _get_plot_callbacks(
-        data_split: Optional[DataSplit],
-    ) -> Sequence[BackwardHookPlotCallback[ModelTContr]]: ...
+    def _get_plot_callbacks() -> Sequence[BackwardHookPlotCallback[ModelTContr]]: ...
 
     @staticmethod
     @abstractmethod
-    def _get_score_collection_callbacks(
-        data_split: Optional[DataSplit],
-    ) -> Sequence[BackwardHookScoreCollectionCallback[ModelTContr]]: ...
+    def _get_score_collection_callbacks() -> Sequence[
+        BackwardHookScoreCollectionCallback[ModelTContr]
+    ]: ...
 
     @staticmethod
     @abstractmethod
-    def _get_array_collection_callbacks(
-        data_split: Optional[DataSplit],
-    ) -> Sequence[BackwardHookArrayCollectionCallback[ModelTContr]]: ...
+    def _get_array_collection_callbacks() -> Sequence[
+        BackwardHookArrayCollectionCallback[ModelTContr]
+    ]: ...
 
     @staticmethod
     @abstractmethod
-    def _get_plot_collection_callbacks(
-        data_split: Optional[DataSplit],
-    ) -> Sequence[BackwardHookPlotCollectionCallback[ModelTContr]]: ...
+    def _get_plot_collection_callbacks() -> Sequence[
+        BackwardHookPlotCollectionCallback[ModelTContr]
+    ]: ...
 
     def attach(self, resources: HookCallbackResources[ModelTContr]) -> bool:
         any_attached = False
