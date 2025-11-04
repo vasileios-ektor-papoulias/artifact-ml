@@ -7,6 +7,7 @@ from artifact_core.binary_classification.artifacts.base import (
 )
 from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
 
+from artifact_experiment.base.entities.data_split import DataSplit
 from artifact_experiment.base.plans.artifact import ArtifactPlan
 from artifact_experiment.base.plans.callback_factory import ArtifactCallbackFactory
 from artifact_experiment.binary_classification.callback_factory import (
@@ -61,11 +62,12 @@ class BinaryClassificationPlan(
         true: Mapping[IdentifierType, str],
         predicted: Mapping[IdentifierType, str],
         probs_pos: Optional[Mapping[IdentifierType, float]] = None,
+        data_split: Optional[DataSplit] = None,
     ):
-        callback_resources = BinaryClassificationArtifactResources.from_spec(
+        artifact_resources = BinaryClassificationArtifactResources.from_spec(
             class_spec=self._resource_spec, true=true, predicted=predicted, probs_pos=probs_pos
         )
-        super().execute_artifacts(resources=callback_resources)
+        super().execute_artifacts(resources=artifact_resources, data_split=data_split)
 
     @staticmethod
     def _get_callback_factory() -> Type[
