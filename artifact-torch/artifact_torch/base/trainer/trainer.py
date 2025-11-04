@@ -6,7 +6,6 @@ import torch
 from artifact_experiment.base.tracking.client import TrackingClient
 from torch import optim
 
-from artifact_torch.base.components.cache.cache import StandardCache
 from artifact_torch.base.components.cache.score_cache import ScoreCache
 from artifact_torch.base.components.callbacks.checkpoint import (
     CheckpointCallback,
@@ -19,65 +18,70 @@ from artifact_torch.base.components.model_tracking.tracker import (
     ModelTrackingCriterion,
 )
 from artifact_torch.base.components.routines.artifact import ArtifactRoutine
-from artifact_torch.base.components.routines.batch import BatchRoutine
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
+from artifact_torch.base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
 from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.base.trainer.base import TrainerBase
-from artifact_torch.base.trainer.batch_end_flow import BatchEndFlow
-from artifact_torch.base.trainer.epoch_end_flow import EpochEndFlow
+from artifact_torch.base.trainer.routine_suite import RoutineSuite
 from artifact_torch.base.trainer.training_state import TrainingState
 
-ModelT = TypeVar("ModelT", bound=Model[Any, Any])
-ModelInputT = TypeVar("ModelInputT", bound=ModelInput)
-ModelOutputT = TypeVar("ModelOutputT", bound=ModelOutput)
+ModelTContr = TypeVar("ModelTContr", bound=Model[Any, Any], contravariant=True)
+ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
+ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput, contravariant=True)
 StopperUpdateDataT = TypeVar("StopperUpdateDataT", bound=StopperUpdateData)
 ModelTrackingCriterionT = TypeVar("ModelTrackingCriterionT", bound=ModelTrackingCriterion)
 TrainerT = TypeVar("TrainerT", bound="Trainer")
 
 
 class Trainer(
-    TrainerBase[ModelT, ModelInputT, ModelOutputT],
-    Generic[ModelT, ModelInputT, ModelOutputT, StopperUpdateDataT, ModelTrackingCriterionT],
+    TrainerBase[ModelTContr, ModelInputTContr, ModelOutputTContr],
+    Generic[
+        ModelTContr,
+        ModelInputTContr,
+        ModelOutputTContr,
+        StopperUpdateDataT,
+        ModelTrackingCriterionT,
+    ],
 ):
     _train_loss_key = "loss_train"
     _val_loss_key = "loss_val"
-    _cache_batch_artifacts = True
 
     def __init__(
         self,
-        training_state: TrainingState[ModelT],
-        train_loader: DataLoader[ModelInputT],
+        training_state: TrainingState[ModelTContr],
+        train_loader: DataLoader[ModelInputTContr],
         device: torch.device,
         early_stopper: EarlyStopper[StopperUpdateDataT],
         model_tracker: Optional[ModelTracker[ModelTrackingCriterionT]],
         checkpoint_callback: Optional[CheckpointCallback],
-        batch_end_flow: BatchEndFlow[ModelInputT, ModelOutputT],
-        epoch_end_flow: EpochEndFlow[ModelT, ModelInputT, ModelOutputT],
+        routine_suite: RoutineSuite[ModelTContr, ModelInputTContr, ModelOutputTContr],
     ):
         super().__init__(training_state=training_state, train_loader=train_loader, device=device)
         self._early_stopper = early_stopper
         self._model_tracker = model_tracker
         self._checkpoint_callback = checkpoint_callback
-        self._batch_end_flow = batch_end_flow
-        self._epoch_end_flow = epoch_end_flow
-        self._batch_cache = StandardCache[Any]()
+        self._routine_suite = routine_suite
         self._epoch_score_cache = ScoreCache()
 
     @classmethod
     def build(
         cls: Type[TrainerT],
-        model: ModelT,
-        train_loader: DataLoader[ModelInputT],
-        batch_routine: Optional[BatchRoutine[ModelInputT, ModelOutputT]] = None,
-        loader_routine: Optional[DataLoaderRoutine[ModelT, ModelInputT, ModelOutputT]] = None,
-        artifact_routine: Optional[ArtifactRoutine[ModelT, Any, Any, Any, Any]] = None,
+        model: ModelTContr,
+        train_loader: DataLoader[ModelInputTContr],
+        train_diagnostics_routine: Optional[
+            TrainDiagnosticsRoutine[ModelTContr, ModelInputTContr, ModelOutputTContr]
+        ] = None,
+        loader_routine: Optional[
+            DataLoaderRoutine[ModelTContr, ModelInputTContr, ModelOutputTContr]
+        ] = None,
+        artifact_routine: Optional[ArtifactRoutine[ModelTContr, Any, Any, Any, Any]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ) -> TrainerT:
         optimizer = cls._get_optimizer(model=model)
         scheduler = cls._get_scheduler(optimizer=optimizer)
-        training_state = TrainingState[ModelT](
+        training_state = TrainingState[ModelTContr](
             model=model,
             optimizer=optimizer,
             scheduler=scheduler,
@@ -86,9 +90,10 @@ class Trainer(
         early_stopper = cls._get_early_stopper()
         model_tracker = cls._get_model_tracker()
         checkpoint_callback = cls._get_checkpoint_callback(tracking_client=tracking_client)
-        batch_end_flow = BatchEndFlow(batch_routine=batch_routine)
-        epoch_end_flow = EpochEndFlow(
-            artifact_routine=artifact_routine, loader_routine=loader_routine
+        routine_suite = RoutineSuite(
+            train_diagnostics_routine=train_diagnostics_routine,
+            artifact_routine=artifact_routine,
+            loader_routine=loader_routine,
         )
         trainer = cls(
             training_state=training_state,
@@ -97,8 +102,7 @@ class Trainer(
             early_stopper=early_stopper,
             model_tracker=model_tracker,
             checkpoint_callback=checkpoint_callback,
-            batch_end_flow=batch_end_flow,
-            epoch_end_flow=epoch_end_flow,
+            routine_suite=routine_suite,
         )
         return trainer
 
@@ -107,21 +111,17 @@ class Trainer(
         return self._epoch_score_cache.scores
 
     @property
-    def batch_cache(self) -> StandardCache[Any]:
-        return self._batch_cache
+    def latest_model_state(self) -> Dict[str, Any]:
+        return self._training_state.model.state_dict()
 
     @property
     def best_model_state(self) -> Optional[Dict[str, Any]]:
         if self._model_tracker is not None:
             return self._model_tracker.best_model_state
 
-    @property
-    def latest_model_state(self) -> Dict[str, Any]:
-        return self.model.state_dict()
-
     @staticmethod
     @abstractmethod
-    def _get_optimizer(model: ModelT) -> optim.Optimizer: ...
+    def _get_optimizer(model: ModelTContr) -> optim.Optimizer: ...
 
     @staticmethod
     @abstractmethod
@@ -156,44 +156,24 @@ class Trainer(
     def _should_stop(self) -> bool:
         return self._early_stopper.stopped
 
-    def _execute_batch_postprocessing(
-        self,
-        model_input: ModelInputT,
-        model_output: ModelOutputT,
-        batch_idx: int,
-    ):
-        self._execute_batch_end_flow(
-            model_input=model_input,
-            model_output=model_output,
-            batch_idx=batch_idx,
+    def _execute_epoch_preprocessing(self):
+        self._routine_suite.attach_train_diagnostics_hooks(
+            model=self._training_state.model, n_epochs_elapsed=self._n_epochs_elapsed
         )
-
-    def _execute_batch_end_flow(
-        self,
-        model_input: ModelInputT,
-        model_output: ModelOutputT,
-        batch_idx: int,
-    ):
-        self._batch_end_flow.execute(
-            model_input=model_input,
-            model_output=model_output,
-            model=self.model,
-            batch_idx=batch_idx,
-        )
-        if self._cache_batch_artifacts:
-            self._batch_cache.append(items=self._batch_end_flow.cache)
 
     def _execute_epoch_postprocessing(self):
         super()._execute_epoch_postprocessing()
-        self._execute_epoch_end_flow()
+        self._execute_routine_suite()
         self._execute_checkpoint_callback()
         self._update_tracker()
         self._update_stopper()
 
-    def _execute_epoch_end_flow(self):
-        self._epoch_end_flow.clear_cache()
-        self._epoch_end_flow.execute(model=self.model, n_epochs_elapsed=self.n_epochs_elapsed)
-        self._epoch_score_cache.append(self._epoch_end_flow.scores)
+    def _execute_routine_suite(self):
+        self._routine_suite.clear_cache()
+        self._routine_suite.execute(
+            model=self._training_state.model, n_epochs_elapsed=self.n_epochs_elapsed
+        )
+        self._epoch_score_cache.append(self._routine_suite.scores)
 
     def _execute_checkpoint_callback(self):
         if self._checkpoint_callback is not None:
@@ -208,7 +188,7 @@ class Trainer(
             criterion = self._get_model_tracking_criterion()
             assert criterion is not None
             self._model_tracker.update(
-                model=self.model,
+                model=self._training_state.model,
                 criterion=criterion,
                 epoch=self.n_epochs_elapsed,
             )
