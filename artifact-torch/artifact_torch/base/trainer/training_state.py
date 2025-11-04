@@ -6,17 +6,17 @@ from torch import optim
 
 from artifact_torch.base.model.base import Model
 
-ModelT = TypeVar("ModelT", bound=Model[Any, Any])
+ModelTCov = TypeVar("ModelTCov", bound=Model[Any, Any], covariant=True)
 
 
-class TrainingState(Generic[ModelT]):
+class TrainingState(Generic[ModelTCov]):
     _model_state_checkpoint_key: str = "model_state"
     _optimizer_state_checkpoint_key: str = "optimizer_state"
     _scheduler_state_checkpoint_key: str = "scheduler_state"
 
     def __init__(
         self,
-        model: ModelT,
+        model: ModelTCov,
         optimizer: optim.Optimizer,
         scheduler: Optional[optim.lr_scheduler._LRScheduler],
     ):
@@ -26,7 +26,7 @@ class TrainingState(Generic[ModelT]):
         self._validate()
 
     @property
-    def model(self) -> ModelT:
+    def model(self) -> ModelTCov:
         return self._model
 
     @property
@@ -71,7 +71,7 @@ class TrainingState(Generic[ModelT]):
             )
 
     @staticmethod
-    def _validate_optimizer(optimizer: optim.Optimizer, model: ModelT):
+    def _validate_optimizer(optimizer: optim.Optimizer, model: Model[Any, Any]):
         model_param_ids = {id(p) for p in model.parameters()}
         optimizer_param_ids = {id(p) for group in optimizer.param_groups for p in group["params"]}
         if not model_param_ids.issubset(optimizer_param_ids):
