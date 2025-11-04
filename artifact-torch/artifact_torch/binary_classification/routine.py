@@ -21,10 +21,6 @@ from artifact_torch.libs.exports.classification_results import ClassificationRes
 ClassificationParamsTCov = TypeVar(
     "ClassificationParamsTCov", bound=ClassificationParams, covariant=True
 )
-ClassificationDataT = TypeVar("ClassificationDataT")
-BinaryClassificationRoutineT = TypeVar(
-    "BinaryClassificationRoutineT", bound="BinaryClassificationRoutine"
-)
 
 
 @dataclass
@@ -34,21 +30,30 @@ class BinaryClassificationRoutineHyperparams(
     classification_params: ClassificationParamsTCov
 
 
+ClassificationDataTCov = TypeVar("ClassificationDataTCov", covariant=True)
+
+
 @dataclass
-class BinaryClassificationRoutineData(ArtifactRoutineData, Generic[ClassificationDataT]):
+class BinaryClassificationRoutineData(ArtifactRoutineData, Generic[ClassificationDataTCov]):
     true_category_store: BinaryCategoryStore
-    classification_data: ClassificationDataT
+    classification_data: ClassificationDataTCov
+
+
+ClassificationDataTContr = TypeVar("ClassificationDataTContr", contravariant=True)
+BinaryClassificationRoutineT = TypeVar(
+    "BinaryClassificationRoutineT", bound="BinaryClassificationRoutine"
+)
 
 
 class BinaryClassificationRoutine(
     ArtifactRoutine[
-        BinaryClassifier[Any, Any, ClassificationParamsTCov, ClassificationDataT],
+        BinaryClassifier[Any, Any, ClassificationParamsTCov, Any],
         BinaryClassificationRoutineHyperparams[ClassificationParamsTCov],
-        BinaryClassificationRoutineData[ClassificationDataT],
+        BinaryClassificationRoutineData[ClassificationDataTContr],
         BinaryClassificationArtifactResources,
         BinaryFeatureSpecProtocol,
     ],
-    Generic[ClassificationParamsTCov, ClassificationDataT],
+    Generic[ClassificationParamsTCov, ClassificationDataTContr],
 ):
     _resource_export_prefix = "CLASSIFICATION_RESULTS"
 
@@ -81,7 +86,7 @@ class BinaryClassificationRoutine(
         return hyperparams
 
     def _generate_artifact_resources(
-        self, model: BinaryClassifier[Any, Any, ClassificationParamsTCov, ClassificationDataT]
+        self, model: BinaryClassifier[Any, Any, ClassificationParamsTCov, Any]
     ) -> Mapping[DataSplit, BinaryClassificationArtifactResources]:
         resources_by_split = {}
         for data_split in self._data.keys():
