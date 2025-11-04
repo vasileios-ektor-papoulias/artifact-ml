@@ -4,9 +4,9 @@ from artifact_core.core.classification.artifact import ClassificationArtifactRes
 
 from artifact_experiment.base.callbacks.artifact import ArtifactCallbackResources
 
-ClassificationArtifactResourcesT = TypeVar(
-    "ClassificationArtifactResourcesT", bound=ClassificationArtifactResources
+ClassificationArtifactResourcesTCov = TypeVar(
+    "ClassificationArtifactResourcesTCov", bound=ClassificationArtifactResources, covariant=True
 )
 
 
-ClassificationCallbackResources = ArtifactCallbackResources[ClassificationArtifactResourcesT]
+ClassificationCallbackResources = ArtifactCallbackResources[ClassificationArtifactResourcesTCov]
