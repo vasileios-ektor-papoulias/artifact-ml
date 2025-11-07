@@ -14,7 +14,7 @@ from artifact_core.table_comparison.artifacts.base import (
     TableComparisonArtifact,
     TableComparisonArtifactResources,
 )
-from artifact_experiment.base.callbacks.tracking import (
+from artifact_experiment.base.handlers.tracking import (
     ArrayCallbackHandler,
     ArrayCollectionCallbackHandler,
     PlotCallbackHandler,
@@ -26,7 +26,7 @@ from artifact_experiment.table_comparison.callback_factory import TableCompariso
 from artifact_experiment.table_comparison.callback_resources import TableComparisonCallbackResources
 from pytest_mock import MockerFixture
 
-from tests.table_comparison.validation_plan.dummy.validation_plan import DummyTableComparisonPlan
+from tests.table_comparison.validation_plan.dummy.plan import DummyTableComparisonPlan
 
 
 def test_build(

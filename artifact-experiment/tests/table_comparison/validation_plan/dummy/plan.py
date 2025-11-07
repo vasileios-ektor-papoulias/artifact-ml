@@ -8,7 +8,7 @@ from artifact_core.table_comparison import (
     TableComparisonScoreCollectionType,
     TableComparisonScoreType,
 )
-from artifact_experiment.table_comparison.validation_plan import TableComparisonPlan
+from artifact_experiment.table_comparison.plan import TableComparisonPlan
 
 
 class DummyTableComparisonPlan(TableComparisonPlan):

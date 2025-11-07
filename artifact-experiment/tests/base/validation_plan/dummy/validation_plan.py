@@ -1,6 +1,6 @@
 from typing import List, Type
 
-from artifact_experiment.base.validation_plan import ValidationPlan
+from artifact_experiment.base.plans.artifact import ArtifactPlan
 
 from tests.base.callback_factory.dummy.callback_factory import DummyCallbackFactory
 from tests.base.dummy_artifact_toolkit import (
@@ -16,15 +16,15 @@ from tests.base.dummy_artifact_toolkit import (
 
 
 class DummyValidationPlan(
-    ValidationPlan[
+    ArtifactPlan[
+        DummyArtifactResources,
+        DummyResourceSpec,
         DummyScoreType,
         DummyArrayType,
         DummyPlotType,
         DummyScoreCollectionType,
         DummyArrayCollectionType,
         DummyPlotCollectionType,
-        DummyArtifactResources,
-        DummyResourceSpec,
     ]
 ):
     @staticmethod

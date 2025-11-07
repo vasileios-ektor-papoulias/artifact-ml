@@ -6,18 +6,20 @@ from artifact_core.base.artifact_dependencies import ArtifactResult
 from artifact_experiment.base.callbacks.base import CallbackResources
 from artifact_experiment.base.callbacks.tracking import (
     ArrayCallback,
-    ArrayCallbackHandler,
     ArrayCollectionCallback,
-    ArrayCollectionCallbackHandler,
     PlotCallback,
-    PlotCallbackHandler,
     PlotCollectionCallback,
-    PlotCollectionCallbackHandler,
     ScoreCallback,
-    ScoreCallbackHandler,
     ScoreCollectionCallback,
-    ScoreCollectionCallbackHandler,
     TrackingCallback,
+)
+from artifact_experiment.base.handlers.tracking import (
+    ArrayCallbackHandler,
+    ArrayCollectionCallbackHandler,
+    PlotCallbackHandler,
+    PlotCollectionCallbackHandler,
+    ScoreCallbackHandler,
+    ScoreCollectionCallbackHandler,
     TrackingCallbackHandler,
 )
 from artifact_experiment.base.tracking.client import TrackingClient
@@ -216,28 +218,22 @@ def handler_factory(
             for callback_key, callback_value in zip(ls_callback_keys, ls_callback_values)
         ]
         if callback_type == "score":
-            handler = ScoreCallbackHandler(
-                ls_callbacks=ls_callbacks, tracking_client=tracking_client
-            )
+            handler = ScoreCallbackHandler(callbacks=ls_callbacks, tracking_client=tracking_client)
         elif callback_type == "array":
-            handler = ArrayCallbackHandler(
-                ls_callbacks=ls_callbacks, tracking_client=tracking_client
-            )
+            handler = ArrayCallbackHandler(callbacks=ls_callbacks, tracking_client=tracking_client)
         elif callback_type == "plot":
-            handler = PlotCallbackHandler(
-                ls_callbacks=ls_callbacks, tracking_client=tracking_client
-            )
+            handler = PlotCallbackHandler(callbacks=ls_callbacks, tracking_client=tracking_client)
         elif callback_type == "score_collection":
             handler = ScoreCollectionCallbackHandler(
-                ls_callbacks=ls_callbacks, tracking_client=tracking_client
+                callbacks=ls_callbacks, tracking_client=tracking_client
             )
         elif callback_type == "array_collection":
             handler = ArrayCollectionCallbackHandler(
-                ls_callbacks=ls_callbacks, tracking_client=tracking_client
+                callbacks=ls_callbacks, tracking_client=tracking_client
             )
         elif callback_type == "plot_collection":
             handler = PlotCollectionCallbackHandler(
-                ls_callbacks=ls_callbacks, tracking_client=tracking_client
+                callbacks=ls_callbacks, tracking_client=tracking_client
             )
         else:
             raise ValueError(f"Unknown callback type: {callback_type}")

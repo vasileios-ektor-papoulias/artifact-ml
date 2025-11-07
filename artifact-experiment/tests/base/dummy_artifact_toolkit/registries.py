@@ -18,7 +18,7 @@ class DummyScoreType(ArtifactType):
 
 
 class DummyScoreRegistry(
-    ArtifactRegistry[DummyScoreType, DummyArtifactResources, float, DummyResourceSpec]
+    ArtifactRegistry[DummyArtifactResources, DummyResourceSpec, DummyScoreType, float]
 ):
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
@@ -30,7 +30,7 @@ class DummyArrayType(ArtifactType):
 
 
 class DummyArrayRegistry(
-    ArtifactRegistry[DummyArrayType, DummyArtifactResources, ndarray, DummyResourceSpec]
+    ArtifactRegistry[DummyArtifactResources, DummyResourceSpec, DummyArrayType, ndarray]
 ):
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
@@ -42,7 +42,7 @@ class DummyPlotType(ArtifactType):
 
 
 class DummyPlotRegistry(
-    ArtifactRegistry[DummyPlotType, DummyArtifactResources, Figure, DummyResourceSpec]
+    ArtifactRegistry[DummyArtifactResources, DummyResourceSpec, DummyPlotType, Figure]
 ):
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
@@ -55,7 +55,7 @@ class DummyScoreCollectionType(ArtifactType):
 
 class DummyScoreCollectionRegistry(
     ArtifactRegistry[
-        DummyScoreCollectionType, DummyArtifactResources, Dict[str, float], DummyResourceSpec
+        DummyArtifactResources, DummyResourceSpec, DummyScoreCollectionType, Dict[str, float]
     ]
 ):
     @classmethod
@@ -69,7 +69,10 @@ class DummyArrayCollectionType(ArtifactType):
 
 class DummyArrayCollectionRegistry(
     ArtifactRegistry[
-        DummyArrayCollectionType, DummyArtifactResources, Dict[str, ndarray], DummyResourceSpec
+        DummyArtifactResources,
+        DummyResourceSpec,
+        DummyArrayCollectionType,
+        Dict[str, ndarray],
     ]
 ):
     @classmethod
@@ -83,7 +86,10 @@ class DummyPlotCollectionType(ArtifactType):
 
 class DummyPlotCollectionRegistry(
     ArtifactRegistry[
-        DummyPlotCollectionType, DummyArtifactResources, Dict[str, Figure], DummyResourceSpec
+        DummyArtifactResources,
+        DummyResourceSpec,
+        DummyPlotCollectionType,
+        Dict[str, Figure],
     ]
 ):
     @classmethod
