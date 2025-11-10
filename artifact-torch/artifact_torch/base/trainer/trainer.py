@@ -3,7 +3,7 @@ from typing import Any, Dict, Generic, Optional, Type, TypeVar
 
 import pandas as pd
 import torch
-from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_experiment.base.tracking.background.writer import FileWriter
 from torch import optim
 
 from artifact_torch.base.components.cache.score_cache import ScoreCache
@@ -76,8 +76,8 @@ class Trainer(
         loader_routine: Optional[
             DataLoaderRoutine[ModelTContr, ModelInputTContr, ModelOutputTContr]
         ] = None,
-        artifact_routine: Optional[ArtifactRoutine[ModelTContr, Any, Any, Any, Any]] = None,
-        tracking_client: Optional[TrackingClient] = None,
+        artifact_routine: Optional[ArtifactRoutine[ModelTContr, Any, Any, Any, Any, Any]] = None,
+        file_writer: Optional[FileWriter] = None,
     ) -> TrainerT:
         optimizer = cls._get_optimizer(model=model)
         scheduler = cls._get_scheduler(optimizer=optimizer)
@@ -89,7 +89,7 @@ class Trainer(
         device = cls._get_device()
         early_stopper = cls._get_early_stopper()
         model_tracker = cls._get_model_tracker()
-        checkpoint_callback = cls._get_checkpoint_callback(tracking_client=tracking_client)
+        checkpoint_callback = cls._get_checkpoint_callback(writer=file_writer)
         routine_suite = RoutineSuite(
             train_diagnostics_routine=train_diagnostics_routine,
             artifact_routine=artifact_routine,
@@ -150,7 +150,7 @@ class Trainer(
     @staticmethod
     @abstractmethod
     def _get_checkpoint_callback(
-        tracking_client: Optional[TrackingClient],
+        writer: Optional[FileWriter],
     ) -> Optional[CheckpointCallback]: ...
 
     def _should_stop(self) -> bool:
@@ -179,7 +179,7 @@ class Trainer(
         if self._checkpoint_callback is not None:
             checkpoint = self._get_checkpoint()
             checkpoint_callback_resources = CheckpointCallbackResources(
-                step=self._n_epochs_elapsed, checkpoint=checkpoint
+                step=self._n_epochs_elapsed, export_data=checkpoint
             )
             self._checkpoint_callback.execute(resources=checkpoint_callback_resources)
 
@@ -188,9 +188,7 @@ class Trainer(
             criterion = self._get_model_tracking_criterion()
             assert criterion is not None
             self._model_tracker.update(
-                model=self._training_state.model,
-                criterion=criterion,
-                epoch=self.n_epochs_elapsed,
+                model=self._training_state.model, criterion=criterion, epoch=self.n_epochs_elapsed
             )
 
     def _update_stopper(self):

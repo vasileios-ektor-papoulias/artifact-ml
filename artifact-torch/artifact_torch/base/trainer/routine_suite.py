@@ -4,6 +4,7 @@ from matplotlib.figure import Figure
 from numpy import ndarray
 
 from artifact_torch.base.components.routines.artifact import ArtifactRoutine
+from artifact_torch.base.components.routines.base import RoutineResources
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
 from artifact_torch.base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
 from artifact_torch.base.model.base import Model
@@ -23,7 +24,7 @@ class RoutineSuite(Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]):
         loader_routine: Optional[
             DataLoaderRoutine[ModelTContr, ModelInputTContr, ModelOutputTContr]
         ] = None,
-        artifact_routine: Optional[ArtifactRoutine[ModelTContr, Any, Any, Any, Any]] = None,
+        artifact_routine: Optional[ArtifactRoutine[ModelTContr, Any, Any, Any, Any, Any]] = None,
     ):
         self._train_diagnostics_routine = train_diagnostics_routine
         self._loader_routine = loader_routine
@@ -100,12 +101,13 @@ class RoutineSuite(Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]):
             self._train_diagnostics_routine.attach(model=model, n_epochs_elapsed=n_epochs_elapsed)
 
     def execute(self, model: ModelTContr, n_epochs_elapsed: int):
+        resources = RoutineResources(model=model, n_epochs_elapsed=n_epochs_elapsed)
         if self._train_diagnostics_routine is not None:
-            self._train_diagnostics_routine.execute(model=model, n_epochs_elapsed=n_epochs_elapsed)
+            self._train_diagnostics_routine.execute(resources=resources)
         if self._loader_routine is not None:
-            self._loader_routine.execute(model=model, n_epochs_elapsed=n_epochs_elapsed)
+            self._loader_routine.execute(resources=resources)
         if self._artifact_routine is not None:
-            self._artifact_routine.execute(model=model, n_epochs_elapsed=n_epochs_elapsed)
+            self._artifact_routine.execute(resources=resources)
 
     def clear_cache(self):
         if self._train_diagnostics_routine is not None:
