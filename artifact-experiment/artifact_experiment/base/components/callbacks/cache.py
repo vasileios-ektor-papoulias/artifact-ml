@@ -1,8 +1,11 @@
 from abc import abstractmethod
 from dataclasses import KW_ONLY, dataclass
-from typing import Dict, Generic, Optional, TypeVar
+from typing import Dict, Generic, Mapping, Optional, TypeVar
 
-from artifact_experiment.base.callbacks.base import Callback, CallbackResources
+from artifact_experiment.base.components.callbacks.base import Callback, CallbackResources
+from artifact_experiment.base.entities.tracking_data import TrackingData
+from matplotlib.figure import Figure
+from numpy import ndarray
 
 
 @dataclass(frozen=True)
@@ -14,7 +17,7 @@ class CacheCallbackResources(CallbackResources):
 CacheCallbackResourcesTContr = TypeVar(
     "CacheCallbackResourcesTContr", bound=CacheCallbackResources, contravariant=True
 )
-CacheDataTCov = TypeVar("CacheDataTCov", covariant=True)
+CacheDataTCov = TypeVar("CacheDataTCov", bound=TrackingData, covariant=True)
 
 
 class CacheCallback(
@@ -40,7 +43,7 @@ class CacheCallback(
         return next(iter(self._cache.values()), None)
 
     @property
-    def cache(self) -> Dict[str, Optional[CacheDataTCov]]:
+    def cache(self) -> Mapping[str, Optional[CacheDataTCov]]:
         return self._cache.copy()
 
     def execute(self, resources: CacheCallbackResourcesTContr):
@@ -61,3 +64,11 @@ class CacheCallback(
         if resources.trigger is not None:
             key = f"{key}_{resources.trigger}"
         return key
+
+
+CacheScoreCallback = CacheCallback[CacheCallbackResourcesTContr, float]
+CacheArrayCallback = CacheCallback[CacheCallbackResourcesTContr, ndarray]
+CachePlotCallback = CacheCallback[CacheCallbackResourcesTContr, Figure]
+CacheScoreCollectionCallback = CacheCallback[CacheCallbackResourcesTContr, Dict[str, float]]
+CacheArrayCollectionCallback = CacheCallback[CacheCallbackResourcesTContr, Dict[str, ndarray]]
+CachePlotCollectionCallback = CacheCallback[CacheCallbackResourcesTContr, Dict[str, Figure]]
