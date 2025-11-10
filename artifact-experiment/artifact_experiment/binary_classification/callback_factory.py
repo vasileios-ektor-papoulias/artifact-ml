@@ -35,7 +35,7 @@ from artifact_core.binary_classification.registries.scores.registry import (
     BinaryClassificationScoreType,
 )
 
-from artifact_experiment.base.plans.callback_factory import ArtifactCallbackFactory
+from artifact_experiment.base.components.factories.artifact import ArtifactCallbackFactory
 
 
 class BinaryClassificationCallbackFactory(

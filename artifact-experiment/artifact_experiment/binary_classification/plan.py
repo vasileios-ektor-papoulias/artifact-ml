@@ -7,9 +7,9 @@ from artifact_core.binary_classification.artifacts.base import (
 )
 from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
 
+from artifact_experiment.base.components.factories.artifact import ArtifactCallbackFactory
+from artifact_experiment.base.components.plans.artifact import ArtifactPlan
 from artifact_experiment.base.entities.data_split import DataSplit
-from artifact_experiment.base.plans.artifact import ArtifactPlan
-from artifact_experiment.base.plans.callback_factory import ArtifactCallbackFactory
 from artifact_experiment.binary_classification.callback_factory import (
     BinaryClassificationArrayCollectionType,
     BinaryClassificationArrayType,
@@ -65,7 +65,10 @@ class BinaryClassificationPlan(
         data_split: Optional[DataSplit] = None,
     ):
         artifact_resources = BinaryClassificationArtifactResources.from_spec(
-            class_spec=self._resource_spec, true=true, predicted=predicted, probs_pos=probs_pos
+            class_spec=self._context.resource_spec,
+            true=true,
+            predicted=predicted,
+            probs_pos=probs_pos,
         )
         super().execute_artifacts(resources=artifact_resources, data_split=data_split)
 
