@@ -8,7 +8,7 @@ from artifact_torch.base.components.callbacks.model_io import (
     ModelIOScoreCallback,
     ModelIOScoreCollectionCallback,
 )
-from artifact_torch.base.components.plans.model_io import ModelIOPlan
+from artifact_torch.base.components.plans.model_io import ModelIOPlan, ModelIOPlanBuildContext
 from artifact_torch.libs.components.callbacks.loader.loss import LossCallback
 
 from demos.binary_classification.components.protocols import DemoModelInput, DemoModelOutput
@@ -19,64 +19,85 @@ from demos.binary_classification.config.constants import (
 
 
 class DataLoaderModelIOPlan(ModelIOPlan[DemoModelInput, DemoModelOutput]):
-    @staticmethod
-    def _get_score_callbacks() -> List[ModelIOScoreCallback[DemoModelInput, DemoModelOutput]]:
-        return [LossCallback(period=LOADER_VALIDATION_PERIOD)]
+    @classmethod
+    def _get_score_callbacks(
+        cls, context: ModelIOPlanBuildContext
+    ) -> List[ModelIOScoreCallback[DemoModelInput, DemoModelOutput]]:
+        return [LossCallback(period=LOADER_VALIDATION_PERIOD, writer=context.score_writer)]
 
-    @staticmethod
-    def _get_array_callbacks() -> List[ModelIOArrayCallback[DemoModelInput, DemoModelOutput]]:
+    @classmethod
+    def _get_array_callbacks(
+        cls, context: ModelIOPlanBuildContext
+    ) -> List[ModelIOArrayCallback[DemoModelInput, DemoModelOutput]]:
+        _ = context
         return []
 
-    @staticmethod
-    def _get_plot_callbacks() -> List[ModelIOPlotCallback[DemoModelInput, DemoModelOutput]]:
+    @classmethod
+    def _get_plot_callbacks(
+        cls, context: ModelIOPlanBuildContext
+    ) -> List[ModelIOPlotCallback[DemoModelInput, DemoModelOutput]]:
+        _ = context
         return []
 
-    @staticmethod
-    def _get_score_collection_callbacks() -> List[
-        ModelIOScoreCollectionCallback[DemoModelInput, DemoModelOutput]
-    ]:
+    @classmethod
+    def _get_score_collection_callbacks(
+        cls, context: ModelIOPlanBuildContext
+    ) -> List[ModelIOScoreCollectionCallback[DemoModelInput, DemoModelOutput]]:
+        _ = context
         return []
 
-    @staticmethod
-    def _get_array_collection_callbacks() -> List[
-        ModelIOArrayCollectionCallback[DemoModelInput, DemoModelOutput]
-    ]:
+    @classmethod
+    def _get_array_collection_callbacks(
+        cls, context: ModelIOPlanBuildContext
+    ) -> List[ModelIOArrayCollectionCallback[DemoModelInput, DemoModelOutput]]:
         return []
 
-    @staticmethod
-    def _get_plot_collection_callbacks() -> List[
-        ModelIOPlotCollectionCallback[DemoModelInput, DemoModelOutput]
-    ]:
+    @classmethod
+    def _get_plot_collection_callbacks(
+        cls, context: ModelIOPlanBuildContext
+    ) -> List[ModelIOPlotCollectionCallback[DemoModelInput, DemoModelOutput]]:
+        _ = context
         return []
 
 
 class TrainDiagnosticsModelIOPlan(ModelIOPlan[DemoModelInput, DemoModelOutput]):
-    @staticmethod
-    def _get_score_callbacks() -> List[ModelIOScoreCallback[DemoModelInput, DemoModelOutput]]:
-        return [LossCallback(period=TRAIN_DIAGNOSTICS_PERIOD)]
+    @classmethod
+    def _get_score_callbacks(
+        cls, context: ModelIOPlanBuildContext
+    ) -> List[ModelIOScoreCallback[DemoModelInput, DemoModelOutput]]:
+        return [LossCallback(period=TRAIN_DIAGNOSTICS_PERIOD, writer=context.score_writer)]
 
-    @staticmethod
-    def _get_array_callbacks() -> List[ModelIOArrayCallback[DemoModelInput, DemoModelOutput]]:
+    @classmethod
+    def _get_array_callbacks(
+        cls, context: ModelIOPlanBuildContext
+    ) -> List[ModelIOArrayCallback[DemoModelInput, DemoModelOutput]]:
+        _ = context
         return []
 
-    @staticmethod
-    def _get_plot_callbacks() -> List[ModelIOPlotCallback[DemoModelInput, DemoModelOutput]]:
+    @classmethod
+    def _get_plot_callbacks(
+        cls, context: ModelIOPlanBuildContext
+    ) -> List[ModelIOPlotCallback[DemoModelInput, DemoModelOutput]]:
+        _ = context
         return []
 
-    @staticmethod
-    def _get_score_collection_callbacks() -> List[
-        ModelIOScoreCollectionCallback[DemoModelInput, DemoModelOutput]
-    ]:
+    @classmethod
+    def _get_score_collection_callbacks(
+        cls, context: ModelIOPlanBuildContext
+    ) -> List[ModelIOScoreCollectionCallback[DemoModelInput, DemoModelOutput]]:
+        _ = context
         return []
 
-    @staticmethod
-    def _get_array_collection_callbacks() -> List[
-        ModelIOArrayCollectionCallback[DemoModelInput, DemoModelOutput]
-    ]:
+    @classmethod
+    def _get_array_collection_callbacks(
+        cls, context: ModelIOPlanBuildContext
+    ) -> List[ModelIOArrayCollectionCallback[DemoModelInput, DemoModelOutput]]:
+        _ = context
         return []
 
-    @staticmethod
-    def _get_plot_collection_callbacks() -> List[
-        ModelIOPlotCollectionCallback[DemoModelInput, DemoModelOutput]
-    ]:
+    @classmethod
+    def _get_plot_collection_callbacks(
+        cls, context: ModelIOPlanBuildContext
+    ) -> List[ModelIOPlotCollectionCallback[DemoModelInput, DemoModelOutput]]:
+        _ = context
         return []
