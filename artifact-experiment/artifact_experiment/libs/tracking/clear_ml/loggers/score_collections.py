@@ -2,20 +2,20 @@ import os
 from typing import Dict
 
 from artifact_experiment.libs.tracking.clear_ml.adapter import ClearMLRunAdapter
-from artifact_experiment.libs.tracking.clear_ml.loggers.base import ClearMLArtifactLogger
+from artifact_experiment.libs.tracking.clear_ml.loggers.artifacts import ClearMLArtifactLogger
 
 
 class ClearMLScoreCollectionLogger(ClearMLArtifactLogger[Dict[str, float]]):
-    def _append(self, artifact_path: str, artifact: Dict[str, float]):
-        iteration = self._get_score_collection_iteration(run=self._run, path=artifact_path)
-        for score_name, score_value in artifact.items():
+    def _append(self, item_path: str, item: Dict[str, float]):
+        iteration = self._get_score_collection_iteration(run=self._run, path=item_path)
+        for score_name, score_value in item.items():
             self._run.log_score(
-                value=score_value, title=artifact_path, series=score_name, iteration=iteration
+                value=score_value, title=item_path, series=score_name, iteration=iteration
             )
 
     @classmethod
-    def _get_relative_path(cls, artifact_name: str) -> str:
-        return os.path.join("score_collections", artifact_name)
+    def _get_relative_path(cls, item_name: str) -> str:
+        return os.path.join("score_collections", item_name)
 
     @staticmethod
     def _get_score_collection_iteration(run: ClearMLRunAdapter, path: str) -> int:

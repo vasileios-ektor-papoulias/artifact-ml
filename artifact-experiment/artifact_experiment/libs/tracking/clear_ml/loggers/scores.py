@@ -1,23 +1,23 @@
 import os
 
 from artifact_experiment.libs.tracking.clear_ml.adapter import ClearMLRunAdapter
-from artifact_experiment.libs.tracking.clear_ml.loggers.base import ClearMLArtifactLogger
+from artifact_experiment.libs.tracking.clear_ml.loggers.artifacts import ClearMLArtifactLogger
 
 
 class ClearMLScoreLogger(ClearMLArtifactLogger[float]):
     _series_name: str = "score"
 
-    def _append(self, artifact_path: str, artifact: float):
+    def _append(self, item_path: str, item: float):
         iteration = self._get_score_iteration(
-            run=self._run, path=artifact_path, series_name=self._series_name
+            run=self._run, path=item_path, series_name=self._series_name
         )
         self._run.log_score(
-            value=artifact, title=artifact_path, series=self._series_name, iteration=iteration
+            value=item, title=item_path, series=self._series_name, iteration=iteration
         )
 
     @classmethod
-    def _get_relative_path(cls, artifact_name: str) -> str:
-        return os.path.join("scores", artifact_name)
+    def _get_relative_path(cls, item_name: str) -> str:
+        return os.path.join("scores", item_name)
 
     @staticmethod
     def _get_score_iteration(run: ClearMLRunAdapter, path: str, series_name: str) -> int:

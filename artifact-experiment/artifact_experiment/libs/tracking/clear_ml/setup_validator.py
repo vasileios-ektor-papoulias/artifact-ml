@@ -3,7 +3,7 @@ from pathlib import Path
 
 
 class ClearMLSetupValidator:
-    _config_path = Path.home() / ".clearml.conf"
+    _config_path = Path.home() / "clearml.conf"
     _host_env_var = "CLEARML_API_HOST"
     _access_key_env_var = "CLEARML_API_ACCESS_KEY"
     _secret_key_env_var = "CLEARML_API_SECRET_KEY"
@@ -15,6 +15,8 @@ class ClearMLSetupValidator:
         has_access_key = os.getenv(key=cls._access_key_env_var)
         has_secret_key = os.getenv(key=cls._secret_key_env_var)
         has_api_credentials = has_access_key and has_secret_key
+        print(cls._config_path)
+        print(has_config_file)
         if has_api_credentials and has_host:
             return True
         if has_host and not has_api_credentials:
@@ -29,7 +31,6 @@ class ClearMLSetupValidator:
             "ClearML is not configured.\n"
             "To set it up, either:\n"
             "- Run `clearml-init` in the terminal, or\n"
-            "- Call `from clearml import setup; setup()` in Python (e.g., in a notebook), or\n"
             "- Set the required environment variables manually:\n"
             f"  • remote: {cls._host_env_var}, "
             f"{cls._access_key_env_var}, "
