@@ -50,6 +50,7 @@ class DataLoaderModelIOPlan(ModelIOPlan[DemoModelInput, DemoModelOutput]):
     def _get_array_collection_callbacks(
         cls, context: ModelIOPlanBuildContext
     ) -> List[ModelIOArrayCollectionCallback[DemoModelInput, DemoModelOutput]]:
+        _ = context
         return []
 
     @classmethod
