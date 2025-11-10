@@ -19,7 +19,7 @@ from artifact_experiment.base.components.factories.artifact import ArtifactCallb
 from artifact_experiment.base.components.handler_suites.artifact import ArtifactCallbackHandlerSuite
 from artifact_experiment.base.components.plans.base import CallbackExecutionPlan, PlanBuildContext
 from artifact_experiment.base.entities.data_split import DataSplit
-from artifact_experiment.base.tracking.background.tracking_queue import TrackingQueue
+from artifact_experiment.base.tracking.backend.client import TrackingClient
 from artifact_experiment.libs.utils.sequence_concatenator import SequenceConcatenator
 
 ResourceSpecProtocolTCov = TypeVar(
@@ -69,8 +69,9 @@ class ArtifactPlan(
     def create(
         cls: Type[ArtifactPlanT],
         resource_spec: ResourceSpecProtocolTContr,
-        tracking_queue: Optional[TrackingQueue] = None,
+        tracking_client: Optional[TrackingClient] = None,
     ) -> ArtifactPlanT:
+        tracking_queue = tracking_client.queue if tracking_client is not None else None
         context = ArtifactPlanBuildContext(
             tracking_queue=tracking_queue, resource_spec=resource_spec
         )
@@ -149,7 +150,7 @@ class ArtifactPlan(
         self.execute(resources=callback_resources)
 
     @classmethod
-    def _get_handler_suite_type(
+    def _get_handler_suite(
         cls,
     ) -> Type[ArtifactCallbackHandlerSuite[ArtifactResourcesTContr, ResourceSpecProtocolTContr]]:
         return ArtifactCallbackHandlerSuite
