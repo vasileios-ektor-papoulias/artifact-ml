@@ -2,7 +2,7 @@ from typing import TypeVar
 
 from artifact_core.core.dataset_comparison.artifact import DatasetComparisonArtifactResources
 
-from artifact_experiment.base.callbacks.artifact import ArtifactCallbackResources
+from artifact_experiment.base.components.callbacks.artifact import ArtifactCallbackResources
 
 DatasetTCov = TypeVar("DatasetTCov", covariant=True)
 
