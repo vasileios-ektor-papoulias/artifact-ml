@@ -1,7 +1,7 @@
 from typing import Any, Optional
 
 import torch
-from artifact_experiment.tracking import TrackingClient
+from artifact_experiment.base.tracking.background.writer import FileWriter
 from artifact_torch.base.components.callbacks.checkpoint import CheckpointCallback
 from artifact_torch.base.components.early_stopping.stopper import EarlyStopper, StopperUpdateData
 from artifact_torch.base.components.model_tracking.tracker import (
@@ -10,7 +10,7 @@ from artifact_torch.base.components.model_tracking.tracker import (
 )
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.base.trainer.trainer import Trainer
-from artifact_torch.libs.components.callbacks.checkpoint.standard import StandardCheckpointCallback
+from artifact_torch.libs.components.callbacks.export.checkpoint import TorchCheckpointCallback
 from artifact_torch.libs.components.early_stopping.epoch_bound import EpochBoundStopper
 from artifact_torch.table_comparison.model import TableSynthesizer
 from torch import optim
@@ -64,9 +64,7 @@ class DemoTrainer(
 
     @staticmethod
     def _get_checkpoint_callback(
-        tracking_client: Optional[TrackingClient],
+        writer: Optional[FileWriter],
     ) -> Optional[CheckpointCallback]:
-        if tracking_client is not None:
-            return StandardCheckpointCallback(
-                period=CHECKPOINT_PERIOD, tracking_client=tracking_client
-            )
+        if writer is not None:
+            return TorchCheckpointCallback(period=CHECKPOINT_PERIOD, writer=writer)

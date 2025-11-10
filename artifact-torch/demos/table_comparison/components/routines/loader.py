@@ -1,8 +1,9 @@
-from typing import Any, Optional
+from typing import Any, Optional, Type
 
 from artifact_experiment import DataSplit
-from artifact_experiment.tracking import TrackingClient
-from artifact_torch.base.components.plans.forward_hook import ForwardHookPlan
+from artifact_torch.base.components.plans.forward_hook import (
+    ForwardHookPlan,
+)
 from artifact_torch.base.components.plans.model_io import ModelIOPlan
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
 from artifact_torch.base.model.base import Model
@@ -15,16 +16,16 @@ from demos.table_comparison.components.protocols import DemoModelInput, DemoMode
 class DemoLoaderRoutine(
     DataLoaderRoutine[Model[Any, DemoModelOutput], DemoModelInput, DemoModelOutput]
 ):
-    @staticmethod
+    @classmethod
     def _get_model_io_plan(
-        data_split: DataSplit, tracking_client: Optional[TrackingClient]
-    ) -> Optional[ModelIOPlan[DemoModelInput, DemoModelOutput]]:
+        cls, data_split: DataSplit
+    ) -> Optional[Type[ModelIOPlan[DemoModelInput, DemoModelOutput]]]:
         if data_split is DataSplit.TRAIN:
-            return DemoModelIOPlan.build(tracking_client=tracking_client)
+            return DemoModelIOPlan
 
-    @staticmethod
+    @classmethod
     def _get_forward_hook_plan(
-        data_split: DataSplit, tracking_client: Optional[TrackingClient]
-    ) -> Optional[ForwardHookPlan[Model[Any, Any]]]:
+        cls, data_split: DataSplit
+    ) -> Optional[Type[ForwardHookPlan[Model[Any, Any]]]]:
         if data_split is DataSplit.TRAIN:
-            return DemoForwardHookPlan.build(tracking_client=tracking_client)
+            return DemoForwardHookPlan
