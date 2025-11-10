@@ -6,7 +6,7 @@ from typing import List, Optional
 from mlflow.entities import Experiment, FileInfo, Metric, Run, RunStatus
 from mlflow.tracking import MlflowClient
 
-from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
+from artifact_experiment.base.tracking.backend.adapter import InactiveRunError, RunAdapter
 from artifact_experiment.libs.utils.environment_variable_reader import EnvironmentVariableReader
 
 

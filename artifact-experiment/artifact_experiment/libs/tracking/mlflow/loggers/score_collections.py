@@ -4,18 +4,14 @@ from typing import Dict, List
 from mlflow.entities import Metric
 
 from artifact_experiment.libs.tracking.mlflow.adapter import MlflowRunAdapter
-from artifact_experiment.libs.tracking.mlflow.loggers.base import MlflowArtifactLogger
+from artifact_experiment.libs.tracking.mlflow.loggers.artifacts import MlflowArtifactLogger
 
 
 class MlflowScoreCollectionLogger(MlflowArtifactLogger[Dict[str, float]]):
-    def _append(self, artifact_path: str, artifact: Dict[str, float]):
-        next_step = self._get_next_step(
-            collection_path=artifact_path, ls_score_names=list(artifact.keys())
-        )
-        for score_name, score_value in artifact.items():
-            backend_path = self._get_score_path(
-                collection_path=artifact_path, score_name=score_name
-            )
+    def _append(self, item_path: str, item: Dict[str, float]):
+        next_step = self._get_next_step(collection_path=item_path, ls_score_names=list(item.keys()))
+        for score_name, score_value in item.items():
+            backend_path = self._get_score_path(collection_path=item_path, score_name=score_name)
             self._run.log_score(backend_path=backend_path, value=score_value, step=next_step)
 
     def _get_next_step(self, collection_path: str, ls_score_names: List[str]) -> int:
@@ -53,5 +49,5 @@ class MlflowScoreCollectionLogger(MlflowArtifactLogger[Dict[str, float]]):
         return score_path
 
     @classmethod
-    def _get_relative_path(cls, artifact_name: str) -> str:
-        return os.path.join("score_collections", artifact_name)
+    def _get_relative_path(cls, item_name: str) -> str:
+        return os.path.join("score_collections", item_name)

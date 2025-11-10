@@ -3,19 +3,19 @@ from typing import List
 
 from mlflow.entities import Metric
 
-from artifact_experiment.libs.tracking.mlflow.loggers.base import MlflowArtifactLogger
+from artifact_experiment.libs.tracking.mlflow.loggers.artifacts import MlflowArtifactLogger
 
 
 class MlflowScoreLogger(MlflowArtifactLogger[float]):
-    def _append(self, artifact_path: str, artifact: float):
-        ls_history = self._run.get_ls_score_history(backend_path=artifact_path)
+    def _append(self, item_path: str, item: float):
+        ls_history = self._run.get_ls_score_history(backend_path=item_path)
         next_step = self._get_next_step_from_history(ls_history=ls_history)
-        self._run.log_score(backend_path=artifact_path, value=artifact, step=next_step)
+        self._run.log_score(backend_path=item_path, value=item, step=next_step)
 
     @staticmethod
     def _get_next_step_from_history(ls_history: List[Metric]) -> int:
         return 1 + len(ls_history)
 
     @classmethod
-    def _get_relative_path(cls, artifact_name: str) -> str:
-        return os.path.join("scores", artifact_name)
+    def _get_relative_path(cls, item_name: str) -> str:
+        return os.path.join("scores", item_name)

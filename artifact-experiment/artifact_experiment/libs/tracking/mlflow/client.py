@@ -1,23 +1,10 @@
-from typing import Dict, Optional, Type, TypeVar
+from typing import Optional, Type, TypeVar
 
-from matplotlib.figure import Figure
-from numpy import ndarray
-
-from artifact_experiment.base.tracking.client import TrackingClient
-from artifact_experiment.base.tracking.logger import ArtifactLogger
+from artifact_experiment.base.tracking.backend.client import TrackingClient
+from artifact_experiment.base.tracking.backend.logger_worker import LoggerWorker
+from artifact_experiment.base.tracking.background.tracking_queue import TrackingQueue
 from artifact_experiment.libs.tracking.mlflow.adapter import MlflowNativeRun, MlflowRunAdapter
-from artifact_experiment.libs.tracking.mlflow.loggers.array_collections import (
-    MlflowArrayCollectionLogger,
-)
-from artifact_experiment.libs.tracking.mlflow.loggers.arrays import MlflowArrayLogger
-from artifact_experiment.libs.tracking.mlflow.loggers.plot_collections import (
-    MlflowPlotCollectionLogger,
-)
-from artifact_experiment.libs.tracking.mlflow.loggers.plots import MlflowPlotLogger
-from artifact_experiment.libs.tracking.mlflow.loggers.score_collections import (
-    MlflowScoreCollectionLogger,
-)
-from artifact_experiment.libs.tracking.mlflow.loggers.scores import MlflowScoreLogger
+from artifact_experiment.libs.tracking.mlflow.logger_worker import MlflowLoggerWorker
 
 MlflowTrackingClientT = TypeVar("MlflowTrackingClientT", bound="MlflowTrackingClient")
 
@@ -40,33 +27,9 @@ class MlflowTrackingClient(TrackingClient[MlflowRunAdapter]):
         return client
 
     @staticmethod
-    def _get_score_logger(run: MlflowRunAdapter) -> ArtifactLogger[float, MlflowRunAdapter]:
-        return MlflowScoreLogger(run=run)
-
-    @staticmethod
-    def _get_array_logger(
-        run: MlflowRunAdapter,
-    ) -> ArtifactLogger[ndarray, MlflowRunAdapter]:
-        return MlflowArrayLogger(run=run)
-
-    @staticmethod
-    def _get_plot_logger(run: MlflowRunAdapter) -> ArtifactLogger[Figure, MlflowRunAdapter]:
-        return MlflowPlotLogger(run=run)
-
-    @staticmethod
-    def _get_score_collection_logger(
-        run: MlflowRunAdapter,
-    ) -> ArtifactLogger[Dict[str, float], MlflowRunAdapter]:
-        return MlflowScoreCollectionLogger(run=run)
-
-    @staticmethod
-    def _get_array_collection_logger(
-        run: MlflowRunAdapter,
-    ) -> ArtifactLogger[Dict[str, ndarray], MlflowRunAdapter]:
-        return MlflowArrayCollectionLogger(run=run)
-
-    @staticmethod
-    def _get_plot_collection_logger(
-        run: MlflowRunAdapter,
-    ) -> ArtifactLogger[Dict[str, Figure], MlflowRunAdapter]:
-        return MlflowPlotCollectionLogger(run=run)
+    def _get_logger_worker(
+        run: MlflowRunAdapter, tracking_queue: TrackingQueue
+    ) -> LoggerWorker[MlflowRunAdapter]:
+        return MlflowLoggerWorker.build(
+            run=run, queue=tracking_queue.queue, managed_temp_dir=tracking_queue.managed_temp_dir
+        )

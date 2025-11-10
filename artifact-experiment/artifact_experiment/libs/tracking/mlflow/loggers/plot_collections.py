@@ -5,19 +5,17 @@ from typing import Dict, List
 from matplotlib.figure import Figure
 from mlflow.entities import FileInfo
 
-from artifact_experiment.libs.tracking.mlflow.adapter import (
-    MlflowRunAdapter,
-)
-from artifact_experiment.libs.tracking.mlflow.loggers.base import MlflowArtifactLogger
+from artifact_experiment.libs.tracking.mlflow.adapter import MlflowRunAdapter
+from artifact_experiment.libs.tracking.mlflow.loggers.artifacts import MlflowArtifactLogger
 from artifact_experiment.libs.utils.incremental_path_generator import IncrementalPathGenerator
 
 
 class MlflowPlotCollectionLogger(MlflowArtifactLogger[Dict[str, Figure]]):
     _fmt = "png"
 
-    def _append(self, artifact_path: str, artifact: Dict[str, Figure]):
+    def _append(self, item_path: str, item: Dict[str, Figure]):
         ls_history = self._get_plot_collection_history(
-            run=self._run, backend_artifact_path=artifact_path
+            run=self._run, backend_artifact_path=item_path
         )
         next_step = self._get_next_step_from_history(ls_history=ls_history)
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -25,9 +23,9 @@ class MlflowPlotCollectionLogger(MlflowArtifactLogger[Dict[str, Figure]]):
                 export_dir=temp_dir, iteration=next_step
             )
             collection_backend_path = self._get_collection_backend_path(
-                artifact_path=artifact_path, iteration=next_step
+                artifact_path=item_path, iteration=next_step
             )
-            for plot_name, plot in artifact.items():
+            for plot_name, plot in item.items():
                 plot_local_path = self._get_plot_path_from_collection_path(
                     collection_path=collection_local_path, plot_name=plot_name, fmt=self._fmt
                 )
@@ -53,8 +51,7 @@ class MlflowPlotCollectionLogger(MlflowArtifactLogger[Dict[str, Figure]]):
     @staticmethod
     def _get_collection_local_path(export_dir: str, iteration: int) -> str:
         collection_local_path = IncrementalPathGenerator.format_path(
-            dir_path=export_dir,
-            next_idx=iteration,
+            dir_path=export_dir, next_idx=iteration
         )
         os.makedirs(collection_local_path, exist_ok=True)
         return collection_local_path
@@ -62,11 +59,10 @@ class MlflowPlotCollectionLogger(MlflowArtifactLogger[Dict[str, Figure]]):
     @staticmethod
     def _get_collection_backend_path(artifact_path: str, iteration: int) -> str:
         collection_backend_path = IncrementalPathGenerator.format_path(
-            dir_path=artifact_path,
-            next_idx=iteration,
+            dir_path=artifact_path, next_idx=iteration
         )
         return collection_backend_path
 
     @classmethod
-    def _get_relative_path(cls, artifact_name: str) -> str:
-        return os.path.join("plot_collections", artifact_name)
+    def _get_relative_path(cls, item_name: str) -> str:
+        return os.path.join("plot_collections", item_name)
