@@ -1,16 +1,18 @@
-from abc import ABC, abstractmethod
-from typing import Any, Dict, Generic, List, Mapping, Optional, Type, TypeVar
+from abc import abstractmethod
+from typing import Any, Generic, List, Mapping, Optional, Type, TypeVar
 
 import torch
 from artifact_experiment.base.entities.data_split import DataSplit
-from artifact_experiment.base.tracking.client import TrackingClient
-from matplotlib.figure import Figure
-from numpy import ndarray
+from artifact_experiment.base.tracking.background.tracking_queue import TrackingQueue
 from tqdm import tqdm
 
 from artifact_torch.base.components.callbacks.hook import HookCallbackResources
-from artifact_torch.base.components.plans.forward_hook import ForwardHookPlan
-from artifact_torch.base.components.plans.model_io import ModelIOPlan
+from artifact_torch.base.components.plans.forward_hook import (
+    ForwardHookPlan,
+    ForwardHookPlanBuildContext,
+)
+from artifact_torch.base.components.plans.model_io import ModelIOPlan, ModelIOPlanBuildContext
+from artifact_torch.base.components.routines.base import PlanExecutionRoutine, RoutineResources
 from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
@@ -22,7 +24,9 @@ ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput, contravarian
 DataLoaderRoutineT = TypeVar("DataLoaderRoutineT", bound="DataLoaderRoutine[Any, Any, Any]")
 
 
-class DataLoaderRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]):
+class DataLoaderRoutine(
+    PlanExecutionRoutine[ModelTContr], Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]
+):
     _verbose = True
     _progressbar_message = "Processing Data Loader"
 
@@ -32,24 +36,28 @@ class DataLoaderRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelOutputT
         forward_hook_plans: Mapping[DataSplit, ForwardHookPlan[ModelTContr]],
         data_loaders: Mapping[DataSplit, DataLoader[ModelInputTContr]],
     ):
+        self._data_loaders = data_loaders
         self._model_io_plans = KeySelector.restrict_to_keys(model_io_plans, keys_from=data_loaders)
         self._forward_hook_plans = KeySelector.restrict_to_keys(
             forward_hook_plans, keys_from=data_loaders
         )
-        self._data_loaders = data_loaders
+        plans = list(self._model_io_plans.values()) + list(self._forward_hook_plans.values())
+        super().__init__(plans=plans)
 
     @classmethod
     def build(
         cls: Type[DataLoaderRoutineT],
         data_loaders: Mapping[DataSplit, DataLoader[ModelInputTContr]],
-        tracking_client: Optional[TrackingClient] = None,
+        tracking_queue: Optional[TrackingQueue] = None,
     ) -> DataLoaderRoutineT:
+        model_io_build_context = ModelIOPlanBuildContext(tracking_queue=tracking_queue)
+        forward_hook_build_context = ForwardHookPlanBuildContext(tracking_queue=tracking_queue)
         model_io_plans = {
             data_split: plan
             for data_split in DataSplit
             if (
-                plan := cls._get_model_io_plan(
-                    data_split=data_split, tracking_client=tracking_client
+                plan := cls._build_model_io_plan(
+                    data_split=data_split, context=model_io_build_context
                 )
             )
             is not None
@@ -58,8 +66,8 @@ class DataLoaderRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelOutputT
             data_split: plan
             for data_split in DataSplit
             if (
-                plan := cls._get_forward_hook_plan(
-                    data_split=data_split, tracking_client=tracking_client
+                plan := cls._build_forward_hook_plan(
+                    data_split=data_split, context=forward_hook_build_context
                 )
             )
             is not None
@@ -72,175 +80,31 @@ class DataLoaderRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelOutputT
         return routine
 
     @property
-    def scores(self) -> Dict[str, float]:
-        scores = {}
-        scores.update(self._model_io_scores)
-        scores.update(self._forward_hook_scores)
-        return scores
-
-    @property
-    def arrays(self) -> Dict[str, ndarray]:
-        arrays = {}
-        arrays.update(self._model_io_arrays)
-        arrays.update(self._forward_hook_arrays)
-        return arrays
-
-    @property
-    def plots(self) -> Dict[str, Figure]:
-        plots = {}
-        plots.update(self._model_io_plots)
-        plots.update(self._forward_hook_plots)
-        return plots
-
-    @property
-    def score_collections(self) -> Dict[str, Dict[str, float]]:
-        score_collections = {}
-        score_collections.update(self._model_io_score_collections)
-        score_collections.update(self._forward_hook_score_collections)
-        return score_collections
-
-    @property
-    def array_collections(self) -> Dict[str, Dict[str, ndarray]]:
-        array_collections = {}
-        array_collections.update(self._model_io_array_collections)
-        array_collections.update(self._forward_hook_array_collections)
-        return array_collections
-
-    @property
-    def plot_collections(self) -> Dict[str, Dict[str, Figure]]:
-        plot_collections = {}
-        plot_collections.update(self._model_io_plot_collections)
-        plot_collections.update(self._forward_hook_plot_collections)
-        return plot_collections
-
-    @property
-    def _model_io_scores(self) -> Dict[str, float]:
-        return {
-            name: value
-            for model_io_plan in self._model_io_plans.values()
-            for name, value in model_io_plan.scores.items()
-        }
-
-    @property
-    def _model_io_arrays(self) -> Dict[str, ndarray]:
-        return {
-            name: value
-            for model_io_plan in self._model_io_plans.values()
-            for name, value in model_io_plan.arrays.items()
-        }
-
-    @property
-    def _model_io_plots(self) -> Dict[str, Figure]:
-        return {
-            name: value
-            for model_io_plan in self._model_io_plans.values()
-            for name, value in model_io_plan.plots.items()
-        }
-
-    @property
-    def _model_io_score_collections(self) -> Dict[str, Dict[str, float]]:
-        return {
-            name: value
-            for model_io_plan in self._model_io_plans.values()
-            for name, value in model_io_plan.score_collections.items()
-        }
-
-    @property
-    def _model_io_array_collections(self) -> Dict[str, Dict[str, ndarray]]:
-        return {
-            name: value
-            for model_io_plan in self._model_io_plans.values()
-            for name, value in model_io_plan.array_collections.items()
-        }
-
-    @property
-    def _model_io_plot_collections(self) -> Dict[str, Dict[str, Figure]]:
-        return {
-            name: value
-            for model_io_plan in self._model_io_plans.values()
-            for name, value in model_io_plan.plot_collections.items()
-        }
-
-    @property
-    def _forward_hook_scores(self) -> Dict[str, float]:
-        return {
-            name: value
-            for forward_hook_plan in self._forward_hook_plans.values()
-            for name, value in forward_hook_plan.scores.items()
-        }
-
-    @property
-    def _forward_hook_arrays(self) -> Dict[str, ndarray]:
-        return {
-            name: value
-            for forward_hook_plan in self._forward_hook_plans.values()
-            for name, value in forward_hook_plan.arrays.items()
-        }
-
-    @property
-    def _forward_hook_plots(self) -> Dict[str, Figure]:
-        return {
-            name: value
-            for forward_hook_plan in self._forward_hook_plans.values()
-            for name, value in forward_hook_plan.plots.items()
-        }
-
-    @property
-    def _forward_hook_score_collections(self) -> Dict[str, Dict[str, float]]:
-        return {
-            name: value
-            for forward_hook_plan in self._forward_hook_plans.values()
-            for name, value in forward_hook_plan.score_collections.items()
-        }
-
-    @property
-    def _forward_hook_array_collections(self) -> Dict[str, Dict[str, ndarray]]:
-        return {
-            name: value
-            for forward_hook_plan in self._forward_hook_plans.values()
-            for name, value in forward_hook_plan.array_collections.items()
-        }
-
-    @property
-    def _forward_hook_plot_collections(self) -> Dict[str, Dict[str, Figure]]:
-        return {
-            name: value
-            for forward_hook_plan in self._forward_hook_plans.values()
-            for name, value in forward_hook_plan.plot_collections.items()
-        }
-
-    @property
     def _data_splits(self) -> List[DataSplit]:
         return list(self._data_loaders.keys())
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _get_model_io_plan(
-        data_split: DataSplit,
-        tracking_client: Optional[TrackingClient],
-    ) -> Optional[ModelIOPlan[ModelInputTContr, ModelOutputTContr]]: ...
+        cls, data_split: DataSplit
+    ) -> Optional[Type[ModelIOPlan[ModelInputTContr, ModelOutputTContr]]]: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _get_forward_hook_plan(
-        data_split: DataSplit,
-        tracking_client: Optional[TrackingClient],
-    ) -> Optional[ForwardHookPlan[ModelTContr]]: ...
+        cls, data_split: DataSplit
+    ) -> Optional[Type[ForwardHookPlan[ModelTContr]]]: ...
 
-    def clear_cache(self):
-        self._clear_model_io_cache()
-        self._clear_forward_hook_cache()
-
-    def execute(self, model: ModelTContr, n_epochs_elapsed: int):
+    def execute(self, resources: RoutineResources[ModelTContr]):
         for data_split in self._data_splits:
-            resources = HookCallbackResources[ModelTContr](
-                model=model, step=n_epochs_elapsed, data_split=data_split
+            callback_resources = HookCallbackResources[ModelTContr](
+                model=resources.model, step=resources.n_epochs_elapsed, data_split=data_split
             )
             data_loader = self._data_loaders[data_split]
             model_io_plan = self._model_io_plans.get(data_split)
             forward_hook_plan = self._forward_hook_plans.get(data_split)
             self._execute(
-                resources=resources,
+                callback_resources=callback_resources,
                 model_io_plan=model_io_plan,
                 forward_hook_plan=forward_hook_plan,
                 data_loader=data_loader,
@@ -249,34 +113,34 @@ class DataLoaderRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelOutputT
     @classmethod
     def _execute(
         cls,
-        resources: HookCallbackResources[ModelTContr],
+        callback_resources: HookCallbackResources[ModelTContr],
         model_io_plan: Optional[ModelIOPlan[ModelInputTContr, ModelOutputTContr]],
         forward_hook_plan: Optional[ForwardHookPlan[ModelTContr]],
         data_loader: DataLoader[ModelInputTContr],
     ):
         any_attached = cls._attach(
-            resources=resources,
+            callback_resources=callback_resources,
             model_io_plan=model_io_plan,
             forward_hook_plan=forward_hook_plan,
         )
         if any_attached:
-            cls._process_data_loader(model=resources.model, data_loader=data_loader)
+            cls._process_data_loader(model=callback_resources.model, data_loader=data_loader)
             if model_io_plan is not None:
-                model_io_plan.execute(resources=resources)
+                model_io_plan.execute(resources=callback_resources)
             if forward_hook_plan is not None:
-                forward_hook_plan.execute(resources=resources)
+                forward_hook_plan.execute(resources=callback_resources)
 
     @staticmethod
     def _attach(
-        resources: HookCallbackResources[ModelTContr],
+        callback_resources: HookCallbackResources[ModelTContr],
         model_io_plan: Optional[ModelIOPlan[ModelInputTContr, ModelOutputTContr]],
         forward_hook_plan: Optional[ForwardHookPlan[ModelTContr]],
     ) -> bool:
         any_attached = False
         if model_io_plan is not None:
-            any_attached |= model_io_plan.attach(resources=resources)
+            any_attached |= model_io_plan.attach(resources=callback_resources)
         if forward_hook_plan is not None:
-            any_attached |= forward_hook_plan.attach(resources=resources)
+            any_attached |= forward_hook_plan.attach(resources=callback_resources)
         return any_attached
 
     @classmethod
@@ -291,10 +155,18 @@ class DataLoaderRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelOutputT
             ):
                 _ = model(model_input)
 
-    def _clear_model_io_cache(self):
-        for plan in self._model_io_plans.values():
-            plan.clear_cache()
+    @classmethod
+    def _build_model_io_plan(
+        cls, data_split: DataSplit, context: ModelIOPlanBuildContext
+    ) -> Optional[ModelIOPlan[ModelInputTContr, ModelOutputTContr]]:
+        plan_class = cls._get_model_io_plan(data_split=data_split)
+        if plan_class is not None:
+            return plan_class.build(context=context)
 
-    def _clear_forward_hook_cache(self):
-        for plan in self._forward_hook_plans.values():
-            plan.clear_cache()
+    @classmethod
+    def _build_forward_hook_plan(
+        cls, data_split: DataSplit, context: ForwardHookPlanBuildContext
+    ) -> Optional[ForwardHookPlan[ModelTContr]]:
+        plan_class = cls._get_forward_hook_plan(data_split=data_split)
+        if plan_class is not None:
+            return plan_class.build(context=context)

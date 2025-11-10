@@ -1,14 +1,19 @@
-from abc import ABC, abstractmethod
-from typing import Any, Dict, Generic, Optional, Type, TypeVar
+from abc import abstractmethod
+from typing import Any, Generic, Optional, Type, TypeVar
 
-from artifact_experiment.base.tracking.client import TrackingClient
-from matplotlib.figure import Figure
-from numpy import ndarray
+from artifact_experiment.base.tracking.background.tracking_queue import TrackingQueue
 
 from artifact_torch.base.components.callbacks.hook import HookCallbackResources
-from artifact_torch.base.components.plans.backward_hook import BackwardHookPlan
-from artifact_torch.base.components.plans.forward_hook import ForwardHookPlan
-from artifact_torch.base.components.plans.model_io import ModelIOPlan
+from artifact_torch.base.components.plans.backward_hook import (
+    BackwardHookPlan,
+    BackwardHookPlanBuildContext,
+)
+from artifact_torch.base.components.plans.forward_hook import (
+    ForwardHookPlan,
+    ForwardHookPlanBuildContext,
+)
+from artifact_torch.base.components.plans.model_io import ModelIOPlan, ModelIOPlanBuildContext
+from artifact_torch.base.components.routines.base import PlanExecutionRoutine, RoutineResources
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 
@@ -20,7 +25,9 @@ TrainDiagnosticsRoutineT = TypeVar(
 )
 
 
-class TrainDiagnosticsRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]):
+class TrainDiagnosticsRoutine(
+    PlanExecutionRoutine[ModelTContr], Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]
+):
     _callback_trigger_identifier = "EPOCH"
 
     def __init__(
@@ -32,14 +39,23 @@ class TrainDiagnosticsRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelO
         self._model_io_plan = model_io_plan
         self._forward_hook_plan = forward_hook_plan
         self._backward_hook_plan = backward_hook_plan
+        plans = [
+            plan
+            for plan in [model_io_plan, forward_hook_plan, backward_hook_plan]
+            if plan is not None
+        ]
+        super().__init__(plans=plans)
 
     @classmethod
     def build(
-        cls: Type[TrainDiagnosticsRoutineT], tracking_client: Optional[TrackingClient] = None
+        cls: Type[TrainDiagnosticsRoutineT], tracking_queue: Optional[TrackingQueue] = None
     ) -> TrainDiagnosticsRoutineT:
-        model_io_plan = cls._get_model_io_plan(tracking_client=tracking_client)
-        forward_hook_plan = cls._get_forward_hook_plan(tracking_client=tracking_client)
-        backward_hook_plan = cls._get_backward_hook_plan(tracking_client=tracking_client)
+        model_io_build_context = ModelIOPlanBuildContext(tracking_queue=tracking_queue)
+        forward_hook_build_context = ForwardHookPlanBuildContext(tracking_queue=tracking_queue)
+        backward_hook_build_context = BackwardHookPlanBuildContext(tracking_queue=tracking_queue)
+        model_io_plan = cls._build_model_io_plan(context=model_io_build_context)
+        forward_hook_plan = cls._build_forward_hook_plan(context=forward_hook_build_context)
+        backward_hook_plan = cls._build_backward_hook_plan(context=backward_hook_build_context)
         routine = cls(
             model_io_plan=model_io_plan,
             forward_hook_plan=forward_hook_plan,
@@ -47,177 +63,32 @@ class TrainDiagnosticsRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelO
         )
         return routine
 
-    @property
-    def scores(self) -> Dict[str, float]:
-        scores = {}
-        scores.update(self._model_io_scores)
-        scores.update(self._forward_hook_scores)
-        scores.update(self._backward_hook_scores)
-        return scores
-
-    @property
-    def arrays(self) -> Dict[str, ndarray]:
-        arrays = {}
-        arrays.update(self._model_io_arrays)
-        arrays.update(self._forward_hook_arrays)
-        arrays.update(self._backward_hook_arrays)
-        return arrays
-
-    @property
-    def plots(self) -> Dict[str, Figure]:
-        plots = {}
-        plots.update(self._model_io_plots)
-        plots.update(self._forward_hook_plots)
-        plots.update(self._backward_hook_plots)
-        return plots
-
-    @property
-    def score_collections(self) -> Dict[str, Dict[str, float]]:
-        score_collections = {}
-        score_collections.update(self._model_io_score_collections)
-        score_collections.update(self._forward_hook_score_collections)
-        score_collections.update(self._backward_hook_score_collections)
-        return score_collections
-
-    @property
-    def array_collections(self) -> Dict[str, Dict[str, ndarray]]:
-        array_collections = {}
-        array_collections.update(self._model_io_array_collections)
-        array_collections.update(self._forward_hook_array_collections)
-        array_collections.update(self._backward_hook_array_collections)
-        return array_collections
-
-    @property
-    def plot_collections(self) -> Dict[str, Dict[str, Figure]]:
-        plot_collections = {}
-        plot_collections.update(self._model_io_plot_collections)
-        plot_collections.update(self._forward_hook_plot_collections)
-        plot_collections.update(self._backward_hook_plot_collections)
-        return plot_collections
-
-    @property
-    def _model_io_scores(self) -> Dict[str, float]:
-        return self._model_io_plan.scores if self._model_io_plan is not None else {}
-
-    @property
-    def _model_io_arrays(self) -> Dict[str, ndarray]:
-        return self._model_io_plan.arrays if self._model_io_plan is not None else {}
-
-    @property
-    def _model_io_plots(self) -> Dict[str, Figure]:
-        return self._model_io_plan.plots if self._model_io_plan is not None else {}
-
-    @property
-    def _model_io_score_collections(self) -> Dict[str, Dict[str, float]]:
-        return self._model_io_plan.score_collections if self._model_io_plan is not None else {}
-
-    @property
-    def _model_io_array_collections(self) -> Dict[str, Dict[str, ndarray]]:
-        return self._model_io_plan.array_collections if self._model_io_plan is not None else {}
-
-    @property
-    def _model_io_plot_collections(self) -> Dict[str, Dict[str, Figure]]:
-        return self._model_io_plan.plot_collections if self._model_io_plan is not None else {}
-
-    @property
-    def _forward_hook_scores(self) -> Dict[str, float]:
-        return self._forward_hook_plan.scores if self._forward_hook_plan is not None else {}
-
-    @property
-    def _forward_hook_arrays(self) -> Dict[str, ndarray]:
-        return self._forward_hook_plan.arrays if self._forward_hook_plan is not None else {}
-
-    @property
-    def _forward_hook_plots(self) -> Dict[str, Figure]:
-        return self._forward_hook_plan.plots if self._forward_hook_plan is not None else {}
-
-    @property
-    def _forward_hook_score_collections(self) -> Dict[str, Dict[str, float]]:
-        return (
-            self._forward_hook_plan.score_collections if self._forward_hook_plan is not None else {}
-        )
-
-    @property
-    def _forward_hook_array_collections(self) -> Dict[str, Dict[str, ndarray]]:
-        return (
-            self._forward_hook_plan.array_collections if self._forward_hook_plan is not None else {}
-        )
-
-    @property
-    def _forward_hook_plot_collections(self) -> Dict[str, Dict[str, Figure]]:
-        return (
-            self._forward_hook_plan.plot_collections if self._forward_hook_plan is not None else {}
-        )
-
-    @property
-    def _backward_hook_scores(self) -> Dict[str, float]:
-        return self._backward_hook_plan.scores if self._backward_hook_plan is not None else {}
-
-    @property
-    def _backward_hook_arrays(self) -> Dict[str, ndarray]:
-        return self._backward_hook_plan.arrays if self._backward_hook_plan is not None else {}
-
-    @property
-    def _backward_hook_plots(self) -> Dict[str, Figure]:
-        return self._backward_hook_plan.plots if self._backward_hook_plan is not None else {}
-
-    @property
-    def _backward_hook_score_collections(self) -> Dict[str, Dict[str, float]]:
-        return (
-            self._backward_hook_plan.score_collections
-            if self._backward_hook_plan is not None
-            else {}
-        )
-
-    @property
-    def _backward_hook_array_collections(self) -> Dict[str, Dict[str, ndarray]]:
-        return (
-            self._backward_hook_plan.array_collections
-            if self._backward_hook_plan is not None
-            else {}
-        )
-
-    @property
-    def _backward_hook_plot_collections(self) -> Dict[str, Dict[str, Figure]]:
-        return (
-            self._backward_hook_plan.plot_collections
-            if self._backward_hook_plan is not None
-            else {}
-        )
-
-    @staticmethod
+    @classmethod
     @abstractmethod
     def _get_model_io_plan(
-        tracking_client: Optional[TrackingClient],
-    ) -> Optional[ModelIOPlan[ModelInputTContr, ModelOutputTContr]]: ...
+        cls,
+    ) -> Optional[Type[ModelIOPlan[ModelInputTContr, ModelOutputTContr]]]: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
-    def _get_forward_hook_plan(
-        tracking_client: Optional[TrackingClient],
-    ) -> Optional[ForwardHookPlan[ModelTContr]]: ...
+    def _get_forward_hook_plan(cls) -> Optional[Type[ForwardHookPlan[ModelTContr]]]: ...
 
-    @staticmethod
+    @classmethod
     @abstractmethod
-    def _get_backward_hook_plan(
-        tracking_client: Optional[TrackingClient],
-    ) -> Optional[BackwardHookPlan[ModelTContr]]: ...
+    def _get_backward_hook_plan(cls) -> Optional[Type[BackwardHookPlan[ModelTContr]]]: ...
 
-    def clear_cache(self):
-        self._clear_model_io_cache()
-        self._clear_forward_hook_cache()
-        self._clear_backward_hook_cache()
-
-    def execute(self, model: ModelTContr, n_epochs_elapsed: int):
-        resources = HookCallbackResources[ModelTContr](
-            model=model, step=n_epochs_elapsed, trigger=self._callback_trigger_identifier
+    def execute(self, resources: RoutineResources[ModelTContr]):
+        callback_resources = HookCallbackResources[ModelTContr](
+            model=resources.model,
+            step=resources.n_epochs_elapsed,
+            trigger=self._callback_trigger_identifier,
         )
         if self._model_io_plan is not None:
-            self._model_io_plan.execute(resources=resources)
+            self._model_io_plan.execute(resources=callback_resources)
         if self._forward_hook_plan is not None:
-            self._forward_hook_plan.execute(resources=resources)
+            self._forward_hook_plan.execute(resources=callback_resources)
         if self._backward_hook_plan is not None:
-            self._backward_hook_plan.execute(resources=resources)
+            self._backward_hook_plan.execute(resources=callback_resources)
 
     def attach(self, model: ModelTContr, n_epochs_elapsed: int) -> bool:
         resources = HookCallbackResources[ModelTContr](model=model, step=n_epochs_elapsed)
@@ -230,14 +101,29 @@ class TrainDiagnosticsRoutine(ABC, Generic[ModelTContr, ModelInputTContr, ModelO
             any_attached |= self._backward_hook_plan.attach(resources=resources)
         return any_attached
 
-    def _clear_model_io_cache(self):
-        if self._model_io_plan is not None:
-            self._model_io_plan.clear_cache()
+    @classmethod
+    def _build_model_io_plan(
+        cls,
+        context: ModelIOPlanBuildContext,
+    ) -> Optional[ModelIOPlan[ModelInputTContr, ModelOutputTContr]]:
+        plan_class = cls._get_model_io_plan()
+        if plan_class is not None:
+            return plan_class.build(context=context)
 
-    def _clear_forward_hook_cache(self):
-        if self._forward_hook_plan is not None:
-            self._forward_hook_plan.clear_cache()
+    @classmethod
+    def _build_forward_hook_plan(
+        cls,
+        context: ForwardHookPlanBuildContext,
+    ) -> Optional[ForwardHookPlan[ModelTContr]]:
+        plan_class = cls._get_forward_hook_plan()
+        if plan_class is not None:
+            return plan_class.build(context=context)
 
-    def _clear_backward_hook_cache(self):
-        if self._backward_hook_plan is not None:
-            self._backward_hook_plan.clear_cache()
+    @classmethod
+    def _build_backward_hook_plan(
+        cls,
+        context: BackwardHookPlanBuildContext,
+    ) -> Optional[BackwardHookPlan[ModelTContr]]:
+        plan_class = cls._get_backward_hook_plan()
+        if plan_class is not None:
+            return plan_class.build(context=context)
