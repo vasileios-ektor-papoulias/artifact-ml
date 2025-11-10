@@ -4,7 +4,9 @@ from typing import Any, Generic, Mapping, Optional, Type, TypeVar
 import pandas as pd
 from artifact_core.base.artifact import ResourceSpecProtocol
 from artifact_experiment.base.entities.data_split import DataSplit
-from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_experiment.base.tracking.backend.client import TrackingClient
+from artifact_experiment.base.tracking.background.tracking_queue import TrackingQueue
+from artifact_experiment.base.tracking.background.writer import FileWriter
 
 from artifact_torch.base.components.routines.artifact import ArtifactRoutine, ArtifactRoutineData
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
@@ -48,26 +50,29 @@ class Experiment(
         data_loaders: Mapping[DataSplit, DataLoader[ModelInputTContr]],
         artifact_routine_data: Mapping[DataSplit, ArtifactRoutineDataTContr],
         artifact_routine_data_spec: Optional[DataSpecProtocolTContr] = None,
-        tracking_client: Optional[TrackingClient] = None,
+        tracking_client: Optional[TrackingClient[Any]] = None,
     ) -> ExperimentT:
         assert DataSplit.TRAIN in data_loaders, "Training data not provided."
-        train_diagnostics_routine = cls._get_train_diagnostics_routine(
-            tracking_client=tracking_client
+        tracking_queue = cls._get_tracking_queue(tracking_client=tracking_client)
+        file_writer = cls._get_file_writer(tracking_client=tracking_client)
+        train_diagnostics_routine = cls._build_train_diagnostics_routine(
+            tracking_queue=tracking_queue
         )
-        loader_routine = cls._get_loader_routine(
-            data_loaders=data_loaders, tracking_client=tracking_client
+        loader_routine = cls._build_loader_routine(
+            data_loaders=data_loaders, tracking_queue=tracking_queue
         )
-        artifact_routine = cls._get_artifact_routine(
+        artifact_routine = cls._build_artifact_routine(
             data=artifact_routine_data,
             data_spec=artifact_routine_data_spec,
-            tracking_client=tracking_client,
+            tracking_queue=tracking_queue,
         )
-        trainer = cls._get_trainer_type().build(
+        trainer = cls._build_trainer(
             model=model,
             train_loader=data_loaders[DataSplit.TRAIN],
             train_diagnostics_routine=train_diagnostics_routine,
             loader_routine=loader_routine,
             artifact_routine=artifact_routine,
+            file_writer=file_writer,
         )
         experiment = cls(trainer=trainer)
         return experiment
@@ -78,7 +83,7 @@ class Experiment(
 
     @classmethod
     @abstractmethod
-    def _get_trainer_type(
+    def _get_trainer(
         cls,
     ) -> Type[Trainer[ModelTContr, ModelInputTContr, ModelOutputTContr, Any, Any]]: ...
 
@@ -86,25 +91,105 @@ class Experiment(
     @abstractmethod
     def _get_train_diagnostics_routine(
         cls,
-        tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[TrainDiagnosticsRoutine[ModelTContr, ModelInputTContr, ModelOutputTContr]]: ...
+    ) -> Optional[
+        Type[TrainDiagnosticsRoutine[ModelTContr, ModelInputTContr, ModelOutputTContr]]
+    ]: ...
 
     @classmethod
     @abstractmethod
     def _get_loader_routine(
         cls,
-        data_loaders: Mapping[DataSplit, DataLoader[ModelInputTContr]],
-        tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[DataLoaderRoutine[ModelTContr, ModelInputTContr, ModelOutputTContr]]: ...
+    ) -> Optional[Type[DataLoaderRoutine[ModelTContr, ModelInputTContr, ModelOutputTContr]]]: ...
 
     @classmethod
     @abstractmethod
     def _get_artifact_routine(
         cls,
-        data: Mapping[DataSplit, ArtifactRoutineDataTContr],
-        data_spec: DataSpecProtocolTContr,
-        tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[ArtifactRoutine[ModelTContr, Any, Any, Any, Any]]: ...
+    ) -> Optional[
+        Type[
+            ArtifactRoutine[
+                ModelTContr, Any, ArtifactRoutineDataTContr, Any, DataSpecProtocolTContr, Any
+            ]
+        ]
+    ]: ...
 
     def run(self):
         self._trainer.train()
+
+    @classmethod
+    def _build_trainer(
+        cls,
+        model: ModelTContr,
+        train_loader: DataLoader[ModelInputTContr],
+        train_diagnostics_routine: Optional[
+            TrainDiagnosticsRoutine[ModelTContr, ModelInputTContr, ModelOutputTContr]
+        ],
+        loader_routine: Optional[
+            DataLoaderRoutine[ModelTContr, ModelInputTContr, ModelOutputTContr]
+        ],
+        artifact_routine: Optional[
+            ArtifactRoutine[
+                ModelTContr, Any, ArtifactRoutineDataTContr, Any, DataSpecProtocolTContr, Any
+            ]
+        ],
+        file_writer: Optional[FileWriter],
+    ) -> Trainer[ModelTContr, ModelInputTContr, ModelOutputTContr, Any, Any]:
+        trainer_class = cls._get_trainer()
+        trainer = trainer_class.build(
+            model=model,
+            train_loader=train_loader,
+            train_diagnostics_routine=train_diagnostics_routine,
+            loader_routine=loader_routine,
+            artifact_routine=artifact_routine,
+            file_writer=file_writer,
+        )
+        return trainer
+
+    @classmethod
+    def _build_train_diagnostics_routine(
+        cls, tracking_queue: Optional[TrackingQueue]
+    ) -> Optional[TrainDiagnosticsRoutine[ModelTContr, ModelInputTContr, ModelOutputTContr]]:
+        routine = None
+        routine_class = cls._get_train_diagnostics_routine()
+        if routine_class is not None:
+            routine = routine_class.build(tracking_queue=tracking_queue)
+        return routine
+
+    @classmethod
+    def _build_loader_routine(
+        cls,
+        data_loaders: Mapping[DataSplit, DataLoader[ModelInputTContr]],
+        tracking_queue: Optional[TrackingQueue],
+    ) -> Optional[DataLoaderRoutine[ModelTContr, ModelInputTContr, ModelOutputTContr]]:
+        routine = None
+        routine_class = cls._get_loader_routine()
+        if routine_class is not None:
+            routine = routine_class.build(data_loaders=data_loaders, tracking_queue=tracking_queue)
+        return routine
+
+    @classmethod
+    def _build_artifact_routine(
+        cls,
+        data: Mapping[DataSplit, ArtifactRoutineDataTContr],
+        data_spec: Optional[DataSpecProtocolTContr],
+        tracking_queue: Optional[TrackingQueue],
+    ) -> Optional[
+        ArtifactRoutine[
+            ModelTContr, Any, ArtifactRoutineDataTContr, Any, DataSpecProtocolTContr, Any
+        ]
+    ]:
+        routine = None
+        routine_class = cls._get_artifact_routine()
+        if routine_class is not None and data_spec is not None:
+            routine = routine_class.build(
+                data=data, data_spec=data_spec, tracking_queue=tracking_queue
+            )
+        return routine
+
+    @staticmethod
+    def _get_tracking_queue(tracking_client: Optional[TrackingClient]) -> Optional[TrackingQueue]:
+        return tracking_client.queue if tracking_client is not None else None
+
+    @staticmethod
+    def _get_file_writer(tracking_client: Optional[TrackingClient]) -> Optional[FileWriter]:
+        return tracking_client.file_writer if tracking_client is not None else None
