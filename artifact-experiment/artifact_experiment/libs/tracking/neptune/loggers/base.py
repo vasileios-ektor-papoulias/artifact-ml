@@ -1,27 +1,20 @@
 from abc import abstractmethod
 from typing import Generic, TypeVar
 
-from artifact_core.base.artifact_dependencies import ArtifactResult
+from artifact_experiment.base.entities.tracking_data import TrackingData
+from artifact_experiment.base.tracking.backend.logger import BackendLogger
+from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter
 
-from artifact_experiment.base.tracking.logger import ArtifactLogger
-from artifact_experiment.libs.tracking.neptune.adapter import (
-    NeptuneRunAdapter,
-)
-
-ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
+TrackingDataT = TypeVar("TrackingDataT", bound=TrackingData)
 
 
-class NeptuneArtifactLogger(
-    ArtifactLogger[ArtifactResultT, NeptuneRunAdapter], Generic[ArtifactResultT]
-):
-    _root_dir = "artifacts"
-
-    def _append(self, artifact_path: str, artifact: ArtifactResultT):
-        self._run.log(artifact_path=artifact_path, artifact=artifact)
+class NeptuneLogger(BackendLogger[TrackingDataT, NeptuneRunAdapter], Generic[TrackingDataT]):
+    @abstractmethod
+    def _append(self, item_path: str, item: TrackingDataT): ...
 
     @classmethod
     @abstractmethod
-    def _get_relative_path(cls, artifact_name: str) -> str: ...
+    def _get_relative_path(cls, item_name: str) -> str: ...
 
-    def _get_root_dir(self) -> str:
-        return self._root_dir
+    @abstractmethod
+    def _get_root_dir(self) -> str: ...

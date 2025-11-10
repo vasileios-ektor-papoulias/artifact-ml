@@ -1,24 +1,12 @@
-from typing import Dict, Optional, Type, TypeVar
+from typing import Optional, Type, TypeVar
 
 import neptune
-from matplotlib.figure import Figure
-from numpy import ndarray
 
-from artifact_experiment.base.tracking.client import TrackingClient
-from artifact_experiment.base.tracking.logger import ArtifactLogger
+from artifact_experiment.base.tracking.backend.client import TrackingClient
+from artifact_experiment.base.tracking.backend.logger_worker import LoggerWorker
+from artifact_experiment.base.tracking.background.tracking_queue import TrackingQueue
 from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter
-from artifact_experiment.libs.tracking.neptune.loggers.array_collections import (
-    NeptuneArrayCollectionLogger,
-)
-from artifact_experiment.libs.tracking.neptune.loggers.arrays import NeptuneArrayLogger
-from artifact_experiment.libs.tracking.neptune.loggers.plot_collections import (
-    NeptunePlotCollectionLogger,
-)
-from artifact_experiment.libs.tracking.neptune.loggers.plots import NeptunePlotLogger
-from artifact_experiment.libs.tracking.neptune.loggers.score_collections import (
-    NeptuneScoreCollectionLogger,
-)
-from artifact_experiment.libs.tracking.neptune.loggers.scores import NeptuneScoreLogger
+from artifact_experiment.libs.tracking.neptune.logger_worker import NeptuneLoggerWorker
 
 NeptuneTrackingClientT = TypeVar("NeptuneTrackingClientT", bound="NeptuneTrackingClient")
 
@@ -41,33 +29,9 @@ class NeptuneTrackingClient(TrackingClient[NeptuneRunAdapter]):
         return client
 
     @staticmethod
-    def _get_score_logger(run: NeptuneRunAdapter) -> ArtifactLogger[float, NeptuneRunAdapter]:
-        return NeptuneScoreLogger(run=run)
-
-    @staticmethod
-    def _get_array_logger(
-        run: NeptuneRunAdapter,
-    ) -> ArtifactLogger[ndarray, NeptuneRunAdapter]:
-        return NeptuneArrayLogger(run=run)
-
-    @staticmethod
-    def _get_plot_logger(run: NeptuneRunAdapter) -> ArtifactLogger[Figure, NeptuneRunAdapter]:
-        return NeptunePlotLogger(run=run)
-
-    @staticmethod
-    def _get_score_collection_logger(
-        run: NeptuneRunAdapter,
-    ) -> ArtifactLogger[Dict[str, float], NeptuneRunAdapter]:
-        return NeptuneScoreCollectionLogger(run=run)
-
-    @staticmethod
-    def _get_array_collection_logger(
-        run: NeptuneRunAdapter,
-    ) -> ArtifactLogger[Dict[str, ndarray], NeptuneRunAdapter]:
-        return NeptuneArrayCollectionLogger(run=run)
-
-    @staticmethod
-    def _get_plot_collection_logger(
-        run: NeptuneRunAdapter,
-    ) -> ArtifactLogger[Dict[str, Figure], NeptuneRunAdapter]:
-        return NeptunePlotCollectionLogger(run=run)
+    def _get_logger_worker(
+        run: NeptuneRunAdapter, tracking_queue: TrackingQueue
+    ) -> LoggerWorker[NeptuneRunAdapter]:
+        return NeptuneLoggerWorker.build(
+            run=run, queue=tracking_queue.queue, managed_temp_dir=tracking_queue.managed_temp_dir
+        )
