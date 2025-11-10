@@ -6,7 +6,7 @@
   <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
 </p>
 
-[![Documentation](https://img.shields.io/badge/docs-mkdocs-blue)](https://artifact-ml.readthedocs.io/en/latest/artifact_experiment)
+[![Documentation](https://img.shields.io/badge/docs-mkdocs-blue)](https://artifact-ml.readthedocs.io/en/latest/artifact-experiment)
 ![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
 ![License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-ml)
 
