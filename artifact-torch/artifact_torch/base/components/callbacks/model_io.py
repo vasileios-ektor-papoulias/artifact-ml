@@ -4,15 +4,7 @@ from typing import Any, Dict, Generic, List, Optional, Tuple, TypeVar
 
 import torch
 import torch.nn as nn
-from artifact_experiment.base.callbacks.tracking import (
-    ArrayCollectionExportMixin,
-    ArrayExportMixin,
-    PlotCollectionExportMixin,
-    PlotExportMixin,
-    ScoreCollectionExportMixin,
-    ScoreExportMixin,
-)
-from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_core.base.artifact_dependencies import ArtifactResult
 from matplotlib.figure import Figure
 from numpy import ndarray
 
@@ -29,7 +21,7 @@ ModelIOCallbackResources = HookCallbackResources[Model[Any, ModelOutputTCov]]
 
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
 ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput, contravariant=True)
-CacheDataT = TypeVar("CacheDataT")
+CacheDataT = TypeVar("CacheDataT", bound=ArtifactResult, covariant=True)
 BatchResultT = TypeVar("BatchResultT")
 
 
@@ -44,18 +36,12 @@ class ModelIOCallback(
     @classmethod
     @abstractmethod
     def _compute_on_batch(
-        cls,
-        model_input: ModelInputTContr,
-        model_output: ModelOutputTContr,
+        cls, model_input: ModelInputTContr, model_output: ModelOutputTContr
     ) -> BatchResultT: ...
 
     @classmethod
     @abstractmethod
     def _aggregate_batch_results(cls, ls_batch_results: List[BatchResultT]) -> CacheDataT: ...
-
-    @staticmethod
-    @abstractmethod
-    def _export(key: str, value: CacheDataT, tracking_client: TrackingClient): ...
 
     @classmethod
     def _get_layers(cls, model: Model[ModelInputTContr, ModelOutputTContr]) -> Sequence[nn.Module]:
@@ -74,129 +60,31 @@ class ModelIOCallback(
         return cls._aggregate_batch_results(ls_batch_results=ls_batch_results)
 
 
-class ModelIOScoreCallback(
-    ScoreExportMixin,
-    ModelIOCallback[ModelInputTContr, ModelOutputTContr, float, Dict[str, torch.Tensor]],
-):
-    @classmethod
-    @abstractmethod
-    def _get_base_key(cls) -> str: ...
-
-    @classmethod
-    @abstractmethod
-    def _compute_on_batch(
-        cls, model_input: ModelInputTContr, model_output: ModelOutputTContr
-    ) -> Dict[str, torch.Tensor]: ...
-
-    @classmethod
-    @abstractmethod
-    def _aggregate_batch_results(cls, ls_batch_results: List[Dict[str, torch.Tensor]]) -> float: ...
+ModelIOScoreCallback = ModelIOCallback[
+    ModelInputTContr, ModelOutputTContr, float, Dict[str, torch.Tensor]
+]
 
 
-class ModelIOArrayCallback(
-    ArrayExportMixin,
-    ModelIOCallback[ModelInputTContr, ModelOutputTContr, ndarray, Dict[str, torch.Tensor]],
-):
-    @classmethod
-    @abstractmethod
-    def _get_base_key(cls) -> str: ...
-
-    @classmethod
-    @abstractmethod
-    def _compute_on_batch(
-        cls, model_input: ModelInputTContr, model_output: ModelOutputTContr
-    ) -> Dict[str, torch.Tensor]: ...
-
-    @classmethod
-    @abstractmethod
-    def _aggregate_batch_results(
-        cls, ls_batch_results: List[Dict[str, torch.Tensor]]
-    ) -> ndarray: ...
+ModelIOArrayCallback = ModelIOCallback[
+    ModelInputTContr, ModelOutputTContr, ndarray, Dict[str, torch.Tensor]
+]
 
 
-class ModelIOPlotCallback(
-    PlotExportMixin,
-    ModelIOCallback[ModelInputTContr, ModelOutputTContr, Figure, Dict[str, torch.Tensor]],
-):
-    @classmethod
-    @abstractmethod
-    def _get_base_key(cls) -> str: ...
-
-    @classmethod
-    @abstractmethod
-    def _compute_on_batch(
-        cls, model_input: ModelInputTContr, model_output: ModelOutputTContr
-    ) -> Dict[str, torch.Tensor]: ...
-
-    @classmethod
-    @abstractmethod
-    def _aggregate_batch_results(
-        cls, ls_batch_results: List[Dict[str, torch.Tensor]]
-    ) -> Figure: ...
+ModelIOPlotCallback = ModelIOCallback[
+    ModelInputTContr, ModelOutputTContr, Figure, Dict[str, torch.Tensor]
+]
 
 
-class ModelIOScoreCollectionCallback(
-    ScoreCollectionExportMixin,
-    ModelIOCallback[ModelInputTContr, ModelOutputTContr, Dict[str, float], Dict[str, torch.Tensor]],
-):
-    @classmethod
-    @abstractmethod
-    def _get_base_key(cls) -> str: ...
-
-    @classmethod
-    @abstractmethod
-    def _compute_on_batch(
-        cls, model_input: ModelInputTContr, model_output: ModelOutputTContr
-    ) -> Dict[str, torch.Tensor]: ...
-
-    @classmethod
-    @abstractmethod
-    def _aggregate_batch_results(
-        cls, ls_batch_results: List[Dict[str, torch.Tensor]]
-    ) -> Dict[str, float]: ...
+ModelIOScoreCollectionCallback = ModelIOCallback[
+    ModelInputTContr, ModelOutputTContr, Dict[str, float], Dict[str, torch.Tensor]
+]
 
 
-class ModelIOArrayCollectionCallback(
-    ArrayCollectionExportMixin,
-    ModelIOCallback[
-        ModelInputTContr, ModelOutputTContr, Dict[str, ndarray], Dict[str, torch.Tensor]
-    ],
-):
-    @classmethod
-    @abstractmethod
-    def _get_base_key(cls) -> str: ...
-
-    @classmethod
-    @abstractmethod
-    def _compute_on_batch(
-        cls, model_input: ModelInputTContr, model_output: ModelOutputTContr
-    ) -> Dict[str, torch.Tensor]: ...
-
-    @classmethod
-    @abstractmethod
-    def _aggregate_batch_results(
-        cls, ls_batch_results: List[Dict[str, torch.Tensor]]
-    ) -> Dict[str, ndarray]: ...
+ModelIOArrayCollectionCallback = ModelIOCallback[
+    ModelInputTContr, ModelOutputTContr, Dict[str, ndarray], Dict[str, torch.Tensor]
+]
 
 
-class ModelIOPlotCollectionCallback(
-    PlotCollectionExportMixin,
-    ModelIOCallback[
-        ModelInputTContr, ModelOutputTContr, Dict[str, Figure], Dict[str, torch.Tensor]
-    ],
-):
-    @classmethod
-    @abstractmethod
-    def _get_base_key(cls) -> str: ...
-
-    @classmethod
-    @abstractmethod
-    def _compute_on_batch(
-        cls, model_input: ModelInputTContr, model_output: ModelOutputTContr
-    ) -> Dict[str, torch.Tensor]: ...
-
-    @classmethod
-    @abstractmethod
-    def _aggregate_batch_results(
-        cls, ls_batch_results: List[Dict[str, torch.Tensor]]
-    ) -> Dict[str, Figure]: ...
+ModelIOPlotCollectionCallback = ModelIOCallback[
+    ModelInputTContr, ModelOutputTContr, Dict[str, Figure], Dict[str, torch.Tensor]
+]

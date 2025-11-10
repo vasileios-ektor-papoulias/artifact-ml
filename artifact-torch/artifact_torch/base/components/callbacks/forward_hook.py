@@ -4,15 +4,7 @@ from typing import Any, Dict, Generic, List, Optional, Tuple, TypeVar
 
 import torch
 import torch.nn as nn
-from artifact_experiment.base.callbacks.tracking import (
-    ArrayCollectionExportMixin,
-    ArrayExportMixin,
-    PlotCollectionExportMixin,
-    PlotExportMixin,
-    ScoreCollectionExportMixin,
-    ScoreExportMixin,
-)
-from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_core.base.artifact_dependencies import ArtifactResult
 from matplotlib.figure import Figure
 from numpy import ndarray
 from torch.utils.hooks import RemovableHandle
@@ -21,13 +13,13 @@ from artifact_torch.base.components.callbacks.hook import HookCallback
 from artifact_torch.base.model.base import Model
 
 ModelTContr = TypeVar("ModelTContr", bound=Model, contravariant=True)
-CacheDataT = TypeVar("CacheDataT")
+CacheDataTCov = TypeVar("CacheDataTCov", bound=ArtifactResult, covariant=True)
 HookResultT = TypeVar("HookResultT")
 
 
 class ForwardHookCallback(
-    HookCallback[ModelTContr, CacheDataT, HookResultT],
-    Generic[ModelTContr, CacheDataT, HookResultT],
+    HookCallback[ModelTContr, CacheDataTCov, HookResultT],
+    Generic[ModelTContr, CacheDataTCov, HookResultT],
 ):
     @classmethod
     @abstractmethod
@@ -45,11 +37,7 @@ class ForwardHookCallback(
 
     @classmethod
     @abstractmethod
-    def _aggregate(cls, hook_results: Dict[str, List[HookResultT]]) -> CacheDataT: ...
-
-    @staticmethod
-    @abstractmethod
-    def _export(key: str, value: CacheDataT, tracking_client: TrackingClient): ...
+    def _aggregate(cls, hook_results: Dict[str, List[HookResultT]]) -> CacheDataTCov: ...
 
     @classmethod
     def _attach(
@@ -67,157 +55,24 @@ class ForwardHookCallback(
             handles.append(module.register_forward_hook(_wrapped_hook))
 
 
-class ForwardHookScoreCallback(
-    ScoreExportMixin,
-    ForwardHookCallback[ModelTContr, float, Dict[str, torch.Tensor]],
-):
-    @classmethod
-    @abstractmethod
-    def _get_base_key(cls) -> str: ...
+ForwardHookScoreCallback = ForwardHookCallback[ModelTContr, float, Dict[str, torch.Tensor]]
 
-    @classmethod
-    @abstractmethod
-    def _get_layers(cls, model: ModelTContr) -> Sequence[nn.Module]: ...
-
-    @classmethod
-    @abstractmethod
-    def _hook(
-        cls, module: nn.Module, inputs: Tuple[Any, ...], output: Any
-    ) -> Optional[Dict[str, torch.Tensor]]: ...
-
-    @classmethod
-    @abstractmethod
-    def _aggregate(cls, hook_results: Dict[str, List[Dict[str, torch.Tensor]]]) -> float: ...
+ForwardHookArrayCallback = ForwardHookCallback[ModelTContr, ndarray, Dict[str, torch.Tensor]]
 
 
-class ForwardHookArrayCallback(
-    ArrayExportMixin,
-    ForwardHookCallback[ModelTContr, ndarray, Dict[str, torch.Tensor]],
-):
-    @classmethod
-    @abstractmethod
-    def _get_base_key(cls) -> str: ...
-
-    @classmethod
-    @abstractmethod
-    def _get_layers(cls, model: ModelTContr) -> Sequence[nn.Module]: ...
-
-    @classmethod
-    @abstractmethod
-    def _hook(
-        cls, module: nn.Module, inputs: Tuple[Any, ...], output: Any
-    ) -> Optional[Dict[str, torch.Tensor]]: ...
-
-    @classmethod
-    @abstractmethod
-    def _aggregate(cls, hook_results: Dict[str, List[Dict[str, torch.Tensor]]]) -> ndarray: ...
+ForwardHookPlotCallback = ForwardHookCallback[ModelTContr, Figure, Dict[str, torch.Tensor]]
 
 
-class ForwardHookPlotCallback(
-    PlotExportMixin,
-    ForwardHookCallback[ModelTContr, Figure, Dict[str, torch.Tensor]],
-):
-    @classmethod
-    @abstractmethod
-    def _get_base_key(cls) -> str: ...
-
-    @classmethod
-    @abstractmethod
-    def _get_layers(cls, model: ModelTContr) -> Sequence[nn.Module]: ...
-
-    @classmethod
-    @abstractmethod
-    def _hook(
-        cls, module: nn.Module, inputs: Tuple[Any, ...], output: Any
-    ) -> Optional[Dict[str, torch.Tensor]]: ...
-
-    @classmethod
-    @abstractmethod
-    def _aggregate(cls, hook_results: Dict[str, List[Dict[str, torch.Tensor]]]) -> Figure: ...
+ForwardHookScoreCollectionCallback = ForwardHookCallback[
+    ModelTContr, Dict[str, float], Dict[str, torch.Tensor]
+]
 
 
-class ForwardHookScoreCollectionCallback(
-    ScoreCollectionExportMixin,
-    ForwardHookCallback[
-        ModelTContr,
-        Dict[str, float],
-        Dict[str, torch.Tensor],
-    ],
-):
-    @classmethod
-    @abstractmethod
-    def _get_base_key(cls) -> str: ...
-
-    @classmethod
-    @abstractmethod
-    def _get_layers(cls, model: ModelTContr) -> Sequence[nn.Module]: ...
-
-    @classmethod
-    @abstractmethod
-    def _hook(
-        cls, module: nn.Module, inputs: Tuple[Any, ...], output: Any
-    ) -> Optional[Dict[str, torch.Tensor]]: ...
-
-    @classmethod
-    @abstractmethod
-    def _aggregate(
-        cls, hook_results: Dict[str, List[Dict[str, torch.Tensor]]]
-    ) -> Dict[str, float]: ...
+ForwardHookArrayCollectionCallback = ForwardHookCallback[
+    ModelTContr, Dict[str, ndarray], Dict[str, torch.Tensor]
+]
 
 
-class ForwardHookArrayCollectionCallback(
-    ArrayCollectionExportMixin,
-    ForwardHookCallback[
-        ModelTContr,
-        Dict[str, ndarray],
-        Dict[str, torch.Tensor],
-    ],
-):
-    @classmethod
-    @abstractmethod
-    def _get_base_key(cls) -> str: ...
-
-    @classmethod
-    @abstractmethod
-    def _get_layers(cls, model: ModelTContr) -> Sequence[nn.Module]: ...
-
-    @classmethod
-    @abstractmethod
-    def _hook(
-        cls, module: nn.Module, inputs: Tuple[Any, ...], output: Any
-    ) -> Optional[Dict[str, torch.Tensor]]: ...
-
-    @classmethod
-    @abstractmethod
-    def _aggregate(
-        cls, hook_results: Dict[str, List[Dict[str, torch.Tensor]]]
-    ) -> Dict[str, ndarray]: ...
-
-
-class ForwardHookPlotCollectionCallback(
-    PlotCollectionExportMixin,
-    ForwardHookCallback[
-        ModelTContr,
-        Dict[str, Figure],
-        Dict[str, torch.Tensor],
-    ],
-):
-    @classmethod
-    @abstractmethod
-    def _get_base_key(cls) -> str: ...
-
-    @classmethod
-    @abstractmethod
-    def _get_layers(cls, model: ModelTContr) -> Sequence[nn.Module]: ...
-
-    @classmethod
-    @abstractmethod
-    def _hook(
-        cls, module: nn.Module, inputs: Tuple[Any, ...], output: Any
-    ) -> Optional[Dict[str, torch.Tensor]]: ...
-
-    @classmethod
-    @abstractmethod
-    def _aggregate(
-        cls, hook_results: Dict[str, List[Dict[str, torch.Tensor]]]
-    ) -> Dict[str, Figure]: ...
+ForwardHookPlotCollectionCallback = ForwardHookCallback[
+    ModelTContr, Dict[str, Figure], Dict[str, torch.Tensor]
+]

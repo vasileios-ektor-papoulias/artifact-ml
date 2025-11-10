@@ -1,9 +1,13 @@
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import Dict, Generic, List, Sequence, TypeVar
+from typing import Dict, Generic, List, Optional, Sequence, TypeVar
 
+import torch
 import torch.nn as nn
-from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_core.base.artifact_dependencies import ArtifactResult
+from artifact_experiment.base.tracking.background.writer import TrackingQueueWriter
+from matplotlib.figure import Figure
+from numpy import ndarray
 from torch.utils.hooks import RemovableHandle
 
 from artifact_torch.base.components.callbacks.periodic import (
@@ -23,17 +27,17 @@ class HookCallbackResources(PeriodicTrackingCallbackResources, Generic[ModelTCov
 
 
 ModelTContr = TypeVar("ModelTContr", bound=Model, contravariant=True)
-CacheDataT = TypeVar("CacheDataT")
+CacheDataTCov = TypeVar("CacheDataTCov", bound=ArtifactResult, covariant=True)
 HookResultT = TypeVar("HookResultT")
 
 
 class HookCallback(
-    PeriodicTrackingCallback[HookCallbackResources[ModelTContr], CacheDataT],
-    Generic[ModelTContr, CacheDataT, HookResultT],
+    PeriodicTrackingCallback[HookCallbackResources[ModelTContr], CacheDataTCov],
+    Generic[ModelTContr, CacheDataTCov, HookResultT],
 ):
-    def __init__(self, period: int):
+    def __init__(self, period: int, writer: Optional[TrackingQueueWriter[CacheDataTCov]] = None):
         base_key = self._get_base_key()
-        super().__init__(base_key=base_key, period=period)
+        super().__init__(base_key=base_key, period=period, writer=writer)
         self._hook_results: Dict[str, List[HookResultT]] = {}
         self._handles: List[RemovableHandle] = []
 
@@ -53,11 +57,7 @@ class HookCallback(
 
     @classmethod
     @abstractmethod
-    def _aggregate(cls, hook_results: Dict[str, List[HookResultT]]) -> CacheDataT: ...
-
-    @staticmethod
-    @abstractmethod
-    def _export(key: str, value: CacheDataT, tracking_client: TrackingClient): ...
+    def _aggregate(cls, hook_results: Dict[str, List[HookResultT]]) -> CacheDataTCov: ...
 
     def attach(self, resources: HookCallbackResources[ModelTContr]) -> bool:
         if self._should_trigger(step=resources.step):
@@ -66,7 +66,7 @@ class HookCallback(
         else:
             return False
 
-    def _compute(self, resources: HookCallbackResources[ModelTContr]) -> CacheDataT:
+    def _compute(self, resources: HookCallbackResources[ModelTContr]) -> CacheDataTCov:
         _ = resources
         result = self._aggregate(hook_results=self._hook_results)
         self._hook_results.clear()
@@ -77,3 +77,20 @@ class HookCallback(
         for h in self._handles:
             h.remove()
         self._handles.clear()
+
+
+HookScoreCallback = HookCallback[ModelTContr, float, Dict[str, torch.Tensor]]
+
+HookArrayCallback = HookCallback[ModelTContr, ndarray, Dict[str, torch.Tensor]]
+
+
+HookPlotCallback = HookCallback[ModelTContr, Figure, Dict[str, torch.Tensor]]
+
+
+HookScoreCollectionCallback = HookCallback[ModelTContr, Dict[str, float], Dict[str, torch.Tensor]]
+
+
+HookArrayCollectionCallback = HookCallback[ModelTContr, Dict[str, ndarray], Dict[str, torch.Tensor]]
+
+
+HookPlotCollectionCallback = HookCallback[ModelTContr, Dict[str, Figure], Dict[str, torch.Tensor]]

@@ -2,13 +2,16 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Generic, Optional, TypeVar
 
-from artifact_experiment.base.callbacks.base import (
-    Callback,
-    CallbackResources,
+from artifact_experiment.base.components.callbacks.base import Callback, CallbackResources
+from artifact_experiment.base.components.callbacks.cache import (
+    CacheCallback,
+    CacheCallbackResources,
 )
-from artifact_experiment.base.callbacks.cache import CacheCallback, CacheCallbackResources
-from artifact_experiment.base.callbacks.tracking import TrackingCallback, TrackingCallbackResources
-from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_experiment.base.components.callbacks.tracking import (
+    TrackingCallback,
+    TrackingCallbackResources,
+)
+from artifact_experiment.base.tracking.background.writer import TrackingData, TrackingQueueWriter
 
 from artifact_torch.base.components.utils.periodic_action_trigger import PeriodicActionTrigger
 
@@ -55,19 +58,19 @@ class PeriodicCacheCallbackResources(CacheCallbackResources):
 PeriodicCacheCallbackResourcesTContr = TypeVar(
     "PeriodicCacheCallbackResourcesTContr", bound=PeriodicCacheCallbackResources, contravariant=True
 )
-CacheDataT = TypeVar("CacheDataT")
+CacheDataTCov = TypeVar("CacheDataTCov", bound=TrackingData, covariant=True)
 
 
 class PeriodicCacheCallback(
-    CacheCallback[PeriodicCacheCallbackResourcesTContr, CacheDataT],
-    Generic[PeriodicCacheCallbackResourcesTContr, CacheDataT],
+    CacheCallback[PeriodicCacheCallbackResourcesTContr, CacheDataTCov],
+    Generic[PeriodicCacheCallbackResourcesTContr, CacheDataTCov],
 ):
     def __init__(self, base_key: str, period: int):
         super().__init__(base_key=base_key)
         self._period = period
 
     @abstractmethod
-    def _compute(self, resources: PeriodicCacheCallbackResourcesTContr) -> CacheDataT: ...
+    def _compute(self, resources: PeriodicCacheCallbackResourcesTContr) -> CacheDataTCov: ...
 
     @property
     def execution_interval(self) -> int:
@@ -94,28 +97,24 @@ PeriodicTrackingCallbackResourcesTContr = TypeVar(
     bound=PeriodicTrackingCallbackResources,
     contravariant=True,
 )
-CacheDataT = TypeVar("CacheDataT")
+CacheDataTCov = TypeVar("CacheDataTCov", bound=TrackingData, covariant=True)
 
 
 class PeriodicTrackingCallback(
-    TrackingCallback[PeriodicTrackingCallbackResourcesTContr, CacheDataT],
-    Generic[PeriodicTrackingCallbackResourcesTContr, CacheDataT],
+    TrackingCallback[PeriodicTrackingCallbackResourcesTContr, CacheDataTCov],
+    Generic[PeriodicTrackingCallbackResourcesTContr, CacheDataTCov],
 ):
     def __init__(
         self,
         base_key: str,
         period: int,
-        tracking_client: Optional[TrackingClient] = None,
+        writer: Optional[TrackingQueueWriter[CacheDataTCov]] = None,
     ):
-        super().__init__(base_key=base_key, tracking_client=tracking_client)
+        super().__init__(base_key=base_key, writer=writer)
         self._period = period
 
     @abstractmethod
-    def _compute(self, resources: PeriodicTrackingCallbackResourcesTContr) -> CacheDataT: ...
-
-    @staticmethod
-    @abstractmethod
-    def _export(key: str, value: CacheDataT, tracking_client: TrackingClient): ...
+    def _compute(self, resources: PeriodicTrackingCallbackResourcesTContr) -> CacheDataTCov: ...
 
     @property
     def execution_interval(self) -> int:
