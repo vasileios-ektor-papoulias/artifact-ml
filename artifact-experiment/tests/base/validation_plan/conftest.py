@@ -2,8 +2,8 @@ from typing import Callable, Dict, Tuple
 from unittest.mock import MagicMock
 
 import pytest
-from artifact_experiment.base.callbacks.artifact import ArtifactCallbackResources
-from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_experiment.base.components.callbacks.artifact import ArtifactCallbackResources
+from artifact_experiment.base.tracking.backend.client import TrackingClient
 from pytest_mock import MockerFixture
 
 from tests.base.dummy_artifact_toolkit import (

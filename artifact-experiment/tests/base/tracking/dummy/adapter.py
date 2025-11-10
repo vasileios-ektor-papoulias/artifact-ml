@@ -1,5 +1,5 @@
 from artifact_core.base.artifact_dependencies import ArtifactResult
-from artifact_experiment.base.tracking.adapter import RunAdapter
+from artifact_experiment.base.tracking.backend.adapter import RunAdapter
 
 
 class DummyNativeRun:

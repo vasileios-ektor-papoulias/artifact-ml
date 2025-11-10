@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from artifact_core.base.artifact_dependencies import ArtifactResult
-from artifact_experiment.base.callbacks.artifact import (
+from artifact_experiment.base.components.callbacks.artifact import (
     ArtifactArrayCallback,
     ArtifactArrayCollectionCallback,
     ArtifactCallback,
@@ -13,7 +13,7 @@ from artifact_experiment.base.callbacks.artifact import (
     ArtifactScoreCallback,
     ArtifactScoreCollectionCallback,
 )
-from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_experiment.base.tracking.backend.client import TrackingClient
 from pytest_mock import MockerFixture
 
 

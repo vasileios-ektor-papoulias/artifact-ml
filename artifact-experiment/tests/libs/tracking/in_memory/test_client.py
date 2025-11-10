@@ -346,7 +346,7 @@ def test_upload(
     adapter, client = client_factory(experiment_id, run_id)
     assert len(adapter.uploaded_files) == 0
     for file_entry in ls_file_entries:
-        client.upload(**file_entry)
+        client.log_file(**file_entry)
     assert len(adapter.uploaded_files) == expected_store_length
     for i, file_entry in enumerate(ls_file_entries):
         assert adapter.uploaded_files[i] == file_entry

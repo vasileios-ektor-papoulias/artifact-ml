@@ -1,8 +1,8 @@
 from typing import Dict, Optional
 
 import numpy as np
-from artifact_experiment.base.callbacks.base import CallbackResources
-from artifact_experiment.base.callbacks.tracking import (
+from artifact_experiment.base.components.callbacks.base import CallbackResources
+from artifact_experiment.base.components.callbacks.tracking import (
     ArrayCallback,
     ArrayCollectionCallback,
     PlotCallback,
@@ -10,7 +10,7 @@ from artifact_experiment.base.callbacks.tracking import (
     ScoreCallback,
     ScoreCollectionCallback,
 )
-from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_experiment.base.tracking.backend.client import TrackingClient
 from matplotlib.figure import Figure
 
 

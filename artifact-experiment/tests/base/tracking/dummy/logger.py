@@ -1,5 +1,5 @@
 from artifact_core.base.artifact_dependencies import ArtifactResult
-from artifact_experiment.base.tracking.logger import ArtifactLogger
+from artifact_experiment.base.tracking.backend.logger import ArtifactLogger
 
 from tests.base.tracking.dummy.adapter import DummyRunAdapter
 

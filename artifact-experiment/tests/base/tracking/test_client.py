@@ -371,5 +371,5 @@ def test_upload(
 ):
     adapter, _, client = client_factory(experiment_id, run_id)
     adapter.upload = mocker.MagicMock()
-    client.upload(path_source=path_source, dir_target=dir_target)
+    client.log_file(path_source=path_source, dir_target=dir_target)
     adapter.upload.assert_called_once_with(path_source=path_source, dir_target=dir_target)

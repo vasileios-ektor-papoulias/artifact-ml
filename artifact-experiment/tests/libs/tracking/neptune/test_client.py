@@ -587,7 +587,7 @@ def test_upload(
     ) = client_factory(experiment_id, run_id)
     spy_adapter_upload = mocker.spy(adapter, "upload")
     for file_entry in ls_file_entries:
-        client.upload(**file_entry)
+        client.log_file(**file_entry)
     assert spy_adapter_upload.call_count == len(ls_file_entries)
     for entry in ls_file_entries:
         spy_adapter_upload.assert_any_call(
