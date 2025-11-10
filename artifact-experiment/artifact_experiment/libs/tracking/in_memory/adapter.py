@@ -4,10 +4,8 @@ from typing import Any, Dict, List
 from matplotlib.figure import Figure
 from numpy import ndarray
 
-from artifact_experiment.base.tracking.adapter import RunAdapter
-from artifact_experiment.libs.tracking.in_memory.native_run import (
-    InMemoryRun,
-)
+from artifact_experiment.base.tracking.backend.adapter import RunAdapter
+from artifact_experiment.libs.tracking.in_memory.native_run import InMemoryRun
 
 
 class InMemoryRunAdapter(RunAdapter[InMemoryRun]):
