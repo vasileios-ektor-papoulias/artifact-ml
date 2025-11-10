@@ -1,13 +1,10 @@
 from abc import abstractmethod
-from typing import Any, Generic, Mapping, Optional, Type, TypeVar
+from typing import Any, Generic, Optional, Type, TypeVar
 
 from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_experiment.base.entities.data_split import DataSplit
-from artifact_experiment.base.tracking.client import TrackingClient
 
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
 from artifact_torch.base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
-from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.base.experiment.experiment import Experiment
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.base.trainer.trainer import Trainer
@@ -43,7 +40,7 @@ class TabularSynthesisExperiment(
 ):
     @classmethod
     @abstractmethod
-    def _get_trainer_type(
+    def _get_trainer(
         cls,
     ) -> Type[
         Trainer[
@@ -59,26 +56,20 @@ class TabularSynthesisExperiment(
     @abstractmethod
     def _get_train_diagnostics_routine(
         cls,
-        tracking_client: Optional[TrackingClient] = None,
     ) -> Optional[
-        TrainDiagnosticsRoutine[TableSynthesizerTContr, ModelInputTContr, ModelOutputTContr]
+        Type[TrainDiagnosticsRoutine[TableSynthesizerTContr, ModelInputTContr, ModelOutputTContr]]
     ]: ...
 
     @classmethod
     @abstractmethod
     def _get_loader_routine(
         cls,
-        data_loaders: Mapping[DataSplit, DataLoader[ModelInputTContr]],
-        tracking_client: Optional[TrackingClient] = None,
     ) -> Optional[
-        DataLoaderRoutine[TableSynthesizerTContr, ModelInputTContr, ModelOutputTContr]
+        Type[DataLoaderRoutine[TableSynthesizerTContr, ModelInputTContr, ModelOutputTContr]]
     ]: ...
 
     @classmethod
     @abstractmethod
     def _get_artifact_routine(
         cls,
-        data: Mapping[DataSplit, TableComparisonRoutineData],
-        data_spec: TabularDataSpecProtocol,
-        tracking_client: Optional[TrackingClient] = None,
-    ) -> Optional[TableComparisonRoutine[GenerationParamsTContr]]: ...
+    ) -> Optional[Type[TableComparisonRoutine[GenerationParamsTContr]]]: ...
