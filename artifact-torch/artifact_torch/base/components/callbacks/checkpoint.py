@@ -1,31 +1,29 @@
+import os
 from abc import abstractmethod
-from dataclasses import dataclass
 from typing import Any, Dict
 
-from artifact_experiment.base.tracking.client import TrackingClient
+import torch
 
-from artifact_torch.base.components.callbacks.periodic import (
-    PeriodicCallback,
-    PeriodicCallbackResources,
-)
+from artifact_torch.base.components.callbacks.export import ExportCallback, ExportCallbackResources
 
-
-@dataclass(frozen=True)
-class CheckpointCallbackResources(PeriodicCallbackResources):
-    checkpoint: Dict[str, Any]
+CheckpointCallbackResources = ExportCallbackResources[Dict[str, Any]]
 
 
-class CheckpointCallback(PeriodicCallback[CheckpointCallbackResources]):
-    def __init__(self, period: int, tracking_client: TrackingClient):
-        super().__init__(period=period)
-        self._tracking_client = tracking_client
-
+class CheckpointCallback(ExportCallback[Dict[str, Any]]):
+    @classmethod
     @abstractmethod
-    def _export(self, checkpoint: Dict[str, Any], step: int): ...
+    def _get_checkpoint_name(cls) -> str: ...
 
-    def _execute(self, resources: CheckpointCallbackResources):
-        if self._tracking_client is not None:
-            self._export(
-                checkpoint=resources.checkpoint,
-                step=resources.step,
-            )
+    @classmethod
+    def _get_export_name(cls) -> str:
+        return cls._get_checkpoint_name()
+
+    @classmethod
+    def _get_extension(cls) -> str:
+        return "pth"
+
+    @classmethod
+    def _save_local(cls, data: Dict[str, Any], dir_target: str, filename: str) -> str:
+        filepath = os.path.join(dir_target, filename)
+        torch.save(data, filepath)
+        return filepath
