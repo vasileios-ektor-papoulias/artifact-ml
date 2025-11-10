@@ -7,9 +7,9 @@ from artifact_core.table_comparison.artifacts.base import (
     TabularDataSpecProtocol,
 )
 
+from artifact_experiment.base.components.factories.artifact import ArtifactCallbackFactory
+from artifact_experiment.base.components.plans.artifact import ArtifactPlan
 from artifact_experiment.base.entities.data_split import DataSplit
-from artifact_experiment.base.plans.artifact import ArtifactPlan
-from artifact_experiment.base.plans.callback_factory import ArtifactCallbackFactory
 from artifact_experiment.table_comparison.callback_factory import (
     TableComparisonArrayCollectionType,
     TableComparisonArrayType,
