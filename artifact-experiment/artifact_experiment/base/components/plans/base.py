@@ -84,20 +84,7 @@ class CallbackExecutionPlan(
 
     @classmethod
     def build(cls: Type[PlanT], context: PlanBuildContextTContr) -> PlanT:
-        score_callbacks = cls._get_score_callbacks(context=context)
-        array_callbacks = cls._get_array_callbacks(context=context)
-        plot_callbacks = cls._get_plot_callbacks(context=context)
-        score_collection_callbacks = cls._get_score_collection_callbacks(context=context)
-        array_collection_callbacks = cls._get_array_collection_callbacks(context=context)
-        plot_collection_callbacks = cls._get_plot_collection_callbacks(context=context)
-        handler_suite = cls._get_handler_suite_type().build(
-            score_callbacks=score_callbacks,
-            array_callbacks=array_callbacks,
-            plot_callbacks=plot_callbacks,
-            score_collection_callbacks=score_collection_callbacks,
-            array_collection_callbacks=array_collection_callbacks,
-            plot_collection_callbacks=plot_collection_callbacks,
-        )
+        handler_suite = cls._build_handler_suite(context=context)
         plan = cls(handler_suite=handler_suite, context=context)
         return plan
 
@@ -127,7 +114,7 @@ class CallbackExecutionPlan(
 
     @classmethod
     @abstractmethod
-    def _get_handler_suite_type(cls) -> Type[CallbackHandlerSuiteTCov]: ...
+    def _get_handler_suite(cls) -> Type[CallbackHandlerSuiteTCov]: ...
 
     @classmethod
     @abstractmethod
@@ -170,3 +157,22 @@ class CallbackExecutionPlan(
 
     def clear_cache(self):
         self._handler_suite.clear_cache()
+
+    @classmethod
+    def _build_handler_suite(cls, context: PlanBuildContextTContr) -> CallbackHandlerSuiteTCov:
+        score_callbacks = cls._get_score_callbacks(context=context)
+        array_callbacks = cls._get_array_callbacks(context=context)
+        plot_callbacks = cls._get_plot_callbacks(context=context)
+        score_collection_callbacks = cls._get_score_collection_callbacks(context=context)
+        array_collection_callbacks = cls._get_array_collection_callbacks(context=context)
+        plot_collection_callbacks = cls._get_plot_collection_callbacks(context=context)
+        handler_suite_class = cls._get_handler_suite()
+        handler_suite = handler_suite_class.build(
+            score_callbacks=score_callbacks,
+            array_callbacks=array_callbacks,
+            plot_callbacks=plot_callbacks,
+            score_collection_callbacks=score_collection_callbacks,
+            array_collection_callbacks=array_collection_callbacks,
+            plot_collection_callbacks=plot_collection_callbacks,
+        )
+        return handler_suite
