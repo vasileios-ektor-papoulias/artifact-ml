@@ -1,14 +1,15 @@
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import Any, Generic, Mapping, Optional, TypeVar
+from typing import Any, Dict, Generic, Mapping, Optional, Type, TypeVar
 
 from artifact_core.binary_classification.artifacts.base import BinaryClassificationArtifactResources
 from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
 from artifact_core.libs.resources.categorical.category_store.binary import BinaryCategoryStore
-from artifact_experiment.base.entities.data_split import DataSplit, DataSplitSuffixAppender
-from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_experiment.base.entities.data_split import DataSplit
+from artifact_experiment.base.tracking.background.tracking_queue import TrackingQueue
 from artifact_experiment.binary_classification.plan import BinaryClassificationPlan
 
+from artifact_torch.base.components.callbacks.export import ExportCallback, ExportCallbackResources
 from artifact_torch.base.components.routines.artifact import (
     ArtifactRoutine,
     ArtifactRoutineData,
@@ -16,7 +17,9 @@ from artifact_torch.base.components.routines.artifact import (
 )
 from artifact_torch.binary_classification.model import BinaryClassifier
 from artifact_torch.core.model.classifier import ClassificationParams
-from artifact_torch.libs.exports.classification_results import ClassificationResultsExporter
+from artifact_torch.libs.components.callbacks.export.classification_results import (
+    ClassificationResultsExportCallback,
+)
 
 ClassificationParamsTCov = TypeVar(
     "ClassificationParamsTCov", bound=ClassificationParams, covariant=True
@@ -52,11 +55,10 @@ class BinaryClassificationRoutine(
         BinaryClassificationRoutineData[ClassificationDataTContr],
         BinaryClassificationArtifactResources,
         BinaryFeatureSpecProtocol,
+        Dict[str, Any],
     ],
     Generic[ClassificationParamsTCov, ClassificationDataTContr],
 ):
-    _resource_export_prefix = "CLASSIFICATION_RESULTS"
-
     @classmethod
     @abstractmethod
     def _get_period(
@@ -66,16 +68,13 @@ class BinaryClassificationRoutine(
 
     @classmethod
     @abstractmethod
-    def _get_artifact_plan(
-        cls,
-        artifact_resource_spec: BinaryFeatureSpecProtocol,
-        data_split: DataSplit,
-        tracking_client: Optional[TrackingClient],
-    ) -> Optional[BinaryClassificationPlan]: ...
+    def _get_classification_params(cls) -> ClassificationParamsTCov: ...
 
     @classmethod
     @abstractmethod
-    def _get_classification_params(cls) -> ClassificationParamsTCov: ...
+    def _get_artifact_plan(
+        cls, data_split: DataSplit
+    ) -> Optional[Type[BinaryClassificationPlan]]: ...
 
     @classmethod
     def _get_hyperparams(cls) -> BinaryClassificationRoutineHyperparams[ClassificationParamsTCov]:
@@ -84,6 +83,13 @@ class BinaryClassificationRoutine(
             classification_params=classification_params
         )
         return hyperparams
+
+    @classmethod
+    def _get_export_callback(
+        cls, tracking_queue: Optional[TrackingQueue]
+    ) -> Optional[ExportCallback[Dict[str, Any]]]:
+        if tracking_queue is not None:
+            return ClassificationResultsExportCallback(period=1, writer=tracking_queue.file_writer)
 
     def _generate_artifact_resources(
         self, model: BinaryClassifier[Any, Any, ClassificationParamsTCov, Any]
@@ -105,9 +111,9 @@ class BinaryClassificationRoutine(
     def _export_artifact_resources(
         cls,
         artifact_resources: BinaryClassificationArtifactResources,
+        export_callback: ExportCallback[Dict[str, Any]],
         n_epochs_elapsed: int,
         data_split: DataSplit,
-        tracking_client: TrackingClient,
     ):
         true = artifact_resources.true_category_store.id_to_category
         true = {str(identifier): category for identifier, category in true.items()}
@@ -115,7 +121,7 @@ class BinaryClassificationRoutine(
         predicted = {str(identifier): category for identifier, category in predicted.items()}
         probs = artifact_resources.classification_results.id_to_prob_pos
         probs = {str(identifier): prob for identifier, prob in probs.items()}
-        dict_resources = {
+        dict_artifact_resources = {
             identifier: {
                 "true": true.get(identifier),
                 "predicted": predicted.get(identifier),
@@ -123,16 +129,7 @@ class BinaryClassificationRoutine(
             }
             for identifier in sorted(set(true) | set(predicted) | set(probs), key=int)
         }
-        resource_export_prefix = cls._get_resource_export_prefix(data_split=data_split)
-        ClassificationResultsExporter.export(
-            data=dict_resources,
-            tracking_client=tracking_client,
-            prefix=resource_export_prefix,
-            step=n_epochs_elapsed,
+        export_callback_resources = ExportCallbackResources[Dict[str, Any]](
+            step=n_epochs_elapsed, export_data=dict_artifact_resources, data_split=data_split
         )
-
-    @classmethod
-    def _get_resource_export_prefix(cls, data_split: DataSplit) -> str:
-        return DataSplitSuffixAppender.append_suffix(
-            name=cls._resource_export_prefix, data_split=data_split
-        )
+        export_callback.execute(resources=export_callback_resources)
