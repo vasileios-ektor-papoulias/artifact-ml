@@ -4,20 +4,16 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from artifact_experiment.libs.tracking.filesystem.adapter import (
-    InactiveFilesystemRunError,
-)
-from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemArtifactLogger
+from artifact_experiment.libs.tracking.filesystem.adapter import InactiveFilesystemRunError
+from artifact_experiment.libs.tracking.filesystem.loggers.artifacts import FilesystemArtifactLogger
 
 
 class FilesystemScoreLogger(FilesystemArtifactLogger[float]):
     _column_name: str = "value"
 
-    def _append(self, artifact_path: str, artifact: float):
+    def _append(self, item_path: str, item: float):
         if self._run.is_active:
-            self._export_score(
-                path=Path(artifact_path), value=artifact, column_name=self._column_name
-            )
+            self._export_score(path=Path(item_path), value=item, column_name=self._column_name)
         else:
             raise InactiveFilesystemRunError("Run is inactive")
 
@@ -33,5 +29,5 @@ class FilesystemScoreLogger(FilesystemArtifactLogger[float]):
         df.to_csv(path, index=False)
 
     @classmethod
-    def _get_relative_path(cls, artifact_name: str) -> str:
-        return os.path.join("scores", artifact_name)
+    def _get_relative_path(cls, item_name: str) -> str:
+        return os.path.join("scores", item_name)

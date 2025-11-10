@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from artifact_experiment.base.tracking.adapter import InactiveRunError, RunAdapter
+from artifact_experiment.base.tracking.backend.adapter import InactiveRunError, RunAdapter
 from artifact_experiment.libs.tracking.filesystem.native_run import FilesystemRun
 
 

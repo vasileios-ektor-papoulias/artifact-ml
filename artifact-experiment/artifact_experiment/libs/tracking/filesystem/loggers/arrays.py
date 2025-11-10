@@ -3,21 +3,17 @@ import os
 import numpy as np
 from numpy import ndarray
 
-from artifact_experiment.libs.tracking.filesystem.adapter import (
-    InactiveFilesystemRunError,
-)
-from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemArtifactLogger
-from artifact_experiment.libs.utils.incremental_path_generator import (
-    IncrementalPathGenerator,
-)
+from artifact_experiment.libs.tracking.filesystem.adapter import InactiveFilesystemRunError
+from artifact_experiment.libs.tracking.filesystem.loggers.artifacts import FilesystemArtifactLogger
+from artifact_experiment.libs.utils.incremental_path_generator import IncrementalPathGenerator
 
 
 class FilesystemArrayLogger(FilesystemArtifactLogger[ndarray]):
     _fmt: str = "npy"
 
-    def _append(self, artifact_path: str, artifact: ndarray):
+    def _append(self, item_path: str, item: ndarray):
         if self._run.is_active:
-            self._export_array(dir_path=artifact_path, array=artifact)
+            self._export_array(dir_path=item_path, array=item)
         else:
             raise InactiveFilesystemRunError("Run is inactive")
 
@@ -27,5 +23,5 @@ class FilesystemArrayLogger(FilesystemArtifactLogger[ndarray]):
         np.save(file=filepath, arr=array)
 
     @classmethod
-    def _get_relative_path(cls, artifact_name: str) -> str:
-        return os.path.join("arrays", artifact_name)
+    def _get_relative_path(cls, item_name: str) -> str:
+        return os.path.join("arrays", item_name)

@@ -2,13 +2,9 @@ import os
 
 from matplotlib.figure import Figure
 
-from artifact_experiment.libs.tracking.filesystem.adapter import (
-    InactiveFilesystemRunError,
-)
-from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemArtifactLogger
-from artifact_experiment.libs.utils.incremental_path_generator import (
-    IncrementalPathGenerator,
-)
+from artifact_experiment.libs.tracking.filesystem.adapter import InactiveFilesystemRunError
+from artifact_experiment.libs.tracking.filesystem.loggers.artifacts import FilesystemArtifactLogger
+from artifact_experiment.libs.utils.incremental_path_generator import IncrementalPathGenerator
 
 
 class FilesystemPlotLogger(FilesystemArtifactLogger[Figure]):
@@ -16,9 +12,9 @@ class FilesystemPlotLogger(FilesystemArtifactLogger[Figure]):
     _dpi: int = 300
     _bbox_inches: str = "tight"
 
-    def _append(self, artifact_path: str, artifact: Figure):
+    def _append(self, item_path: str, item: Figure):
         if self._run.is_active:
-            self._export_plot(dir_path=artifact_path, plot=artifact)
+            self._export_plot(dir_path=item_path, plot=item)
         else:
             raise InactiveFilesystemRunError("Run is inactive")
 
@@ -28,5 +24,5 @@ class FilesystemPlotLogger(FilesystemArtifactLogger[Figure]):
         plot.savefig(fname=filepath, dpi=cls._dpi, bbox_inches=cls._bbox_inches, format=cls._fmt)
 
     @classmethod
-    def _get_relative_path(cls, artifact_name: str) -> str:
-        return os.path.join("plots", artifact_name)
+    def _get_relative_path(cls, item_name: str) -> str:
+        return os.path.join("plots", item_name)

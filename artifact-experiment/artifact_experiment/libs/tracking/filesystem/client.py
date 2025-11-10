@@ -1,23 +1,10 @@
-from typing import Dict, Optional, Type, TypeVar
+from typing import Optional, Type, TypeVar
 
-from matplotlib.figure import Figure
-from numpy import ndarray
-
-from artifact_experiment.base.tracking.client import TrackingClient
-from artifact_experiment.base.tracking.logger import ArtifactLogger
+from artifact_experiment.base.tracking.backend.client import TrackingClient
+from artifact_experiment.base.tracking.backend.logger_worker import LoggerWorker
+from artifact_experiment.base.tracking.background.tracking_queue import TrackingQueue
 from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRun, FilesystemRunAdapter
-from artifact_experiment.libs.tracking.filesystem.loggers.array_collections import (
-    FilesystemArrayCollectionLogger,
-)
-from artifact_experiment.libs.tracking.filesystem.loggers.arrays import FilesystemArrayLogger
-from artifact_experiment.libs.tracking.filesystem.loggers.plot_collections import (
-    FilesystemPlotCollectionLogger,
-)
-from artifact_experiment.libs.tracking.filesystem.loggers.plots import FilesystemPlotLogger
-from artifact_experiment.libs.tracking.filesystem.loggers.score_collections import (
-    FilesystemScoreCollectionLogger,
-)
-from artifact_experiment.libs.tracking.filesystem.loggers.scores import FilesystemScoreLogger
+from artifact_experiment.libs.tracking.filesystem.logger_worker import FilesystemLoggerWorker
 
 FilesystemTrackingClientT = TypeVar("FilesystemTrackingClientT", bound="FilesystemTrackingClient")
 
@@ -48,37 +35,10 @@ class FilesystemTrackingClient(TrackingClient[FilesystemRunAdapter]):
         return self._run.run_dir
 
     @staticmethod
-    def _get_score_logger(
+    def _get_logger_worker(
         run: FilesystemRunAdapter,
-    ) -> ArtifactLogger[float, FilesystemRunAdapter]:
-        return FilesystemScoreLogger(run=run)
-
-    @staticmethod
-    def _get_array_logger(
-        run: FilesystemRunAdapter,
-    ) -> ArtifactLogger[ndarray, FilesystemRunAdapter]:
-        return FilesystemArrayLogger(run=run)
-
-    @staticmethod
-    def _get_plot_logger(
-        run: FilesystemRunAdapter,
-    ) -> ArtifactLogger[Figure, FilesystemRunAdapter]:
-        return FilesystemPlotLogger(run=run)
-
-    @staticmethod
-    def _get_score_collection_logger(
-        run: FilesystemRunAdapter,
-    ) -> ArtifactLogger[Dict[str, float], FilesystemRunAdapter]:
-        return FilesystemScoreCollectionLogger(run=run)
-
-    @staticmethod
-    def _get_array_collection_logger(
-        run: FilesystemRunAdapter,
-    ) -> ArtifactLogger[Dict[str, ndarray], FilesystemRunAdapter]:
-        return FilesystemArrayCollectionLogger(run=run)
-
-    @staticmethod
-    def _get_plot_collection_logger(
-        run: FilesystemRunAdapter,
-    ) -> ArtifactLogger[Dict[str, Figure], FilesystemRunAdapter]:
-        return FilesystemPlotCollectionLogger(run=run)
+        tracking_queue: TrackingQueue,
+    ) -> LoggerWorker[FilesystemRunAdapter]:
+        return FilesystemLoggerWorker.build(
+            run=run, queue=tracking_queue.queue, managed_temp_dir=tracking_queue.managed_temp_dir
+        )

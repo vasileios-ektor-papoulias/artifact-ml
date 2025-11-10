@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-from artifact_experiment.base.tracking.adapter import InactiveRunError
+from artifact_experiment.base.tracking.backend.adapter import InactiveRunError
 
 
 class InactiveFilesystemRunError(InactiveRunError):

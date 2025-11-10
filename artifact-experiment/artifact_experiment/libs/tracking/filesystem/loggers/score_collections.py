@@ -5,16 +5,14 @@ from typing import Dict
 import numpy as np
 import pandas as pd
 
-from artifact_experiment.libs.tracking.filesystem.adapter import (
-    InactiveFilesystemRunError,
-)
-from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemArtifactLogger
+from artifact_experiment.libs.tracking.filesystem.adapter import InactiveFilesystemRunError
+from artifact_experiment.libs.tracking.filesystem.loggers.artifacts import FilesystemArtifactLogger
 
 
 class FilesystemScoreCollectionLogger(FilesystemArtifactLogger[Dict[str, float]]):
-    def _append(self, artifact_path: str, artifact: Dict[str, float]):
+    def _append(self, item_path: str, item: Dict[str, float]):
         if self._run.is_active:
-            self._export_score_collection(path=Path(artifact_path), dict_values=artifact)
+            self._export_score_collection(path=Path(item_path), dict_values=item)
         else:
             raise InactiveFilesystemRunError("Run is inactive")
 
@@ -30,5 +28,5 @@ class FilesystemScoreCollectionLogger(FilesystemArtifactLogger[Dict[str, float]]
         df.to_csv(path, index=False)
 
     @classmethod
-    def _get_relative_path(cls, artifact_name: str) -> str:
-        return os.path.join("score_collections", artifact_name)
+    def _get_relative_path(cls, item_name: str) -> str:
+        return os.path.join("score_collections", item_name)

@@ -3,10 +3,8 @@ from typing import Dict
 
 from matplotlib.figure import Figure
 
-from artifact_experiment.libs.tracking.filesystem.adapter import (
-    InactiveFilesystemRunError,
-)
-from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemArtifactLogger
+from artifact_experiment.libs.tracking.filesystem.adapter import InactiveFilesystemRunError
+from artifact_experiment.libs.tracking.filesystem.loggers.artifacts import FilesystemArtifactLogger
 from artifact_experiment.libs.utils.incremental_path_generator import IncrementalPathGenerator
 
 
@@ -15,9 +13,9 @@ class FilesystemPlotCollectionLogger(FilesystemArtifactLogger[Dict[str, Figure]]
     _dpi: int = 300
     _bbox_inches: str = "tight"
 
-    def _append(self, artifact_path: str, artifact: Dict[str, Figure]):
+    def _append(self, item_path: str, item: Dict[str, Figure]):
         if self._run.is_active:
-            self._export_plot_collection(dir_path=artifact_path, plot_collection=artifact)
+            self._export_plot_collection(dir_path=item_path, plot_collection=item)
         else:
             raise InactiveFilesystemRunError("Run is inactive")
 
@@ -33,8 +31,8 @@ class FilesystemPlotCollectionLogger(FilesystemArtifactLogger[Dict[str, Figure]]
             )
 
     @classmethod
-    def _get_relative_path(cls, artifact_name: str) -> str:
-        return os.path.join("plot_collections", artifact_name)
+    def _get_relative_path(cls, item_name: str) -> str:
+        return os.path.join("plot_collections", item_name)
 
     @staticmethod
     def _append_extension(filename: str, extension: str) -> str:

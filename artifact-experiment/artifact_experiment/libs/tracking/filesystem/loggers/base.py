@@ -1,26 +1,20 @@
-import os
 from abc import abstractmethod
 from typing import Generic, TypeVar
 
-from artifact_core.base.artifact_dependencies import ArtifactResult
+from artifact_experiment.base.entities.tracking_data import TrackingData
+from artifact_experiment.base.tracking.backend.logger import BackendLogger
+from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRunAdapter
 
-from artifact_experiment.base.tracking.logger import ArtifactLogger
-from artifact_experiment.libs.tracking.filesystem.adapter import (
-    FilesystemRunAdapter,
-)
-
-ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
+TrackingDataT = TypeVar("TrackingDataT", bound=TrackingData)
 
 
-class FilesystemArtifactLogger(
-    ArtifactLogger[ArtifactResultT, FilesystemRunAdapter], Generic[ArtifactResultT]
-):
+class FilesystemLogger(BackendLogger[TrackingDataT, FilesystemRunAdapter], Generic[TrackingDataT]):
     @abstractmethod
-    def _append(self, artifact_path: str, artifact: ArtifactResultT): ...
+    def _append(self, item_path: str, item: TrackingDataT): ...
 
     @classmethod
     @abstractmethod
-    def _get_relative_path(cls, artifact_name: str) -> str: ...
+    def _get_relative_path(cls, item_name: str) -> str: ...
 
-    def _get_root_dir(self) -> str:
-        return os.path.join(self._run.run_dir, "artifacts")
+    @abstractmethod
+    def _get_root_dir(self) -> str: ...
