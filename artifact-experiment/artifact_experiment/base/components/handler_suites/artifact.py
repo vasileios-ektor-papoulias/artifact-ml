@@ -12,7 +12,7 @@ from artifact_experiment.base.components.callbacks.artifact import (
     ArtifactScoreCallback,
     ArtifactScoreCollectionCallback,
 )
-from artifact_experiment.base.components.handler_suites.base import CallbackHandlerSuite
+from artifact_experiment.base.components.handler_suites.tracking import TrackingCallbackHandlerSuite
 from artifact_experiment.base.components.handlers.artifact import ArtifactCallbackHandler
 
 ArtifactResourcesTContr = TypeVar(
@@ -27,7 +27,7 @@ ArtifactCallbackHandlerSuiteT = TypeVar(
 
 
 class ArtifactCallbackHandlerSuite(
-    CallbackHandlerSuite[
+    TrackingCallbackHandlerSuite[
         ArtifactCallbackHandler[ArtifactResourcesTContr, ResourceSpecProtocolTContr, Any],
         ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr, Any],
         ArtifactCallbackResources[ArtifactResourcesTContr],
