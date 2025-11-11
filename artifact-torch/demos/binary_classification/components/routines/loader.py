@@ -1,9 +1,7 @@
 from typing import Any, Optional, Type
 
 from artifact_experiment import DataSplit
-from artifact_torch.base.components.plans.forward_hook import (
-    ForwardHookPlan,
-)
+from artifact_torch.base.components.plans.forward_hook import ForwardHookPlan
 from artifact_torch.base.components.plans.model_io import ModelIOPlan
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
 from artifact_torch.base.model.base import Model
