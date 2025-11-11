@@ -9,7 +9,7 @@ from artifact_experiment.base.components.callbacks.tracking import (
     TrackingCallback,
     TrackingCallbackResources,
 )
-from artifact_experiment.base.components.handler_suites.base import CallbackHandlerSuite
+from artifact_experiment.base.components.handler_suites.tracking import TrackingCallbackHandlerSuite
 from artifact_experiment.base.tracking.background.tracking_queue import TrackingQueue
 from artifact_experiment.base.tracking.background.writer import (
     ArrayCollectionWriter,
@@ -56,8 +56,10 @@ class PlanBuildContext:
         )
 
 
-CallbackHandlerSuiteTCov = TypeVar(
-    "CallbackHandlerSuiteTCov", bound=CallbackHandlerSuite[Any, Any, Any], covariant=True
+TrackingCallbackHandlerSuiteTCov = TypeVar(
+    "TrackingCallbackHandlerSuiteTCov",
+    bound=TrackingCallbackHandlerSuite[Any, Any, Any],
+    covariant=True,
 )
 TrackingCallbackTCov = TypeVar("TrackingCallbackTCov", bound=TrackingCallback, covariant=True)
 TrackingCallbackResourcesTContr = TypeVar(
@@ -72,13 +74,15 @@ PlanT = TypeVar("PlanT", bound="CallbackExecutionPlan")
 class CallbackExecutionPlan(
     ABC,
     Generic[
-        CallbackHandlerSuiteTCov,
+        TrackingCallbackHandlerSuiteTCov,
         TrackingCallbackTCov,
         TrackingCallbackResourcesTContr,
         PlanBuildContextTContr,
     ],
 ):
-    def __init__(self, handler_suite: CallbackHandlerSuiteTCov, context: PlanBuildContextTContr):
+    def __init__(
+        self, handler_suite: TrackingCallbackHandlerSuiteTCov, context: PlanBuildContextTContr
+    ):
         self._handler_suite = handler_suite
         self._context = context
 
@@ -114,7 +118,7 @@ class CallbackExecutionPlan(
 
     @classmethod
     @abstractmethod
-    def _get_handler_suite(cls) -> Type[CallbackHandlerSuiteTCov]: ...
+    def _get_handler_suite(cls) -> Type[TrackingCallbackHandlerSuiteTCov]: ...
 
     @classmethod
     @abstractmethod
@@ -159,7 +163,9 @@ class CallbackExecutionPlan(
         self._handler_suite.clear_cache()
 
     @classmethod
-    def _build_handler_suite(cls, context: PlanBuildContextTContr) -> CallbackHandlerSuiteTCov:
+    def _build_handler_suite(
+        cls, context: PlanBuildContextTContr
+    ) -> TrackingCallbackHandlerSuiteTCov:
         score_callbacks = cls._get_score_callbacks(context=context)
         array_callbacks = cls._get_array_callbacks(context=context)
         plot_callbacks = cls._get_plot_callbacks(context=context)
