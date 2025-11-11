@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import Any, Dict, Generic, Mapping, Optional, Sequence, Type, TypeVar
+from typing import Any, Dict, Generic, Mapping, Sequence, Type, TypeVar
 
 from matplotlib.figure import Figure
 from numpy import ndarray
@@ -10,51 +9,7 @@ from artifact_experiment.base.components.callbacks.tracking import (
     TrackingCallbackResources,
 )
 from artifact_experiment.base.components.handler_suites.tracking import TrackingCallbackHandlerSuite
-from artifact_experiment.base.tracking.background.tracking_queue import TrackingQueue
-from artifact_experiment.base.tracking.background.writer import (
-    ArrayCollectionWriter,
-    ArrayWriter,
-    PlotCollectionWriter,
-    PlotWriter,
-    ScoreCollectionWriter,
-    ScoreWriter,
-)
-
-
-@dataclass(frozen=True)
-class PlanBuildContext:
-    tracking_queue: Optional[TrackingQueue]
-
-    @property
-    def score_writer(self) -> Optional[ScoreWriter]:
-        return self.tracking_queue.score_writer if self.tracking_queue is not None else None
-
-    @property
-    def array_writer(self) -> Optional[ArrayWriter]:
-        return self.tracking_queue.array_writer if self.tracking_queue is not None else None
-
-    @property
-    def plot_writer(self) -> Optional[PlotWriter]:
-        return self.tracking_queue.plot_writer if self.tracking_queue is not None else None
-
-    @property
-    def score_collection_writer(self) -> Optional[ScoreCollectionWriter]:
-        return (
-            self.tracking_queue.score_collection_writer if self.tracking_queue is not None else None
-        )
-
-    @property
-    def array_collection_writer(self) -> Optional[ArrayCollectionWriter]:
-        return (
-            self.tracking_queue.array_collection_writer if self.tracking_queue is not None else None
-        )
-
-    @property
-    def plot_collection_writer(self) -> Optional[PlotCollectionWriter]:
-        return (
-            self.tracking_queue.plot_collection_writer if self.tracking_queue is not None else None
-        )
-
+from artifact_experiment.base.components.plans.build_context import PlanBuildContext
 
 TrackingCallbackHandlerSuiteTCov = TypeVar(
     "TrackingCallbackHandlerSuiteTCov",
