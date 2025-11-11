@@ -1,0 +1,47 @@
+{
+  "native_artifact_path": "_artifacts",
+  "custom_artifact_path": null,
+  "scores": {
+    "MEAN_JS_DISTANCE": {
+      "n_bins_cts_histogram": 100,
+      "categorical_only": false
+    },
+    "CORRELATION_DISTANCE": {
+      "categorical_association_type": "CRAMERS_V",
+      "continuous_association_type": "PEARSON",
+      "vector_distance_metric": "RMSE"
+    }
+  },
+  "arrays": {},
+  "plots": {
+    "CORRELATION_HEATMAP_JUXTAPOSITION": {
+      "categorical_association_type": "CRAMERS_V",
+      "continuous_association_type": "PEARSON"
+    },
+    "PCA_JUXTAPOSITION": {
+      "use_categorical": true
+    },
+    "TRUNCATED_SVD_JUXTAPOSITION": {
+      "use_categorical": true
+    },
+    "TSNE_JUXTAPOSITION": {
+      "use_categorical": true,
+      "perplexity": 30,
+      "learning_rate": "auto",
+      "max_iter": 1000
+    }
+  },
+  "score_collections": {
+    "JS_DISTANCE": {
+      "n_bins_cts_histogram": 100,
+      "categorical_only": false
+    }
+  },
+  "array_collections": {},
+  "plot_collections": {
+    "CORRELATION_HEATMAPS": {
+      "categorical_association_type": "CRAMERS_V",
+      "continuous_association_type": "PEARSON"
+    }
+  }
+}

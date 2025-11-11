@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import numpy as np
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.projections.base.plotter import (
+from artifact_core._libs.implementation.tabular.projections.base.plotter import (
     ProjectionPlotter,
 )
 

@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Generic, TypeVar
 
-from artifact_core.libs.resources.classification.binary_classification_results import (
+from artifact_core._libs.resources.classification.binary_classification_results import (
     BinaryClassificationResults,
 )
 

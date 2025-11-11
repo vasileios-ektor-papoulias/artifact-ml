@@ -1,6 +1,6 @@
 from typing import Any, Dict, Generic, TypeVar
 
-from artifact_core.base.artifact_dependencies import (
+from artifact_core._base.artifact_dependencies import (
     ArtifactResources,
     ArtifactResult,
     ResourceSpecProtocol,

@@ -1,7 +1,9 @@
 from abc import abstractmethod
 from typing import Generic, TypedDict, TypeVar
 
-from artifact_core.libs.resources.classification.classification_results import ClassificationResults
+from artifact_core._libs.resources.classification.classification_results import (
+    ClassificationResults,
+)
 
 from artifact_torch.base.model.base import Model
 from artifact_torch.base.model.io import (

@@ -2,7 +2,7 @@ from abc import abstractmethod
 from typing import List, Optional, Type
 
 import pandas as pd
-from artifact_core.table_comparison.artifacts.base import (
+from artifact_core.table_comparison._artifacts.base import (
     TableComparisonArtifactResources,
     TabularDataSpecProtocol,
 )

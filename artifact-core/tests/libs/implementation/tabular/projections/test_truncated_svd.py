@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.projections.truncated_svd import (
+from artifact_core._libs.implementation.tabular.projections.truncated_svd import (
     TruncatedSVDHyperparams,
     TruncatedSVDProjector,
 )

@@ -1,4 +1,4 @@
-from artifact_core.base.artifact_dependencies import ArtifactResult
+from artifact_core._base.artifact_dependencies import ArtifactResult
 from artifact_experiment.base.tracking.backend.logger import ArtifactLogger
 
 from tests.base.tracking.dummy.adapter import DummyRunAdapter

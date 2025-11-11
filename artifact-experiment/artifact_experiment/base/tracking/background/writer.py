@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Generic, TypeVar
 
-from artifact_core.base.artifact_dependencies import ArtifactResult
+from artifact_core._base.artifact_dependencies import ArtifactResult
 from matplotlib.figure import Figure
 from numpy import ndarray
 

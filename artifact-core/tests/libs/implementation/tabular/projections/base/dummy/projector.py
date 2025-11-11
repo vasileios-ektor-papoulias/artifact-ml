@@ -3,11 +3,11 @@ from typing import List, Optional, Type, TypeVar
 
 import numpy as np
 import pandas as pd
-from artifact_core.libs.implementation.tabular.projections.base.plotter import (
+from artifact_core._libs.implementation.tabular.projections.base.plotter import (
     ProjectionPlotter,
     ProjectionPlotterConfig,
 )
-from artifact_core.libs.implementation.tabular.projections.base.projector import (
+from artifact_core._libs.implementation.tabular.projections.base.projector import (
     ProjectorBase,
     ProjectorHyperparams,
 )

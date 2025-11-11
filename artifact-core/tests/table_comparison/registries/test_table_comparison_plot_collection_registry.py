@@ -1,20 +1,20 @@
 from typing import Type
 
 import pytest
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.table_comparison.artifacts.base import (
+from artifact_core._libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.table_comparison._artifacts.base import (
     TableComparisonPlotCollection,
 )
-from artifact_core.table_comparison.artifacts.plot_collections.cdf import (
+from artifact_core.table_comparison._artifacts.plot_collections.cdf import (
     CDFPlots,
 )
-from artifact_core.table_comparison.artifacts.plot_collections.correlations import (
+from artifact_core.table_comparison._artifacts.plot_collections.correlations import (
     CorrelationHeatmaps,
 )
-from artifact_core.table_comparison.artifacts.plot_collections.pdf import (
+from artifact_core.table_comparison._artifacts.plot_collections.pdf import (
     PDFPlots,
 )
-from artifact_core.table_comparison.registries.plot_collections.registry import (
+from artifact_core.table_comparison._registries.plot_collections.registry import (
     TableComparisonPlotCollectionRegistry,
     TableComparisonPlotCollectionType,
 )

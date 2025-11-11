@@ -1,7 +1,7 @@
 from copy import deepcopy
 from typing import Any, Dict, List
 
-from artifact_core.base.artifact_dependencies import ArtifactResult
+from artifact_core._base.artifact_dependencies import ArtifactResult
 from matplotlib.figure import Figure
 from numpy import ndarray
 

@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 import torch
-from artifact_core.libs.utils.plotters.pdf_plotter import PDFConfig, PDFPlotter
+from artifact_core._libs.utils.plotters.pdf_plotter import PDFConfig, PDFPlotter
 from matplotlib.figure import Figure
 from torch import Tensor
 from torch.nn import Module

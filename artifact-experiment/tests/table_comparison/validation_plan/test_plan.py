@@ -10,7 +10,7 @@ from artifact_core.table_comparison import (
     TableComparisonScoreType,
     TabularDataSpec,
 )
-from artifact_core.table_comparison.artifacts.base import (
+from artifact_core.table_comparison._artifacts.base import (
     TableComparisonArtifact,
     TableComparisonArtifactResources,
 )

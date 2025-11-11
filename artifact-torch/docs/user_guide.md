@@ -233,7 +233,7 @@ class DemoTableComparisonPlan(TableComparisonPlan):
 **Artifact Routine Configuration** (Suggested directory: `components/routines/artifact.py`)
 ```python
 from typing import Optional
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_experiment.base.tracking.client import TrackingClient
 from artifact_experiment.table_comparison.validation_plan import TableComparisonPlan
 from artifact_torch.table_comparison.routine import TableComparisonRoutine

@@ -2,7 +2,7 @@ from typing import List
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.cdf.plotter import TabularCDFPlotter
+from artifact_core._libs.implementation.tabular.cdf.plotter import TabularCDFPlotter
 from matplotlib.figure import Figure
 
 

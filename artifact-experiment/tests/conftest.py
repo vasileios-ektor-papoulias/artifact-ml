@@ -3,7 +3,7 @@ from typing import Dict, List
 import matplotlib
 import numpy as np
 import pytest
-from artifact_core.base.artifact_dependencies import ArtifactResult
+from artifact_core._base.artifact_dependencies import ArtifactResult
 from matplotlib.figure import Figure
 
 matplotlib.use("Agg")

@@ -2,7 +2,9 @@ from typing import List, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.cdf.overlaid_plotter import TabularOverlaidCDFPlotter
+from artifact_core._libs.implementation.tabular.cdf.overlaid_plotter import (
+    TabularOverlaidCDFPlotter,
+)
 from matplotlib.figure import Figure
 
 

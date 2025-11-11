@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from artifact_core.base.registry import (
+from artifact_core._base.registry import (
     ArtifactRegistry,
     ArtifactType,
 )

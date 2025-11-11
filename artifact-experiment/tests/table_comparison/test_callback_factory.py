@@ -8,18 +8,18 @@ from artifact_core.table_comparison import (
     TableComparisonScoreType,
     TabularDataSpec,
 )
-from artifact_core.table_comparison.registries.array_collections.registry import (
+from artifact_core.table_comparison._registries.array_collections.registry import (
     TableComparisonArrayCollectionRegistry,
 )
-from artifact_core.table_comparison.registries.arrays.registry import TableComparisonArrayRegistry
-from artifact_core.table_comparison.registries.plot_collections.registry import (
+from artifact_core.table_comparison._registries.arrays.registry import TableComparisonArrayRegistry
+from artifact_core.table_comparison._registries.plot_collections.registry import (
     TableComparisonPlotCollectionRegistry,
 )
-from artifact_core.table_comparison.registries.plots.registry import TableComparisonPlotRegistry
-from artifact_core.table_comparison.registries.score_collections.registry import (
+from artifact_core.table_comparison._registries.plots.registry import TableComparisonPlotRegistry
+from artifact_core.table_comparison._registries.score_collections.registry import (
     TableComparisonScoreCollectionRegistry,
 )
-from artifact_core.table_comparison.registries.scores.registry import TableComparisonScoreRegistry
+from artifact_core.table_comparison._registries.scores.registry import TableComparisonScoreRegistry
 from artifact_experiment.base.callbacks.artifact import (
     ArtifactArrayCallback,
     ArtifactArrayCollectionCallback,

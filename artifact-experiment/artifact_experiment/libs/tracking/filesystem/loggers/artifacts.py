@@ -2,7 +2,7 @@ import os
 from abc import abstractmethod
 from typing import TypeVar
 
-from artifact_core.base.artifact_dependencies import ArtifactResult
+from artifact_core._base.artifact_dependencies import ArtifactResult
 
 from artifact_experiment.libs.tracking.filesystem.loggers.base import FilesystemLogger
 

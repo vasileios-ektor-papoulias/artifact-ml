@@ -28,8 +28,8 @@ class TableComparisonScoreType(ArtifactType):
 Then implement and register your artifact's hyperparameters:
 
 ```python
-from artifact_core.base.artifact_dependencies import ArtifactHyperparams
-from artifact_core.table_comparison.registries.scores.registry import TableComparisonScoreRegistry
+from artifact_core._base.artifact_dependencies import ArtifactHyperparams
+from artifact_core.table_comparison._registries.scores.registry import TableComparisonScoreRegistry
 
 
 @TableComparisonScoreRegistry.register_artifact_hyperparams(
@@ -57,7 +57,7 @@ The corresponding contribution to the configuration file (`artifact_core/table_c
 Should your contribution not require any hyperparameters, simply use the following as the generic parameter:
 
 ```python
-from artifact_core.base.artifact_dependencies import NoArtifactHyperparams
+from artifact_core._base.artifact_dependencies import NoArtifactHyperparams
 ```
 
 In this case no hyperparams class needs to be registered and no configuration params need to be added to the config file.
@@ -67,9 +67,9 @@ The appropriate generics for table comparison scores are as follows:
 ```python
 import pandas as pd
 
-from artifact_core.base.artifact import Artifact
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.core.dataset_comparison.artifact import DatasetComparisonResources
+from artifact_core._base.artifact import Artifact
+from artifact_core._libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._core.dataset_comparison.artifact import DatasetComparisonResources
 
 Artifact[
         DatasetComparisonResources[pd.DataFrame],
@@ -87,8 +87,8 @@ To illustrate: all table comparison scores should inherit the following base:
 ```python
 import pandas as pd
 
-from artifact_core.table_comparison.artifacts.base import TableComparisonScore
-from artifact_core.table_comparison.registries.scores.types import TableComparisonScoreType
+from artifact_core.table_comparison._artifacts.base import TableComparisonScore
+from artifact_core.table_comparison._registries.scores.types import TableComparisonScoreType
 
 TableComparisonScore[<HyperparamsT>]
 ```
@@ -100,11 +100,11 @@ from typing import Dict, Any, Optional, Union, List
 from dataclasses import dataclass
 import pandas as pd
 
-from artifact_core.table_comparison.artifacts.base import TableComparisonScore, TableComparisonArtifactResources
-from artifact_core.table_comparison.registries.scores.registry import TableComparisonScoreRegistry
-from artifact_core.table_comparison.registries.scores.types import TableComparisonScoreType
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.core.dataset_comparison.artifact import DatasetComparisonResources
+from artifact_core.table_comparison._artifacts.base import TableComparisonScore, TableComparisonArtifactResources
+from artifact_core.table_comparison._registries.scores.registry import TableComparisonScoreRegistry
+from artifact_core.table_comparison._registries.scores.types import TableComparisonScoreType
+from artifact_core._libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._core.dataset_comparison.artifact import DatasetComparisonResources
 
 
 @TableComparisonScoreRegistry.register_artifact(

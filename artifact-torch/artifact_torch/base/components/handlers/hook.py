@@ -1,6 +1,6 @@
 from typing import Any, Dict, Generic, TypeVar
 
-from artifact_core.base.artifact_dependencies import ArtifactResult
+from artifact_core._base.artifact_dependencies import ArtifactResult
 from artifact_experiment.base.components.handlers.tracking import TrackingCallbackHandler
 from matplotlib.figure import Figure
 from numpy import ndarray

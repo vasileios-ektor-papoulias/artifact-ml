@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 import neptune
-from artifact_core.base.artifact_dependencies import ArtifactResult
+from artifact_core._base.artifact_dependencies import ArtifactResult
 
 from artifact_experiment.base.tracking.backend.adapter import InactiveRunError, RunAdapter
 from artifact_experiment.libs.utils.environment_variable_reader import EnvironmentVariableReader

@@ -1,4 +1,4 @@
-from artifact_core.base.engine import ArtifactEngine
+from artifact_core._base.engine import ArtifactEngine
 
 from tests.base.dummy.artifact_dependencies import DummyArtifactResources, DummyResourceSpec
 from tests.base.dummy.registries import (

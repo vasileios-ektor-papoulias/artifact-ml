@@ -2,8 +2,8 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Any, Generic, List, Mapping, Optional, Set, Type, TypeVar
 
-from artifact_core.base.artifact import ResourceSpecProtocol
-from artifact_core.base.artifact_dependencies import ArtifactResources
+from artifact_core._base.artifact import ResourceSpecProtocol
+from artifact_core._base.artifact_dependencies import ArtifactResources
 from artifact_experiment.base.components.plans.artifact import (
     ArtifactPlan,
     ArtifactPlanBuildContext,

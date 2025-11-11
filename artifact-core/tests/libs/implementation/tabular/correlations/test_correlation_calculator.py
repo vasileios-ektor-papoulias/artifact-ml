@@ -3,12 +3,12 @@ from typing import List, Optional, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.correlations.calculator import (
+from artifact_core._libs.implementation.tabular.correlations.calculator import (
     CategoricalAssociationType,
     ContinuousAssociationType,
     CorrelationCalculator,
 )
-from artifact_core.libs.utils.calculators.vector_distance_calculator import (
+from artifact_core._libs.utils.calculators.vector_distance_calculator import (
     VectorDistanceMetric,
 )
 

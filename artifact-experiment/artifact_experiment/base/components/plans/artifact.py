@@ -2,8 +2,8 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Any, Generic, Optional, Sequence, Type, TypeVar
 
-from artifact_core.base.artifact_dependencies import ArtifactResources, ResourceSpecProtocol
-from artifact_core.base.registry import ArtifactType
+from artifact_core._base.artifact_dependencies import ArtifactResources, ResourceSpecProtocol
+from artifact_core._base.registry import ArtifactType
 
 from artifact_experiment.base.components.callbacks.artifact import (
     ArtifactArrayCallback,

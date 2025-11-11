@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from artifact_core.core.dataset_comparison.artifact import (
+from artifact_core._core.dataset_comparison.artifact import (
     DatasetComparisonArtifactResources,
     ResourceSpecProtocol,
 )

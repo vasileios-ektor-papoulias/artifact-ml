@@ -2,7 +2,7 @@ import os
 from typing import Callable, List, Optional, Tuple
 
 import pytest
-from artifact_core.base.artifact_dependencies import ArtifactResult
+from artifact_core._base.artifact_dependencies import ArtifactResult
 from pytest_mock import MockerFixture
 
 from tests.base.tracking.dummy.adapter import DummyRunAdapter

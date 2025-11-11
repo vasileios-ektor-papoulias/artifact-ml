@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Generic, Mapping, Optional, Type, TypeVar
 
 import pandas as pd
-from artifact_core.base.artifact import ResourceSpecProtocol
+from artifact_core._base.artifact import ResourceSpecProtocol
 from artifact_experiment.base.entities.data_split import DataSplit
 from artifact_experiment.base.tracking.backend.client import TrackingClient
 from artifact_experiment.base.tracking.background.tracking_queue import TrackingQueue

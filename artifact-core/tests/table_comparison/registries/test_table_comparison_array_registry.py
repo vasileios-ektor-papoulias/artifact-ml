@@ -1,11 +1,11 @@
 from typing import Type
 
 import pytest
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.table_comparison.artifacts.base import (
+from artifact_core._libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.table_comparison._artifacts.base import (
     TableComparisonArray,
 )
-from artifact_core.table_comparison.registries.arrays.registry import (
+from artifact_core.table_comparison._registries.arrays.registry import (
     TableComparisonArrayRegistry,
     TableComparisonArrayType,
 )

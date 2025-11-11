@@ -2,7 +2,7 @@ from typing import Callable, Dict, List, Literal, Optional, Tuple, overload
 from unittest.mock import MagicMock
 
 import pytest
-from artifact_core.base.artifact_dependencies import ArtifactResult
+from artifact_core._base.artifact_dependencies import ArtifactResult
 from artifact_experiment.base.components.callbacks.base import CallbackResources
 from artifact_experiment.base.components.callbacks.tracking import (
     TrackingArrayCallback,

@@ -4,7 +4,7 @@ from typing import Dict, List
 import numpy as np
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.descriptive_stats.calculator import (
+from artifact_core._libs.implementation.tabular.descriptive_stats.calculator import (
     DescriptiveStatistic,
     TableStatsCalculator,
 )

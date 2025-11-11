@@ -3,16 +3,16 @@ from unittest.mock import ANY
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.correlations.heatmap_plotter import (
+from artifact_core._libs.implementation.tabular.correlations.heatmap_plotter import (
     CategoricalAssociationType,
     ContinuousAssociationType,
     CorrelationHeatmapPlotter,
 )
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.table_comparison.artifacts.base import (
+from artifact_core._libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.table_comparison._artifacts.base import (
     DatasetComparisonArtifactResources,
 )
-from artifact_core.table_comparison.artifacts.plot_collections.correlations import (
+from artifact_core.table_comparison._artifacts.plot_collections.correlations import (
     CorrelationHeatmaps,
     CorrelationHeatmapsHyperparams,
 )

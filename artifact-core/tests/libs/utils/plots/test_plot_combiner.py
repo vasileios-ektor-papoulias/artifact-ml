@@ -2,7 +2,7 @@ from typing import Callable, Dict, Optional
 
 import matplotlib.pyplot as plt
 import pytest
-from artifact_core.libs.utils.plotters.plot_combiner import PlotCombinationConfig, PlotCombiner
+from artifact_core._libs.utils.plotters.plot_combiner import PlotCombinationConfig, PlotCombiner
 from matplotlib.figure import Figure
 
 

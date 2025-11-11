@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from artifact_core.libs.utils.system.package_importer import PackageImporter
+from artifact_core._libs.utils.system.package_importer import PackageImporter
 
 from tests.base.dummy_artifact_toolkit.artifact_dependencies import (
     DummyArtifactResources,

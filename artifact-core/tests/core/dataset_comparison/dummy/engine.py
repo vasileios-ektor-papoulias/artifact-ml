@@ -1,4 +1,4 @@
-from artifact_core.core.dataset_comparison.engine import DatasetComparisonEngine
+from artifact_core._core.dataset_comparison.engine import DatasetComparisonEngine
 
 from tests.core.dataset_comparison.dummy.artifact_dependencies import (
     DummyDataset,

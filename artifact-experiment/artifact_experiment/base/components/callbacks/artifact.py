@@ -1,19 +1,20 @@
 from dataclasses import dataclass
 from typing import Any, Dict, Generic, Optional, TypeVar
 
-from artifact_core.base.artifact import Artifact
-from artifact_core.base.artifact_dependencies import (
+from artifact_core._base.artifact import Artifact
+from artifact_core._base.artifact_dependencies import (
     ArtifactResources,
     ArtifactResult,
     ResourceSpecProtocol,
 )
+from matplotlib.figure import Figure
+from numpy import ndarray
+
 from artifact_experiment.base.components.callbacks.tracking import (
     TrackingCallback,
     TrackingCallbackResources,
 )
 from artifact_experiment.base.tracking.background.writer import TrackingQueueWriter
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 ArtifactResourcesTCov = TypeVar("ArtifactResourcesTCov", bound=ArtifactResources, covariant=True)
 

@@ -1,12 +1,12 @@
 from typing import Type
 
 import pytest
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.table_comparison.artifacts.base import (
+from artifact_core._libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.table_comparison._artifacts.base import (
     TableComparisonScoreCollection,
 )
-from artifact_core.table_comparison.artifacts.score_collections.js import JSDistanceScores
-from artifact_core.table_comparison.registries.score_collections.registry import (
+from artifact_core.table_comparison._artifacts.score_collections.js import JSDistanceScores
+from artifact_core.table_comparison._registries.score_collections.registry import (
     TableComparisonScoreCollectionRegistry,
     TableComparisonScoreCollectionType,
 )

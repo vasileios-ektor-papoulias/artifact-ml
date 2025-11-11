@@ -8,20 +8,20 @@ from artifact_core.table_comparison import (
     TableComparisonScoreCollectionType,
     TableComparisonScoreType,
 )
-from artifact_core.table_comparison.artifacts.array_collections.descriptive_stats import (
+from artifact_core.table_comparison._artifacts.array_collections.descriptive_stats import (
     FirstQuartileJuxtapositionArrays,
     MedianJuxtapositionArrays,
     ThirdQuartileJuxtapositionArrays,
 )
-from artifact_core.table_comparison.artifacts.base import TableComparisonArtifact
-from artifact_core.table_comparison.artifacts.plot_collections.correlations import (
+from artifact_core.table_comparison._artifacts.base import TableComparisonArtifact
+from artifact_core.table_comparison._artifacts.plot_collections.correlations import (
     CorrelationHeatmaps,
 )
-from artifact_core.table_comparison.artifacts.plots.cdf import CDFPlot
-from artifact_core.table_comparison.artifacts.plots.pdf import PDFPlot
-from artifact_core.table_comparison.artifacts.score_collections.js import JSDistanceScores
-from artifact_core.table_comparison.artifacts.scores.correlation import CorrelationDistanceScore
-from artifact_core.table_comparison.artifacts.scores.mean_js import MeanJSDistanceScore
+from artifact_core.table_comparison._artifacts.plots.cdf import CDFPlot
+from artifact_core.table_comparison._artifacts.plots.pdf import PDFPlot
+from artifact_core.table_comparison._artifacts.score_collections.js import JSDistanceScores
+from artifact_core.table_comparison._artifacts.scores.correlation import CorrelationDistanceScore
+from artifact_core.table_comparison._artifacts.scores.mean_js import MeanJSDistanceScore
 from artifact_experiment.base.callbacks.tracking import (
     ArrayCallbackHandler,
     ArrayCollectionCallbackHandler,

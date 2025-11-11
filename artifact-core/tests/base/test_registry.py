@@ -1,7 +1,7 @@
 from typing import Any, Callable, Type, TypeVar, Union
 
 import pytest
-from artifact_core.base.artifact_dependencies import (
+from artifact_core._base.artifact_dependencies import (
     NO_ARTIFACT_HYPERPARAMS,
     ArtifactResult,
     NoArtifactHyperparams,

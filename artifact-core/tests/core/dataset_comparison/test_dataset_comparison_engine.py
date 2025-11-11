@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 import numpy as np
 import pytest
-from artifact_core.base.artifact_dependencies import ArtifactResult
+from artifact_core._base.artifact_dependencies import ArtifactResult
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 

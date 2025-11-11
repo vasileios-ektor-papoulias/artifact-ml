@@ -4,11 +4,11 @@ from unittest.mock import MagicMock
 import numpy as np
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.projections.base.plotter import (
+from artifact_core._libs.implementation.tabular.projections.base.plotter import (
     ProjectionPlotter,
     ProjectionPlotterConfig,
 )
-from artifact_core.libs.utils.plotters.plot_combiner import PlotCombinationConfig
+from artifact_core._libs.utils.plotters.plot_combiner import PlotCombinationConfig
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 

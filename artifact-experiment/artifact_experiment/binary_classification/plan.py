@@ -1,11 +1,11 @@
 from abc import abstractmethod
 from typing import List, Mapping, Optional, Type
 
-from artifact_core.binary_classification.artifacts.base import (
+from artifact_core._libs.utils.data_structures.entity_store import IdentifierType
+from artifact_core.binary_classification._artifacts.base import (
     BinaryClassificationArtifactResources,
     BinaryFeatureSpecProtocol,
 )
-from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
 
 from artifact_experiment.base.components.factories.artifact import ArtifactCallbackFactory
 from artifact_experiment.base.components.plans.artifact import ArtifactPlan

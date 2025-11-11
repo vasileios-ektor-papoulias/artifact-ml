@@ -1,0 +1,6 @@
+from enum import Enum
+
+
+class DomainToolkit(Enum):
+    TABLE_COMPARISON = "TABLE_COMPARISON"
+    BINARY_CLASSIFICATION = "BINARY_CLASSIFICATION"

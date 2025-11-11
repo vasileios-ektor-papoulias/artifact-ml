@@ -1,6 +1,6 @@
 import pandas as pd
 import pytest
-from artifact_core.core.dataset_comparison.artifact import DatasetComparisonArtifactResources
+from artifact_core._core.dataset_comparison.artifact import DatasetComparisonArtifactResources
 from artifact_experiment.core.dataset_comparison.callback_resources import (
     DatasetComparisonCallbackResources,
 )

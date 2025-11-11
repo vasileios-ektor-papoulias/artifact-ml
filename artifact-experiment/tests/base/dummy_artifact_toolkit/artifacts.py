@@ -2,8 +2,8 @@ from typing import Dict, TypeVar
 
 import matplotlib.pyplot as plt
 import numpy as np
-from artifact_core.base.artifact import Artifact
-from artifact_core.base.artifact_dependencies import (
+from artifact_core._base.artifact import Artifact
+from artifact_core._base.artifact_dependencies import (
     ArtifactResult,
     NoArtifactHyperparams,
 )

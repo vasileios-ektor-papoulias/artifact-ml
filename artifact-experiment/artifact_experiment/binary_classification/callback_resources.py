@@ -1,12 +1,14 @@
 from typing import List, Mapping, Optional, Type, TypeVar
 
-from artifact_core.binary_classification.artifacts.base import BinaryClassificationArtifactResources
-from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
-from artifact_core.libs.resources.categorical.category_store.binary import BinaryCategoryStore
-from artifact_core.libs.resources.classification.binary_classification_results import (
+from artifact_core._libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
+from artifact_core._libs.resources.categorical.category_store.binary import BinaryCategoryStore
+from artifact_core._libs.resources.classification.binary_classification_results import (
     BinaryClassificationResults,
 )
-from artifact_core.libs.utils.data_structures.entity_store import IdentifierType
+from artifact_core._libs.utils.data_structures.entity_store import IdentifierType
+from artifact_core.binary_classification._artifacts.base import (
+    BinaryClassificationArtifactResources,
+)
 
 from artifact_experiment.core.classification.callback_resources import (
     ClassificationCallbackResources,

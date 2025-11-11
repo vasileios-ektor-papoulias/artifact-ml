@@ -1,35 +1,35 @@
 from typing import Type
 
-from artifact_core.binary_classification.artifacts.base import (
+from artifact_core.binary_classification._artifacts.base import (
     BinaryClassificationArtifactResources,
     BinaryFeatureSpecProtocol,
 )
-from artifact_core.binary_classification.registries.array_collections.registry import (
+from artifact_core.binary_classification._registries.array_collections.registry import (
     BinaryClassificationArrayCollectionRegistry,
     BinaryClassificationArrayCollectionRegistryBase,
     BinaryClassificationArrayCollectionType,
 )
-from artifact_core.binary_classification.registries.arrays.registry import (
+from artifact_core.binary_classification._registries.arrays.registry import (
     BinaryClassificationArrayRegistry,
     BinaryClassificationArrayRegistryBase,
     BinaryClassificationArrayType,
 )
-from artifact_core.binary_classification.registries.plot_collections.registry import (
+from artifact_core.binary_classification._registries.plot_collections.registry import (
     BinaryClassificationPlotCollectionRegistry,
     BinaryClassificationPlotCollectionRegistryBase,
     BinaryClassificationPlotCollectionType,
 )
-from artifact_core.binary_classification.registries.plots.registry import (
+from artifact_core.binary_classification._registries.plots.registry import (
     BinaryClassificationPlotRegistry,
     BinaryClassificationPlotRegistryBase,
     BinaryClassificationPlotType,
 )
-from artifact_core.binary_classification.registries.score_collections.registry import (
+from artifact_core.binary_classification._registries.score_collections.registry import (
     BinaryClassificationScoreCollectionRegistry,
     BinaryClassificationScoreCollectionRegistryBase,
     BinaryClassificationScoreCollectionType,
 )
-from artifact_core.binary_classification.registries.scores.registry import (
+from artifact_core.binary_classification._registries.scores.registry import (
     BinaryClassificationScoreRegistry,
     BinaryClassificationScoreRegistryBase,
     BinaryClassificationScoreType,

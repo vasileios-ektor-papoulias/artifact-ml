@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.projections.pca import PCAHyperparams, PCAProjector
+from artifact_core._libs.implementation.tabular.projections.pca import PCAHyperparams, PCAProjector
 from pytest_mock import MockerFixture
 from sklearn.decomposition import PCA
 

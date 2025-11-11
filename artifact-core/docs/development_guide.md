@@ -12,7 +12,7 @@ First, you define enumerations for each type of artifact your engine will suppor
 
 ```python
 from enum import Enum
-from artifact_core.base.artifact_dependencies import ArtifactType
+from artifact_core._base.artifact_dependencies import ArtifactType
 
 class CustomScoreType(ArtifactType):
     CUSTOM_SCORE = "accuracy_score"
@@ -42,7 +42,7 @@ The resource specification defines the structural properties of your validation 
 ```python
 from dataclasses import dataclass
 from typing import List, Dict, Optional
-from artifact_core.base.artifact_dependencies import ResourceSpecProtocol
+from artifact_core._base.artifact_dependencies import ResourceSpecProtocol
 
 @dataclass
 class CustomResourceSpec(ResourceSpecProtocol):
@@ -59,7 +59,7 @@ import numpy as np
 import pandas as pd
 from typing import Dict, List, Optional, Union
 
-from artifact_core.base.artifact_dependencies import ArtifactResources
+from artifact_core._base.artifact_dependencies import ArtifactResources
 
 @dataclass
 class CustomResources(ArtifactResources):
@@ -77,7 +77,7 @@ import numpy as np
 import os
 from typing import Dict, Type, Optional, List
 
-from artifact_core.base.registry import ArtifactRegistry
+from artifact_core._base.registry import ArtifactRegistry
 
 # Helper function to load configurations
 def load_config_section(config_path: str, section: str) -> Dict[str, Dict[str, Any]]:
@@ -109,8 +109,8 @@ Create concrete artifact implementations:
 ```python
 from typing import Any, Optional, Union
 
-from artifact_core.base.artifact import Artifact
-from artifact_core.base.artifact_dependencies import NoArtifactHyperparams
+from artifact_core._base.artifact import Artifact
+from artifact_core._base.artifact_dependencies import NoArtifactHyperparams
 
 @CustomScoreRegistry.register_artifact(CustomScoreType.CUSTOM_SCORE)
 class CustomScore(Artifact[CustomResources, float, NoArtifactHyperparams, CustomResourceSpec]):
@@ -130,7 +130,7 @@ Finally, create the engine that orchestrates the computation of artifacts:
 ```python
 from typing import Type, Dict, Union
 
-from artifact_core.base.engine import ArtifactEngine
+from artifact_core._base.engine import ArtifactEngine
 
 class CustomArtifactEngine(ArtifactEngine[
     CustomResources,

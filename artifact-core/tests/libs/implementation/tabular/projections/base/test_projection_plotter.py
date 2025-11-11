@@ -2,7 +2,7 @@ from typing import Dict, Optional, Tuple
 
 import numpy as np
 import pytest
-from artifact_core.libs.implementation.tabular.projections.base.plotter import (
+from artifact_core._libs.implementation.tabular.projections.base.plotter import (
     ProjectionPlotter,
 )
 from matplotlib.figure import Figure

@@ -4,7 +4,7 @@ from typing import Dict, Generic, List, Optional, Tuple, TypeVar
 
 import torch
 import torch.nn as nn
-from artifact_core.base.artifact_dependencies import ArtifactResult
+from artifact_core._base.artifact_dependencies import ArtifactResult
 from matplotlib.figure import Figure
 from numpy import ndarray
 from torch.utils.hooks import RemovableHandle

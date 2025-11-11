@@ -1,6 +1,6 @@
 from typing import TypeVar
 
-from artifact_core.core.classification.artifact import ClassificationArtifactResources
+from artifact_core._core.classification.artifact import ClassificationArtifactResources
 
 from artifact_experiment.base.components.callbacks.artifact import ArtifactCallbackResources
 

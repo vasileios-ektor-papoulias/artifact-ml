@@ -1,11 +1,11 @@
 from abc import abstractmethod
 from typing import Dict, Generic, Optional, Type, TypeVar, Union
 
-from artifact_core.base.artifact_dependencies import (
+from artifact_core._base.artifact_dependencies import (
     ArtifactResources,
     ResourceSpecProtocol,
 )
-from artifact_core.base.registry import ArtifactRegistry, ArtifactType
+from artifact_core._base.registry import ArtifactRegistry, ArtifactType
 from matplotlib.figure import Figure
 from numpy import ndarray
 

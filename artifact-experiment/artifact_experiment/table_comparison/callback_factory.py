@@ -1,35 +1,35 @@
 from typing import Type
 
-from artifact_core.table_comparison.artifacts.base import (
+from artifact_core.table_comparison._artifacts.base import (
     TableComparisonArtifactResources,
     TabularDataSpecProtocol,
 )
-from artifact_core.table_comparison.registries.array_collections.registry import (
+from artifact_core.table_comparison._registries.array_collections.registry import (
     TableComparisonArrayCollectionRegistry,
     TableComparisonArrayCollectionRegistryBase,
     TableComparisonArrayCollectionType,
 )
-from artifact_core.table_comparison.registries.arrays.registry import (
+from artifact_core.table_comparison._registries.arrays.registry import (
     TableComparisonArrayRegistry,
     TableComparisonArrayRegistryBase,
     TableComparisonArrayType,
 )
-from artifact_core.table_comparison.registries.plot_collections.registry import (
+from artifact_core.table_comparison._registries.plot_collections.registry import (
     TableComparisonPlotCollectionRegistry,
     TableComparisonPlotCollectionRegistryBase,
     TableComparisonPlotCollectionType,
 )
-from artifact_core.table_comparison.registries.plots.registry import (
+from artifact_core.table_comparison._registries.plots.registry import (
     TableComparisonPlotRegistry,
     TableComparisonPlotRegistryBase,
     TableComparisonPlotType,
 )
-from artifact_core.table_comparison.registries.score_collections.registry import (
+from artifact_core.table_comparison._registries.score_collections.registry import (
     TableComparisonScoreCollectionRegistry,
     TableComparisonScoreCollectionRegistryBase,
     TableComparisonScoreCollectionType,
 )
-from artifact_core.table_comparison.registries.scores.registry import (
+from artifact_core.table_comparison._registries.scores.registry import (
     TableComparisonScoreRegistry,
     TableComparisonScoreRegistryBase,
     TableComparisonScoreType,

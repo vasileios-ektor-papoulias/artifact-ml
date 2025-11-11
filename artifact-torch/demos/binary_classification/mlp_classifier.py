@@ -1,9 +1,9 @@
 from typing import List, Optional, Type, TypeVar
 
 import pandas as pd
-from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
-from artifact_core.libs.resources.categorical.category_store.binary import BinaryCategoryStore
-from artifact_core.libs.resources.classification.binary_classification_results import (
+from artifact_core._libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
+from artifact_core._libs.resources.categorical.category_store.binary import BinaryCategoryStore
+from artifact_core._libs.resources.classification.binary_classification_results import (
     BinaryClassificationResults,
 )
 from artifact_experiment.base.tracking.client import TrackingClient

@@ -1,15 +1,15 @@
 from typing import Type
 
 import pytest
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.table_comparison.artifacts.base import (
+from artifact_core._libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.table_comparison._artifacts.base import (
     TableComparisonPlot,
 )
-from artifact_core.table_comparison.artifacts.plots.cdf import CDFPlot
-from artifact_core.table_comparison.artifacts.plots.correlations import (
+from artifact_core.table_comparison._artifacts.plots.cdf import CDFPlot
+from artifact_core.table_comparison._artifacts.plots.correlations import (
     CorrelationHeatmapJuxtapositionPlot,
 )
-from artifact_core.table_comparison.artifacts.plots.descriptive_stats import (
+from artifact_core.table_comparison._artifacts.plots.descriptive_stats import (
     DescriptiveStatsAlignmentPlot,
     FirstQuartileAlignmentPlot,
     MaxAlignmentPlot,
@@ -20,17 +20,17 @@ from artifact_core.table_comparison.artifacts.plots.descriptive_stats import (
     ThirdQuartileAlignmentPlot,
     VarianceAlignmentPlot,
 )
-from artifact_core.table_comparison.artifacts.plots.pca import (
+from artifact_core.table_comparison._artifacts.plots.pca import (
     PCAJuxtapositionPlot,
 )
-from artifact_core.table_comparison.artifacts.plots.pdf import PDFPlot
-from artifact_core.table_comparison.artifacts.plots.truncated_svd import (
+from artifact_core.table_comparison._artifacts.plots.pdf import PDFPlot
+from artifact_core.table_comparison._artifacts.plots.truncated_svd import (
     TruncatedSVDJuxtapositionPlot,
 )
-from artifact_core.table_comparison.artifacts.plots.tsne import (
+from artifact_core.table_comparison._artifacts.plots.tsne import (
     TSNEJuxtapositionPlot,
 )
-from artifact_core.table_comparison.registries.plots.registry import (
+from artifact_core.table_comparison._registries.plots.registry import (
     TableComparisonPlotRegistry,
     TableComparisonPlotType,
 )
