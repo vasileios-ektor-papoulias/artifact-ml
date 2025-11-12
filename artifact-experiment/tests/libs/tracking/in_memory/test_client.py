@@ -11,8 +11,6 @@ from artifact_experiment.libs.tracking.in_memory.client import (
 from artifact_experiment.libs.tracking.in_memory.native_run import (
     InMemoryRun,
 )
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 
 @pytest.mark.unit
@@ -146,7 +144,7 @@ def test_log_array(
     ],
     experiment_id: str,
     run_id: str,
-    ls_arrays: List[ndarray],
+    ls_arrays: List[Array],
 ):
     adapter, client = client_factory(experiment_id, run_id)
     for idx, array in enumerate(ls_arrays):
@@ -256,7 +254,7 @@ def test_log_array_collection(
     ],
     experiment_id: str,
     run_id: str,
-    ls_array_collections: List[Dict[str, ndarray]],
+    ls_array_collections: List[Dict[str, Array]],
 ):
     adapter, client = client_factory(experiment_id, run_id)
     for idx, array_collection in enumerate(ls_array_collections):

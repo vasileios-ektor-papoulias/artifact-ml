@@ -1,5 +1,5 @@
 import pandas as pd
-from artifact_core._libs.resources.categorical.category_store.binary import BinaryCategoryStore
+from artifact_core._libs.resourcess.categorical.category_store.binary import BinaryCategoryStore
 from artifact_core.binary_classification import BinaryFeatureSpec
 from artifact_torch.base.data.data_loader import DataLoader
 from artifact_torch.binary_classification.routine import BinaryClassificationRoutineData

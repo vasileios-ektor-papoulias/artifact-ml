@@ -1,7 +1,7 @@
 from typing import Type
 
 import pytest
-from artifact_core._libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison._artifacts.base import (
     TableComparisonPlot,
 )
@@ -31,8 +31,8 @@ from artifact_core.table_comparison._artifacts.plots.tsne import (
     TSNEJuxtapositionPlot,
 )
 from artifact_core.table_comparison._registries.plots.registry import (
+    TableComparisonPlot,
     TableComparisonPlotRegistry,
-    TableComparisonPlotType,
 )
 
 
@@ -40,41 +40,41 @@ from artifact_core.table_comparison._registries.plots.registry import (
 @pytest.mark.parametrize(
     "artifact_type, artifact_class",
     [
-        (TableComparisonPlotType.PDF, PDFPlot),
-        (TableComparisonPlotType.CDF, CDFPlot),
+        (TableComparisonPlot.PDF, PDFPlot),
+        (TableComparisonPlot.CDF, CDFPlot),
         (
-            TableComparisonPlotType.DESCRIPTIVE_STATS_ALIGNMENT,
+            TableComparisonPlot.DESCRIPTIVE_STATS_ALIGNMENT,
             DescriptiveStatsAlignmentPlot,
         ),
-        (TableComparisonPlotType.MEAN_ALIGNMENT, MeanAlignmentPlot),
-        (TableComparisonPlotType.STD_ALIGNMENT, STDAlignmentPlot),
-        (TableComparisonPlotType.VARIANCE_ALIGNMENT, VarianceAlignmentPlot),
-        (TableComparisonPlotType.MEDIAN_ALIGNMENT, MedianAlignmentPlot),
+        (TableComparisonPlot.MEAN_ALIGNMENT, MeanAlignmentPlot),
+        (TableComparisonPlot.STD_ALIGNMENT, STDAlignmentPlot),
+        (TableComparisonPlot.VARIANCE_ALIGNMENT, VarianceAlignmentPlot),
+        (TableComparisonPlot.MEDIAN_ALIGNMENT, MedianAlignmentPlot),
         (
-            TableComparisonPlotType.FIRST_QUARTILE_ALIGNMENT,
+            TableComparisonPlot.FIRST_QUARTILE_ALIGNMENT,
             FirstQuartileAlignmentPlot,
         ),
         (
-            TableComparisonPlotType.THIRD_QUARTILE_ALIGNMENT,
+            TableComparisonPlot.THIRD_QUARTILE_ALIGNMENT,
             ThirdQuartileAlignmentPlot,
         ),
-        (TableComparisonPlotType.MIN_ALIGNMENT, MinAlignmentPlot),
-        (TableComparisonPlotType.MAX_ALIGNMENT, MaxAlignmentPlot),
+        (TableComparisonPlot.MIN_ALIGNMENT, MinAlignmentPlot),
+        (TableComparisonPlot.MAX_ALIGNMENT, MaxAlignmentPlot),
         (
-            TableComparisonPlotType.CORRELATION_HEATMAP_JUXTAPOSITION,
+            TableComparisonPlot.CORRELATION_HEATMAP_JUXTAPOSITION,
             CorrelationHeatmapJuxtapositionPlot,
         ),
-        (TableComparisonPlotType.PCA_JUXTAPOSITION, PCAJuxtapositionPlot),
+        (TableComparisonPlot.PCA_JUXTAPOSITION, PCAJuxtapositionPlot),
         (
-            TableComparisonPlotType.TRUNCATED_SVD_JUXTAPOSITION,
+            TableComparisonPlot.TRUNCATED_SVD_JUXTAPOSITION,
             TruncatedSVDJuxtapositionPlot,
         ),
-        (TableComparisonPlotType.TSNE_JUXTAPOSITION, TSNEJuxtapositionPlot),
+        (TableComparisonPlot.TSNE_JUXTAPOSITION, TSNEJuxtapositionPlot),
     ],
 )
 def test_get(
     resource_spec: TabularDataSpecProtocol,
-    artifact_type: TableComparisonPlotType,
+    artifact_type: TableComparisonPlot,
     artifact_class: Type[TableComparisonPlot],
 ):
     artifact = TableComparisonPlotRegistry.get(

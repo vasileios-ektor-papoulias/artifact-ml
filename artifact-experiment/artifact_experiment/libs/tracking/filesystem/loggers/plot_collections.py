@@ -1,8 +1,6 @@
 import os
 from typing import Dict
 
-from matplotlib.figure import Figure
-
 from artifact_experiment.libs.tracking.filesystem.adapter import InactiveFilesystemRunError
 from artifact_experiment.libs.tracking.filesystem.loggers.artifacts import FilesystemArtifactLogger
 from artifact_experiment.libs.utils.incremental_path_generator import IncrementalPathGenerator

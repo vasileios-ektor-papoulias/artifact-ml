@@ -2,8 +2,7 @@ from typing import List
 
 import pandas as pd
 import pytest
-from artifact_core._libs.implementation.tabular.cdf.plotter import TabularCDFPlotter
-from matplotlib.figure import Figure
+from artifact_core._libs.artifacts.table_comparison.cdf.plotter import TabularCDFPlotter
 
 
 @pytest.mark.unit

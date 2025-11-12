@@ -5,7 +5,6 @@ from unittest.mock import ANY
 import pytest
 from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRunAdapter
 from artifact_experiment.libs.tracking.filesystem.loggers.plots import FilesystemPlotLogger
-from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 

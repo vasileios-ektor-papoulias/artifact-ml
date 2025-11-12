@@ -4,8 +4,8 @@ import pandas as pd
 import pytest
 from artifact_core.table_comparison import (
     TableComparisonArrayCollectionType,
+    TableComparisonPlot,
     TableComparisonPlotCollectionType,
-    TableComparisonPlotType,
     TableComparisonScoreCollectionType,
     TableComparisonScoreType,
     TabularDataSpec,
@@ -33,7 +33,7 @@ def test_build(
     mocker: MockerFixture,
     tabular_data_spec: TabularDataSpec,
     expected_score_types: List[TableComparisonScoreType],
-    expected_plot_types: List[TableComparisonPlotType],
+    expected_plot_types: List[TableComparisonPlot],
     expected_score_collection_types: List[TableComparisonScoreCollectionType],
     expected_array_collection_types: List[TableComparisonArrayCollectionType],
     expected_plot_collection_types: List[TableComparisonPlotCollectionType],
@@ -89,7 +89,7 @@ def test_build(
 def test_execute(
     mocker: MockerFixture,
     expected_score_types: List[TableComparisonScoreType],
-    expected_plot_types: List[TableComparisonPlotType],
+    expected_plot_types: List[TableComparisonPlot],
     expected_score_collection_types: List[TableComparisonScoreCollectionType],
     expected_array_collection_types: List[TableComparisonArrayCollectionType],
     expected_plot_collection_types: List[TableComparisonPlotCollectionType],

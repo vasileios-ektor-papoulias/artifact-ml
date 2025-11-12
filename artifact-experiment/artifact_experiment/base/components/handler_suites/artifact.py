@@ -1,6 +1,6 @@
 from typing import Any, Generic, Sequence, Type, TypeVar
 
-from artifact_core._base.artifact_dependencies import ArtifactResources, ResourceSpecProtocol
+from artifact_core._base.primitives import ArtifactResources, ResourceSpecProtocol
 
 from artifact_experiment.base.components.callbacks.artifact import (
     ArtifactArrayCallback,

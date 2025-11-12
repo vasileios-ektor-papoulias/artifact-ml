@@ -2,23 +2,22 @@ from abc import abstractmethod
 from typing import Dict, Generic, List, Mapping, Optional, Type, TypeVar
 
 from matplotlib.figure import Figure
-from numpy import ndarray
 
-from artifact_core._base.artifact_dependencies import (
-    ArtifactHyperparams,
-    ArtifactResult,
+from artifact_core._base.contracts.hyperparams import ArtifactHyperparams
+from artifact_core._base.types.artifact_result import Array, ArtifactResult
+from artifact_core._libs.resource_specs.binary_classification.protocol import (
+    BinaryFeatureSpecProtocol,
 )
-from artifact_core._core.classification.artifact import (
+from artifact_core._libs.resource_specs.binary_classification.spec import BinaryFeatureSpec
+from artifact_core._libs.resources.binary_classification.category_store import BinaryCategoryStore
+from artifact_core._libs.resources.binary_classification.classification_results import (
+    BinaryClassificationResults,
+)
+from artifact_core._libs.resources.tools.entity_store import IdentifierType
+from artifact_core._tasks.classification.artifact import (
     ClassificationArtifact,
     ClassificationArtifactResources,
 )
-from artifact_core._libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
-from artifact_core._libs.resource_spec.binary.spec import BinaryFeatureSpec
-from artifact_core._libs.resources.categorical.category_store.binary import BinaryCategoryStore
-from artifact_core._libs.resources.classification.binary_classification_results import (
-    BinaryClassificationResults,
-)
-from artifact_core._libs.utils.data_structures.entity_store import IdentifierType
 
 BinaryClassificationArtifactResourcesT = TypeVar(
     "BinaryClassificationArtifactResourcesT", bound="BinaryClassificationArtifactResources"
@@ -99,13 +98,13 @@ class BinaryClassificationArtifact(
 
 
 BinaryClassificationScore = BinaryClassificationArtifact[ArtifactHyperparamsT, float]
-BinaryClassificationArray = BinaryClassificationArtifact[ArtifactHyperparamsT, ndarray]
+BinaryClassificationArray = BinaryClassificationArtifact[ArtifactHyperparamsT, Array]
 BinaryClassificationPlot = BinaryClassificationArtifact[ArtifactHyperparamsT, Figure]
 BinaryClassificationScoreCollection = BinaryClassificationArtifact[
     ArtifactHyperparamsT, Dict[str, float]
 ]
 BinaryClassificationArrayCollection = BinaryClassificationArtifact[
-    ArtifactHyperparamsT, Dict[str, ndarray]
+    ArtifactHyperparamsT, Dict[str, Array]
 ]
 BinaryClassificationPlotCollection = BinaryClassificationArtifact[
     ArtifactHyperparamsT, Dict[str, Figure]

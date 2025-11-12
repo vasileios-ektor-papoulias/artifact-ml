@@ -1,10 +1,10 @@
 from typing import List
 
 from artifact_core.table_comparison import (
+    TableComparisonArray,
     TableComparisonArrayCollectionType,
-    TableComparisonArrayType,
+    TableComparisonPlot,
     TableComparisonPlotCollectionType,
-    TableComparisonPlotType,
     TableComparisonScoreCollectionType,
     TableComparisonScoreType,
 )
@@ -20,17 +20,17 @@ class DemoTableComparisonPlan(TableComparisonPlan):
         ]
 
     @staticmethod
-    def _get_array_types() -> List[TableComparisonArrayType]:
+    def _get_array_types() -> List[TableComparisonArray]:
         return []
 
     @staticmethod
-    def _get_plot_types() -> List[TableComparisonPlotType]:
+    def _get_plot_types() -> List[TableComparisonPlot]:
         return [
-            TableComparisonPlotType.PDF,
-            TableComparisonPlotType.CDF,
-            TableComparisonPlotType.DESCRIPTIVE_STATS_ALIGNMENT,
-            TableComparisonPlotType.PCA_JUXTAPOSITION,
-            TableComparisonPlotType.CORRELATION_HEATMAP_JUXTAPOSITION,
+            TableComparisonPlot.PDF,
+            TableComparisonPlot.CDF,
+            TableComparisonPlot.DESCRIPTIVE_STATS_ALIGNMENT,
+            TableComparisonPlot.PCA_JUXTAPOSITION,
+            TableComparisonPlot.CORRELATION_HEATMAP_JUXTAPOSITION,
         ]
 
     @staticmethod

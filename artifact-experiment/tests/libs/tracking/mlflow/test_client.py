@@ -18,8 +18,6 @@ from artifact_experiment.libs.tracking.mlflow.loggers.score_collections import (
     MlflowScoreCollectionLogger,
 )
 from artifact_experiment.libs.tracking.mlflow.loggers.scores import MlflowScoreLogger
-from matplotlib.figure import Figure
-from numpy import ndarray
 from pytest_mock import MockerFixture
 
 
@@ -234,7 +232,7 @@ def test_log_array(
     ],
     experiment_id: str,
     run_id: str,
-    ls_arrays: List[ndarray],
+    ls_arrays: List[Array],
 ):
     (
         adapter,
@@ -450,7 +448,7 @@ def test_log_array_collection(
     ],
     experiment_id: str,
     run_id: str,
-    ls_array_collections: List[Dict[str, ndarray]],
+    ls_array_collections: List[Dict[str, Array]],
 ):
     (
         adapter,

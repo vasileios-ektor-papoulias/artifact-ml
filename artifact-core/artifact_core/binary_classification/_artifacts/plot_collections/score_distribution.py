@@ -3,23 +3,19 @@ from typing import Dict, Sequence, Type, TypeVar, Union
 
 from matplotlib.figure import Figure
 
-from artifact_core._base.artifact_dependencies import ArtifactHyperparams
-from artifact_core._libs.implementation.binary_classification.score_distribution.partitioner import (
+from artifact_core._base.contracts.hyperparams import ArtifactHyperparams
+from artifact_core._libs.artifacts.binary_classification.score_distribution.partitioner import (
     BinarySampleSplit,
     BinarySampleSplitLiteral,
 )
-from artifact_core._libs.implementation.binary_classification.score_distribution.plotter import (
+from artifact_core._libs.artifacts.binary_classification.score_distribution.plotter import (
     ScorePDFPlotter,
 )
-from artifact_core._libs.resources.categorical.category_store.binary import (
-    BinaryCategoryStore,
-)
-from artifact_core._libs.resources.classification.binary_classification_results import (
+from artifact_core._libs.resources.binary_classification.category_store import BinaryCategoryStore
+from artifact_core._libs.resources.binary_classification.classification_results import (
     BinaryClassificationResults,
 )
-from artifact_core.binary_classification._artifacts.base import (
-    BinaryClassificationPlotCollection,
-)
+from artifact_core.binary_classification._artifacts.base import BinaryClassificationPlotCollection
 from artifact_core.binary_classification._registries.plot_collections.registry import (
     BinaryClassificationPlotCollectionRegistry,
 )

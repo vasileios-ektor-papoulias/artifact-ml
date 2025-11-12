@@ -1,8 +1,6 @@
 from typing import Any, Dict, Generic, TypeVar
 
-from artifact_core._base.artifact_dependencies import ArtifactResult
-from matplotlib.figure import Figure
-from numpy import ndarray
+from artifact_core._base.primitives import ArtifactResult
 
 from artifact_torch.base.components.handlers.hook import HookCallbackHandler
 from artifact_torch.base.model.base import Model
@@ -23,7 +21,7 @@ class ModelIOCallbackHandler(
 ModelIOScoreHandler = ModelIOCallbackHandler[ModelOutputTContr, float]
 
 
-ModelIOArrayHandler = ModelIOCallbackHandler[ModelOutputTContr, ndarray]
+ModelIOArrayHandler = ModelIOCallbackHandler[ModelOutputTContr, Array]
 
 
 ModelIOPlotHandler = ModelIOCallbackHandler[ModelOutputTContr, Figure]
@@ -32,7 +30,7 @@ ModelIOPlotHandler = ModelIOCallbackHandler[ModelOutputTContr, Figure]
 ModelIOScoreCollectionHandler = ModelIOCallbackHandler[ModelOutputTContr, Dict[str, float]]
 
 
-ModelIOArrayCollectionHandler = ModelIOCallbackHandler[ModelOutputTContr, Dict[str, ndarray]]
+ModelIOArrayCollectionHandler = ModelIOCallbackHandler[ModelOutputTContr, Dict[str, Array]]
 
 
 ModelIOPlotCollectionHandler = ModelIOCallbackHandler[ModelOutputTContr, Dict[str, Figure]]

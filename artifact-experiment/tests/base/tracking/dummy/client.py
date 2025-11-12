@@ -1,9 +1,7 @@
 from typing import Dict, Optional, Type, TypeVar
 
-import numpy as np
 from artifact_experiment.base.tracking.backend.client import TrackingClient
 from artifact_experiment.base.tracking.backend.logger import ArtifactLogger
-from matplotlib.figure import Figure
 
 from tests.base.tracking.dummy.adapter import DummyNativeRun, DummyRunAdapter
 from tests.base.tracking.dummy.logger import DummyArtifactLogger
@@ -37,7 +35,7 @@ class DummyTrackingClient(TrackingClient[DummyRunAdapter]):
     @staticmethod
     def _get_array_logger(
         run: DummyRunAdapter,
-    ) -> ArtifactLogger[np.ndarray, DummyRunAdapter]:
+    ) -> ArtifactLogger[Array, DummyRunAdapter]:
         return DummyArtifactLogger(run=run)
 
     @staticmethod
@@ -55,7 +53,7 @@ class DummyTrackingClient(TrackingClient[DummyRunAdapter]):
     @staticmethod
     def _get_array_collection_logger(
         run: DummyRunAdapter,
-    ) -> ArtifactLogger[Dict[str, np.ndarray], DummyRunAdapter]:
+    ) -> ArtifactLogger[Dict[str, Array], DummyRunAdapter]:
         return DummyArtifactLogger(run=run)
 
     @staticmethod

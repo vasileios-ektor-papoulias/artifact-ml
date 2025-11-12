@@ -2,7 +2,7 @@ from typing import Callable, Optional, Tuple
 from uuid import UUID
 
 import pytest
-from artifact_core._base.artifact_dependencies import ArtifactResult
+from artifact_core._base.primitives import ArtifactResult
 from pytest_mock import MockerFixture
 
 from tests.base.tracking.dummy.adapter import DummyNativeRun, DummyRunAdapter

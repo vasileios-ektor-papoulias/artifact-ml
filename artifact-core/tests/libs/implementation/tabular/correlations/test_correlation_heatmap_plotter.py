@@ -2,15 +2,14 @@ from typing import List, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core._libs.implementation.tabular.correlations.calculator import (
+from artifact_core._libs.artifacts.table_comparison.correlations.calculator import (
     CategoricalAssociationType,
     ContinuousAssociationType,
 )
-from artifact_core._libs.implementation.tabular.correlations.heatmap_plotter import (
+from artifact_core._libs.artifacts.table_comparison.correlations.heatmap_plotter import (
     CorrelationHeatmapPlotter,
 )
-from artifact_core._libs.utils.plotters.plot_combiner import PlotCombinationConfig
-from matplotlib.figure import Figure
+from artifact_core._libs.artifacts.tools.plotters.plot_combiner import PlotCombinationConfig
 
 
 @pytest.mark.unit

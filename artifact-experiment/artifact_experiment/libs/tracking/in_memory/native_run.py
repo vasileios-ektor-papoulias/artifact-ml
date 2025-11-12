@@ -1,9 +1,7 @@
 from copy import deepcopy
 from typing import Any, Dict, List
 
-from artifact_core._base.artifact_dependencies import ArtifactResult
-from matplotlib.figure import Figure
-from numpy import ndarray
+from artifact_core._base.primitives import ArtifactResult
 
 
 class InMemoryRun:
@@ -12,10 +10,10 @@ class InMemoryRun:
         self._experiment_id = experiment_id
         self._run_id = run_id
         self._dict_scores: Dict[str, float] = {}
-        self._dict_arrays: Dict[str, ndarray] = {}
+        self._dict_arrays: Dict[str, Array] = {}
         self._dict_plots: Dict[str, Figure] = {}
         self._dict_score_collections: Dict[str, Dict[str, float]] = {}
-        self._dict_array_collections: Dict[str, Dict[str, ndarray]] = {}
+        self._dict_array_collections: Dict[str, Dict[str, Array]] = {}
         self._dict_plot_collections: Dict[str, Dict[str, Figure]] = {}
         self._uploaded_files: List[Dict[str, str]] = []
 
@@ -40,7 +38,7 @@ class InMemoryRun:
         return deepcopy(self._dict_scores)
 
     @property
-    def dict_arrays(self) -> Dict[str, ndarray]:
+    def dict_arrays(self) -> Dict[str, Array]:
         return deepcopy(self._dict_arrays)
 
     @property
@@ -52,7 +50,7 @@ class InMemoryRun:
         return deepcopy(self._dict_score_collections)
 
     @property
-    def dict_array_collections(self) -> Dict[str, Dict[str, ndarray]]:
+    def dict_array_collections(self) -> Dict[str, Dict[str, Array]]:
         return deepcopy(self._dict_array_collections)
 
     @property
@@ -66,7 +64,7 @@ class InMemoryRun:
     def log_score(self, key: str, score: float):
         self._log(key=key, value=score, store=self._dict_scores)
 
-    def log_array(self, key: str, array: ndarray):
+    def log_array(self, key: str, array: Array):
         self._log(key=key, value=array, store=self._dict_arrays)
 
     def log_plot(self, key: str, plot: Figure):
@@ -75,7 +73,7 @@ class InMemoryRun:
     def log_score_collection(self, key: str, score_collection: Dict[str, float]):
         self._log(key=key, value=score_collection, store=self._dict_score_collections)
 
-    def log_array_collection(self, key: str, array_collection: Dict[str, ndarray]):
+    def log_array_collection(self, key: str, array_collection: Dict[str, Array]):
         self._log(key=key, value=array_collection, store=self._dict_array_collections)
 
     def log_plot_collection(self, key: str, plot_collection: Dict[str, Figure]):

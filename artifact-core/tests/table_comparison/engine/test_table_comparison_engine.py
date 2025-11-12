@@ -1,4 +1,4 @@
-from artifact_core._libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison._engine.engine import (
     TableComparisonArrayCollectionRegistry,
     TableComparisonArrayRegistry,

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from artifact_core._base.artifact_dependencies import (
+from artifact_core._base.primitives import (
     ArtifactResources,
     ResourceSpecProtocol,
 )

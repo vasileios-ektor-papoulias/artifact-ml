@@ -3,11 +3,9 @@ from typing import Dict
 
 import pandas as pd
 
-from artifact_core._base.artifact_dependencies import ArtifactHyperparams
-from artifact_core._libs.implementation.tabular.js.calculator import JSDistanceCalculator
-from artifact_core.table_comparison._artifacts.base import (
-    TableComparisonScoreCollection,
-)
+from artifact_core._base.contracts.hyperparams import ArtifactHyperparams
+from artifact_core._libs.artifacts.table_comparison.js.calculator import JSDistanceCalculator
+from artifact_core.table_comparison._artifacts.base import TableComparisonScoreCollection
 from artifact_core.table_comparison._registries.score_collections.registry import (
     TableComparisonScoreCollectionRegistry,
     TableComparisonScoreCollectionType,

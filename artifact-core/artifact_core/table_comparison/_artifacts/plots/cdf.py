@@ -1,8 +1,8 @@
 import pandas as pd
 from matplotlib.figure import Figure
 
-from artifact_core._base.artifact_dependencies import NoArtifactHyperparams
-from artifact_core._libs.implementation.tabular.cdf.overlaid_plotter import (
+from artifact_core._base.contracts.hyperparams import NoArtifactHyperparams
+from artifact_core._libs.artifacts.table_comparison.cdf.overlaid_plotter import (
     TabularOverlaidCDFPlotter,
 )
 from artifact_core.table_comparison._artifacts.base import (

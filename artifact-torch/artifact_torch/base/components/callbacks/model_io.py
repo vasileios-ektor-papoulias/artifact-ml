@@ -4,9 +4,7 @@ from typing import Any, Dict, Generic, List, Optional, Tuple, TypeVar
 
 import torch
 import torch.nn as nn
-from artifact_core._base.artifact_dependencies import ArtifactResult
-from matplotlib.figure import Figure
-from numpy import ndarray
+from artifact_core._base.primitives import ArtifactResult
 
 from artifact_torch.base.components.callbacks.forward_hook import ForwardHookCallback
 from artifact_torch.base.components.callbacks.hook import HookCallbackResources
@@ -66,7 +64,7 @@ ModelIOScoreCallback = ModelIOCallback[
 
 
 ModelIOArrayCallback = ModelIOCallback[
-    ModelInputTContr, ModelOutputTContr, ndarray, Dict[str, torch.Tensor]
+    ModelInputTContr, ModelOutputTContr, Array, Dict[str, torch.Tensor]
 ]
 
 
@@ -81,7 +79,7 @@ ModelIOScoreCollectionCallback = ModelIOCallback[
 
 
 ModelIOArrayCollectionCallback = ModelIOCallback[
-    ModelInputTContr, ModelOutputTContr, Dict[str, ndarray], Dict[str, torch.Tensor]
+    ModelInputTContr, ModelOutputTContr, Dict[str, Array], Dict[str, torch.Tensor]
 ]
 
 

@@ -8,10 +8,10 @@ from artifact_experiment.libs.tracking.clear_ml.loggers.artifacts import ClearML
 from artifact_experiment.libs.utils.incremental_path_generator import IncrementalPathGenerator
 
 
-class ClearMLArrayLogger(ClearMLArtifactLogger[np.ndarray]):
+class ClearMLArrayLogger(ClearMLArtifactLogger[Array]):
     _fmt = ".npy"
 
-    def _append(self, item_path: str, item: np.ndarray):
+    def _append(self, item_path: str, item: Array):
         iteration = self._get_array_iteration(run=self._run, path=item_path)
         item_name = IncrementalPathGenerator.format_path(dir_path=item_path, next_idx=iteration)
         with tempfile.TemporaryDirectory() as temp_dir:

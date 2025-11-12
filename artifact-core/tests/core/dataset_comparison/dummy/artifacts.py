@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 from typing import Tuple, TypeVar
 
-from artifact_core._base.artifact_dependencies import (
+from artifact_core._base.primitives import (
     ArtifactHyperparams,
     ArtifactResult,
 )
-from artifact_core._core.dataset_comparison.artifact import DatasetComparisonArtifact
+from artifact_core._tasks.dataset_comparison.artifact import DatasetComparisonArtifact
 
 from tests.core.dataset_comparison.dummy.artifact_dependencies import (
     DummyDataset,

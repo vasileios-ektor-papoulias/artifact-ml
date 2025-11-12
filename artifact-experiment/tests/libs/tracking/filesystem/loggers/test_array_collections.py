@@ -6,7 +6,6 @@ from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRunAd
 from artifact_experiment.libs.tracking.filesystem.loggers.array_collections import (
     FilesystemArrayCollectionLogger,
 )
-from numpy import ndarray
 from pytest_mock import MockerFixture
 
 
@@ -99,7 +98,7 @@ def test_log_array_collection(
     experiment_id: str,
     run_id: str,
     ls_array_collection_names: List[str],
-    ls_array_collections: List[Dict[str, ndarray]],
+    ls_array_collections: List[Dict[str, Array]],
     ls_step: List[int],
 ):
     _, logger = array_collection_logger_factory(experiment_id, run_id)

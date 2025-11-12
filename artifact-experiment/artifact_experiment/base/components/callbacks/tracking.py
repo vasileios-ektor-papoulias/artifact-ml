@@ -9,8 +9,6 @@ from artifact_experiment.base.components.callbacks.cache import (
 from artifact_experiment.base.entities.data_split import DataSplit, DataSplitSuffixAppender
 from artifact_experiment.base.entities.tracking_data import TrackingData
 from artifact_experiment.base.tracking.background.writer import TrackingQueueWriter
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 
 @dataclass(frozen=True)
@@ -59,13 +57,13 @@ class TrackingCallback(
 
 
 TrackingScoreCallback = TrackingCallback[TrackingCallbackResourcesTContr, float]
-TrackingArrayCallback = TrackingCallback[TrackingCallbackResourcesTContr, ndarray]
+TrackingArrayCallback = TrackingCallback[TrackingCallbackResourcesTContr, Array]
 TrackingPlotCallback = TrackingCallback[TrackingCallbackResourcesTContr, Figure]
 TrackingScoreCollectionCallback = TrackingCallback[
     TrackingCallbackResourcesTContr, Dict[str, float]
 ]
 TrackingArrayCollectionCallback = TrackingCallback[
-    TrackingCallbackResourcesTContr, Dict[str, ndarray]
+    TrackingCallbackResourcesTContr, Dict[str, Array]
 ]
 TrackingPlotCollectionCallback = TrackingCallback[
     TrackingCallbackResourcesTContr, Dict[str, Figure]

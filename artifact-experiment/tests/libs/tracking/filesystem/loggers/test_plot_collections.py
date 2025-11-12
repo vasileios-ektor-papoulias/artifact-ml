@@ -7,7 +7,6 @@ from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRunAd
 from artifact_experiment.libs.tracking.filesystem.loggers.plot_collections import (
     FilesystemPlotCollectionLogger,
 )
-from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 

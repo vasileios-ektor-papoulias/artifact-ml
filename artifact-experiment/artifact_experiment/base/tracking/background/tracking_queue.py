@@ -1,8 +1,5 @@
 from typing import Dict, Type, TypeVar
 
-from matplotlib.figure import Figure
-from numpy import ndarray
-
 from artifact_experiment.base.entities.file import File
 from artifact_experiment.base.entities.tracking_data import TrackingData
 from artifact_experiment.base.tracking.background.item import (
@@ -108,7 +105,7 @@ class TrackingQueue:
     def put_score(self, name: str, value: float):
         self._score_writer.write(name=name, value=value)
 
-    def put_array(self, name: str, value: ndarray):
+    def put_array(self, name: str, value: Array):
         self._array_writer.write(name=name, value=value)
 
     def put_plot(self, name: str, value: Figure):
@@ -117,7 +114,7 @@ class TrackingQueue:
     def put_score_collection(self, name: str, value: Dict[str, float]):
         self._score_collection_writer.write(name=name, value=value)
 
-    def put_array_collection(self, name: str, value: Dict[str, ndarray]):
+    def put_array_collection(self, name: str, value: Dict[str, Array]):
         self._array_collection_writer.write(name=name, value=value)
 
     def put_plot_collection(self, name: str, value: Dict[str, Figure]):

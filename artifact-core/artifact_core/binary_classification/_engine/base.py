@@ -1,22 +1,24 @@
 from typing import Dict, Generic, Mapping, Optional, TypeVar, Union
 
 from matplotlib.figure import Figure
-from numpy import ndarray
 
-from artifact_core._base.registry import ArtifactType
-from artifact_core._core.classification.engine import ClassificationEngine
-from artifact_core._libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
-from artifact_core._libs.utils.data_structures.entity_store import IdentifierType
+from artifact_core._base.types.artifact_result import Array
+from artifact_core._base.types.artifact_type import ArtifactType
+from artifact_core._libs.resource_specs.binary_classification.protocol import (
+    BinaryFeatureSpecProtocol,
+)
+from artifact_core._libs.resources.tools.entity_store import IdentifierType
+from artifact_core._tasks.classification.engine import ClassificationEngine
 from artifact_core.binary_classification._artifacts.base import (
     BinaryClassificationArtifactResources,
 )
 
-ScoreTypeT = TypeVar("ScoreTypeT", bound="ArtifactType")
-ArrayTypeT = TypeVar("ArrayTypeT", bound="ArtifactType")
-PlotTypeT = TypeVar("PlotTypeT", bound="ArtifactType")
-ScoreCollectionTypeT = TypeVar("ScoreCollectionTypeT", bound="ArtifactType")
-ArrayCollectionTypeT = TypeVar("ArrayCollectionTypeT", bound="ArtifactType")
-PlotCollectionTypeT = TypeVar("PlotCollectionTypeT", bound="ArtifactType")
+ScoreTypeT = TypeVar("ScoreTypeT", bound=ArtifactType)
+ArrayTypeT = TypeVar("ArrayTypeT", bound=ArtifactType)
+PlotTypeT = TypeVar("PlotTypeT", bound=ArtifactType)
+ScoreCollectionTypeT = TypeVar("ScoreCollectionTypeT", bound=ArtifactType)
+ArrayCollectionTypeT = TypeVar("ArrayCollectionTypeT", bound=ArtifactType)
+PlotCollectionTypeT = TypeVar("PlotCollectionTypeT", bound=ArtifactType)
 
 
 class BinaryClassificationEngineBase(
@@ -60,7 +62,7 @@ class BinaryClassificationEngineBase(
         true: Mapping[IdentifierType, str],
         predicted: Mapping[IdentifierType, str],
         probs_pos: Optional[Mapping[IdentifierType, float]] = None,
-    ) -> ndarray:
+    ) -> Array:
         resources = BinaryClassificationArtifactResources.from_spec(
             class_spec=self._resource_spec,
             true=true,
@@ -107,7 +109,7 @@ class BinaryClassificationEngineBase(
         true: Mapping[IdentifierType, str],
         predicted: Mapping[IdentifierType, str],
         probs_pos: Optional[Mapping[IdentifierType, float]] = None,
-    ) -> Dict[str, ndarray]:
+    ) -> Dict[str, Array]:
         resources = BinaryClassificationArtifactResources.from_spec(
             class_spec=self._resource_spec,
             true=true,

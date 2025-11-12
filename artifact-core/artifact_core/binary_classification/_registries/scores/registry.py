@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Mapping
 
 from artifact_core.binary_classification._config.parsed import CONFIG
 from artifact_core.binary_classification._registries.base import (
@@ -13,5 +13,5 @@ class BinaryClassificationScoreRegistry(
     BinaryClassificationScoreRegistryBase[BinaryClassificationScoreType]
 ):
     @classmethod
-    def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
-        return CONFIG.dict_score_collections_config
+    def _get_artifact_configurations(cls) -> Mapping[str, Mapping[str, Any]]:
+        return CONFIG.score_collections_config

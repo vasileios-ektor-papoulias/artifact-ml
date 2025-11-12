@@ -1,23 +1,25 @@
 from abc import abstractmethod
 from typing import List, Mapping, Optional, Type
 
-from artifact_core._libs.utils.data_structures.entity_store import IdentifierType
-from artifact_core.binary_classification._artifacts.base import (
+from artifact_core.binary_classification import (
+    BinaryClassificationArrayCollectionType,
+    BinaryClassificationArrayType,
+    BinaryClassificationPlotCollectionType,
+    BinaryClassificationPlotType,
+    BinaryClassificationScoreCollectionType,
+    BinaryClassificationScoreType,
+)
+from artifact_core.binary_classification.spi import (
     BinaryClassificationArtifactResources,
     BinaryFeatureSpecProtocol,
+    IdentifierType,
 )
 
 from artifact_experiment.base.components.factories.artifact import ArtifactCallbackFactory
 from artifact_experiment.base.components.plans.artifact import ArtifactPlan
 from artifact_experiment.base.entities.data_split import DataSplit
 from artifact_experiment.binary_classification.callback_factory import (
-    BinaryClassificationArrayCollectionType,
-    BinaryClassificationArrayType,
     BinaryClassificationCallbackFactory,
-    BinaryClassificationPlotCollectionType,
-    BinaryClassificationPlotType,
-    BinaryClassificationScoreCollectionType,
-    BinaryClassificationScoreType,
 )
 
 

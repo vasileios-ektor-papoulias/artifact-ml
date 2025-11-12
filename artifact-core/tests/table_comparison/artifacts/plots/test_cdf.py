@@ -1,18 +1,17 @@
 from unittest.mock import ANY
 
 import pandas as pd
-from artifact_core._base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
-from artifact_core._libs.implementation.tabular.cdf.overlaid_plotter import (
+from artifact_core._base.primitives import NO_ARTIFACT_HYPERPARAMS
+from artifact_core._libs.artifacts.table_comparison.cdf.overlaid_plotter import (
     TabularOverlaidCDFPlotter,
 )
-from artifact_core._libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison._artifacts.base import (
     DatasetComparisonArtifactResources,
 )
 from artifact_core.table_comparison._artifacts.plots.cdf import (
     CDFPlot,
 )
-from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 

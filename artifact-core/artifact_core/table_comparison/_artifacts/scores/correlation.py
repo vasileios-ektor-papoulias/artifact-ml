@@ -3,21 +3,19 @@ from typing import Type, TypeVar, Union
 
 import pandas as pd
 
-from artifact_core._base.artifact_dependencies import ArtifactHyperparams
-from artifact_core._libs.implementation.tabular.correlations.calculator import (
+from artifact_core._base.contracts.hyperparams import ArtifactHyperparams
+from artifact_core._libs.artifacts.table_comparison.correlations.calculator import (
     CategoricalAssociationType,
     CategoricalAssociationTypeLiteral,
     ContinuousAssociationType,
     ContinuousAssociationTypeLiteral,
     CorrelationCalculator,
 )
-from artifact_core._libs.utils.calculators.vector_distance_calculator import (
+from artifact_core._libs.artifacts.tools.calculators.vector_distance_calculator import (
     VectorDistanceMetric,
     VectorDistanceMetricLiteral,
 )
-from artifact_core.table_comparison._artifacts.base import (
-    TableComparisonScore,
-)
+from artifact_core.table_comparison._artifacts.base import TableComparisonScore
 from artifact_core.table_comparison._registries.scores.registry import (
     TableComparisonScoreRegistry,
     TableComparisonScoreType,

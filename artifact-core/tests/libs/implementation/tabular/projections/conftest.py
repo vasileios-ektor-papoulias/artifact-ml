@@ -4,12 +4,11 @@ from unittest.mock import MagicMock
 import numpy as np
 import pandas as pd
 import pytest
-from artifact_core._libs.implementation.tabular.projections.base.plotter import (
+from artifact_core._libs.artifacts.table_comparison.projections.base.plotter import (
     ProjectionPlotter,
     ProjectionPlotterConfig,
 )
-from artifact_core._libs.utils.plotters.plot_combiner import PlotCombinationConfig
-from matplotlib.figure import Figure
+from artifact_core._libs.artifacts.tools.plotters.plot_combiner import PlotCombinationConfig
 from pytest_mock import MockerFixture
 
 
@@ -63,7 +62,7 @@ def dataset_dispatcher(request: pytest.FixtureRequest) -> Tuple[pd.DataFrame, Li
 @pytest.fixture
 def projection_2d_real_dispatcher(
     request: pytest.FixtureRequest,
-) -> Optional[np.ndarray]:
+) -> Optional[Array]:
     projection_type: Literal["projection_2d_real", "null"] = request.param
     if projection_type == "null":
         projection = None
@@ -75,7 +74,7 @@ def projection_2d_real_dispatcher(
 @pytest.fixture
 def projection_2d_synthetic_dispatcher(
     request: pytest.FixtureRequest,
-) -> Optional[np.ndarray]:
+) -> Optional[Array]:
     projection_type: Literal["projection_2d_real", "null"] = request.param
     if projection_type == "null":
         projection = None

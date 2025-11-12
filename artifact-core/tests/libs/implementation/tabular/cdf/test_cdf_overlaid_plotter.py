@@ -2,10 +2,9 @@ from typing import List, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core._libs.implementation.tabular.cdf.overlaid_plotter import (
+from artifact_core._libs.artifacts.table_comparison.cdf.overlaid_plotter import (
     TabularOverlaidCDFPlotter,
 )
-from matplotlib.figure import Figure
 
 
 @pytest.mark.unit

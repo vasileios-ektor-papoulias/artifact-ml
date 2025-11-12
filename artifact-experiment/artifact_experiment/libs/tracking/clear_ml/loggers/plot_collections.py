@@ -1,8 +1,6 @@
 import os
 from typing import Dict
 
-from matplotlib.figure import Figure
-
 from artifact_experiment.libs.tracking.clear_ml.adapter import ClearMLRunAdapter
 from artifact_experiment.libs.tracking.clear_ml.loggers.artifacts import ClearMLArtifactLogger
 

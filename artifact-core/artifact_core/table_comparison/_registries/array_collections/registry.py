@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Mapping
 
 from artifact_core.table_comparison._config.parsed import CONFIG
 from artifact_core.table_comparison._registries.array_collections.types import (
@@ -13,5 +13,5 @@ class TableComparisonArrayCollectionRegistry(
     TableComparisonArrayCollectionRegistryBase[TableComparisonArrayCollectionType]
 ):
     @classmethod
-    def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
-        return CONFIG.dict_array_collections_config
+    def _get_artifact_configurations(cls) -> Mapping[str, Mapping[str, Any]]:
+        return CONFIG.array_collections_config

@@ -1,5 +1,5 @@
 {
-  "native_artifact_path": "binary_classification/artifacts",
+  "native_artifact_path": "_artifacts",
   "custom_artifact_path": null,
   "scores": {},
   "arrays": {

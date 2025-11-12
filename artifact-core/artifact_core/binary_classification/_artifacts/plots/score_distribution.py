@@ -1,24 +1,18 @@
 from matplotlib.figure import Figure
 
-from artifact_core._base.artifact_dependencies import NoArtifactHyperparams
-from artifact_core._libs.implementation.binary_classification.score_distribution.plotter import (
+from artifact_core._base.contracts.hyperparams import NoArtifactHyperparams
+from artifact_core._libs.artifacts.binary_classification.score_distribution.plotter import (
     ScorePDFPlotter,
 )
-from artifact_core._libs.resources.categorical.category_store.binary import (
-    BinaryCategoryStore,
-)
-from artifact_core._libs.resources.classification.binary_classification_results import (
+from artifact_core._libs.resources.binary_classification.category_store import BinaryCategoryStore
+from artifact_core._libs.resources.binary_classification.classification_results import (
     BinaryClassificationResults,
 )
-from artifact_core.binary_classification._artifacts.base import (
-    BinaryClassificationPlot,
-)
+from artifact_core.binary_classification._artifacts.base import BinaryClassificationPlot
 from artifact_core.binary_classification._registries.plots.registry import (
     BinaryClassificationPlotRegistry,
 )
-from artifact_core.binary_classification._registries.plots.types import (
-    BinaryClassificationPlotType,
-)
+from artifact_core.binary_classification._registries.plots.types import BinaryClassificationPlotType
 
 
 @BinaryClassificationPlotRegistry.register_artifact(BinaryClassificationPlotType.SCORE_PDF)

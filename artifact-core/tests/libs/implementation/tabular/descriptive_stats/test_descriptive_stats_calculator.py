@@ -4,7 +4,7 @@ from typing import Dict, List
 import numpy as np
 import pandas as pd
 import pytest
-from artifact_core._libs.implementation.tabular.descriptive_stats.calculator import (
+from artifact_core._libs.artifacts.table_comparison.descriptive_stats.calculator import (
     DescriptiveStatistic,
     TableStatsCalculator,
 )
@@ -224,7 +224,7 @@ def test_compute_juxtaposition(
     df_synthetic: pd.DataFrame,
     ls_cts_features: List[str],
     stat: DescriptiveStatistic,
-    expected_juxtaposition: Dict[str, np.ndarray],
+    expected_juxtaposition: Dict[str, Array],
     expect_raise_missing: bool,
     expect_raise_unsupported: bool,
 ):

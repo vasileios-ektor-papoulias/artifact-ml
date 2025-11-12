@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
-from artifact_core._base.artifact_dependencies import ArtifactResult
+from artifact_core._base.primitives import ArtifactResult
 from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter, NeptuneRunStatus
 
 

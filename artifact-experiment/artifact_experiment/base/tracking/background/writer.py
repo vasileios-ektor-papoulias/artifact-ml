@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Generic, TypeVar
 
-from artifact_core._base.artifact_dependencies import ArtifactResult
-from matplotlib.figure import Figure
-from numpy import ndarray
+from artifact_core._base.primitives import ArtifactResult
 
 from artifact_experiment.base.entities.file import File
 from artifact_experiment.base.entities.tracking_data import TrackingData
@@ -51,9 +49,9 @@ class ScoreWriter(ArtifactQueueWriter[float]):
         return ScoreQueueItem(name=name, value=value)
 
 
-class ArrayWriter(ArtifactQueueWriter[ndarray]):
+class ArrayWriter(ArtifactQueueWriter[Array]):
     @classmethod
-    def _get_queue_item(cls, name: str, value: ndarray) -> ArrayQueueItem:
+    def _get_queue_item(cls, name: str, value: Array) -> ArrayQueueItem:
         return ArrayQueueItem(name=name, value=value)
 
 
@@ -69,9 +67,9 @@ class ScoreCollectionWriter(ArtifactQueueWriter[Dict[str, float]]):
         return ScoreCollectionQueueItem(name=name, value=value)
 
 
-class ArrayCollectionWriter(ArtifactQueueWriter[Dict[str, ndarray]]):
+class ArrayCollectionWriter(ArtifactQueueWriter[Dict[str, Array]]):
     @classmethod
-    def _get_queue_item(cls, name: str, value: Dict[str, ndarray]) -> ArrayCollectionQueueItem:
+    def _get_queue_item(cls, name: str, value: Dict[str, Array]) -> ArrayCollectionQueueItem:
         return ArrayCollectionQueueItem(name=name, value=value)
 
 

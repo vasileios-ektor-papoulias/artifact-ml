@@ -2,7 +2,15 @@ from abc import abstractmethod
 from typing import List, Optional, Type
 
 import pandas as pd
-from artifact_core.table_comparison._artifacts.base import (
+from artifact_core.table_comparison import (
+    TableComparisonArrayCollectionType,
+    TableComparisonArrayType,
+    TableComparisonPlotCollectionType,
+    TableComparisonPlotType,
+    TableComparisonScoreCollectionType,
+    TableComparisonScoreType,
+)
+from artifact_core.table_comparison.spi import (
     TableComparisonArtifactResources,
     TabularDataSpecProtocol,
 )
@@ -10,15 +18,7 @@ from artifact_core.table_comparison._artifacts.base import (
 from artifact_experiment.base.components.factories.artifact import ArtifactCallbackFactory
 from artifact_experiment.base.components.plans.artifact import ArtifactPlan
 from artifact_experiment.base.entities.data_split import DataSplit
-from artifact_experiment.table_comparison.callback_factory import (
-    TableComparisonArrayCollectionType,
-    TableComparisonArrayType,
-    TableComparisonCallbackFactory,
-    TableComparisonPlotCollectionType,
-    TableComparisonPlotType,
-    TableComparisonScoreCollectionType,
-    TableComparisonScoreType,
-)
+from artifact_experiment.table_comparison.callback_factory import TableComparisonCallbackFactory
 
 
 class TableComparisonPlan(

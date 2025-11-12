@@ -1,9 +1,6 @@
 from abc import abstractmethod
 from typing import Dict, Generic, Type, TypeVar
 
-from matplotlib.figure import Figure
-from numpy import ndarray
-
 from artifact_experiment.base.entities.file import File
 from artifact_experiment.base.entities.tracking_data import TrackingData
 from artifact_experiment.base.tracking.backend.adapter import RunAdapter
@@ -22,10 +19,10 @@ class LoggerWorker(TrackingWorker, Generic[RunAdapterT]):
         self,
         run: RunAdapterT,
         score_logger: ArtifactLogger[float, RunAdapterT],
-        array_logger: ArtifactLogger[ndarray, RunAdapterT],
+        array_logger: ArtifactLogger[Array, RunAdapterT],
         plot_logger: ArtifactLogger[Figure, RunAdapterT],
         score_collection_logger: ArtifactLogger[Dict[str, float], RunAdapterT],
-        array_collection_logger: ArtifactLogger[Dict[str, ndarray], RunAdapterT],
+        array_collection_logger: ArtifactLogger[Dict[str, Array], RunAdapterT],
         plot_collection_logger: ArtifactLogger[Dict[str, Figure], RunAdapterT],
         file_logger: BackendLogger[File, RunAdapterT],
         queue: ThreadQueue[TrackingQueueItem[TrackingData]],
@@ -78,7 +75,7 @@ class LoggerWorker(TrackingWorker, Generic[RunAdapterT]):
     @abstractmethod
     def _get_array_logger(
         run: RunAdapterT,
-    ) -> ArtifactLogger[ndarray, RunAdapterT]: ...
+    ) -> ArtifactLogger[Array, RunAdapterT]: ...
 
     @staticmethod
     @abstractmethod
@@ -96,7 +93,7 @@ class LoggerWorker(TrackingWorker, Generic[RunAdapterT]):
     @abstractmethod
     def _get_array_collection_logger(
         run: RunAdapterT,
-    ) -> ArtifactLogger[Dict[str, ndarray], RunAdapterT]: ...
+    ) -> ArtifactLogger[Dict[str, Array], RunAdapterT]: ...
 
     @staticmethod
     @abstractmethod
@@ -113,7 +110,7 @@ class LoggerWorker(TrackingWorker, Generic[RunAdapterT]):
     def _log_score(self, name: str, value: float):
         self._score_logger.log(item_name=name, item=value)
 
-    def _log_array(self, name: str, value: ndarray):
+    def _log_array(self, name: str, value: Array):
         self._array_logger.log(item_name=name, item=value)
 
     def _log_plot(self, name: str, value: Figure):
@@ -122,7 +119,7 @@ class LoggerWorker(TrackingWorker, Generic[RunAdapterT]):
     def _log_score_collection(self, name: str, value: Dict[str, float]):
         self._score_collection_logger.log(item_name=name, item=value)
 
-    def _log_array_collection(self, name: str, value: Dict[str, ndarray]):
+    def _log_array_collection(self, name: str, value: Dict[str, Array]):
         self._array_collection_logger.log(item_name=name, item=value)
 
     def _log_plot_collection(self, name: str, value: Dict[str, Figure]):

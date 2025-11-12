@@ -1,8 +1,5 @@
 from typing import Any, Dict, Generic, TypeVar
 
-from matplotlib.figure import Figure
-from numpy import ndarray
-
 from artifact_experiment.base.components.callbacks.tracking import (
     TrackingCallback,
     TrackingCallbackResources,
@@ -30,7 +27,7 @@ TrackingScoreHandler = TrackingCallbackHandler[
     TrackingCallbackTCov, TrackingCallbackResourcesTContr, float
 ]
 TrackingArrayHandler = TrackingCallbackHandler[
-    TrackingCallbackTCov, TrackingCallbackResourcesTContr, ndarray
+    TrackingCallbackTCov, TrackingCallbackResourcesTContr, Array
 ]
 TrackingPlotHandler = TrackingCallbackHandler[
     TrackingCallbackTCov, TrackingCallbackResourcesTContr, Figure
@@ -39,7 +36,7 @@ TrackingScoreCollectionHandler = TrackingCallbackHandler[
     TrackingCallbackTCov, TrackingCallbackResourcesTContr, Dict[str, float]
 ]
 TrackingArrayCollectionHandler = TrackingCallbackHandler[
-    TrackingCallbackTCov, TrackingCallbackResourcesTContr, Dict[str, ndarray]
+    TrackingCallbackTCov, TrackingCallbackResourcesTContr, Dict[str, Array]
 ]
 TrackingPlotCollectionHandler = TrackingCallbackHandler[
     TrackingCallbackTCov, TrackingCallbackResourcesTContr, Dict[str, Figure]

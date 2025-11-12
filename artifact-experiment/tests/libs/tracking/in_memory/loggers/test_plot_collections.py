@@ -6,7 +6,6 @@ from artifact_experiment.libs.tracking.in_memory.adapter import InMemoryRunAdapt
 from artifact_experiment.libs.tracking.in_memory.loggers.plot_collections import (
     InMemoryPlotCollectionLogger,
 )
-from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 

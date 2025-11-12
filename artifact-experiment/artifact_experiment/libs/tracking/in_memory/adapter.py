@@ -1,9 +1,6 @@
 from pathlib import Path
 from typing import Any, Dict, List
 
-from matplotlib.figure import Figure
-from numpy import ndarray
-
 from artifact_experiment.base.tracking.backend.adapter import RunAdapter
 from artifact_experiment.libs.tracking.in_memory.native_run import InMemoryRun
 
@@ -38,11 +35,11 @@ class InMemoryRunAdapter(RunAdapter[InMemoryRun]):
         return len(self.ls_scores)
 
     @property
-    def dict_arrays(self) -> Dict[str, ndarray]:
+    def dict_arrays(self) -> Dict[str, Array]:
         return self._native_run.dict_arrays
 
     @property
-    def ls_arrays(self) -> List[ndarray]:
+    def ls_arrays(self) -> List[Array]:
         return list(self.dict_arrays.values())
 
     @property
@@ -74,11 +71,11 @@ class InMemoryRunAdapter(RunAdapter[InMemoryRun]):
         return len(self.ls_score_collections)
 
     @property
-    def dict_array_collections(self) -> Dict[str, Dict[str, ndarray]]:
+    def dict_array_collections(self) -> Dict[str, Dict[str, Array]]:
         return self._native_run.dict_array_collections
 
     @property
-    def ls_array_collections(self) -> List[Dict[str, ndarray]]:
+    def ls_array_collections(self) -> List[Dict[str, Array]]:
         return list(self.dict_array_collections.values())
 
     @property
@@ -104,7 +101,7 @@ class InMemoryRunAdapter(RunAdapter[InMemoryRun]):
         key = self._get_store_key(path=path)
         self._native_run.log_score(key=key, score=score)
 
-    def log_array(self, path: str, array: ndarray):
+    def log_array(self, path: str, array: Array):
         key = self._get_store_key(path=path)
         self._native_run.log_array(key=key, array=array)
 
@@ -116,7 +113,7 @@ class InMemoryRunAdapter(RunAdapter[InMemoryRun]):
         key = self._get_store_key(path=path)
         self._native_run.log_score_collection(key=key, score_collection=score_collection)
 
-    def log_array_collection(self, path: str, array_collection: Dict[str, ndarray]):
+    def log_array_collection(self, path: str, array_collection: Dict[str, Array]):
         key = self._get_store_key(path=path)
         self._native_run.log_array_collection(key=key, array_collection=array_collection)
 

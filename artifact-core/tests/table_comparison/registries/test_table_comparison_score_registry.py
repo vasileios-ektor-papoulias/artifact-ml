@@ -1,7 +1,7 @@
 from typing import Type
 
 import pytest
-from artifact_core._libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison._artifacts.base import (
     TableComparisonScore,
 )

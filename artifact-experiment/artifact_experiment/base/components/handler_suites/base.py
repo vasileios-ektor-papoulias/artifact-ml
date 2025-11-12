@@ -1,8 +1,5 @@
 from typing import Any, Dict, Generic, List, Mapping, Sequence, Type, TypeVar
 
-from matplotlib.figure import Figure
-from numpy import ndarray
-
 from artifact_experiment.base.components.callbacks.cache import (
     CacheCallback,
     CacheCallbackResources,
@@ -65,7 +62,7 @@ class CallbackHandlerSuite(
         return self._score_handler.active_cache
 
     @property
-    def arrays(self) -> Mapping[str, ndarray]:
+    def arrays(self) -> Mapping[str, Array]:
         return self._array_handler.active_cache
 
     @property
@@ -77,7 +74,7 @@ class CallbackHandlerSuite(
         return self._score_collection_handler.active_cache
 
     @property
-    def array_collections(self) -> Mapping[str, Dict[str, ndarray]]:
+    def array_collections(self) -> Mapping[str, Dict[str, Array]]:
         return self._array_collection_handler.active_cache
 
     @property

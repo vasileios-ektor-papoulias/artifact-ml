@@ -17,8 +17,6 @@ from artifact_experiment.libs.tracking.filesystem.loggers.score_collections impo
 )
 from artifact_experiment.libs.tracking.filesystem.loggers.scores import FilesystemScoreLogger
 from artifact_experiment.libs.tracking.filesystem.native_run import FilesystemRun
-from matplotlib.figure import Figure
-from numpy import ndarray
 from pytest_mock import MockerFixture
 
 
@@ -216,7 +214,7 @@ def test_log_array(
     ],
     experiment_id: str,
     run_id: str,
-    ls_arrays: List[ndarray],
+    ls_arrays: List[Array],
 ):
     (
         _,
@@ -397,7 +395,7 @@ def test_log_array_collection(
     ],
     experiment_id: str,
     run_id: str,
-    ls_array_collections: List[Dict[str, ndarray]],
+    ls_array_collections: List[Dict[str, Array]],
 ):
     (
         _,

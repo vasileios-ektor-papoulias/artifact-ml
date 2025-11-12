@@ -3,8 +3,8 @@ from typing import Callable, List, Tuple, Type
 import pytest
 from artifact_core.table_comparison import (
     TableComparisonArrayCollectionType,
+    TableComparisonPlot,
     TableComparisonPlotCollectionType,
-    TableComparisonPlotType,
     TableComparisonScoreCollectionType,
     TableComparisonScoreType,
 )
@@ -41,10 +41,10 @@ def expected_score_types() -> List[TableComparisonScoreType]:
 
 
 @pytest.fixture
-def expected_plot_types() -> List[TableComparisonPlotType]:
+def expected_plot_types() -> List[TableComparisonPlot]:
     return [
-        TableComparisonPlotType.PDF,
-        TableComparisonPlotType.CDF,
+        TableComparisonPlot.PDF,
+        TableComparisonPlot.CDF,
     ]
 
 

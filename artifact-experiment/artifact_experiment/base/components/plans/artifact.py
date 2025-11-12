@@ -2,8 +2,8 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Any, Generic, Optional, Sequence, Type, TypeVar
 
-from artifact_core._base.artifact_dependencies import ArtifactResources, ResourceSpecProtocol
-from artifact_core._base.registry import ArtifactType
+from artifact_core._base.orchestration.artifact_type import ArtifactType
+from artifact_core._base.primitives import ArtifactResources, ResourceSpecProtocol
 
 from artifact_experiment.base.components.callbacks.artifact import (
     ArtifactArrayCallback,
@@ -39,8 +39,8 @@ ResourceSpecProtocolTContr = TypeVar(
     "ResourceSpecProtocolTContr", bound=ResourceSpecProtocol, contravariant=True
 )
 ScoreTypeT = TypeVar("ScoreTypeT", bound=ArtifactType)
-ArrayTypeT = TypeVar("ArrayTypeT", bound=ArtifactType)
-PlotTypeT = TypeVar("PlotTypeT", bound=ArtifactType)
+ArrayT = TypeVar("ArrayT", bound=ArtifactType)
+PlotT = TypeVar("PlotT", bound=ArtifactType)
 ScoreCollectionTypeT = TypeVar("ScoreCollectionTypeT", bound=ArtifactType)
 ArrayCollectionTypeT = TypeVar("ArrayCollectionTypeT", bound=ArtifactType)
 PlotCollectionTypeT = TypeVar("PlotCollectionTypeT", bound=ArtifactType)
@@ -58,8 +58,8 @@ class ArtifactPlan(
         ArtifactResourcesTContr,
         ResourceSpecProtocolTContr,
         ScoreTypeT,
-        ArrayTypeT,
-        PlotTypeT,
+        ArrayT,
+        PlotT,
         ScoreCollectionTypeT,
         ArrayCollectionTypeT,
         PlotCollectionTypeT,
@@ -85,8 +85,8 @@ class ArtifactPlan(
             ArtifactResourcesTContr,
             ResourceSpecProtocolTContr,
             ScoreTypeT,
-            ArrayTypeT,
-            PlotTypeT,
+            ArrayT,
+            PlotT,
             ScoreCollectionTypeT,
             ArrayCollectionTypeT,
             PlotCollectionTypeT,
@@ -99,11 +99,11 @@ class ArtifactPlan(
 
     @staticmethod
     @abstractmethod
-    def _get_array_types() -> Sequence[ArrayTypeT]: ...
+    def _get_array_types() -> Sequence[ArrayT]: ...
 
     @staticmethod
     @abstractmethod
-    def _get_plot_types() -> Sequence[PlotTypeT]: ...
+    def _get_plot_types() -> Sequence[PlotT]: ...
 
     @staticmethod
     @abstractmethod

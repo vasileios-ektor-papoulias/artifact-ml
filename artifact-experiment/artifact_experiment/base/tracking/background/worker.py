@@ -2,9 +2,6 @@ from abc import ABC, abstractmethod
 from threading import Thread
 from typing import Dict, Optional
 
-from matplotlib.figure import Figure
-from numpy import ndarray
-
 from artifact_experiment.base.entities.file import File
 from artifact_experiment.base.entities.tracking_data import TrackingData
 from artifact_experiment.base.tracking.background.item import (
@@ -39,7 +36,7 @@ class TrackingWorker(ABC):
     def _log_score(self, name: str, value: float): ...
 
     @abstractmethod
-    def _log_array(self, name: str, value: ndarray): ...
+    def _log_array(self, name: str, value: Array): ...
 
     @abstractmethod
     def _log_plot(self, name: str, value: Figure): ...
@@ -48,7 +45,7 @@ class TrackingWorker(ABC):
     def _log_score_collection(self, name: str, value: Dict[str, float]): ...
 
     @abstractmethod
-    def _log_array_collection(self, name: str, value: Dict[str, ndarray]): ...
+    def _log_array_collection(self, name: str, value: Dict[str, Array]): ...
 
     @abstractmethod
     def _log_plot_collection(self, name: str, value: Dict[str, Figure]): ...

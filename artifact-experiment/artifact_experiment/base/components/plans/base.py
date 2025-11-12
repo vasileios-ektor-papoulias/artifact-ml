@@ -1,9 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Generic, Mapping, Sequence, Type, TypeVar
 
-from matplotlib.figure import Figure
-from numpy import ndarray
-
 from artifact_experiment.base.components.callbacks.tracking import (
     TrackingCallback,
     TrackingCallbackResources,
@@ -52,7 +49,7 @@ class CallbackExecutionPlan(
         return self._handler_suite.scores
 
     @property
-    def arrays(self) -> Mapping[str, ndarray]:
+    def arrays(self) -> Mapping[str, Array]:
         return self._handler_suite.arrays
 
     @property
@@ -64,7 +61,7 @@ class CallbackExecutionPlan(
         return self._handler_suite.score_collections
 
     @property
-    def array_collections(self) -> Mapping[str, Dict[str, ndarray]]:
+    def array_collections(self) -> Mapping[str, Dict[str, Array]]:
         return self._handler_suite.array_collections
 
     @property

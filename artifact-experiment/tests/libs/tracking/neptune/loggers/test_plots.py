@@ -4,7 +4,6 @@ from typing import Callable, List, Optional, Tuple
 import pytest
 from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter
 from artifact_experiment.libs.tracking.neptune.loggers.plots import NeptunePlotLogger
-from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 

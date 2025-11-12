@@ -1,18 +1,17 @@
 from dataclasses import dataclass
 from typing import Dict, Sequence, Type, TypeVar, Union
 
-from numpy import ndarray
-
-from artifact_core._base.artifact_dependencies import ArtifactHyperparams
-from artifact_core._libs.implementation.binary_classification.confusion.calculator import (
+from artifact_core._base.contracts.hyperparams import ArtifactHyperparams
+from artifact_core._base.types.artifact_result import Array
+from artifact_core._libs.artifacts.binary_classification.confusion.calculator import (
     ConfusionMatrixNormalizationStrategy,
     NormalizedConfusionCalculator,
 )
-from artifact_core._libs.implementation.binary_classification.confusion.normalizer import (
+from artifact_core._libs.artifacts.binary_classification.confusion.normalizer import (
     ConfusionNormalizationStrategyLiteral,
 )
-from artifact_core._libs.resources.categorical.category_store.binary import BinaryCategoryStore
-from artifact_core._libs.resources.classification.binary_classification_results import (
+from artifact_core._libs.resources.binary_classification.category_store import BinaryCategoryStore
+from artifact_core._libs.resources.binary_classification.classification_results import (
     BinaryClassificationResults,
 )
 from artifact_core.binary_classification._artifacts.base import (
@@ -64,7 +63,7 @@ class ConfusionMatrixCollection(
         self,
         true_category_store: BinaryCategoryStore,
         classification_results: BinaryClassificationResults,
-    ) -> Dict[str, ndarray]:
+    ) -> Dict[str, Array]:
         array_collection = (
             NormalizedConfusionCalculator.compute_confusion_matrix_multiple_normalizations(
                 true=true_category_store.id_to_is_positive,

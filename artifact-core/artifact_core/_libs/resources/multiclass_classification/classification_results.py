@@ -1,0 +1,69 @@
+from typing import List, Mapping, Optional, Type, TypeVar
+
+from artifact_core._base.types.artifact_result import Array
+from artifact_core._libs.resource_specs.classification.protocol import (
+    CategoricalFeatureSpecProtocol,
+)
+from artifact_core._libs.resource_specs.classification.spec import CategoricalFeatureSpec
+from artifact_core._libs.resources.classification.classification_results import (
+    ClassificationResults,
+    DistributionInferenceType,
+)
+from artifact_core._libs.resources.multiclass_classification.category_store import (
+    MulticlassCategoryStore,
+)
+from artifact_core._libs.resources.multiclass_classification.distribution_store import (
+    MulticlassDistributionStore,
+)
+from artifact_core._libs.resources.tools.entity_store import IdentifierType
+
+CategoricalFeatureSpecProtocolTCov = TypeVar(
+    "CategoricalFeatureSpecProtocolTCov", bound=CategoricalFeatureSpecProtocol, covariant=True
+)
+MulticlassClassificationResultsT = TypeVar(
+    "MulticlassClassificationResultsT", bound="MulticlassClassificationResults"
+)
+
+
+class MulticlassClassificationResults(
+    ClassificationResults[
+        CategoricalFeatureSpecProtocol, MulticlassCategoryStore, MulticlassDistributionStore
+    ]
+):
+    _distn_inference_type = DistributionInferenceType.CONCENTRATED
+    _feature_name = "classification_results"
+
+    @classmethod
+    def build(
+        cls: Type[MulticlassClassificationResultsT],
+        ls_categories: List[str],
+        id_to_category: Optional[Mapping[IdentifierType, str]] = None,
+        id_to_logits: Optional[Mapping[IdentifierType, Array]] = None,
+    ) -> MulticlassClassificationResultsT:
+        feature_spec = CategoricalFeatureSpec(
+            ls_categories=ls_categories, feature_name=cls._feature_name
+        )
+        store = cls.from_spec(
+            feature_spec=feature_spec, id_to_category=id_to_category, id_to_logits=id_to_logits
+        )
+        return store
+
+    @classmethod
+    def from_spec(
+        cls: Type[MulticlassClassificationResultsT],
+        feature_spec: CategoricalFeatureSpecProtocol,
+        id_to_category: Optional[Mapping[IdentifierType, str]] = None,
+        id_to_logits: Optional[Mapping[IdentifierType, Array]] = None,
+    ) -> MulticlassClassificationResultsT:
+        pred_store = MulticlassCategoryStore(feature_spec=feature_spec)
+        distn_store = MulticlassDistributionStore(feature_spec=feature_spec)
+        classification_results = cls(
+            class_spec=feature_spec,
+            pred_store=pred_store,
+            distn_store=distn_store,
+        )
+        if id_to_category is not None:
+            classification_results.set_multiple(
+                id_to_category=id_to_category, id_to_logits=id_to_logits or {}
+            )
+        return classification_results

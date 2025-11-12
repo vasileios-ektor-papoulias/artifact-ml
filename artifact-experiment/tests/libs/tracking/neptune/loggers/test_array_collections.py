@@ -6,7 +6,6 @@ from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter
 from artifact_experiment.libs.tracking.neptune.loggers.array_collections import (
     NeptuneArrayCollectionLogger,
 )
-from numpy import ndarray
 from pytest_mock import MockerFixture
 
 
@@ -63,7 +62,7 @@ def test_log(
     experiment_id: str,
     run_id: str,
     ls_array_collection_names: List[str],
-    ls_array_collections: List[Dict[str, ndarray]],
+    ls_array_collections: List[Dict[str, Array]],
 ):
     adapter, logger = array_collection_logger_factory(experiment_id, run_id)
     spy_adapter_log = mocker.spy(adapter, "log")

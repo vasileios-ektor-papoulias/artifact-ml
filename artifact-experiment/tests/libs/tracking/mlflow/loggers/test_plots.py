@@ -7,7 +7,6 @@ import pytest
 from artifact_experiment.libs.tracking.mlflow.adapter import MlflowRunAdapter
 from artifact_experiment.libs.tracking.mlflow.loggers.plots import MlflowPlotLogger
 from artifact_experiment.libs.utils.incremental_path_generator import IncrementalPathGenerator
-from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 

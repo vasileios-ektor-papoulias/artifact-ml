@@ -3,8 +3,8 @@ from typing import Dict
 import pandas as pd
 from matplotlib.figure import Figure
 
-from artifact_core._base.artifact_dependencies import NoArtifactHyperparams
-from artifact_core._libs.implementation.tabular.pdf.overlaid_plotter import (
+from artifact_core._base.contracts.hyperparams import NoArtifactHyperparams
+from artifact_core._libs.artifacts.table_comparison.pdf.overlaid_plotter import (
     TabularOverlaidPDFPlotter,
 )
 from artifact_core.table_comparison._artifacts.base import (

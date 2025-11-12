@@ -1,13 +1,11 @@
 from abc import abstractmethod
 from typing import Dict, Generic, Optional, Type, TypeVar, Union
 
-from artifact_core._base.artifact_dependencies import (
+from artifact_core._base.primitives import (
     ArtifactResources,
     ResourceSpecProtocol,
 )
 from artifact_core._base.registry import ArtifactRegistry, ArtifactType
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 from artifact_experiment.base.components.callbacks.artifact import (
     ArtifactArrayCallback,
@@ -23,8 +21,8 @@ ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound=ArtifactResources)
 ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
 ArtifactTypeT = TypeVar("ArtifactTypeT", bound=ArtifactType)
 ScoreTypeT = TypeVar("ScoreTypeT", bound=ArtifactType)
-ArrayTypeT = TypeVar("ArrayTypeT", bound=ArtifactType)
-PlotTypeT = TypeVar("PlotTypeT", bound=ArtifactType)
+ArrayT = TypeVar("ArrayT", bound=ArtifactType)
+PlotT = TypeVar("PlotT", bound=ArtifactType)
 ScoreCollectionTypeT = TypeVar("ScoreCollectionTypeT", bound=ArtifactType)
 ArrayCollectionTypeT = TypeVar("ArrayCollectionTypeT", bound=ArtifactType)
 PlotCollectionTypeT = TypeVar("PlotCollectionTypeT", bound=ArtifactType)
@@ -35,8 +33,8 @@ class ArtifactCallbackFactory(
         ArtifactResourcesT,
         ResourceSpecProtocolT,
         ScoreTypeT,
-        ArrayTypeT,
-        PlotTypeT,
+        ArrayT,
+        PlotT,
         ScoreCollectionTypeT,
         ArrayCollectionTypeT,
         PlotCollectionTypeT,
@@ -51,13 +49,13 @@ class ArtifactCallbackFactory(
     @staticmethod
     @abstractmethod
     def _get_array_registry() -> Type[
-        ArtifactRegistry[ArtifactResourcesT, ResourceSpecProtocolT, ArrayTypeT, ndarray]
+        ArtifactRegistry[ArtifactResourcesT, ResourceSpecProtocolT, ArrayT, Array]
     ]: ...
 
     @staticmethod
     @abstractmethod
     def _get_plot_registry() -> Type[
-        ArtifactRegistry[ArtifactResourcesT, ResourceSpecProtocolT, PlotTypeT, Figure]
+        ArtifactRegistry[ArtifactResourcesT, ResourceSpecProtocolT, PlotT, Figure]
     ]: ...
 
     @staticmethod
@@ -75,7 +73,7 @@ class ArtifactCallbackFactory(
             ArtifactResourcesT,
             ResourceSpecProtocolT,
             ArrayCollectionTypeT,
-            Dict[str, ndarray],
+            Dict[str, Array],
         ]
     ]: ...
 
@@ -108,9 +106,9 @@ class ArtifactCallbackFactory(
     @classmethod
     def build_array_callback(
         cls,
-        array_type: Union[ArrayTypeT, str],
+        array_type: Union[ArrayT, str],
         resource_spec: ResourceSpecProtocolT,
-        writer: Optional[TrackingQueueWriter[ndarray]] = None,
+        writer: Optional[TrackingQueueWriter[Array]] = None,
     ) -> ArtifactArrayCallback[ArtifactResourcesT, ResourceSpecProtocolT]:
         registry = cls._get_array_registry()
         artifact = registry.get(artifact_type=array_type, resource_spec=resource_spec)
@@ -123,7 +121,7 @@ class ArtifactCallbackFactory(
     @classmethod
     def build_plot_callback(
         cls,
-        plot_type: Union[PlotTypeT, str],
+        plot_type: Union[PlotT, str],
         resource_spec: ResourceSpecProtocolT,
         writer: Optional[TrackingQueueWriter[Figure]] = None,
     ) -> ArtifactPlotCallback[ArtifactResourcesT, ResourceSpecProtocolT]:
@@ -155,7 +153,7 @@ class ArtifactCallbackFactory(
         cls,
         array_collection_type: Union[ArrayCollectionTypeT, str],
         resource_spec: ResourceSpecProtocolT,
-        writer: Optional[TrackingQueueWriter[Dict[str, ndarray]]] = None,
+        writer: Optional[TrackingQueueWriter[Dict[str, Array]]] = None,
     ) -> ArtifactArrayCollectionCallback[ArtifactResourcesT, ResourceSpecProtocolT]:
         registry = cls._get_array_collection_registry()
         artifact = registry.get(artifact_type=array_collection_type, resource_spec=resource_spec)

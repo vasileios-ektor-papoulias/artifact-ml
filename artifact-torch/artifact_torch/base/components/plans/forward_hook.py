@@ -2,7 +2,7 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Any, Generic, Sequence, Type, TypeVar
 
-from artifact_core._base.artifact_dependencies import ArtifactResult
+from artifact_core._base.primitives import ArtifactResult
 from artifact_experiment.base.components.plans.base import CallbackExecutionPlan, PlanBuildContext
 
 from artifact_torch.base.components.callbacks.forward_hook import (

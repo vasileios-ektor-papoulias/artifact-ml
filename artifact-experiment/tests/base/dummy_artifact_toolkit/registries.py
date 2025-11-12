@@ -4,8 +4,6 @@ from artifact_core._base.registry import (
     ArtifactRegistry,
     ArtifactType,
 )
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 from tests.base.dummy_artifact_toolkit.artifact_dependencies import (
     DummyArtifactResources,
@@ -25,24 +23,24 @@ class DummyScoreRegistry(
         return {}
 
 
-class DummyArrayType(ArtifactType):
+class DummyArray(ArtifactType):
     DUMMY_ARRAY_1 = "dummy_array_1"
 
 
 class DummyArrayRegistry(
-    ArtifactRegistry[DummyArtifactResources, DummyResourceSpec, DummyArrayType, ndarray]
+    ArtifactRegistry[DummyArtifactResources, DummyResourceSpec, DummyArray, Array]
 ):
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
         return {}
 
 
-class DummyPlotType(ArtifactType):
+class DummyPlot(ArtifactType):
     DUMMY_PLOT_1 = "dummy_plot_1"
 
 
 class DummyPlotRegistry(
-    ArtifactRegistry[DummyArtifactResources, DummyResourceSpec, DummyPlotType, Figure]
+    ArtifactRegistry[DummyArtifactResources, DummyResourceSpec, DummyPlot, Figure]
 ):
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
@@ -72,7 +70,7 @@ class DummyArrayCollectionRegistry(
         DummyArtifactResources,
         DummyResourceSpec,
         DummyArrayCollectionType,
-        Dict[str, ndarray],
+        Dict[str, Array],
     ]
 ):
     @classmethod

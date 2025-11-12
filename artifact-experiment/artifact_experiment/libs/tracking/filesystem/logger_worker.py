@@ -1,8 +1,5 @@
 from typing import Dict
 
-from matplotlib.figure import Figure
-from numpy import ndarray
-
 from artifact_experiment.base.entities.file import File
 from artifact_experiment.base.tracking.backend.logger import ArtifactLogger, BackendLogger
 from artifact_experiment.base.tracking.backend.logger_worker import LoggerWorker
@@ -32,7 +29,7 @@ class FilesystemLoggerWorker(LoggerWorker[FilesystemRunAdapter]):
     @staticmethod
     def _get_array_logger(
         run: FilesystemRunAdapter,
-    ) -> ArtifactLogger[ndarray, FilesystemRunAdapter]:
+    ) -> ArtifactLogger[Array, FilesystemRunAdapter]:
         return FilesystemArrayLogger(run=run)
 
     @staticmethod
@@ -50,7 +47,7 @@ class FilesystemLoggerWorker(LoggerWorker[FilesystemRunAdapter]):
     @staticmethod
     def _get_array_collection_logger(
         run: FilesystemRunAdapter,
-    ) -> ArtifactLogger[Dict[str, ndarray], FilesystemRunAdapter]:
+    ) -> ArtifactLogger[Dict[str, Array], FilesystemRunAdapter]:
         return FilesystemArrayCollectionLogger(run=run)
 
     @staticmethod

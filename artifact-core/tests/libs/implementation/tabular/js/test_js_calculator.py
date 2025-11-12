@@ -4,7 +4,7 @@ from typing import Dict, List
 
 import pandas as pd
 import pytest
-from artifact_core._libs.implementation.tabular.js.calculator import JSDistanceCalculator
+from artifact_core._libs.artifacts.table_comparison.js.calculator import JSDistanceCalculator
 
 
 @pytest.mark.unit

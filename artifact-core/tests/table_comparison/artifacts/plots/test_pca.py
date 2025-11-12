@@ -2,8 +2,11 @@ from unittest.mock import ANY
 
 import pandas as pd
 import pytest
-from artifact_core._libs.implementation.tabular.projections.pca import PCAHyperparams, PCAProjector
-from artifact_core._libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.artifacts.table_comparison.projections.pca import (
+    PCAHyperparams,
+    PCAProjector,
+)
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison._artifacts.base import (
     DatasetComparisonArtifactResources,
 )
@@ -11,7 +14,6 @@ from artifact_core.table_comparison._artifacts.plots.pca import (
     PCAJuxtapositionPlot,
     PCAJuxtapositionPlotHyperparams,
 )
-from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 

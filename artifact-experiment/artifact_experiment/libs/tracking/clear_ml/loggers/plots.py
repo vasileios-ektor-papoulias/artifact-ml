@@ -1,7 +1,5 @@
 import os
 
-from matplotlib.figure import Figure
-
 from artifact_experiment.libs.tracking.clear_ml.adapter import ClearMLRunAdapter
 from artifact_experiment.libs.tracking.clear_ml.loggers.artifacts import ClearMLArtifactLogger
 

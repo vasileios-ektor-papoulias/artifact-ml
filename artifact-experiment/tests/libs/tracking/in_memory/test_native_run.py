@@ -4,8 +4,6 @@ import pytest
 from artifact_experiment.libs.tracking.in_memory.native_run import (
     InMemoryRun,
 )
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 
 @pytest.mark.unit
@@ -98,7 +96,7 @@ def test_log_array(
     experiment_id: str,
     run_id: str,
     array_key: str,
-    array: ndarray,
+    array: Array,
 ):
     native_run: InMemoryRun = native_run_factory(experiment_id, run_id)
     arrays_dict = native_run.dict_arrays
@@ -179,7 +177,7 @@ def test_log_array_collection(
     experiment_id: str,
     run_id: str,
     array_collection_key: str,
-    array_collection: Dict[str, ndarray],
+    array_collection: Dict[str, Array],
 ):
     native_run: InMemoryRun = native_run_factory(experiment_id, run_id)
     arrays_dict = native_run.dict_arrays

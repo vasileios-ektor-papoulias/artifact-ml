@@ -2,7 +2,7 @@ from typing import Callable, Dict, List, Literal, Optional, Tuple, overload
 from unittest.mock import MagicMock
 
 import pytest
-from artifact_core._base.artifact_dependencies import ArtifactResult
+from artifact_core._base.primitives import ArtifactResult
 from artifact_experiment.base.components.callbacks.base import CallbackResources
 from artifact_experiment.base.components.callbacks.tracking import (
     TrackingArrayCallback,
@@ -23,8 +23,6 @@ from artifact_experiment.base.components.handlers.tracking import (
     TrackingScoreHandler,
 )
 from artifact_experiment.base.tracking.backend.client import TrackingClient
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 from tests.base.callbacks.dummy.tracking import (
     DummyArrayCallback,
@@ -69,11 +67,11 @@ def score_callback_factory() -> Callable[
 
 @pytest.fixture
 def array_callback_factory() -> Callable[
-    [str, Optional[ndarray], Optional[TrackingClient]], TrackingArrayCallback
+    [str, Optional[Array], Optional[TrackingClient]], TrackingArrayCallback
 ]:
     def _factory(
         callback_key: str,
-        compute_value: Optional[ndarray],
+        compute_value: Optional[Array],
         tracking_client: Optional[TrackingClient],
     ) -> TrackingArrayCallback:
         return DummyArrayCallback(
@@ -117,11 +115,11 @@ def score_collection_callback_factory() -> Callable[
 
 @pytest.fixture
 def array_collection_callback_factory() -> Callable[
-    [str, Optional[Dict[str, ndarray]], Optional[TrackingClient]], TrackingArrayCollectionCallback
+    [str, Optional[Dict[str, Array]], Optional[TrackingClient]], TrackingArrayCollectionCallback
 ]:
     def _factory(
         callback_key: str,
-        compute_value: Optional[Dict[str, ndarray]],
+        compute_value: Optional[Dict[str, Array]],
         tracking_client: Optional[TrackingClient],
     ) -> TrackingArrayCollectionCallback:
         return DummyArrayCollectionCallback(
@@ -154,7 +152,7 @@ def callback_factory(
 @overload
 def callback_factory(
     callback_type: Literal["array"],
-) -> Callable[[str, Optional[TrackingClient], Optional[ndarray]], TrackingArrayCallback]: ...
+) -> Callable[[str, Optional[TrackingClient], Optional[Array]], TrackingArrayCallback]: ...
 @overload
 def callback_factory(
     callback_type: Literal["plot"],
@@ -169,7 +167,7 @@ def callback_factory(
 def callback_factory(
     callback_type: Literal["array_collection"],
 ) -> Callable[
-    [str, Optional[TrackingClient], Optional[ndarray]], TrackingArrayCollectionCallback
+    [str, Optional[TrackingClient], Optional[Array]], TrackingArrayCollectionCallback
 ]: ...
 @overload
 def callback_factory(

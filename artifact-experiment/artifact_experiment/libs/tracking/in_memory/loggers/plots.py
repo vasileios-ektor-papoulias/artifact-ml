@@ -1,5 +1,3 @@
-from matplotlib.figure import Figure
-
 from artifact_experiment.libs.tracking.in_memory.loggers.artifacts import InMemoryArtifactLogger
 
 

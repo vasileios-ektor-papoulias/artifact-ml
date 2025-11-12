@@ -3,21 +3,14 @@ from typing import Dict, Generic, Tuple, TypeVar
 
 import pandas as pd
 from matplotlib.figure import Figure
-from numpy import ndarray
 
-from artifact_core._base.artifact_dependencies import (
-    ArtifactHyperparams,
-    ArtifactResult,
-)
-from artifact_core._core.dataset_comparison.artifact import (
+from artifact_core._base.contracts.hyperparams import ArtifactHyperparams
+from artifact_core._base.types.artifact_result import Array, ArtifactResult
+from artifact_core._libs.resource_specs.table_comparison.protocol import TabularDataSpecProtocol
+from artifact_core._libs.validation.table_comparison.table_validator import TableValidator
+from artifact_core._tasks.dataset_comparison.artifact import (
     DatasetComparisonArtifact,
     DatasetComparisonArtifactResources,
-)
-from artifact_core._libs.resource_spec.tabular.protocol import (
-    TabularDataSpecProtocol,
-)
-from artifact_core._libs.resource_validation.tabular.table_validator import (
-    TableValidator,
 )
 
 ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound=ArtifactHyperparams)
@@ -63,8 +56,8 @@ class TableComparisonArtifact(
 
 
 TableComparisonScore = TableComparisonArtifact[ArtifactHyperparamsT, float]
-TableComparisonArray = TableComparisonArtifact[ArtifactHyperparamsT, ndarray]
+TableComparisonArray = TableComparisonArtifact[ArtifactHyperparamsT, Array]
 TableComparisonPlot = TableComparisonArtifact[ArtifactHyperparamsT, Figure]
 TableComparisonScoreCollection = TableComparisonArtifact[ArtifactHyperparamsT, Dict[str, float]]
-TableComparisonArrayCollection = TableComparisonArtifact[ArtifactHyperparamsT, Dict[str, ndarray]]
+TableComparisonArrayCollection = TableComparisonArtifact[ArtifactHyperparamsT, Dict[str, Array]]
 TableComparisonPlotCollection = TableComparisonArtifact[ArtifactHyperparamsT, Dict[str, Figure]]

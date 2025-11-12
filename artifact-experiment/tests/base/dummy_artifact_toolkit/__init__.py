@@ -7,14 +7,14 @@ from tests.base.dummy_artifact_toolkit.artifact_dependencies import (
     DummyResourceSpec,
 )
 from tests.base.dummy_artifact_toolkit.registries import (
+    DummyArray,
     DummyArrayCollectionRegistry,
     DummyArrayCollectionType,
     DummyArrayRegistry,
-    DummyArrayType,
+    DummyPlot,
     DummyPlotCollectionRegistry,
     DummyPlotCollectionType,
     DummyPlotRegistry,
-    DummyPlotType,
     DummyScoreCollectionRegistry,
     DummyScoreCollectionType,
     DummyScoreRegistry,

@@ -6,7 +6,6 @@ from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter
 from artifact_experiment.libs.tracking.neptune.loggers.plot_collections import (
     NeptunePlotCollectionLogger,
 )
-from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 

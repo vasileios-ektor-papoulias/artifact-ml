@@ -5,10 +5,10 @@ from typing import Dict, List, Optional
 import numpy as np
 import pandas as pd
 import pytest
-from artifact_core._libs.resource_spec.tabular.protocol import (
+from artifact_core._libs.resources_spec.tabular.protocol import (
     TabularDataDType,
 )
-from artifact_core._libs.resource_spec.tabular.spec import TabularDataSpec
+from artifact_core._libs.resources_spec.tabular.spec import TabularDataSpec
 
 
 @pytest.mark.unit

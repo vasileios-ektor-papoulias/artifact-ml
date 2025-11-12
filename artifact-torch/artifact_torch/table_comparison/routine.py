@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Any, Generic, Mapping, Optional, Type, TypeVar
 
 import pandas as pd
-from artifact_core._libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison._artifacts.base import TableComparisonArtifactResources
 from artifact_experiment import DataSplit
 from artifact_experiment.base.tracking.background.tracking_queue import TrackingQueue

@@ -4,7 +4,6 @@ from typing import Callable, List, Optional, Tuple
 import pytest
 from artifact_experiment.libs.tracking.in_memory.adapter import InMemoryRunAdapter
 from artifact_experiment.libs.tracking.in_memory.loggers.plots import InMemoryPlotLogger
-from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 

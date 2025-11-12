@@ -4,8 +4,6 @@ from typing import Dict, Generic, Mapping, Optional, TypeVar
 
 from artifact_experiment.base.components.callbacks.base import Callback, CallbackResources
 from artifact_experiment.base.entities.tracking_data import TrackingData
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 
 @dataclass(frozen=True)
@@ -67,8 +65,8 @@ class CacheCallback(
 
 
 CacheScoreCallback = CacheCallback[CacheCallbackResourcesTContr, float]
-CacheArrayCallback = CacheCallback[CacheCallbackResourcesTContr, ndarray]
+CacheArrayCallback = CacheCallback[CacheCallbackResourcesTContr, Array]
 CachePlotCallback = CacheCallback[CacheCallbackResourcesTContr, Figure]
 CacheScoreCollectionCallback = CacheCallback[CacheCallbackResourcesTContr, Dict[str, float]]
-CacheArrayCollectionCallback = CacheCallback[CacheCallbackResourcesTContr, Dict[str, ndarray]]
+CacheArrayCollectionCallback = CacheCallback[CacheCallbackResourcesTContr, Dict[str, Array]]
 CachePlotCollectionCallback = CacheCallback[CacheCallbackResourcesTContr, Dict[str, Figure]]

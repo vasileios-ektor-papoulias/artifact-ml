@@ -3,8 +3,6 @@ from dataclasses import dataclass
 from typing import Any, Dict, Generic, Mapping, Sequence, TypeVar
 
 from artifact_experiment.base.components.plans.base import CallbackExecutionPlan
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 from artifact_torch.base.model.base import Model
 
@@ -32,7 +30,7 @@ class PlanExecutionRoutine(ABC, Generic[ModelTContr]):
         return scores
 
     @property
-    def arrays(self) -> Mapping[str, ndarray]:
+    def arrays(self) -> Mapping[str, Array]:
         arrays = {}
         for plan in self._plans:
             arrays.update(plan.arrays)
@@ -53,7 +51,7 @@ class PlanExecutionRoutine(ABC, Generic[ModelTContr]):
         return score_collections
 
     @property
-    def array_collections(self) -> Mapping[str, Dict[str, ndarray]]:
+    def array_collections(self) -> Mapping[str, Dict[str, Array]]:
         array_collections = {}
         for plan in self._plans:
             array_collections.update(plan.array_collections)

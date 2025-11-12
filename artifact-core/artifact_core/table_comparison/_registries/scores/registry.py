@@ -1,15 +1,11 @@
-from typing import Any, Dict
+from typing import Any, Mapping
 
 from artifact_core.table_comparison._config.parsed import CONFIG
-from artifact_core.table_comparison._registries.base import (
-    TableComparisonScoreRegistryBase,
-)
-from artifact_core.table_comparison._registries.scores.types import (
-    TableComparisonScoreType,
-)
+from artifact_core.table_comparison._registries.base import TableComparisonScoreRegistryBase
+from artifact_core.table_comparison._registries.scores.types import TableComparisonScoreType
 
 
 class TableComparisonScoreRegistry(TableComparisonScoreRegistryBase[TableComparisonScoreType]):
     @classmethod
-    def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
-        return CONFIG.dict_scores_config
+    def _get_artifact_configurations(cls) -> Mapping[str, Mapping[str, Any]]:
+        return CONFIG.scores_config

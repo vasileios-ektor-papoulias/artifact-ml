@@ -67,7 +67,7 @@ def test_log(
     experiment_id: str,
     run_id: str,
     ls_array_collection_names: List[str],
-    ls_array_collections: List[Dict[str, np.ndarray]],
+    ls_array_collections: List[Dict[str, Array]],
 ):
     adapter, logger = array_collection_logger_factory(experiment_id, run_id)
     ls_logged = []
@@ -167,7 +167,7 @@ def test_log_fs_integration(
     experiment_id: str,
     run_id: str,
     ls_array_collection_names: List[str],
-    ls_array_collections: List[Dict[str, np.ndarray]],
+    ls_array_collections: List[Dict[str, Array]],
 ):
     adapter, logger = array_collection_logger_factory(experiment_id, run_id)
     ls_logged = []

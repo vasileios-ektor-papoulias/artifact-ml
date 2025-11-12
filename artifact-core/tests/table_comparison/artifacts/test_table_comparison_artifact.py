@@ -1,7 +1,7 @@
 import pandas as pd
-from artifact_core._base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS, NoArtifactHyperparams
-from artifact_core._libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core._libs.resource_validation.tabular.table_validator import TableValidator
+from artifact_core._base.primitives import NO_ARTIFACT_HYPERPARAMS, NoArtifactHyperparams
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resources_validation.tabular.table_validator import TableValidator
 from artifact_core.table_comparison._artifacts.base import (
     TableComparisonArtifact,
 )

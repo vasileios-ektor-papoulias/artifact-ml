@@ -4,7 +4,7 @@ from typing import cast
 
 import numpy as np
 import pytest
-from artifact_core._libs.utils.calculators.vector_distance_calculator import (
+from artifact_core._libs.artifacts.tools.calculators.vector_distance_calculator import (
     VectorDistanceCalculator,
     VectorDistanceMetric,
 )
@@ -59,8 +59,8 @@ def test_unsupported_metric():
 )
 def test_vector_distance(
     metric: VectorDistanceMetric,
-    v1: np.ndarray,
-    v2: np.ndarray,
+    v1: Array,
+    v2: Array,
     expected: float,
 ):
     result = VectorDistanceCalculator.compute(metric, v1, v2)

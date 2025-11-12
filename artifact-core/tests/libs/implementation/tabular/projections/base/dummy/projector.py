@@ -3,11 +3,11 @@ from typing import List, Optional, Type, TypeVar
 
 import numpy as np
 import pandas as pd
-from artifact_core._libs.implementation.tabular.projections.base.plotter import (
+from artifact_core._libs.artifacts.table_comparison.projections.base.plotter import (
     ProjectionPlotter,
     ProjectionPlotterConfig,
 )
-from artifact_core._libs.implementation.tabular.projections.base.projector import (
+from artifact_core._libs.artifacts.table_comparison.projections.base.projector import (
     ProjectorBase,
     ProjectorHyperparams,
 )
@@ -45,7 +45,7 @@ class DummyProjector(ProjectorBase[DummyProjectorHyperparams]):
     def _get_projection_name(cls) -> str:
         return "dummy_projection"
 
-    def _project(self, dataset_preprocessed: pd.DataFrame) -> Optional[np.ndarray]:
+    def _project(self, dataset_preprocessed: pd.DataFrame) -> Optional[Array]:
         if self._hyperparams.projection_type == "random":
             n_samples = len(dataset_preprocessed)
             n_cols = len(dataset_preprocessed.columns)

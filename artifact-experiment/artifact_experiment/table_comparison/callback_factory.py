@@ -1,38 +1,22 @@
 from typing import Type
 
-from artifact_core.table_comparison._artifacts.base import (
-    TableComparisonArtifactResources,
-    TabularDataSpecProtocol,
-)
-from artifact_core.table_comparison._registries.array_collections.registry import (
-    TableComparisonArrayCollectionRegistry,
-    TableComparisonArrayCollectionRegistryBase,
+from artifact_core.table_comparison import (
     TableComparisonArrayCollectionType,
-)
-from artifact_core.table_comparison._registries.arrays.registry import (
-    TableComparisonArrayRegistry,
-    TableComparisonArrayRegistryBase,
     TableComparisonArrayType,
-)
-from artifact_core.table_comparison._registries.plot_collections.registry import (
-    TableComparisonPlotCollectionRegistry,
-    TableComparisonPlotCollectionRegistryBase,
     TableComparisonPlotCollectionType,
-)
-from artifact_core.table_comparison._registries.plots.registry import (
-    TableComparisonPlotRegistry,
-    TableComparisonPlotRegistryBase,
     TableComparisonPlotType,
-)
-from artifact_core.table_comparison._registries.score_collections.registry import (
-    TableComparisonScoreCollectionRegistry,
-    TableComparisonScoreCollectionRegistryBase,
     TableComparisonScoreCollectionType,
-)
-from artifact_core.table_comparison._registries.scores.registry import (
-    TableComparisonScoreRegistry,
-    TableComparisonScoreRegistryBase,
     TableComparisonScoreType,
+)
+from artifact_core.table_comparison.spi import (
+    TableComparisonArrayCollectionRegistry,
+    TableComparisonArrayRegistry,
+    TableComparisonArtifactResources,
+    TableComparisonPlotCollectionRegistry,
+    TableComparisonPlotRegistry,
+    TableComparisonScoreCollectionRegistry,
+    TableComparisonScoreRegistry,
+    TabularDataSpecProtocol,
 )
 
 from artifact_experiment.base.components.factories.artifact import ArtifactCallbackFactory
@@ -51,31 +35,25 @@ class TableComparisonCallbackFactory(
     ]
 ):
     @staticmethod
-    def _get_score_registry() -> Type[TableComparisonScoreRegistryBase[TableComparisonScoreType]]:
+    def _get_score_registry() -> Type[TableComparisonScoreRegistry]:
         return TableComparisonScoreRegistry
 
     @staticmethod
-    def _get_array_registry() -> Type[TableComparisonArrayRegistryBase[TableComparisonArrayType]]:
+    def _get_array_registry() -> Type[TableComparisonArrayRegistry]:
         return TableComparisonArrayRegistry
 
     @staticmethod
-    def _get_plot_registry() -> Type[TableComparisonPlotRegistryBase[TableComparisonPlotType]]:
+    def _get_plot_registry() -> Type[TableComparisonPlotRegistry]:
         return TableComparisonPlotRegistry
 
     @staticmethod
-    def _get_score_collection_registry() -> Type[
-        TableComparisonScoreCollectionRegistryBase[TableComparisonScoreCollectionType]
-    ]:
+    def _get_score_collection_registry() -> Type[TableComparisonScoreCollectionRegistry]:
         return TableComparisonScoreCollectionRegistry
 
     @staticmethod
-    def _get_array_collection_registry() -> Type[
-        TableComparisonArrayCollectionRegistryBase[TableComparisonArrayCollectionType]
-    ]:
+    def _get_array_collection_registry() -> Type[TableComparisonArrayCollectionRegistry]:
         return TableComparisonArrayCollectionRegistry
 
     @staticmethod
-    def _get_plot_collection_registry() -> Type[
-        TableComparisonPlotCollectionRegistryBase[TableComparisonPlotCollectionType]
-    ]:
+    def _get_plot_collection_registry() -> Type[TableComparisonPlotCollectionRegistry]:
         return TableComparisonPlotCollectionRegistry

@@ -2,10 +2,9 @@ from typing import Dict, List, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core._libs.implementation.tabular.pdf.overlaid_plotter import (
+from artifact_core._libs.artifacts.table_comparison.pdf.overlaid_plotter import (
     TabularOverlaidPDFPlotter,
 )
-from matplotlib.figure import Figure
 
 
 @pytest.mark.unit

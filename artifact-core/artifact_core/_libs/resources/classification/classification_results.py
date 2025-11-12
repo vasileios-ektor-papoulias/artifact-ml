@@ -1,14 +1,15 @@
 from enum import Enum
 from typing import Dict, Generic, Iterable, List, Mapping, Optional, TypeVar
 
-import numpy as np
-
-from artifact_core._libs.resource_spec.categorical.protocol import CategoricalFeatureSpecProtocol
-from artifact_core._libs.resources.categorical.category_store.category_store import CategoryStore
-from artifact_core._libs.resources.categorical.distribution_store.distribution_store import (
+from artifact_core._base.types.artifact_result import Array
+from artifact_core._libs.resource_specs.classification.protocol import (
+    CategoricalFeatureSpecProtocol,
+)
+from artifact_core._libs.resources.classification.category_store import CategoryStore
+from artifact_core._libs.resources.classification.distribution_store import (
     CategoricalDistributionStore,
 )
-from artifact_core._libs.utils.data_structures.entity_store import IdentifierType
+from artifact_core._libs.resources.tools.entity_store import IdentifierType
 
 CategoricalFeatureSpecProtocolTCov = TypeVar(
     "CategoricalFeatureSpecProtocolTCov", bound=CategoricalFeatureSpecProtocol, covariant=True
@@ -82,11 +83,11 @@ class ClassificationResults(
         return self._pred_store.ids
 
     @property
-    def id_to_logits(self) -> Dict[IdentifierType, np.ndarray]:
+    def id_to_logits(self) -> Dict[IdentifierType, Array]:
         return self._distn_store.id_to_logits
 
     @property
-    def id_to_probs(self) -> Dict[IdentifierType, np.ndarray]:
+    def id_to_probs(self) -> Dict[IdentifierType, Array]:
         return self._distn_store.id_to_probs
 
     @property
@@ -103,24 +104,24 @@ class ClassificationResults(
     def get_predicted_category(self, identifier: IdentifierType) -> str:
         return self._pred_store.get_category(identifier=identifier)
 
-    def get_logits(self, identifier: IdentifierType) -> np.ndarray:
+    def get_logits(self, identifier: IdentifierType) -> Array:
         return self._distn_store.get_logits(identifier=identifier)
 
-    def get_probs(self, identifier: IdentifierType) -> np.ndarray:
+    def get_probs(self, identifier: IdentifierType) -> Array:
         return self._distn_store.get_probs(identifier=identifier)
 
     def set_single(
         self,
         identifier: IdentifierType,
         predicted_category: str,
-        logits: Optional[np.ndarray] = None,
+        logits: Optional[Array] = None,
     ) -> None:
         self._set_single(identifier=identifier, category=predicted_category, logits=logits)
 
     def set_multiple(
         self,
         id_to_category: Mapping[IdentifierType, str],
-        id_to_logits: Optional[Mapping[IdentifierType, np.ndarray]] = None,
+        id_to_logits: Optional[Mapping[IdentifierType, Array]] = None,
     ) -> None:
         for identifier in id_to_category.keys():
             category = id_to_category[identifier]
@@ -131,7 +132,7 @@ class ClassificationResults(
         self,
         identifier: IdentifierType,
         category: str,
-        logits: Optional[np.ndarray],
+        logits: Optional[Array],
     ) -> None:
         self._set_prediction(identifier=identifier, category=category)
         self._set_distribution(identifier=identifier, category=category, logits=logits)
@@ -140,7 +141,7 @@ class ClassificationResults(
         self._pred_store.set_category(identifier=identifier, category=category)
 
     def _set_distribution(
-        self, identifier: IdentifierType, category: str, logits: Optional[np.ndarray]
+        self, identifier: IdentifierType, category: str, logits: Optional[Array]
     ) -> None:
         if logits is None:
             self._set_inferred_distribution(

@@ -10,10 +10,10 @@ from artifact_experiment.libs.tracking.mlflow.loggers.artifacts import MlflowArt
 from artifact_experiment.libs.utils.incremental_path_generator import IncrementalPathGenerator
 
 
-class MlflowArrayLogger(MlflowArtifactLogger[np.ndarray]):
+class MlflowArrayLogger(MlflowArtifactLogger[Array]):
     _fmt = "npy"
 
-    def _append(self, item_path: str, item: np.ndarray):
+    def _append(self, item_path: str, item: Array):
         ls_history = self._get_array_history(run=self._run, path=item_path)
         next_step = self._get_next_step_from_history(ls_history=ls_history)
         with tempfile.TemporaryDirectory() as temp_dir:

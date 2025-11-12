@@ -4,11 +4,11 @@ from artifact_experiment.base.plans.artifact import ArtifactPlan
 
 from tests.base.callback_factory.dummy.callback_factory import DummyCallbackFactory
 from tests.base.dummy_artifact_toolkit import (
+    DummyArray,
     DummyArrayCollectionType,
-    DummyArrayType,
     DummyArtifactResources,
+    DummyPlot,
     DummyPlotCollectionType,
-    DummyPlotType,
     DummyResourceSpec,
     DummyScoreCollectionType,
     DummyScoreType,
@@ -20,8 +20,8 @@ class DummyValidationPlan(
         DummyArtifactResources,
         DummyResourceSpec,
         DummyScoreType,
-        DummyArrayType,
-        DummyPlotType,
+        DummyArray,
+        DummyPlot,
         DummyScoreCollectionType,
         DummyArrayCollectionType,
         DummyPlotCollectionType,
@@ -32,12 +32,12 @@ class DummyValidationPlan(
         return [DummyScoreType.DUMMY_SCORE_1]
 
     @staticmethod
-    def _get_array_types() -> List[DummyArrayType]:
-        return [DummyArrayType.DUMMY_ARRAY_1]
+    def _get_array_types() -> List[DummyArray]:
+        return [DummyArray.DUMMY_ARRAY_1]
 
     @staticmethod
-    def _get_plot_types() -> List[DummyPlotType]:
-        return [DummyPlotType.DUMMY_PLOT_1]
+    def _get_plot_types() -> List[DummyPlot]:
+        return [DummyPlot.DUMMY_PLOT_1]
 
     @staticmethod
     def _get_score_collection_types() -> List[DummyScoreCollectionType]:

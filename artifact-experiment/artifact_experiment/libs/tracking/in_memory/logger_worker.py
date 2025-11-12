@@ -1,8 +1,5 @@
 from typing import Dict
 
-from matplotlib.figure import Figure
-from numpy import ndarray
-
 from artifact_experiment.base.entities.file import File
 from artifact_experiment.base.tracking.backend.logger import ArtifactLogger, BackendLogger
 from artifact_experiment.base.tracking.backend.logger_worker import LoggerWorker
@@ -32,7 +29,7 @@ class InMemoryLoggerWorker(LoggerWorker[InMemoryRunAdapter]):
     @staticmethod
     def _get_array_logger(
         run: InMemoryRunAdapter,
-    ) -> ArtifactLogger[ndarray, InMemoryRunAdapter]:
+    ) -> ArtifactLogger[Array, InMemoryRunAdapter]:
         return InMemoryArrayLogger(run=run)
 
     @staticmethod
@@ -50,7 +47,7 @@ class InMemoryLoggerWorker(LoggerWorker[InMemoryRunAdapter]):
     @staticmethod
     def _get_array_collection_logger(
         run: InMemoryRunAdapter,
-    ) -> ArtifactLogger[Dict[str, ndarray], InMemoryRunAdapter]:
+    ) -> ArtifactLogger[Dict[str, Array], InMemoryRunAdapter]:
         return InMemoryArrayCollectionLogger(run=run)
 
     @staticmethod

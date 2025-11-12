@@ -2,13 +2,9 @@ from typing import TypeVar
 
 import pandas as pd
 
-from artifact_core._base.registry import ArtifactType
-from artifact_core._core.dataset_comparison.engine import (
-    DatasetComparisonEngine,
-)
-from artifact_core._libs.resource_spec.tabular.protocol import (
-    TabularDataSpecProtocol,
-)
+from artifact_core._base.types.artifact_type import ArtifactType
+from artifact_core._libs.resource_specs.table_comparison.protocol import TabularDataSpecProtocol
+from artifact_core._tasks.dataset_comparison.engine import DatasetComparisonEngine
 
 ScoreTypeT = TypeVar("ScoreTypeT", bound=ArtifactType)
 ArrayTypeT = TypeVar("ArrayTypeT", bound=ArtifactType)

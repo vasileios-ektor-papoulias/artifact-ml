@@ -4,10 +4,8 @@ from typing import Dict, Generic, List, Optional, Sequence, TypeVar
 
 import torch
 import torch.nn as nn
-from artifact_core._base.artifact_dependencies import ArtifactResult
+from artifact_core._base.primitives import ArtifactResult
 from artifact_experiment.base.tracking.background.writer import TrackingQueueWriter
-from matplotlib.figure import Figure
-from numpy import ndarray
 from torch.utils.hooks import RemovableHandle
 
 from artifact_torch.base.components.callbacks.periodic import (
@@ -81,7 +79,7 @@ class HookCallback(
 
 HookScoreCallback = HookCallback[ModelTContr, float, Dict[str, torch.Tensor]]
 
-HookArrayCallback = HookCallback[ModelTContr, ndarray, Dict[str, torch.Tensor]]
+HookArrayCallback = HookCallback[ModelTContr, Array, Dict[str, torch.Tensor]]
 
 
 HookPlotCallback = HookCallback[ModelTContr, Figure, Dict[str, torch.Tensor]]
@@ -90,7 +88,7 @@ HookPlotCallback = HookCallback[ModelTContr, Figure, Dict[str, torch.Tensor]]
 HookScoreCollectionCallback = HookCallback[ModelTContr, Dict[str, float], Dict[str, torch.Tensor]]
 
 
-HookArrayCollectionCallback = HookCallback[ModelTContr, Dict[str, ndarray], Dict[str, torch.Tensor]]
+HookArrayCollectionCallback = HookCallback[ModelTContr, Dict[str, Array], Dict[str, torch.Tensor]]
 
 
 HookPlotCollectionCallback = HookCallback[ModelTContr, Dict[str, Figure], Dict[str, torch.Tensor]]

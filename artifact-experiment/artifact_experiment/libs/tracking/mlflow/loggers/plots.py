@@ -2,7 +2,6 @@ import os
 import tempfile
 from typing import List
 
-from matplotlib.figure import Figure
 from mlflow.entities import FileInfo
 
 from artifact_experiment.libs.tracking.mlflow.adapter import MlflowRunAdapter

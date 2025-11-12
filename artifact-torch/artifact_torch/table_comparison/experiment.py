@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Any, Generic, Optional, Type, TypeVar
 
-from artifact_core._libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
 
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
 from artifact_torch.base.components.routines.train_diagnostics import TrainDiagnosticsRoutine

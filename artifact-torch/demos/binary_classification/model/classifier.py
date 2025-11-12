@@ -2,7 +2,7 @@ from typing import Dict, Hashable, List, Tuple, Type, TypeVar
 
 import pandas as pd
 import torch
-from artifact_core._libs.resources.classification.binary_classification_results import (
+from artifact_core._libs.resourcess.classification.binary_classification_results import (
     BinaryClassificationResults,
 )
 from artifact_core.binary_classification import BinaryFeatureSpecProtocol

@@ -1,11 +1,11 @@
 import pandas as pd
 from matplotlib.figure import Figure
 
-from artifact_core._base.artifact_dependencies import NoArtifactHyperparams
-from artifact_core._libs.implementation.tabular.descriptive_stats.alignment_plotter import (
+from artifact_core._base.contracts.hyperparams import NoArtifactHyperparams
+from artifact_core._libs.artifacts.table_comparison.descriptive_stats.alignment_plotter import (
     DescriptiveStatsAlignmentPlotter,
 )
-from artifact_core._libs.implementation.tabular.descriptive_stats.calculator import (
+from artifact_core._libs.artifacts.table_comparison.descriptive_stats.calculator import (
     DescriptiveStatistic,
 )
 from artifact_core.table_comparison._artifacts.base import (

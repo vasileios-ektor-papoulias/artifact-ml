@@ -4,9 +4,7 @@ from typing import Dict, Generic, List, Optional, Tuple, TypeVar
 
 import torch
 import torch.nn as nn
-from artifact_core._base.artifact_dependencies import ArtifactResult
-from matplotlib.figure import Figure
-from numpy import ndarray
+from artifact_core._base.primitives import ArtifactResult
 from torch.utils.hooks import RemovableHandle
 
 from artifact_torch.base.components.callbacks.hook import HookCallback
@@ -65,7 +63,7 @@ class BackwardHookCallback(
 
 BackwardHookScoreCallback = BackwardHookCallback[ModelTContr, float, Dict[str, torch.Tensor]]
 
-BackwardHookArrayCallback = BackwardHookCallback[ModelTContr, ndarray, Dict[str, torch.Tensor]]
+BackwardHookArrayCallback = BackwardHookCallback[ModelTContr, Array, Dict[str, torch.Tensor]]
 
 
 BackwardHookPlotCallback = BackwardHookCallback[ModelTContr, Figure, Dict[str, torch.Tensor]]
@@ -77,7 +75,7 @@ BackwardHookScoreCollectionCallback = BackwardHookCallback[
 
 
 BackwardHookArrayCollectionCallback = BackwardHookCallback[
-    ModelTContr, Dict[str, ndarray], Dict[str, torch.Tensor]
+    ModelTContr, Dict[str, Array], Dict[str, torch.Tensor]
 ]
 
 

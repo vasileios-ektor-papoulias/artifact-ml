@@ -2,13 +2,11 @@ from dataclasses import dataclass
 from typing import Any, Dict, Generic, Optional, TypeVar
 
 from artifact_core._base.artifact import Artifact
-from artifact_core._base.artifact_dependencies import (
+from artifact_core._base.primitives import (
     ArtifactResources,
     ArtifactResult,
     ResourceSpecProtocol,
 )
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 from artifact_experiment.base.components.callbacks.tracking import (
     TrackingCallback,
@@ -56,15 +54,13 @@ class ArtifactCallback(
 
 
 ArtifactScoreCallback = ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr, float]
-ArtifactArrayCallback = ArtifactCallback[
-    ArtifactResourcesTContr, ResourceSpecProtocolTContr, ndarray
-]
+ArtifactArrayCallback = ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr, Array]
 ArtifactPlotCallback = ArtifactCallback[ArtifactResourcesTContr, ResourceSpecProtocolTContr, Figure]
 ArtifactScoreCollectionCallback = ArtifactCallback[
     ArtifactResourcesTContr, ResourceSpecProtocolTContr, Dict[str, float]
 ]
 ArtifactArrayCollectionCallback = ArtifactCallback[
-    ArtifactResourcesTContr, ResourceSpecProtocolTContr, Dict[str, ndarray]
+    ArtifactResourcesTContr, ResourceSpecProtocolTContr, Dict[str, Array]
 ]
 ArtifactPlotCollectionCallback = ArtifactCallback[
     ArtifactResourcesTContr, ResourceSpecProtocolTContr, Dict[str, Figure]

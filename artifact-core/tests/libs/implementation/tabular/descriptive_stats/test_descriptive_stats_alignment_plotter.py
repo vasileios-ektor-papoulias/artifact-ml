@@ -2,11 +2,10 @@ from typing import List, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core._libs.implementation.tabular.descriptive_stats.alignment_plotter import (
+from artifact_core._libs.artifacts.table_comparison.descriptive_stats.alignment_plotter import (
     DescriptiveStatistic,
     DescriptiveStatsAlignmentPlotter,
 )
-from matplotlib.figure import Figure
 
 
 @pytest.mark.unit

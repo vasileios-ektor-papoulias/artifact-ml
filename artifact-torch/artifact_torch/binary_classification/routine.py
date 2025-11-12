@@ -2,8 +2,8 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Any, Dict, Generic, Mapping, Optional, Type, TypeVar
 
-from artifact_core._libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
-from artifact_core._libs.resources.categorical.category_store.binary import BinaryCategoryStore
+from artifact_core._libs.resources_spec.binary.protocol import BinaryFeatureSpecProtocol
+from artifact_core._libs.resourcess.categorical.category_store.binary import BinaryCategoryStore
 from artifact_core.binary_classification._artifacts.base import (
     BinaryClassificationArtifactResources,
 )

@@ -1,9 +1,7 @@
 from dataclasses import dataclass
 from typing import Dict, Generic, TypeVar
 
-from artifact_core._base.artifact_dependencies import ArtifactResult
-from matplotlib.figure import Figure
-from numpy import ndarray
+from artifact_core._base.primitives import ArtifactResult
 
 from artifact_experiment.base.entities.file import File
 from artifact_experiment.base.entities.tracking_data import TrackingData
@@ -31,7 +29,7 @@ class ScoreQueueItem(ArtifactQueueItem[float]):
 
 
 @dataclass(frozen=True)
-class ArrayQueueItem(ArtifactQueueItem[ndarray]):
+class ArrayQueueItem(ArtifactQueueItem[Array]):
     pass
 
 
@@ -46,7 +44,7 @@ class ScoreCollectionQueueItem(ArtifactQueueItem[Dict[str, float]]):
 
 
 @dataclass(frozen=True)
-class ArrayCollectionQueueItem(ArtifactQueueItem[Dict[str, ndarray]]):
+class ArrayCollectionQueueItem(ArtifactQueueItem[Dict[str, Array]]):
     pass
 
 

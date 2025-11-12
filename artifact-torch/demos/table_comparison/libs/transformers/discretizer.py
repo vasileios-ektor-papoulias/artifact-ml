@@ -10,7 +10,7 @@ class Discretizer:
         if ls_cts_features is None:
             ls_cts_features = []
         self._ls_cts_features = ls_cts_features
-        self._bin_edges: Dict[str, np.ndarray] = {}
+        self._bin_edges: Dict[str, Array] = {}
         self._is_fitted: bool = False
 
     def fit(
@@ -40,10 +40,8 @@ class Discretizer:
         return self._inverse_transform(df_binned=df_binned, bin_edges=self._bin_edges)
 
     @classmethod
-    def _fit(
-        cls, df: pd.DataFrame, ls_cts_features: List[str], n_bins: int
-    ) -> Dict[str, np.ndarray]:
-        bin_edges: Dict[str, np.ndarray] = {}
+    def _fit(cls, df: pd.DataFrame, ls_cts_features: List[str], n_bins: int) -> Dict[str, Array]:
+        bin_edges: Dict[str, Array] = {}
         for feature in ls_cts_features:
             cls._validate_feature(df=df, feature=feature)
             _, edges = cls._bin_feature(series=df[feature], bins=n_bins)
@@ -52,7 +50,7 @@ class Discretizer:
 
     @classmethod
     def _transform(
-        cls, df: pd.DataFrame, continuous_features: List[str], bin_edges: Dict[str, np.ndarray]
+        cls, df: pd.DataFrame, continuous_features: List[str], bin_edges: Dict[str, Array]
     ) -> pd.DataFrame:
         df_binned = df.copy()
 
@@ -67,7 +65,7 @@ class Discretizer:
 
     @classmethod
     def _inverse_transform(
-        cls, df_binned: pd.DataFrame, bin_edges: Dict[str, np.ndarray]
+        cls, df_binned: pd.DataFrame, bin_edges: Dict[str, Array]
     ) -> pd.DataFrame:
         df_reconstructed = df_binned.copy()
 
@@ -85,8 +83,8 @@ class Discretizer:
 
     @staticmethod
     def _bin_feature(
-        series: pd.Series, bins: int, bin_edges: Optional[np.ndarray] = None
-    ) -> Tuple[pd.Series, np.ndarray]:
+        series: pd.Series, bins: int, bin_edges: Optional[Array] = None
+    ) -> Tuple[pd.Series, Array]:
         if bin_edges is None:
             binned, edges = pd.cut(
                 x=series, bins=bins, labels=False, retbins=True, duplicates="drop"
@@ -97,7 +95,7 @@ class Discretizer:
             return binned, bin_edges
 
     @classmethod
-    def _sample_uniform(cls, binned_series: pd.Series, bin_edges: np.ndarray) -> pd.Series:
+    def _sample_uniform(cls, binned_series: pd.Series, bin_edges: Array) -> pd.Series:
         return pd.Series(
             data=[
                 cls._sample_single_uniform(idx=idx, bin_edges=bin_edges) for idx in binned_series
@@ -106,7 +104,7 @@ class Discretizer:
         )
 
     @staticmethod
-    def _sample_single_uniform(idx: Any, bin_edges: np.ndarray) -> float:
+    def _sample_single_uniform(idx: Any, bin_edges: Array) -> float:
         if pd.isna(idx):
             return np.nan
         left = bin_edges[int(idx)]

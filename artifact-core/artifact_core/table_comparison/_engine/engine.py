@@ -1,8 +1,6 @@
 from typing import Type
 
-from artifact_core.table_comparison._engine.base import (
-    TableComparisonEngineBase,
-)
+from artifact_core.table_comparison._engine.base import TableComparisonEngineBase
 from artifact_core.table_comparison._registries.array_collections.registry import (
     TableComparisonArrayCollectionRegistry,
     TableComparisonArrayCollectionType,

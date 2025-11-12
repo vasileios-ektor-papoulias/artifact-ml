@@ -3,7 +3,6 @@ import time
 from typing import Optional
 
 from clearml import Task, TaskTypes
-from matplotlib.figure import Figure
 
 from artifact_experiment.base.tracking.backend.adapter import InactiveRunError, RunAdapter
 from artifact_experiment.libs.tracking.clear_ml.setup_validator import ClearMLSetupValidator

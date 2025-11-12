@@ -1,8 +1,5 @@
 from typing import Any, Dict, Generic, Mapping, Optional, Sequence, TypeVar
 
-from matplotlib.figure import Figure
-from numpy import ndarray
-
 from artifact_experiment.base.components.callbacks.cache import (
     CacheCallback,
     CacheCallbackResources,
@@ -69,13 +66,13 @@ class CacheCallbackHandler(
 
 
 CacheScoreHandler = CacheCallbackHandler[CacheCallbackTCov, CacheCallbackResourcesTContr, float]
-CacheArrayHandler = CacheCallbackHandler[CacheCallbackTCov, CacheCallbackResourcesTContr, ndarray]
+CacheArrayHandler = CacheCallbackHandler[CacheCallbackTCov, CacheCallbackResourcesTContr, Array]
 CachePlotHandler = CacheCallbackHandler[CacheCallbackTCov, CacheCallbackResourcesTContr, Figure]
 CacheScoreCollectionHandler = CacheCallbackHandler[
     CacheCallbackTCov, CacheCallbackResourcesTContr, Dict[str, float]
 ]
 CacheArrayCollectionHandler = CacheCallbackHandler[
-    CacheCallbackTCov, CacheCallbackResourcesTContr, Dict[str, ndarray]
+    CacheCallbackTCov, CacheCallbackResourcesTContr, Dict[str, Array]
 ]
 CachePlotCollectionHandler = CacheCallbackHandler[
     CacheCallbackTCov, CacheCallbackResourcesTContr, Dict[str, Figure]

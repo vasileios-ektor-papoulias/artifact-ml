@@ -1,12 +1,10 @@
 from typing import Any, Dict, Generic, TypeVar
 
-from artifact_core._base.artifact_dependencies import (
+from artifact_core._base.primitives import (
     ArtifactResources,
     ArtifactResult,
     ResourceSpecProtocol,
 )
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 from artifact_experiment.base.components.callbacks.artifact import (
     ArtifactCallback,
@@ -38,7 +36,7 @@ ArtifactScoreHandler = ArtifactCallbackHandler[
     ArtifactResourcesTContr, ResourceSpecProtocolTContr, float
 ]
 ArtifactArrayHandler = ArtifactCallbackHandler[
-    ArtifactResourcesTContr, ResourceSpecProtocolTContr, ndarray
+    ArtifactResourcesTContr, ResourceSpecProtocolTContr, Array
 ]
 ArtifactPlotHandler = ArtifactCallbackHandler[
     ArtifactResourcesTContr, ResourceSpecProtocolTContr, Figure
@@ -47,7 +45,7 @@ ArtifactScoreCollectionHandler = ArtifactCallbackHandler[
     ArtifactResourcesTContr, ResourceSpecProtocolTContr, Dict[str, float]
 ]
 ArtifactArrayCollectionHandler = ArtifactCallbackHandler[
-    ArtifactResourcesTContr, ResourceSpecProtocolTContr, Dict[str, ndarray]
+    ArtifactResourcesTContr, ResourceSpecProtocolTContr, Dict[str, Array]
 ]
 ArtifactPlotCollectionHandler = ArtifactCallbackHandler[
     ArtifactResourcesTContr, ResourceSpecProtocolTContr, Dict[str, Figure]

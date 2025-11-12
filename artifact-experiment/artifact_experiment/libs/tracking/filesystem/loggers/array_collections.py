@@ -8,17 +8,17 @@ from artifact_experiment.libs.tracking.filesystem.loggers.artifacts import Files
 from artifact_experiment.libs.utils.incremental_path_generator import IncrementalPathGenerator
 
 
-class FilesystemArrayCollectionLogger(FilesystemArtifactLogger[Dict[str, np.ndarray]]):
+class FilesystemArrayCollectionLogger(FilesystemArtifactLogger[Dict[str, Array]]):
     _fmt: str = "npz"
 
-    def _append(self, item_path: str, item: Dict[str, np.ndarray]):
+    def _append(self, item_path: str, item: Dict[str, Array]):
         if self._run.is_active:
             self._export_array_collection(dir_path=item_path, array_collection=item)
         else:
             raise InactiveFilesystemRunError("Run is inactive")
 
     @classmethod
-    def _export_array_collection(cls, dir_path: str, array_collection: Dict[str, np.ndarray]):
+    def _export_array_collection(cls, dir_path: str, array_collection: Dict[str, Array]):
         filepath = IncrementalPathGenerator.generate(dir_path=dir_path, fmt=cls._fmt)
         np.savez_compressed(file=filepath, allow_pickle=True, **array_collection)
 

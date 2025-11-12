@@ -2,7 +2,7 @@ import os
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar
 
-from artifact_core._base.artifact_dependencies import ArtifactResult
+from artifact_core._base.primitives import ArtifactResult
 
 from artifact_experiment.base.entities.tracking_data import TrackingData
 from artifact_experiment.base.tracking.backend.adapter import RunAdapter

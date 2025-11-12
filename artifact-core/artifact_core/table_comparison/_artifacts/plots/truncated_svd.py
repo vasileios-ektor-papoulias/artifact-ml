@@ -3,14 +3,12 @@ from dataclasses import dataclass
 import pandas as pd
 from matplotlib.figure import Figure
 
-from artifact_core._base.artifact_dependencies import ArtifactHyperparams
-from artifact_core._libs.implementation.tabular.projections.truncated_svd import (
+from artifact_core._base.contracts.hyperparams import ArtifactHyperparams
+from artifact_core._libs.artifacts.table_comparison.projections.truncated_svd import (
     TruncatedSVDHyperparams,
     TruncatedSVDProjector,
 )
-from artifact_core.table_comparison._artifacts.base import (
-    TableComparisonPlot,
-)
+from artifact_core.table_comparison._artifacts.base import TableComparisonPlot
 from artifact_core.table_comparison._registries.plots.registry import (
     TableComparisonPlotRegistry,
     TableComparisonPlotType,

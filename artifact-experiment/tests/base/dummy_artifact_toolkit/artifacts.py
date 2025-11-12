@@ -3,23 +3,21 @@ from typing import Dict, TypeVar
 import matplotlib.pyplot as plt
 import numpy as np
 from artifact_core._base.artifact import Artifact
-from artifact_core._base.artifact_dependencies import (
+from artifact_core._base.primitives import (
     ArtifactResult,
     NoArtifactHyperparams,
 )
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 from tests.base.dummy_artifact_toolkit.registries import (
+    DummyArray,
     DummyArrayCollectionRegistry,
     DummyArrayCollectionType,
     DummyArrayRegistry,
-    DummyArrayType,
     DummyArtifactResources,
+    DummyPlot,
     DummyPlotCollectionRegistry,
     DummyPlotCollectionType,
     DummyPlotRegistry,
-    DummyPlotType,
     DummyResourceSpec,
     DummyScoreCollectionRegistry,
     DummyScoreCollectionType,
@@ -45,17 +43,17 @@ class DummyScore1(DummyArtifact[float]):
         return 0
 
 
-@DummyArrayRegistry.register_artifact(artifact_type=DummyArrayType.DUMMY_ARRAY_1)
-class DummyArray1(DummyArtifact[ndarray]):
+@DummyArrayRegistry.register_artifact(artifact_type=DummyArray.DUMMY_ARRAY_1)
+class DummyArray1(DummyArtifact[Array]):
     def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
         return resources
 
-    def _compute(self, resources: DummyArtifactResources) -> ndarray:
+    def _compute(self, resources: DummyArtifactResources) -> Array:
         _ = resources
         return np.array([1.0, 2.0, 3.0])
 
 
-@DummyPlotRegistry.register_artifact(artifact_type=DummyPlotType.DUMMY_PLOT_1)
+@DummyPlotRegistry.register_artifact(artifact_type=DummyPlot.DUMMY_PLOT_1)
 class DummyPlot1(DummyArtifact[Figure]):
     def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
         return resources
@@ -82,11 +80,11 @@ class DummyScoreCollection1(DummyArtifact[Dict[str, float]]):
 @DummyArrayCollectionRegistry.register_artifact(
     artifact_type=DummyArrayCollectionType.DUMMY_ARRAY_COLLECTION_1
 )
-class DummyArrayCollection1(DummyArtifact[Dict[str, ndarray]]):
+class DummyArrayCollection1(DummyArtifact[Dict[str, Array]]):
     def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
         return resources
 
-    def _compute(self, resources: DummyArtifactResources) -> Dict[str, ndarray]:
+    def _compute(self, resources: DummyArtifactResources) -> Dict[str, Array]:
         _ = resources
         return {"array_1": np.array([1, 2]), "array_2": np.array([3, 4])}
 

@@ -3,7 +3,7 @@ from typing import Dict, List, Tuple, Type, TypeVar
 
 import torch
 import torch.nn as nn
-from artifact_core._libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
 
 from demos.table_comparison.config.constants import (
     BN_EPSILON,

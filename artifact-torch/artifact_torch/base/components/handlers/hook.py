@@ -1,9 +1,7 @@
 from typing import Any, Dict, Generic, TypeVar
 
-from artifact_core._base.artifact_dependencies import ArtifactResult
+from artifact_core._base.primitives import ArtifactResult
 from artifact_experiment.base.components.handlers.tracking import TrackingCallbackHandler
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 from artifact_torch.base.components.callbacks.hook import HookCallback, HookCallbackResources
 from artifact_torch.base.model.base import Model
@@ -30,7 +28,7 @@ class HookCallbackHandler(
 HookScoreHandler = HookCallbackHandler[ModelTContr, float]
 
 
-HookArrayHandler = HookCallbackHandler[ModelTContr, ndarray]
+HookArrayHandler = HookCallbackHandler[ModelTContr, Array]
 
 
 HookPlotHandler = HookCallbackHandler[ModelTContr, Figure]
@@ -39,7 +37,7 @@ HookPlotHandler = HookCallbackHandler[ModelTContr, Figure]
 HookScoreCollectionHandler = HookCallbackHandler[ModelTContr, Dict[str, float]]
 
 
-HookArrayCollectionHandler = HookCallbackHandler[ModelTContr, Dict[str, ndarray]]
+HookArrayCollectionHandler = HookCallbackHandler[ModelTContr, Dict[str, Array]]
 
 
 HookPlotCollectionHandler = HookCallbackHandler[ModelTContr, Dict[str, Figure]]

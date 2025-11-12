@@ -1,7 +1,5 @@
 import os
 
-from matplotlib.figure import Figure
-
 from artifact_experiment.libs.tracking.neptune.loggers.artifacts import NeptuneArtifactLogger
 
 

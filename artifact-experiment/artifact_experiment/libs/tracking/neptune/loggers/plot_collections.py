@@ -1,8 +1,6 @@
 import os
 from typing import Dict
 
-from matplotlib.figure import Figure
-
 from artifact_experiment.libs.tracking.neptune.loggers.artifacts import NeptuneArtifactLogger
 
 

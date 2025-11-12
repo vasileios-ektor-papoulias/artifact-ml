@@ -1,8 +1,5 @@
 from typing import Any, Dict, Generic, Optional, TypeVar
 
-from matplotlib.figure import Figure
-from numpy import ndarray
-
 from artifact_torch.base.components.routines.artifact import ArtifactRoutine
 from artifact_torch.base.components.routines.base import RoutineResources
 from artifact_torch.base.components.routines.loader import DataLoaderRoutine
@@ -42,7 +39,7 @@ class RoutineSuite(Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]):
         return scores
 
     @property
-    def arrays(self) -> Dict[str, ndarray]:
+    def arrays(self) -> Dict[str, Array]:
         arrays = {}
         if self._train_diagnostics_routine is not None:
             arrays.update(self._train_diagnostics_routine.arrays)
@@ -75,7 +72,7 @@ class RoutineSuite(Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]):
         return score_collections
 
     @property
-    def array_collections(self) -> Dict[str, Dict[str, ndarray]]:
+    def array_collections(self) -> Dict[str, Dict[str, Array]]:
         array_collections = {}
         if self._train_diagnostics_routine is not None:
             array_collections.update(self._train_diagnostics_routine.array_collections)

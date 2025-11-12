@@ -1,9 +1,6 @@
 from abc import abstractmethod
 from typing import Dict, Generic, Type, TypeVar
 
-from matplotlib.figure import Figure
-from numpy import ndarray
-
 from artifact_experiment.base.entities.file import File
 from artifact_experiment.base.tracking.backend.adapter import RunAdapter
 from artifact_experiment.base.tracking.backend.logger_worker import LoggerWorker
@@ -84,7 +81,7 @@ class TrackingClient(Generic[RunAdapterT]):
     def log_score(self, score: float, name: str):
         self._tracking_queue.put_score(name=name, value=score)
 
-    def log_array(self, array: ndarray, name: str):
+    def log_array(self, array: Array, name: str):
         self._tracking_queue.put_array(name=name, value=array)
 
     def log_plot(self, plot: Figure, name: str):
@@ -93,7 +90,7 @@ class TrackingClient(Generic[RunAdapterT]):
     def log_score_collection(self, score_collection: Dict[str, float], name: str):
         self._tracking_queue.put_score_collection(name=name, value=score_collection)
 
-    def log_array_collection(self, array_collection: Dict[str, ndarray], name: str):
+    def log_array_collection(self, array_collection: Dict[str, Array], name: str):
         self._tracking_queue.put_array_collection(name=name, value=array_collection)
 
     def log_plot_collection(self, plot_collection: Dict[str, Figure], name: str):

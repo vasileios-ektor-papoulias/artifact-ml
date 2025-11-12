@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Type, TypeVar
 
 import pandas as pd
-from artifact_core.table_comparison._artifacts.base import TableComparisonArtifactResources
+from artifact_core.table_comparison.spi import TableComparisonArtifactResources
 
 from artifact_experiment.core.dataset_comparison.callback_resources import (
     DatasetComparisonCallbackResources,

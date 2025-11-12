@@ -1,4 +1,4 @@
-from artifact_core._base.registry import ArtifactType
+from artifact_core._base.types.artifact_type import ArtifactType
 
 
 class BinaryClassificationScoreType(ArtifactType):

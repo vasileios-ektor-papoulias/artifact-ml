@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Generic, TypedDict, TypeVar
 
-from artifact_core._libs.resources.classification.classification_results import (
+from artifact_core._libs.resourcess.classification.classification_results import (
     ClassificationResults,
 )
 
