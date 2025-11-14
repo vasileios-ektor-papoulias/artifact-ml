@@ -1,19 +1,23 @@
-from artifact_core._libs.resource_specs.binary_classification.spec import BinaryFeatureSpec
-from artifact_core.binary_classification._engine.engine import (
+from artifact_core._libs.resource_specs.binary_classification.spec import BinaryClassSpec
+from artifact_core.binary_classification._engine.engine import BinaryClassificationEngine
+from artifact_core.binary_classification._types.array_collections import (
     BinaryClassificationArrayCollectionType,
-    BinaryClassificationArrayType,
-    BinaryClassificationEngine,
-    BinaryClassificationPlotCollectionType,
-    BinaryClassificationPlotType,
-    BinaryClassificationScoreCollectionType,
-    BinaryClassificationScoreType,
 )
+from artifact_core.binary_classification._types.arrays import BinaryClassificationArrayType
+from artifact_core.binary_classification._types.plot_collections import (
+    BinaryClassificationPlotCollectionType,
+)
+from artifact_core.binary_classification._types.plots import BinaryClassificationPlotType
+from artifact_core.binary_classification._types.score_collections import (
+    BinaryClassificationScoreCollectionType,
+)
+from artifact_core.binary_classification._types.scores import BinaryClassificationScoreType
 
 __all__ = [
-    "BinaryFeatureSpec",
+    "BinaryClassSpec",
+    "BinaryClassificationEngine",
     "BinaryClassificationArrayCollectionType",
     "BinaryClassificationArrayType",
-    "BinaryClassificationEngine",
     "BinaryClassificationPlotCollectionType",
     "BinaryClassificationPlotType",
     "BinaryClassificationScoreCollectionType",
@@ -22,13 +26,12 @@ __all__ = [
 
 
 def _init_toolkit():
-    from artifact_core._bootstrap.startup.initializer import ToolkitInitializer
-    from artifact_core.binary_classification._config.parsed import CONFIG, TOOLKIT_ROOT
+    from artifact_core._bootstrap.primitives.domain_toolkit import DomainToolkit
+    from artifact_core._bootstrap.toolkit_initializer import ToolkitInitializer
+    from artifact_core.binary_classification._config.parsed import CONFIG
 
     ToolkitInitializer.init_toolkit(
-        domain_toolkit_root=TOOLKIT_ROOT,
-        native_artifact_path=CONFIG.native_artifact_path,
-        custom_artifact_path=CONFIG.custom_artifact_path,
+        domain_toolkit=DomainToolkit.BINARY_CLASSIFICATION, config=CONFIG
     )
 
 

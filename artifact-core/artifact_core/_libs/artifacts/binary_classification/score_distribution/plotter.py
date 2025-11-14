@@ -10,11 +10,11 @@ from artifact_core._libs.artifacts.binary_classification.score_distribution.part
 from artifact_core._libs.artifacts.binary_classification.score_distribution.sampler import (
     ScoreDistributionSampler,
 )
-from artifact_core._libs.artifacts.tools.plotters.overlaid_pdf_plotter import (
+from artifact_core._libs.tools.plotters.overlaid_pdf_plotter import (
     OverlaidPDFConfig,
     OverlaidPDFPlotter,
 )
-from artifact_core._libs.artifacts.tools.plotters.pdf_plotter import PDFConfig, PDFPlotter
+from artifact_core._libs.tools.plotters.pdf_plotter import PDFConfig, PDFPlotter
 
 
 @dataclass(frozen=True)

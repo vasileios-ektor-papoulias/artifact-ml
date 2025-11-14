@@ -1,17 +1,20 @@
-from typing import Dict, Generic, Mapping, Optional, TypeVar, Union
+from typing import Generic, Mapping, Optional, TypeVar, Union
 
-from matplotlib.figure import Figure
-
-from artifact_core._base.types.artifact_result import Array
-from artifact_core._base.types.artifact_type import ArtifactType
+from artifact_core._base.primitives.artifact_type import ArtifactType
+from artifact_core._base.typing.artifact_result import (
+    Array,
+    ArrayCollection,
+    Plot,
+    PlotCollection,
+    Score,
+    ScoreCollection,
+)
+from artifact_core._domains.classification.engine import ClassificationEngine
 from artifact_core._libs.resource_specs.binary_classification.protocol import (
-    BinaryFeatureSpecProtocol,
+    BinaryClassSpecProtocol,
 )
-from artifact_core._libs.resources.tools.entity_store import IdentifierType
-from artifact_core._tasks.classification.engine import ClassificationEngine
-from artifact_core.binary_classification._artifacts.base import (
-    BinaryClassificationArtifactResources,
-)
+from artifact_core._utils.collections.entity_store import IdentifierType
+from artifact_core.binary_classification._resources import BinaryClassificationArtifactResources
 
 ScoreTypeT = TypeVar("ScoreTypeT", bound=ArtifactType)
 ArrayTypeT = TypeVar("ArrayTypeT", bound=ArtifactType)
@@ -24,7 +27,7 @@ PlotCollectionTypeT = TypeVar("PlotCollectionTypeT", bound=ArtifactType)
 class BinaryClassificationEngineBase(
     ClassificationEngine[
         BinaryClassificationArtifactResources,
-        BinaryFeatureSpecProtocol,
+        BinaryClassSpecProtocol,
         ScoreTypeT,
         ArrayTypeT,
         PlotTypeT,
@@ -47,7 +50,7 @@ class BinaryClassificationEngineBase(
         true: Mapping[IdentifierType, str],
         predicted: Mapping[IdentifierType, str],
         probs_pos: Optional[Mapping[IdentifierType, float]] = None,
-    ) -> float:
+    ) -> Score:
         resources = BinaryClassificationArtifactResources.from_spec(
             class_spec=self._resource_spec,
             true=true,
@@ -77,7 +80,7 @@ class BinaryClassificationEngineBase(
         true: Mapping[IdentifierType, str],
         predicted: Mapping[IdentifierType, str],
         probs_pos: Optional[Mapping[IdentifierType, float]] = None,
-    ) -> Figure:
+    ) -> Plot:
         resources = BinaryClassificationArtifactResources.from_spec(
             class_spec=self._resource_spec,
             true=true,
@@ -92,7 +95,7 @@ class BinaryClassificationEngineBase(
         true: Mapping[IdentifierType, str],
         predicted: Mapping[IdentifierType, str],
         probs_pos: Optional[Mapping[IdentifierType, float]] = None,
-    ) -> Dict[str, float]:
+    ) -> ScoreCollection:
         resources = BinaryClassificationArtifactResources.from_spec(
             class_spec=self._resource_spec,
             true=true,
@@ -109,7 +112,7 @@ class BinaryClassificationEngineBase(
         true: Mapping[IdentifierType, str],
         predicted: Mapping[IdentifierType, str],
         probs_pos: Optional[Mapping[IdentifierType, float]] = None,
-    ) -> Dict[str, Array]:
+    ) -> ArrayCollection:
         resources = BinaryClassificationArtifactResources.from_spec(
             class_spec=self._resource_spec,
             true=true,
@@ -126,7 +129,7 @@ class BinaryClassificationEngineBase(
         true: Mapping[IdentifierType, str],
         predicted: Mapping[IdentifierType, str],
         probs_pos: Optional[Mapping[IdentifierType, float]] = None,
-    ) -> Dict[str, Figure]:
+    ) -> PlotCollection:
         resources = BinaryClassificationArtifactResources.from_spec(
             class_spec=self._resource_spec,
             true=true,

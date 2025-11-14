@@ -30,7 +30,7 @@ from artifact_core.table_comparison._artifacts.plots.truncated_svd import (
 from artifact_core.table_comparison._artifacts.plots.tsne import (
     TSNEJuxtapositionPlot,
 )
-from artifact_core.table_comparison._registries.plots.registry import (
+from artifact_core.table_comparison._registries.plots.plots import (
     TableComparisonPlot,
     TableComparisonPlotRegistry,
 )

@@ -1,21 +1,23 @@
-from artifact_core._libs.resource_specs.table_comparison.protocol import TabularDataSpecProtocol
 from artifact_core._libs.resource_specs.table_comparison.spec import TabularDataSpec
-from artifact_core.table_comparison._engine.engine import (
+from artifact_core.table_comparison._engine.engine import TableComparisonEngine
+from artifact_core.table_comparison._types.array_collections import (
     TableComparisonArrayCollectionType,
-    TableComparisonArrayType,
-    TableComparisonEngine,
-    TableComparisonPlotCollectionType,
-    TableComparisonPlotType,
-    TableComparisonScoreCollectionType,
-    TableComparisonScoreType,
 )
+from artifact_core.table_comparison._types.arrays import TableComparisonArrayType
+from artifact_core.table_comparison._types.plot_collections import (
+    TableComparisonPlotCollectionType,
+)
+from artifact_core.table_comparison._types.plots import TableComparisonPlotType
+from artifact_core.table_comparison._types.score_collections import (
+    TableComparisonScoreCollectionType,
+)
+from artifact_core.table_comparison._types.scores import TableComparisonScoreType
 
 __all__ = [
-    "TabularDataSpecProtocol",
     "TabularDataSpec",
+    "TableComparisonEngine",
     "TableComparisonArrayCollectionType",
     "TableComparisonArrayType",
-    "TableComparisonEngine",
     "TableComparisonPlotCollectionType",
     "TableComparisonPlotType",
     "TableComparisonScoreCollectionType",
@@ -24,14 +26,11 @@ __all__ = [
 
 
 def _init_toolkit():
-    from artifact_core._bootstrap.startup.initializer import ToolkitInitializer
-    from artifact_core.table_comparison._config.parsed import CONFIG, TOOLKIT_ROOT
+    from artifact_core._bootstrap.primitives.domain_toolkit import DomainToolkit
+    from artifact_core._bootstrap.toolkit_initializer import ToolkitInitializer
+    from artifact_core.table_comparison._config.parsed import CONFIG
 
-    ToolkitInitializer.init_toolkit(
-        domain_toolkit_root=TOOLKIT_ROOT,
-        native_artifact_path=CONFIG.native_artifact_path,
-        custom_artifact_path=CONFIG.custom_artifact_path,
-    )
+    ToolkitInitializer.init_toolkit(domain_toolkit=DomainToolkit.TABLE_COMPARISON, config=CONFIG)
 
 
 _init_toolkit()

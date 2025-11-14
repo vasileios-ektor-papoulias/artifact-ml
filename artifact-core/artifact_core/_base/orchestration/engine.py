@@ -1,12 +1,17 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Generic, Type, TypeVar, Union
+from typing import Generic, Type, TypeVar, Union
 
-from matplotlib.figure import Figure
-
-from artifact_core._base.contracts.resource_spec import ResourceSpecProtocol
-from artifact_core._base.contracts.resources import ArtifactResources
+from artifact_core._base.core.resource_spec import ResourceSpecProtocol
+from artifact_core._base.core.resources import ArtifactResources
 from artifact_core._base.orchestration.registry import ArtifactRegistry, ArtifactType
-from artifact_core._base.types.artifact_result import Array
+from artifact_core._base.typing.artifact_result import (
+    Array,
+    ArrayCollection,
+    Plot,
+    PlotCollection,
+    Score,
+    ScoreCollection,
+)
 
 ScoreTypeT = TypeVar("ScoreTypeT", bound=ArtifactType)
 ArrayTypeT = TypeVar("ArrayTypeT", bound=ArtifactType)
@@ -48,7 +53,7 @@ class ArtifactEngine(
     @abstractmethod
     def _get_score_registry(
         cls,
-    ) -> Type[ArtifactRegistry[ArtifactResourcesT, ResourceSpecProtocolT, ScoreTypeT, float]]: ...
+    ) -> Type[ArtifactRegistry[ArtifactResourcesT, ResourceSpecProtocolT, ScoreTypeT, Score]]: ...
 
     @classmethod
     @abstractmethod
@@ -60,7 +65,7 @@ class ArtifactEngine(
     @abstractmethod
     def _get_plot_registry(
         cls,
-    ) -> Type[ArtifactRegistry[ArtifactResourcesT, ResourceSpecProtocolT, PlotTypeT, Figure]]: ...
+    ) -> Type[ArtifactRegistry[ArtifactResourcesT, ResourceSpecProtocolT, PlotTypeT, Plot]]: ...
 
     @classmethod
     @abstractmethod
@@ -68,7 +73,7 @@ class ArtifactEngine(
         cls,
     ) -> Type[
         ArtifactRegistry[
-            ArtifactResourcesT, ResourceSpecProtocolT, ScoreCollectionTypeT, Dict[str, float]
+            ArtifactResourcesT, ResourceSpecProtocolT, ScoreCollectionTypeT, ScoreCollection
         ]
     ]: ...
 
@@ -78,7 +83,7 @@ class ArtifactEngine(
         cls,
     ) -> Type[
         ArtifactRegistry[
-            ArtifactResourcesT, ResourceSpecProtocolT, ArrayCollectionTypeT, Dict[str, Array]
+            ArtifactResourcesT, ResourceSpecProtocolT, ArrayCollectionTypeT, ArrayCollection
         ]
     ]: ...
 
@@ -88,13 +93,13 @@ class ArtifactEngine(
         cls,
     ) -> Type[
         ArtifactRegistry[
-            ArtifactResourcesT, ResourceSpecProtocolT, PlotCollectionTypeT, Dict[str, Figure]
+            ArtifactResourcesT, ResourceSpecProtocolT, PlotCollectionTypeT, PlotCollection
         ]
     ]: ...
 
     def produce_score(
         self, score_type: Union[ScoreTypeT, str], resources: ArtifactResourcesT
-    ) -> float:
+    ) -> Score:
         artifact = self._score_registry.get(
             artifact_type=score_type, resource_spec=self._resource_spec
         )
@@ -108,9 +113,7 @@ class ArtifactEngine(
         )
         return artifact.compute(resources=resources)
 
-    def produce_plot(
-        self, plot_type: Union[PlotTypeT, str], resources: ArtifactResourcesT
-    ) -> Figure:
+    def produce_plot(self, plot_type: Union[PlotTypeT, str], resources: ArtifactResourcesT) -> Plot:
         artifact = self._plot_registry.get(
             artifact_type=plot_type, resource_spec=self._resource_spec
         )
@@ -120,7 +123,7 @@ class ArtifactEngine(
         self,
         score_collection_type: Union[ScoreCollectionTypeT, str],
         resources: ArtifactResourcesT,
-    ) -> Dict[str, float]:
+    ) -> ScoreCollection:
         artifact = self._score_collection_registry.get(
             artifact_type=score_collection_type, resource_spec=self._resource_spec
         )
@@ -130,7 +133,7 @@ class ArtifactEngine(
         self,
         array_collection_type: Union[ArrayCollectionTypeT, str],
         resources: ArtifactResourcesT,
-    ) -> Dict[str, Array]:
+    ) -> ArrayCollection:
         artifact = self._array_collection_registry.get(
             artifact_type=array_collection_type, resource_spec=self._resource_spec
         )
@@ -140,7 +143,7 @@ class ArtifactEngine(
         self,
         plot_collection_type: Union[PlotCollectionTypeT, str],
         resources: ArtifactResourcesT,
-    ) -> Dict[str, Figure]:
+    ) -> PlotCollection:
         artifact = self._plot_collection_registry.get(
             artifact_type=plot_collection_type, resource_spec=self._resource_spec
         )

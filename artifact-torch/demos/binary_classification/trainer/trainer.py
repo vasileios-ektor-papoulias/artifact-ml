@@ -10,7 +10,7 @@ from artifact_torch.base.components.model_tracking.tracker import (
 )
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.base.trainer.trainer import Trainer
-from artifact_torch.binary_classification.model import BinaryClassifier
+from artifact_torch.binary_classification._model import BinaryClassifier
 from artifact_torch.libs.components.callbacks.export.checkpoint import TorchCheckpointCallback
 from artifact_torch.libs.components.early_stopping.epoch_bound import EpochBoundStopper
 from torch import optim

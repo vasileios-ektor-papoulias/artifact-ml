@@ -1,11 +1,10 @@
-from typing import Dict, List, Mapping, Optional, Tuple, Type, TypeVar
+from typing import Dict, Mapping, Optional, Sequence, Tuple, Type, TypeVar
 
-from artifact_core._libs.artifacts.tools.calculators.sigmoid_calculator import SigmoidCalculator
 from artifact_core._libs.resource_specs.binary_classification.protocol import (
-    BinaryFeatureSpecProtocol,
+    BinaryClassSpecProtocol,
 )
-from artifact_core._libs.resource_specs.binary_classification.spec import BinaryFeatureSpec
-from artifact_core._libs.resources.binary_classification.category_store import BinaryCategoryStore
+from artifact_core._libs.resource_specs.binary_classification.spec import BinaryClassSpec
+from artifact_core._libs.resources.binary_classification.class_store import BinaryClassStore
 from artifact_core._libs.resources.binary_classification.distribution_store import (
     BinaryDistributionStore,
 )
@@ -13,7 +12,8 @@ from artifact_core._libs.resources.classification.classification_results import 
     ClassificationResults,
     DistributionInferenceType,
 )
-from artifact_core._libs.resources.tools.entity_store import IdentifierType
+from artifact_core._libs.tools.calculators.sigmoid_calculator import SigmoidCalculator
+from artifact_core._utils.collections.entity_store import IdentifierType
 
 BinaryClassificationResultsT = TypeVar(
     "BinaryClassificationResultsT", bound="BinaryClassificationResults"
@@ -21,27 +21,27 @@ BinaryClassificationResultsT = TypeVar(
 
 
 class BinaryClassificationResults(
-    ClassificationResults[BinaryFeatureSpecProtocol, BinaryCategoryStore, BinaryDistributionStore]
+    ClassificationResults[BinaryClassSpecProtocol, BinaryClassStore, BinaryDistributionStore]
 ):
     _distn_inference_type = DistributionInferenceType.CONCENTRATED
-    _feature_name = "classification_results"
+    _label_name = "label"
 
     @classmethod
     def build(
         cls: Type[BinaryClassificationResultsT],
-        ls_categories: List[str],
-        positive_category: str,
-        id_to_category: Mapping[IdentifierType, str],
+        class_names: Sequence[str],
+        positive_class: str,
+        id_to_class: Mapping[IdentifierType, str],
         id_to_prob_pos: Optional[Mapping[IdentifierType, float]] = None,
     ) -> BinaryClassificationResultsT:
-        class_spec = BinaryFeatureSpec(
-            ls_categories=ls_categories,
-            positive_category=positive_category,
-            feature_name=cls._feature_name,
+        class_spec = BinaryClassSpec(
+            class_names=class_names,
+            positive_class=positive_class,
+            label_name=cls._label_name,
         )
         classification_results = cls.from_spec(
             class_spec=class_spec,
-            id_to_category=id_to_category,
+            id_to_class=id_to_class,
             id_to_prob_pos=id_to_prob_pos,
         )
         return classification_results
@@ -49,30 +49,30 @@ class BinaryClassificationResults(
     @classmethod
     def from_spec(
         cls: Type[BinaryClassificationResultsT],
-        class_spec: BinaryFeatureSpecProtocol,
-        id_to_category: Mapping[IdentifierType, str],
+        class_spec: BinaryClassSpecProtocol,
+        id_to_class: Mapping[IdentifierType, str],
         id_to_prob_pos: Optional[Mapping[IdentifierType, float]] = None,
     ) -> BinaryClassificationResultsT:
-        pred_store = BinaryCategoryStore.from_categories_and_spec(feature_spec=class_spec)
-        distn_store = BinaryDistributionStore.from_spec(feature_spec=class_spec)
+        pred_store = BinaryClassStore.from_class_names_and_spec(class_spec=class_spec)
+        distn_store = BinaryDistributionStore.from_spec(class_spec=class_spec)
         classification_results = cls(
             class_spec=class_spec,
             pred_store=pred_store,
             distn_store=distn_store,
         )
-        if id_to_category is not None:
+        if id_to_class is not None:
             classification_results.set_multiple_binary(
-                id_to_category=id_to_category, id_to_prob_pos=id_to_prob_pos or {}
+                id_to_class=id_to_class, id_to_prob_pos=id_to_prob_pos or {}
             )
         return classification_results
 
     @property
-    def positive_category(self) -> str:
-        return self._feature_spec.positive_category
+    def positive_class(self) -> str:
+        return self._class_spec.positive_class
 
     @property
-    def negative_category(self) -> str:
-        return self._feature_spec.negative_category
+    def negative_class(self) -> str:
+        return self._class_spec.negative_class
 
     @property
     def id_to_predicted_positive(self) -> Dict[IdentifierType, bool]:
@@ -98,11 +98,11 @@ class BinaryClassificationResults(
     def id_to_logit_neg(self) -> Dict[IdentifierType, float]:
         return self._distn_store.id_to_logit_neg
 
-    def predicted_category_is_positive(self, identifier: IdentifierType) -> bool:
-        return self._pred_store.stored_category_is_positive(identifier=identifier)
+    def predicted_class_is_positive(self, identifier: IdentifierType) -> bool:
+        return self._pred_store.stored_class_is_positive(identifier=identifier)
 
-    def predicted_category_is_negative(self, identifier: IdentifierType) -> bool:
-        return self._pred_store.stored_category_is_negative(identifier=identifier)
+    def predicted_class_is_negative(self, identifier: IdentifierType) -> bool:
+        return self._pred_store.stored_class_is_negative(identifier=identifier)
 
     def get_prob_pos(self, identifier: IdentifierType) -> float:
         return self._distn_store.get_prob_pos(identifier=identifier)
@@ -125,36 +125,42 @@ class BinaryClassificationResults(
     def set_single_binary(
         self,
         identifier: IdentifierType,
-        predicted_category: str,
+        predicted_class: str,
         prob_pos: Optional[float] = None,
     ) -> None:
-        self._set_entry_binary(
-            identifier=identifier, category=predicted_category, prob_pos=prob_pos
-        )
+        self._set_entry_binary(identifier=identifier, class_name=predicted_class, prob_pos=prob_pos)
 
     def set_multiple_binary(
         self,
-        id_to_category: Mapping[IdentifierType, str],
+        id_to_class: Mapping[IdentifierType, str],
         id_to_prob_pos: Optional[Mapping[IdentifierType, float]] = None,
     ) -> None:
-        for identifier in id_to_category.keys():
-            category = id_to_category[identifier]
+        for identifier in id_to_class.keys():
+            class_name = id_to_class[identifier]
             prob_pos = id_to_prob_pos.get(identifier, None) if id_to_prob_pos is not None else None
-            self._set_entry_binary(identifier=identifier, category=category, prob_pos=prob_pos)
+            self._set_entry_binary(identifier=identifier, class_name=class_name, prob_pos=prob_pos)
 
     def _set_entry_binary(
-        self, identifier: IdentifierType, category: str, prob_pos: Optional[float] = None
+        self,
+        identifier: IdentifierType,
+        class_name: str,
+        prob_pos: Optional[float] = None,
     ) -> None:
-        self._set_prediction(identifier=identifier, category=category)
-        self._set_distribution_binary(identifier=identifier, category=category, prob_pos=prob_pos)
+        self._set_prediction(identifier=identifier, class_name=class_name)
+        self._set_distribution_binary(
+            identifier=identifier, class_name=class_name, prob_pos=prob_pos
+        )
 
     def _set_distribution_binary(
-        self, identifier: IdentifierType, category: str, prob_pos: Optional[float] = None
+        self,
+        identifier: IdentifierType,
+        class_name: str,
+        prob_pos: Optional[float] = None,
     ) -> None:
         if prob_pos is None:
             self._set_inferred_distribution(
                 identifier=identifier,
-                category=category,
+                class_name=class_name,
                 distribution_inference_type=self._distn_inference_type,
             )
         else:

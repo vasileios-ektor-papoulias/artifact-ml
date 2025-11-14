@@ -2,19 +2,19 @@ from typing import Callable, Optional, Tuple
 from unittest.mock import MagicMock
 
 import pytest
-from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter
-from artifact_experiment.libs.tracking.neptune.loggers.array_collections import (
+from artifact_experiment._impl.neptune.adapter import NeptuneRunAdapter
+from artifact_experiment._impl.neptune.loggers.array_collections import (
     NeptuneArrayCollectionLogger,
 )
-from artifact_experiment.libs.tracking.neptune.loggers.arrays import NeptuneArrayLogger
-from artifact_experiment.libs.tracking.neptune.loggers.plot_collections import (
+from artifact_experiment._impl.neptune.loggers.arrays import NeptuneArrayLogger
+from artifact_experiment._impl.neptune.loggers.plot_collections import (
     NeptunePlotCollectionLogger,
 )
-from artifact_experiment.libs.tracking.neptune.loggers.plots import NeptunePlotLogger
-from artifact_experiment.libs.tracking.neptune.loggers.score_collections import (
+from artifact_experiment._impl.neptune.loggers.plots import NeptunePlotLogger
+from artifact_experiment._impl.neptune.loggers.score_collections import (
     NeptuneScoreCollectionLogger,
 )
-from artifact_experiment.libs.tracking.neptune.loggers.scores import NeptuneScoreLogger
+from artifact_experiment._impl.neptune.loggers.scores import NeptuneScoreLogger
 
 
 @pytest.fixture

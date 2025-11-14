@@ -66,9 +66,9 @@ def test_get_overlaid_pdf_plot_collection(
     result = TabularOverlaidPDFPlotter.get_overlaid_pdf_plot_collection(
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
-        ls_features_order=features_order,
-        ls_cts_features=cts_features,
-        ls_cat_features=cat_features,
+        features_order=features_order,
+        cts_features=cts_features,
+        cat_features=cat_features,
         cat_unique_map=cat_unique_map,
     )
 

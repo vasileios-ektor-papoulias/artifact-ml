@@ -1,12 +1,12 @@
 from dataclasses import dataclass
-from typing import List, Literal, Optional, Type, TypeVar
+from typing import Literal, Optional, Sequence, Type, TypeVar
 
 import pandas as pd
 from numpy.linalg import LinAlgError
 from sklearn.exceptions import NotFittedError
 from sklearn.manifold import TSNE
 
-from artifact_core._base.types.artifact_result import Array
+from artifact_core._base.typing.artifact_result import Array
 from artifact_core._libs.artifacts.table_comparison.projections.base.plotter import (
     ProjectionPlotter,
     ProjectionPlotterConfig,
@@ -32,8 +32,8 @@ class TSNEProjector(ProjectorBase[TSNEHyperparams]):
     @classmethod
     def build(
         cls: Type[TSNEProjectorT],
-        ls_cat_features: List[str],
-        ls_cts_features: List[str],
+        cat_features: Sequence[str],
+        cts_features: Sequence[str],
         projector_config: Optional[TSNEHyperparams] = None,
         plotter_config: Optional[ProjectionPlotterConfig] = None,
     ) -> TSNEProjectorT:
@@ -44,8 +44,8 @@ class TSNEProjector(ProjectorBase[TSNEHyperparams]):
 
         plotter = ProjectionPlotter(config=plotter_config)
         projector = cls(
-            ls_cat_features=ls_cat_features,
-            ls_cts_features=ls_cts_features,
+            cat_features=cat_features,
+            cts_features=cts_features,
             hyperparams=projector_config,
             plotter=plotter,
         )

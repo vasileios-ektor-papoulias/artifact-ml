@@ -3,8 +3,8 @@ from typing import Dict, Hashable, Mapping, Tuple
 
 from sklearn.metrics import confusion_matrix
 
-from artifact_core._base.types.artifact_result import Array
-from artifact_core._libs.utils.dict_aligner import DictAligner
+from artifact_core._base.typing.artifact_result import Array
+from artifact_core._utils.collections.map_aligner import MapAligner
 
 
 class ConfusionMatrixCell(Enum):
@@ -89,6 +89,6 @@ class RawConfusionCalculator:
         true: Mapping[Hashable, bool],
         predicted: Mapping[Hashable, bool],
     ) -> Array:
-        _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
+        _, y_true, y_pred = MapAligner.align(left=true, right=predicted)
         arr_cm = confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[True, False])
         return arr_cm

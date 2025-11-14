@@ -4,11 +4,11 @@ from typing import Callable, Dict, List, Optional, Tuple
 from unittest.mock import ANY, MagicMock
 
 import pytest
-from artifact_experiment.libs.tracking.mlflow.adapter import MlflowRunAdapter
-from artifact_experiment.libs.tracking.mlflow.loggers.plot_collections import (
+from artifact_experiment._impl.mlflow.adapter import MlflowRunAdapter
+from artifact_experiment._impl.mlflow.loggers.plot_collections import (
     MlflowPlotCollectionLogger,
 )
-from artifact_experiment.libs.utils.incremental_path_generator import IncrementalPathGenerator
+from artifact_experiment._utils.incremental_path_generator import IncrementalPathGenerator
 from pytest_mock import MockerFixture
 
 

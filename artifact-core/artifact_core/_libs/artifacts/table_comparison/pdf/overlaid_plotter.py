@@ -1,20 +1,17 @@
-from typing import Dict, List
+from typing import Mapping, Sequence
 
 import pandas as pd
 from matplotlib.figure import Figure
 
-from artifact_core._libs.artifacts.tools.plotters.overlaid_pdf_plotter import (
+from artifact_core._libs.tools.plotters.overlaid_pdf_plotter import (
     OverlaidPDFConfig,
     OverlaidPDFPlotter,
 )
-from artifact_core._libs.artifacts.tools.plotters.overlaid_pmf_plotter import (
+from artifact_core._libs.tools.plotters.overlaid_pmf_plotter import (
     OverlaidPMFConfig,
     OverlaidPMFPlotter,
 )
-from artifact_core._libs.artifacts.tools.plotters.plot_combiner import (
-    PlotCombinationConfig,
-    PlotCombiner,
-)
+from artifact_core._libs.tools.plotters.plot_combiner import PlotCombinationConfig, PlotCombiner
 
 
 class TabularOverlaidPDFPlotter:
@@ -66,22 +63,20 @@ class TabularOverlaidPDFPlotter:
         cls,
         dataset_real: pd.DataFrame,
         dataset_synthetic: pd.DataFrame,
-        ls_features_order: List[str],
-        ls_cts_features: List[str],
-        ls_cat_features: List[str],
-        cat_unique_map: Dict[str, List[str]],
+        features_order: Sequence[str],
+        cts_features: Sequence[str],
+        cat_features: Sequence[str],
+        cat_unique_map: Mapping[str, Sequence[str]],
     ) -> Figure:
-        dict_plots = cls.get_overlaid_pdf_plot_collection(
+        plots = cls.get_overlaid_pdf_plot_collection(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_features_order=ls_features_order,
-            ls_cts_features=ls_cts_features,
-            ls_cat_features=ls_cat_features,
+            features_order=features_order,
+            cts_features=cts_features,
+            cat_features=cat_features,
             cat_unique_map=cat_unique_map,
         )
-        combined_plot = PlotCombiner.combine(
-            dict_plots=dict_plots, config=cls._plot_combiner_config
-        )
+        combined_plot = PlotCombiner.combine(plots=plots, config=cls._plot_combiner_config)
         return combined_plot
 
     @classmethod
@@ -89,22 +84,22 @@ class TabularOverlaidPDFPlotter:
         cls,
         dataset_real: pd.DataFrame,
         dataset_synthetic: pd.DataFrame,
-        ls_features_order: List[str],
-        ls_cts_features: List[str],
-        ls_cat_features: List[str],
-        cat_unique_map: Dict[str, List[str]],
-    ) -> Dict[str, Figure]:
+        features_order: Sequence[str],
+        cts_features: Sequence[str],
+        cat_features: Sequence[str],
+        cat_unique_map: Mapping[str, Sequence[str]],
+    ) -> Mapping[str, Figure]:
         dict_plots = {}
-        for feature in ls_features_order:
-            if feature in ls_cat_features:
+        for feature in features_order:
+            if feature in cat_features:
                 fig = OverlaidPMFPlotter.plot_overlaid_pmf(
                     sr_data_a=dataset_real[feature],
                     sr_data_b=dataset_synthetic[feature],
                     feature_name=feature,
-                    ls_unique_categories=cat_unique_map.get(feature, []),
+                    unique_categories=cat_unique_map.get(feature, []),
                     config=cls._pmf_config,
                 )
-            elif feature in ls_cts_features:
+            elif feature in cts_features:
                 fig = OverlaidPDFPlotter.plot_overlaid_pdf(
                     sr_data_a=dataset_real[feature],
                     sr_data_b=dataset_synthetic[feature],

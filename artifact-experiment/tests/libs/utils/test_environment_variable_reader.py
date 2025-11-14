@@ -3,7 +3,7 @@ from typing import Callable, Dict, Generator, Optional
 from unittest.mock import MagicMock
 
 import pytest
-from artifact_experiment.libs.utils.environment_variable_reader import (
+from artifact_experiment._utils.environment_variable_reader import (
     EnvironmentVariableReader,
 )
 from pytest_mock import MockerFixture

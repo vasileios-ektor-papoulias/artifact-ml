@@ -2,7 +2,7 @@ import pandas as pd
 from artifact_core._libs.resourcess.categorical.category_store.binary import BinaryCategoryStore
 from artifact_core.binary_classification import BinaryFeatureSpec
 from artifact_torch.base.data.data_loader import DataLoader
-from artifact_torch.binary_classification.routine import BinaryClassificationRoutineData
+from artifact_torch.binary_classification._routine import BinaryClassificationRoutineData
 
 from demos.binary_classification.config.constants import BATCH_SIZE, DROP_LAST, LS_FEATURES, SHUFFLE
 from demos.binary_classification.data.dataset import MLPClassifierDataset

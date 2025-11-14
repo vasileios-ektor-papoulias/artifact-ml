@@ -1,2 +1,2 @@
-from artifact_torch.binary_classification.model import BinaryClassifier
-from artifact_torch.binary_classification.routine import BinaryClassificationRoutine
+from artifact_torch.binary_classification._model import BinaryClassifier
+from artifact_torch.binary_classification._routine import BinaryClassificationRoutine

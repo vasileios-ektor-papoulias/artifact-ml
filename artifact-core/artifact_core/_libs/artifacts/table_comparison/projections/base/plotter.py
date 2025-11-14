@@ -5,11 +5,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.figure import Figure
 
-from artifact_core._base.types.artifact_result import Array
-from artifact_core._libs.artifacts.tools.plotters.plot_combiner import (
-    PlotCombinationConfig,
-    PlotCombiner,
-)
+from artifact_core._base.typing.artifact_result import Array
+from artifact_core._libs.tools.plotters.plot_combiner import PlotCombinationConfig, PlotCombiner
 
 
 @dataclass(frozen=True)
@@ -60,9 +57,7 @@ class ProjectionPlotter:
             self._config.combined_plot_real_key: fig_real,
             self._config.combined_plot_synthetic_key: fig_synth,
         }
-        combined_fig = PlotCombiner.combine(
-            dict_plots=dict_plots, config=self._config.combined_config
-        )
+        combined_fig = PlotCombiner.combine(plots=dict_plots, config=self._config.combined_config)
         general_title = self._config.combined_config.combined_title
         combined_fig.suptitle(
             t=f"{general_title}: {projection_name}",

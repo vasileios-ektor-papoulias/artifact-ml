@@ -30,8 +30,8 @@ def test_project(
 ):
     df, ls_cat_features, ls_cts_features = dataset_dispatcher
     projector = TruncatedSVDProjector.build(
-        ls_cat_features=ls_cat_features,
-        ls_cts_features=ls_cts_features,
+        cat_features=ls_cat_features,
+        cts_features=ls_cts_features,
         projector_config=projector_config,
     )
     mock_projection = "mock_projection"

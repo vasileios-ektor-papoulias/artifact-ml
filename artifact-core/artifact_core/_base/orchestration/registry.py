@@ -1,16 +1,24 @@
 from abc import abstractmethod
 from typing import Any, Callable, Dict, Generic, Mapping, Optional, Type, TypeVar, Union
 
-from artifact_core._base.contracts.hyperparams import (
+from artifact_core._base.core.artifact import Artifact
+from artifact_core._base.core.hyperparams import (
     NO_ARTIFACT_HYPERPARAMS,
     ArtifactHyperparams,
     NoArtifactHyperparams,
 )
-from artifact_core._base.contracts.resource_spec import ResourceSpecProtocol
-from artifact_core._base.contracts.resources import ArtifactResources
-from artifact_core._base.core.artifact import Artifact
-from artifact_core._base.types.artifact_result import ArtifactResult
-from artifact_core._base.types.artifact_type import ArtifactType
+from artifact_core._base.core.resource_spec import ResourceSpecProtocol
+from artifact_core._base.core.resources import ArtifactResources
+from artifact_core._base.primitives.artifact_type import ArtifactType
+from artifact_core._base.typing.artifact_result import (
+    Array,
+    ArrayCollection,
+    ArtifactResult,
+    Plot,
+    PlotCollection,
+    Score,
+    ScoreCollection,
+)
 
 ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound=ArtifactHyperparams)
 ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound=ArtifactResources)
@@ -174,3 +182,17 @@ class ArtifactRegistry(
         else:
             key = artifact_type.name
         return key
+
+
+ScoreRegistry = ArtifactRegistry[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, Score]
+ArrayRegistry = ArtifactRegistry[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, Array]
+PlotRegistry = ArtifactRegistry[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, Plot]
+ScoreCollectionRegistry = ArtifactRegistry[
+    ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, ScoreCollection
+]
+ArrayCollectionRegistry = ArtifactRegistry[
+    ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, ArrayCollection
+]
+PlotCollectionRegistry = ArtifactRegistry[
+    ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, PlotCollection
+]

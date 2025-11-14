@@ -1,6 +1,7 @@
 from typing import Dict, Hashable, Mapping, Sequence
 
-from artifact_core._base.types.artifact_result import Array
+from numpy import ndarray
+
 from artifact_core._libs.artifacts.binary_classification.confusion.normalizer import (
     ConfusionMatrixNormalizationStrategy,
     ConfusionMatrixNormalizer,
@@ -18,7 +19,7 @@ class NormalizedConfusionCalculator(RawConfusionCalculator):
         true: Mapping[Hashable, bool],
         predicted: Mapping[Hashable, bool],
         normalization: ConfusionMatrixNormalizationStrategy,
-    ) -> Array:
+    ) -> ndarray:
         arr_cm = cls._compute_normalized_confusion_matrix(
             true=true,
             predicted=predicted,
@@ -32,7 +33,7 @@ class NormalizedConfusionCalculator(RawConfusionCalculator):
         true: Mapping[Hashable, bool],
         predicted: Mapping[Hashable, bool],
         normalization_types: Sequence[ConfusionMatrixNormalizationStrategy],
-    ) -> Dict[ConfusionMatrixNormalizationStrategy, Array]:
+    ) -> Dict[ConfusionMatrixNormalizationStrategy, ndarray]:
         dict_arr_cm = {
             norm: cls._compute_normalized_confusion_matrix(
                 true=true, predicted=predicted, normalization=norm
@@ -82,7 +83,7 @@ class NormalizedConfusionCalculator(RawConfusionCalculator):
         true: Mapping[Hashable, bool],
         predicted: Mapping[Hashable, bool],
         normalization: ConfusionMatrixNormalizationStrategy,
-    ) -> Array:
+    ) -> ndarray:
         arr_cm = cls._compute_confusion_matrix(true=true, predicted=predicted)
         arr_cm_normalized = ConfusionMatrixNormalizer.normalize_cm(
             arr_cm=arr_cm, normalization=normalization

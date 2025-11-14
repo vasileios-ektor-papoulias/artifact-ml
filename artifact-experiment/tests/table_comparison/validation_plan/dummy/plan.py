@@ -1,14 +1,14 @@
 from typing import List
 
 from artifact_core.table_comparison import (
-    TableComparisonArray,
     TableComparisonArrayCollectionType,
-    TableComparisonPlot,
+    TableComparisonArrayType,
     TableComparisonPlotCollectionType,
+    TableComparisonPlotType,
     TableComparisonScoreCollectionType,
     TableComparisonScoreType,
 )
-from artifact_experiment.table_comparison.plan import TableComparisonPlan
+from artifact_experiment.table_comparison._plan import TableComparisonPlan
 
 
 class DummyTableComparisonPlan(TableComparisonPlan):
@@ -20,12 +20,12 @@ class DummyTableComparisonPlan(TableComparisonPlan):
         ]
 
     @staticmethod
-    def _get_array_types() -> List[TableComparisonArray]:
+    def _get_array_types() -> List[TableComparisonArrayType]:
         return []
 
     @staticmethod
-    def _get_plot_types() -> List[TableComparisonPlot]:
-        return [TableComparisonPlot.PDF, TableComparisonPlot.CDF]
+    def _get_plot_types() -> List[TableComparisonPlotType]:
+        return [TableComparisonPlotType.PDF, TableComparisonPlotType.CDF]
 
     @staticmethod
     def _get_score_collection_types() -> List[TableComparisonScoreCollectionType]:

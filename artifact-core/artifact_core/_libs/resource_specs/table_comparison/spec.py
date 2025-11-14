@@ -1,26 +1,21 @@
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Set, Type, TypeVar
+from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Set, Type, TypeVar
 
 import pandas as pd
 
-from artifact_core._libs.resource_specs.interfaces.serializable import Serializable
-from artifact_core._libs.resource_specs.table_comparison.categorical_column_spec import (
-    CategoricalColumnSpec,
-)
-from artifact_core._libs.resource_specs.table_comparison.continuous_column_spec import (
-    ContinuousColumnSpec,
-)
+from artifact_core._interfaces.serializable import Serializable
 from artifact_core._libs.resource_specs.table_comparison.protocol import TabularDataSpecProtocol
-from artifact_core._libs.resource_specs.table_comparison.types import TabularDataDType
-from artifact_core._libs.resource_specs.tools.feature_partition.feature_partition import (
-    FeaturePartition,
-)
-from artifact_core._libs.resource_specs.tools.feature_partition.feature_partitioner import (
+from artifact_core._libs.tools.schema.data_types.typing import TabularDataDType
+from artifact_core._libs.tools.schema.feature_partition.feature_partition import FeaturePartition
+from artifact_core._libs.tools.schema.feature_partition.feature_partitioner import (
     FeaturePartitioner,
 )
-from artifact_core._libs.resource_specs.tools.feature_partition.inference_engine import (
+from artifact_core._libs.tools.schema.feature_partition.inference_engine import (
     FeaturePartitionStrategy,
 )
+from artifact_core._libs.tools.schema.feature_spec.categorical import CategoricalFeatureSpec
+from artifact_core._libs.tools.schema.feature_spec.continuous import ContinuousFeatureSpec
+from artifact_core._utils.collections.sequence_concatenator import SequenceConcatenator
 
 TabularDataSpecT = TypeVar("TabularDataSpecT", bound="TabularDataSpec")
 
@@ -33,24 +28,24 @@ class TabularDataSpec(Serializable, TabularDataSpecProtocol):
 
     def __init__(
         self,
-        dict_cts_specs: Dict[str, ContinuousColumnSpec],
-        dict_cat_specs: Dict[str, CategoricalColumnSpec],
-        features_order: List[str],
+        cts_feature_specs: Mapping[str, ContinuousFeatureSpec],
+        cat_feature_specs: Mapping[str, CategoricalFeatureSpec],
+        features_order: Sequence[str],
     ):
-        self._dict_cts_specs = dict_cts_specs
-        self._dict_cat_specs = dict_cat_specs
+        self._cts_feature_specs = cts_feature_specs
+        self._cat_feature_specs = cat_feature_specs
         self._features_order = features_order
 
     @classmethod
     def from_df(
         cls: Type[TabularDataSpecT],
         df: pd.DataFrame,
-        ls_cts_features: Optional[List[str]] = None,
-        ls_cat_features: Optional[List[str]] = None,
+        cts_features: Optional[Sequence[str]] = None,
+        cat_features: Optional[Sequence[str]] = None,
     ) -> TabularDataSpecT:
         spec = cls.build(
-            ls_cts_features=ls_cts_features,
-            ls_cat_features=ls_cat_features,
+            cts_features=cts_features,
+            cat_features=cat_features,
         )
         spec.fit(df=df)
         return spec
@@ -58,110 +53,91 @@ class TabularDataSpec(Serializable, TabularDataSpecProtocol):
     @classmethod
     def build(
         cls: Type[TabularDataSpecT],
-        ls_cts_features: Optional[List[str]] = None,
-        ls_cat_features: Optional[List[str]] = None,
+        cts_features: Optional[Sequence[str]] = None,
+        cat_features: Optional[Sequence[str]] = None,
     ) -> TabularDataSpecT:
-        if ls_cts_features is None:
-            ls_cts_features = []
-        if ls_cat_features is None:
-            ls_cat_features = []
+        if cts_features is None:
+            cts_features = []
+        if cat_features is None:
+            cat_features = []
         hardcoded_spec = cls._build_hardcoded(
-            ls_cts_features=ls_cts_features,
-            ls_cat_features=ls_cat_features,
+            cts_features=cts_features,
+            cat_features=cat_features,
         )
         spec = cls(
-            dict_cts_specs=hardcoded_spec[cls._cts_specs_key],
-            dict_cat_specs=hardcoded_spec[cls._cat_specs_key],
+            cts_feature_specs=hardcoded_spec[cls._cts_specs_key],
+            cat_feature_specs=hardcoded_spec[cls._cat_specs_key],
             features_order=hardcoded_spec[cls._features_order_key],
         )
         return spec
 
     @property
-    def ls_features(self) -> List[str]:
-        return self._ls_features.copy()
+    def features(self) -> Sequence[str]:
+        return list(self._features_order)
 
     @property
     def n_features(self) -> int:
-        return len(self._ls_features)
+        return len(self._features_order)
 
     @property
-    def ls_cts_features(self) -> List[str]:
-        return [feat for feat in self._ls_features if feat in self._continuous]
+    def cts_features(self) -> Sequence[str]:
+        return [feat for feat in self._features_order if feat in self._cts_feature_specs]
 
     @property
     def n_cts_features(self) -> int:
-        return len(self._continuous)
+        return len(self._cts_feature_specs)
 
     @property
-    def dict_cts_dtypes(self) -> Dict[str, TabularDataDType]:
-        return {feat: self._continuous[feat].dtype for feat in self.ls_cts_features}
+    def cts_dtypes(self) -> Mapping[str, TabularDataDType]:
+        return {feat: self._cts_feature_specs[feat].dtype for feat in self.cts_features}
 
     @property
-    def ls_cat_features(self) -> List[str]:
-        return [feat for feat in self._ls_features if feat in self._categorical]
+    def cat_features(self) -> Sequence[str]:
+        return [feat for feat in self._features_order if feat in self._cat_feature_specs]
 
     @property
     def n_cat_features(self) -> int:
-        return len(self._categorical)
+        return len(self._cat_feature_specs)
 
     @property
-    def dict_cat_dtypes(self) -> Dict[str, TabularDataDType]:
-        return {feat: self._categorical[feat].dtype for feat in self.ls_cat_features}
+    def cat_dtypes(self) -> Mapping[str, TabularDataDType]:
+        return {feat: self._cat_feature_specs[feat].dtype for feat in self.cat_features}
 
     @property
-    def cat_unique_map(self) -> Dict[str, List[str]]:
-        return {feat: self._categorical[feat].ls_categories for feat in self.ls_cat_features}
+    def cat_unique_map(self) -> Mapping[str, List[str]]:
+        return {feat: self._cat_feature_specs[feat].ls_categories for feat in self.cat_features}
 
     @property
-    def cat_unique_count_map(self) -> Dict[str, int]:
-        return {feat: len(self._categorical[feat].ls_categories) for feat in self.ls_cat_features}
+    def cat_unique_count_map(self) -> Mapping[str, int]:
+        return {
+            feat: len(self._cat_feature_specs[feat].ls_categories) for feat in self.cat_features
+        }
 
     @property
-    def ls_n_cat(self) -> List[int]:
-        return [len(self._categorical[feat].ls_categories) for feat in self.ls_cat_features]
-
-    @property
-    def _ls_features(self) -> List[str]:
-        return self._features_order
-
-    @_ls_features.setter
-    def _ls_features(self, features_order: List[str]):
-        self._features_order = features_order
-
-    @property
-    def _continuous(self) -> Dict[str, ContinuousColumnSpec]:
-        return self._dict_cts_specs
-
-    @_continuous.setter
-    def _continuous(self, continuous: Dict[str, ContinuousColumnSpec]):
-        self._dict_cts_specs = continuous
-
-    @property
-    def _categorical(self) -> Dict[str, CategoricalColumnSpec]:
-        return self._dict_cat_specs
-
-    @_categorical.setter
-    def _categorical(self, categorical: Dict[str, CategoricalColumnSpec]):
-        self._dict_cat_specs = categorical
+    def seq_n_cat(self) -> Sequence[int]:
+        return [len(self._cat_feature_specs[feat].ls_categories) for feat in self.cat_features]
 
     def fit(self, df: pd.DataFrame) -> None:
+        self._cts_feature_specs = dict(self._cts_feature_specs)
+        self._cat_feature_specs = dict(self._cat_feature_specs)
         self._assert_prescribed_features_exist(
             df=df,
-            prescribed_features=set(self._dict_cts_specs.keys()) | self._dict_cat_specs.keys(),
+            prescribed_features=set(self._cts_feature_specs.keys())
+            | self._cat_feature_specs.keys(),
         )
         feature_partition = self._partition_features(
             df=df,
-            set_cts_features=set(self._dict_cts_specs.keys()),
-            set_cat_features=set(self._dict_cat_specs.keys()),
+            set_cts_features=set(self._cts_feature_specs.keys()),
+            set_cat_features=set(self._cat_feature_specs.keys()),
         )
         set_cts_features = set(feature_partition.ls_cts_features)
         set_cat_features = set(feature_partition.ls_cat_features)
         for feature in set_cts_features:
-            self._continuous[feature] = self._get_cts_spec_from_data(sr_data=df[feature])
+            self._cts_feature_specs[feature] = self._get_cts_spec_from_data(sr_data=df[feature])
         for feature in set_cat_features:
-            self._categorical[feature] = self._get_cat_spec_from_data(sr_data=df[feature])
+            self._cat_feature_specs[feature] = self._get_cat_spec_from_data(sr_data=df[feature])
             self._assert_known_categories(
-                sr_data=df[feature], cat_feature_spec=self._categorical[feature], name=feature
+                sr_data=df[feature], cat_feature_spec=self._cat_feature_specs[feature], name=feature
             )
         self._features_order = self._get_features_order_from_data(
             df_data=df, cont_set=set_cts_features, cat_set=set_cat_features
@@ -169,9 +145,9 @@ class TabularDataSpec(Serializable, TabularDataSpecProtocol):
         self._drop_missing_features(cont_set=set_cts_features, cat_set=set_cat_features)
 
     def get_unique_categories(self, feature_name: str) -> List[str]:
-        if feature_name not in self._categorical:
+        if feature_name not in self._cat_feature_specs:
             raise ValueError(f"Feature '{feature_name}' is not a categorical feature.")
-        return self._categorical[feature_name].ls_categories
+        return self._cat_feature_specs[feature_name].ls_categories
 
     def get_n_unique_categories(self, feature_name: str) -> int:
         return len(self.get_unique_categories(feature_name))
@@ -196,37 +172,41 @@ class TabularDataSpec(Serializable, TabularDataSpecProtocol):
     def from_dict(cls: Type[TabularDataSpecT], data: Dict[str, Any]) -> TabularDataSpecT:
         dict_cts_raw: Dict[str, Any] = cls._get_from_data(key=cls._cts_specs_key, data=data)
         dict_cts_specs = {
-            name: ContinuousColumnSpec.from_dict(data=raw_spec)
+            name: ContinuousFeatureSpec.from_dict(data=raw_spec)
             for name, raw_spec in dict_cts_raw.items()
         }
         dict_cat_raw: Dict[str, Any] = cls._get_from_data(key=cls._cat_specs_key, data=data)
         dict_cat_specs = {
-            name: CategoricalColumnSpec.from_dict(data=raw_spec)
+            name: CategoricalFeatureSpec.from_dict(data=raw_spec)
             for name, raw_spec in dict_cat_raw.items()
         }
         features_order = cls._get_from_data(key=cls._features_order_key, data=data)
         return cls(
-            dict_cts_specs=dict_cts_specs,
-            dict_cat_specs=dict_cat_specs,
+            cts_feature_specs=dict_cts_specs,
+            cat_feature_specs=dict_cat_specs,
             features_order=list(features_order),
         )
 
     def to_dict(self) -> Dict[str, Any]:
         return {
-            self._cts_specs_key: {name: spec.to_dict() for name, spec in self._continuous.items()},
-            self._cat_specs_key: {name: spec.to_dict() for name, spec in self._categorical.items()},
-            self._features_order_key: list(self._ls_features),
+            self._cts_specs_key: {
+                name: spec.to_dict() for name, spec in self._cts_feature_specs.items()
+            },
+            self._cat_specs_key: {
+                name: spec.to_dict() for name, spec in self._cat_feature_specs.items()
+            },
+            self._features_order_key: list(self._features_order),
         }
 
     def _drop_missing_features(self, cont_set: Set[str], cat_set: Set[str]) -> None:
-        self._continuous = {
+        self._cts_feature_specs = {
             feature_name: feature_spec
-            for feature_name, feature_spec in self._continuous.items()
+            for feature_name, feature_spec in self._cts_feature_specs.items()
             if feature_name in cont_set
         }
-        self._categorical = {
+        self._cat_feature_specs = {
             feature_name: feature_spec
-            for feature_name, feature_spec in self._categorical.items()
+            for feature_name, feature_spec in self._cat_feature_specs.items()
             if feature_name in cat_set
         }
         self._features_order = [
@@ -236,7 +216,7 @@ class TabularDataSpec(Serializable, TabularDataSpecProtocol):
         ]
 
     def _assert_known_categories(
-        self, sr_data: pd.Series, cat_feature_spec: CategoricalColumnSpec, name: str
+        self, sr_data: pd.Series, cat_feature_spec: CategoricalFeatureSpec, name: str
     ) -> None:
         idx_unknown = pd.Index(sr_data.dropna().astype(str).unique()).difference(
             pd.Index(cat_feature_spec.ls_categories)
@@ -261,14 +241,14 @@ class TabularDataSpec(Serializable, TabularDataSpecProtocol):
         return [c for c in df_data.columns if c in cont_set or c in cat_set]
 
     @staticmethod
-    def _get_cts_spec_from_data(sr_data: pd.Series) -> ContinuousColumnSpec:
-        spec = ContinuousColumnSpec(dtype=sr_data.dtype.type)
+    def _get_cts_spec_from_data(sr_data: pd.Series) -> ContinuousFeatureSpec:
+        spec = ContinuousFeatureSpec(dtype=sr_data.dtype.type)
         return spec
 
     @staticmethod
-    def _get_cat_spec_from_data(sr_data: pd.Series) -> CategoricalColumnSpec:
-        ls_categories = sr_data.dropna().astype(str).unique().tolist()
-        spec = CategoricalColumnSpec(dtype=sr_data.dtype.type, ls_categories=ls_categories)  # type: ignore
+    def _get_cat_spec_from_data(sr_data: pd.Series) -> CategoricalFeatureSpec:
+        ls_categories = list(sr_data.dropna().astype(str).unique())
+        spec = CategoricalFeatureSpec(dtype=sr_data.dtype.type, ls_categories=ls_categories)
         return spec
 
     @classmethod
@@ -289,29 +269,29 @@ class TabularDataSpec(Serializable, TabularDataSpecProtocol):
     @classmethod
     def _build_hardcoded(
         cls,
-        ls_cts_features: Optional[List[str]] = None,
-        ls_cat_features: Optional[List[str]] = None,
+        cts_features: Optional[Sequence[str]] = None,
+        cat_features: Optional[Sequence[str]] = None,
     ) -> Dict[str, Any]:
-        if ls_cts_features is None:
-            ls_cts_features = []
-        if ls_cat_features is None:
-            ls_cat_features = []
-        cont_set = set(ls_cts_features)
-        cat_set = set(ls_cat_features)
+        if cts_features is None:
+            cts_features = []
+        if cat_features is None:
+            cat_features = []
+        cont_set = set(cts_features)
+        cat_set = set(cat_features)
         intersection = cont_set.intersection(cat_set)
         if intersection:
             raise ValueError(f"Categorical and continuous features overlap: {intersection}")
         hardcoded_spec: Dict[str, Any] = {
-            cls._cts_specs_key: {feat: cls._build_null_cts_spec() for feat in ls_cts_features},
-            cls._cat_specs_key: {feat: cls._build_null_cat_spec() for feat in ls_cat_features},
-            cls._features_order_key: ls_cts_features + ls_cat_features,
+            cls._cts_specs_key: {feat: cls._build_null_cts_spec() for feat in cts_features},
+            cls._cat_specs_key: {feat: cls._build_null_cat_spec() for feat in cat_features},
+            cls._features_order_key: SequenceConcatenator.concatenate(cts_features, cat_features),
         }
         return hardcoded_spec
 
     @staticmethod
-    def _build_null_cts_spec() -> ContinuousColumnSpec:
-        return ContinuousColumnSpec(dtype=float)
+    def _build_null_cts_spec() -> ContinuousFeatureSpec:
+        return ContinuousFeatureSpec(dtype=float)
 
     @staticmethod
-    def _build_null_cat_spec() -> CategoricalColumnSpec:
-        return CategoricalColumnSpec(dtype=str, ls_categories=[])
+    def _build_null_cat_spec() -> CategoricalFeatureSpec:
+        return CategoricalFeatureSpec(dtype=str, ls_categories=[])

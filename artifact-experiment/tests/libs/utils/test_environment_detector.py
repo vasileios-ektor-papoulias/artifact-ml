@@ -2,7 +2,7 @@ from typing import Callable, Dict, Generator
 from unittest.mock import MagicMock
 
 import pytest
-from artifact_experiment.libs.utils.environment_detector import Environment, EnvironmentDetector
+from artifact_experiment._utils.environment_detector import Environment, EnvironmentDetector
 from pytest_mock import MockerFixture
 
 

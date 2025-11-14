@@ -12,7 +12,7 @@ from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.base.trainer.trainer import Trainer
 from artifact_torch.libs.components.callbacks.export.checkpoint import TorchCheckpointCallback
 from artifact_torch.libs.components.early_stopping.epoch_bound import EpochBoundStopper
-from artifact_torch.table_comparison.model import TableSynthesizer
+from artifact_torch.table_comparison._model import TableSynthesizer
 from torch import optim
 
 from demos.table_comparison.config.constants import (

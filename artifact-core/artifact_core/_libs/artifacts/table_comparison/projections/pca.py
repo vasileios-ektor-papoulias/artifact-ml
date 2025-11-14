@@ -1,12 +1,12 @@
 from dataclasses import dataclass
-from typing import List, Optional, Type, TypeVar
+from typing import Optional, Sequence, Type, TypeVar
 
 import numpy as np
 import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.exceptions import NotFittedError
 
-from artifact_core._base.types.artifact_result import Array
+from artifact_core._base.typing.artifact_result import Array
 from artifact_core._libs.artifacts.table_comparison.projections.base.plotter import (
     ProjectionPlotter,
     ProjectionPlotterConfig,
@@ -30,8 +30,8 @@ class PCAProjector(ProjectorBase[PCAHyperparams]):
     @classmethod
     def build(
         cls: Type[PCAProjectorT],
-        ls_cat_features: List[str],
-        ls_cts_features: List[str],
+        cat_features: Sequence[str],
+        cts_features: Sequence[str],
         projector_config: Optional[PCAHyperparams] = None,
         plotter_config: Optional[ProjectionPlotterConfig] = None,
     ) -> PCAProjectorT:
@@ -41,8 +41,8 @@ class PCAProjector(ProjectorBase[PCAHyperparams]):
             plotter_config = ProjectionPlotterConfig()
         plotter = ProjectionPlotter(config=plotter_config)
         projector = cls(
-            ls_cat_features=ls_cat_features,
-            ls_cts_features=ls_cts_features,
+            cat_features=cat_features,
+            cts_features=cts_features,
             hyperparams=projector_config,
             plotter=plotter,
         )

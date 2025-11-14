@@ -1,7 +1,7 @@
 import pandas as pd
-from matplotlib.figure import Figure
 
-from artifact_core._base.contracts.hyperparams import NoArtifactHyperparams
+from artifact_core._base.core.hyperparams import NoArtifactHyperparams
+from artifact_core._base.typing.artifact_result import Plot
 from artifact_core._libs.artifacts.table_comparison.descriptive_stats.alignment_plotter import (
     DescriptiveStatsAlignmentPlotter,
 )
@@ -11,21 +11,19 @@ from artifact_core._libs.artifacts.table_comparison.descriptive_stats.calculator
 from artifact_core.table_comparison._artifacts.base import (
     TableComparisonPlot,
 )
-from artifact_core.table_comparison._registries.plots.registry import (
-    TableComparisonPlotRegistry,
-    TableComparisonPlotType,
-)
+from artifact_core.table_comparison._registries.plots import TableComparisonPlotRegistry
+from artifact_core.table_comparison._types.plots import TableComparisonPlotType
 
 
 @TableComparisonPlotRegistry.register_artifact(TableComparisonPlotType.DESCRIPTIVE_STATS_ALIGNMENT)
 class DescriptiveStatsAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Figure:
+    ) -> Plot:
         plot = DescriptiveStatsAlignmentPlotter.get_combined_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._resource_spec.ls_cts_features,
+            cts_features=self._resource_spec.cts_features,
         )
         return plot
 
@@ -34,11 +32,11 @@ class DescriptiveStatsAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
 class MeanAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Figure:
+    ) -> Plot:
         plot = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._resource_spec.ls_cts_features,
+            cts_features=self._resource_spec.cts_features,
             stat=DescriptiveStatistic.MEAN,
         )
         return plot
@@ -48,11 +46,11 @@ class MeanAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
 class STDAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Figure:
+    ) -> Plot:
         plot = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._resource_spec.ls_cts_features,
+            cts_features=self._resource_spec.cts_features,
             stat=DescriptiveStatistic.STD,
         )
         return plot
@@ -62,11 +60,11 @@ class STDAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
 class VarianceAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Figure:
+    ) -> Plot:
         plot = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._resource_spec.ls_cts_features,
+            cts_features=self._resource_spec.cts_features,
             stat=DescriptiveStatistic.VARIANCE,
         )
         return plot
@@ -76,11 +74,11 @@ class VarianceAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
 class MedianAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Figure:
+    ) -> Plot:
         plot = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._resource_spec.ls_cts_features,
+            cts_features=self._resource_spec.cts_features,
             stat=DescriptiveStatistic.MEDIAN,
         )
         return plot
@@ -90,11 +88,11 @@ class MedianAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
 class FirstQuartileAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Figure:
+    ) -> Plot:
         plot = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._resource_spec.ls_cts_features,
+            cts_features=self._resource_spec.cts_features,
             stat=DescriptiveStatistic.Q1,
         )
         return plot
@@ -104,11 +102,11 @@ class FirstQuartileAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
 class ThirdQuartileAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Figure:
+    ) -> Plot:
         plot = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._resource_spec.ls_cts_features,
+            cts_features=self._resource_spec.cts_features,
             stat=DescriptiveStatistic.Q3,
         )
         return plot
@@ -118,11 +116,11 @@ class ThirdQuartileAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
 class MaxAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Figure:
+    ) -> Plot:
         plot = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._resource_spec.ls_cts_features,
+            cts_features=self._resource_spec.cts_features,
             stat=DescriptiveStatistic.MAX,
         )
         return plot
@@ -132,11 +130,11 @@ class MaxAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
 class MinAlignmentPlot(TableComparisonPlot[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Figure:
+    ) -> Plot:
         plot = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=self._resource_spec.ls_cts_features,
+            cts_features=self._resource_spec.cts_features,
             stat=DescriptiveStatistic.MIN,
         )
         return plot

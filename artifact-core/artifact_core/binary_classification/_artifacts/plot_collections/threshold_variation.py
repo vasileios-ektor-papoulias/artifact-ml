@@ -3,21 +3,21 @@ from typing import Dict, Sequence, Type, TypeVar, Union
 
 from matplotlib.figure import Figure
 
-from artifact_core._base.contracts.hyperparams import ArtifactHyperparams
+from artifact_core._base.core.hyperparams import ArtifactHyperparams
 from artifact_core._libs.artifacts.binary_classification.threshold_variation.plotter import (
     ThresholdVariationCurvePlotter,
     ThresholdVariationCurveType,
     ThresholdVariationCurveTypeLiteral,
 )
-from artifact_core._libs.resources.binary_classification.category_store import BinaryCategoryStore
+from artifact_core._libs.resources.binary_classification.class_store import BinaryClassStore
 from artifact_core._libs.resources.binary_classification.classification_results import (
     BinaryClassificationResults,
 )
 from artifact_core.binary_classification._artifacts.base import BinaryClassificationPlotCollection
-from artifact_core.binary_classification._registries.plot_collections.registry import (
+from artifact_core.binary_classification._registries.plot_collections import (
     BinaryClassificationPlotCollectionRegistry,
 )
-from artifact_core.binary_classification._registries.plot_collections.types import (
+from artifact_core.binary_classification._types.plot_collections import (
     BinaryClassificationPlotCollectionType,
 )
 
@@ -58,12 +58,12 @@ class ThresholdVariationCurves(
 ):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, Figure]:
         plot_collection = ThresholdVariationCurvePlotter.plot_multiple(
             curve_types=self._hyperparams.curve_types,
-            true=true_category_store.id_to_is_positive,
+            true=true_class_store.id_to_is_positive,
             probs=classification_results.id_to_prob_pos,
         )
         result = {curve_type.value: plot for curve_type, plot in plot_collection.items()}

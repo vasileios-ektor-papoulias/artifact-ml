@@ -1,16 +1,13 @@
-from typing import Dict, List
+from typing import Mapping, Sequence
 
 import pandas as pd
 from matplotlib.figure import Figure
 
-from artifact_core._libs.artifacts.tools.plotters.overlaid_cdf_plotter import (
+from artifact_core._libs.tools.plotters.overlaid_cdf_plotter import (
     OverlaidCDFConfig,
     OverlaidCDFPlotter,
 )
-from artifact_core._libs.artifacts.tools.plotters.plot_combiner import (
-    PlotCombinationConfig,
-    PlotCombiner,
-)
+from artifact_core._libs.tools.plotters.plot_combiner import PlotCombinationConfig, PlotCombiner
 
 
 class TabularOverlaidCDFPlotter:
@@ -55,16 +52,14 @@ class TabularOverlaidCDFPlotter:
         cls,
         dataset_real: pd.DataFrame,
         dataset_synthetic: pd.DataFrame,
-        ls_cts_features: List[str],
+        cts_features: Sequence[str],
     ) -> Figure:
-        dict_plots = cls.get_overlaid_cdf_plot_collection(
+        plots = cls.get_overlaid_cdf_plot_collection(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=ls_cts_features,
+            cts_features=cts_features,
         )
-        combined_plot = PlotCombiner.combine(
-            dict_plots=dict_plots, config=cls._plot_combiner_config
-        )
+        combined_plot = PlotCombiner.combine(plots=plots, config=cls._plot_combiner_config)
         return combined_plot
 
     @classmethod
@@ -72,10 +67,10 @@ class TabularOverlaidCDFPlotter:
         cls,
         dataset_real: pd.DataFrame,
         dataset_synthetic: pd.DataFrame,
-        ls_cts_features: List[str],
-    ) -> Dict[str, Figure]:
+        cts_features: Sequence[str],
+    ) -> Mapping[str, Figure]:
         dict_plots = {}
-        for feature in ls_cts_features:
+        for feature in cts_features:
             cdf_plot = OverlaidCDFPlotter.plot_overlaid_cdf(
                 sr_data_a=dataset_real[feature],
                 sr_data_b=dataset_synthetic[feature],

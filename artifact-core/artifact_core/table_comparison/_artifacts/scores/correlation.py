@@ -3,7 +3,8 @@ from typing import Type, TypeVar, Union
 
 import pandas as pd
 
-from artifact_core._base.contracts.hyperparams import ArtifactHyperparams
+from artifact_core._base.core.hyperparams import ArtifactHyperparams
+from artifact_core._base.typing.artifact_result import Score
 from artifact_core._libs.artifacts.table_comparison.correlations.calculator import (
     CategoricalAssociationType,
     CategoricalAssociationTypeLiteral,
@@ -11,15 +12,13 @@ from artifact_core._libs.artifacts.table_comparison.correlations.calculator impo
     ContinuousAssociationTypeLiteral,
     CorrelationCalculator,
 )
-from artifact_core._libs.artifacts.tools.calculators.vector_distance_calculator import (
+from artifact_core._libs.tools.calculators.vector_distance_calculator import (
     VectorDistanceMetric,
     VectorDistanceMetricLiteral,
 )
 from artifact_core.table_comparison._artifacts.base import TableComparisonScore
-from artifact_core.table_comparison._registries.scores.registry import (
-    TableComparisonScoreRegistry,
-    TableComparisonScoreType,
-)
+from artifact_core.table_comparison._registries.scores import TableComparisonScoreRegistry
+from artifact_core.table_comparison._types.scores import TableComparisonScoreType
 
 PairwiseCorrelationDistanceHyperparamsT = TypeVar(
     "PairwiseCorrelationDistanceHyperparamsT", bound="CorrelationDistanceScoreHyperparams"
@@ -64,13 +63,13 @@ class CorrelationDistanceScoreHyperparams(ArtifactHyperparams):
 class CorrelationDistanceScore(TableComparisonScore[CorrelationDistanceScoreHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> float:
+    ) -> Score:
         pairwise_correlation_distance = CorrelationCalculator.compute_correlation_distance(
             categorical_correlation_type=self._hyperparams.categorical_association_type,
             continuous_correlation_type=self._hyperparams.continuous_association_type,
             distance_metric=self._hyperparams.vector_distance_metric,
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cat_features=self._resource_spec.ls_cat_features,
+            cat_features=self._resource_spec.cat_features,
         )
         return pairwise_correlation_distance

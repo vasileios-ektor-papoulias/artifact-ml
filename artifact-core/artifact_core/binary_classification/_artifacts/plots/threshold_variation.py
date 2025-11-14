@@ -1,31 +1,29 @@
 from matplotlib.figure import Figure
 
-from artifact_core._base.contracts.hyperparams import NoArtifactHyperparams
+from artifact_core._base.core.hyperparams import NoArtifactHyperparams
 from artifact_core._libs.artifacts.binary_classification.threshold_variation.plotter import (
     ThresholdVariationCurvePlotter,
     ThresholdVariationCurveType,
 )
-from artifact_core._libs.resources.binary_classification.category_store import BinaryCategoryStore
+from artifact_core._libs.resources.binary_classification.class_store import BinaryClassStore
 from artifact_core._libs.resources.binary_classification.classification_results import (
     BinaryClassificationResults,
 )
 from artifact_core.binary_classification._artifacts.base import BinaryClassificationPlot
-from artifact_core.binary_classification._registries.plots.registry import (
-    BinaryClassificationPlotRegistry,
-)
-from artifact_core.binary_classification._registries.plots.types import BinaryClassificationPlotType
+from artifact_core.binary_classification._registries.plots import BinaryClassificationPlotRegistry
+from artifact_core.binary_classification._types.plots import BinaryClassificationPlotType
 
 
 @BinaryClassificationPlotRegistry.register_artifact(BinaryClassificationPlotType.ROC_CURVE)
 class ROCCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> Figure:
         return ThresholdVariationCurvePlotter.plot(
             curve_type=ThresholdVariationCurveType.ROC,
-            true=true_category_store.id_to_is_positive,
+            true=true_class_store.id_to_is_positive,
             probs=classification_results.id_to_prob_pos,
         )
 
@@ -34,12 +32,12 @@ class ROCCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
 class PRCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> Figure:
         return ThresholdVariationCurvePlotter.plot(
             curve_type=ThresholdVariationCurveType.PR,
-            true=true_category_store.id_to_is_positive,
+            true=true_class_store.id_to_is_positive,
             probs=classification_results.id_to_prob_pos,
         )
 
@@ -48,12 +46,12 @@ class PRCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
 class DETCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> Figure:
         return ThresholdVariationCurvePlotter.plot(
             curve_type=ThresholdVariationCurveType.DET,
-            true=true_category_store.id_to_is_positive,
+            true=true_class_store.id_to_is_positive,
             probs=classification_results.id_to_prob_pos,
         )
 
@@ -64,12 +62,12 @@ class DETCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
 class RecallThresholdCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> Figure:
         return ThresholdVariationCurvePlotter.plot(
             curve_type=ThresholdVariationCurveType.RECALL_THRESHOLD,
-            true=true_category_store.id_to_is_positive,
+            true=true_class_store.id_to_is_positive,
             probs=classification_results.id_to_prob_pos,
         )
 
@@ -80,11 +78,11 @@ class RecallThresholdCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
 class PrecisionThresholdCurve(BinaryClassificationPlot[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> Figure:
         return ThresholdVariationCurvePlotter.plot(
             curve_type=ThresholdVariationCurveType.PRECISION_THRESHOLD,
-            true=true_category_store.id_to_is_positive,
+            true=true_class_store.id_to_is_positive,
             probs=classification_results.id_to_prob_pos,
         )

@@ -1,0 +1,5 @@
+import pandas as pd
+
+from artifact_core._domains.dataset_comparison.artifact import DatasetComparisonArtifactResources
+
+TableComparisonArtifactResources = DatasetComparisonArtifactResources[pd.DataFrame]

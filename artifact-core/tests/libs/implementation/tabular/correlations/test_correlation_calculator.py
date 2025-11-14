@@ -44,7 +44,7 @@ def test_compute_df_correlations(
         categorical_correlation_type=cat_corr,
         continuous_correlation_type=cont_corr,
         dataset=df,
-        ls_cat_features=cat_features,
+        cat_features=cat_features,
     )
 
     assert result.shape == expected_shape
@@ -88,7 +88,7 @@ def test_compute_df_correlation_difference(
         continuous_correlation_type=cont_corr,
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
-        ls_cat_features=cat_features,
+        cat_features=cat_features,
     )
 
     assert result.shape == expected_shape
@@ -136,7 +136,7 @@ def test_compute_correlation_distance(
         distance_metric=distance_metric,
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
-        ls_cat_features=cat_features,
+        cat_features=cat_features,
     )
     if expected_distance is not None:
         assert isclose(result, expected_distance, rel_tol=1e-7), (

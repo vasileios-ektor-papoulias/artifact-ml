@@ -1,12 +1,12 @@
 from dataclasses import dataclass
-from typing import List, Optional, Type, TypeVar
+from typing import Optional, Sequence, Type, TypeVar
 
 import pandas as pd
 from numpy.linalg import LinAlgError
 from sklearn.decomposition import TruncatedSVD
 from sklearn.exceptions import NotFittedError
 
-from artifact_core._base.types.artifact_result import Array
+from artifact_core._base.typing.artifact_result import Array
 from artifact_core._libs.artifacts.table_comparison.projections.base.plotter import (
     ProjectionPlotter,
     ProjectionPlotterConfig,
@@ -30,8 +30,8 @@ class TruncatedSVDProjector(ProjectorBase[TruncatedSVDHyperparams]):
     @classmethod
     def build(
         cls: Type[TruncatedSVDProjectorT],
-        ls_cat_features: List[str],
-        ls_cts_features: List[str],
+        cat_features: Sequence[str],
+        cts_features: Sequence[str],
         projector_config: Optional[TruncatedSVDHyperparams] = None,
         plotter_config: Optional[ProjectionPlotterConfig] = None,
     ) -> TruncatedSVDProjectorT:
@@ -42,8 +42,8 @@ class TruncatedSVDProjector(ProjectorBase[TruncatedSVDHyperparams]):
 
         plotter = ProjectionPlotter(config=plotter_config)
         return cls(
-            ls_cat_features=ls_cat_features,
-            ls_cts_features=ls_cts_features,
+            cat_features=cat_features,
+            cts_features=cts_features,
             hyperparams=projector_config,
             plotter=plotter,
         )

@@ -1,10 +1,12 @@
 import pandas as pd
 import pytest
-from artifact_core._tasks.dataset_comparison.artifact import DatasetComparisonArtifactResources
+from artifact_core._domains.dataset_comparison.artifact import DatasetComparisonArtifactResources
 from artifact_experiment.core.dataset_comparison.callback_resources import (
     DatasetComparisonCallbackResources,
 )
-from artifact_experiment.table_comparison.callback_resources import TableComparisonCallbackResources
+from artifact_experiment.table_comparison._callback_resources import (
+    TableComparisonCallbackResources,
+)
 
 
 @pytest.mark.unit

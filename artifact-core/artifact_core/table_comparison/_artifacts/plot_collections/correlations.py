@@ -4,7 +4,7 @@ from typing import Dict, Type, TypeVar, Union
 import pandas as pd
 from matplotlib.figure import Figure
 
-from artifact_core._base.contracts.hyperparams import ArtifactHyperparams
+from artifact_core._base.core.hyperparams import ArtifactHyperparams
 from artifact_core._libs.artifacts.table_comparison.correlations.calculator import (
     CategoricalAssociationType,
     CategoricalAssociationTypeLiteral,
@@ -15,10 +15,10 @@ from artifact_core._libs.artifacts.table_comparison.correlations.heatmap_plotter
     CorrelationHeatmapPlotter,
 )
 from artifact_core.table_comparison._artifacts.base import TableComparisonPlotCollection
-from artifact_core.table_comparison._registries.plot_collections.registry import (
+from artifact_core.table_comparison._registries.plot_collections import (
     TableComparisonPlotCollectionRegistry,
-    TableComparisonPlotCollectionType,
 )
+from artifact_core.table_comparison._types.plot_collections import TableComparisonPlotCollectionType
 
 CorrelationHeatmapsHyperparamsT = TypeVar(
     "CorrelationHeatmapsHyperparamsT", bound="CorrelationHeatmapsHyperparams"
@@ -66,6 +66,6 @@ class CorrelationHeatmaps(TableComparisonPlotCollection[CorrelationHeatmapsHyper
             continuous_correlation_type=self._hyperparams.continuous_association_type,
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cat_features=self._resource_spec.ls_cat_features,
+            cat_features=self._resource_spec.cat_features,
         )
         return dict_plots

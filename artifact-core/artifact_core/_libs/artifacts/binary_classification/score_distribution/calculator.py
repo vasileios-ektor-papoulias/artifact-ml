@@ -8,7 +8,7 @@ from artifact_core._libs.artifacts.binary_classification.score_distribution.part
 from artifact_core._libs.artifacts.binary_classification.score_distribution.sampler import (
     ScoreDistributionSampler,
 )
-from artifact_core._libs.artifacts.tools.calculators.descriptive_stats_calculator import (
+from artifact_core._libs.tools.calculators.descriptive_stats_calculator import (
     DescriptiveStatistic,
     DescriptiveStatsCalculator,
 )
@@ -45,7 +45,7 @@ class ScoreStatsCalculator:
         id_to_prob_pos: Mapping[Hashable, float],
         stats: Sequence[DescriptiveStatistic],
         splits: Sequence[BinarySampleSplit],
-    ) -> Dict[DescriptiveStatistic, Dict[BinarySampleSplit, float]]:
+    ) -> Mapping[DescriptiveStatistic, Mapping[BinarySampleSplit, float]]:
         if not stats or not splits:
             return {}
         df = cls.compute_as_df(
@@ -70,7 +70,7 @@ class ScoreStatsCalculator:
         id_to_prob_pos: Mapping[Hashable, float],
         stats: Sequence[DescriptiveStatistic],
         split: BinarySampleSplit,
-    ) -> Dict[DescriptiveStatistic, float]:
+    ) -> Mapping[DescriptiveStatistic, float]:
         if not stats:
             return {}
         df = cls.compute_as_df(
@@ -90,7 +90,7 @@ class ScoreStatsCalculator:
         id_to_prob_pos: Mapping[Hashable, float],
         stat: DescriptiveStatistic,
         splits: Sequence[BinarySampleSplit],
-    ) -> Dict[BinarySampleSplit, float]:
+    ) -> Mapping[BinarySampleSplit, float]:
         if not splits:
             return {}
         df = cls.compute_as_df(

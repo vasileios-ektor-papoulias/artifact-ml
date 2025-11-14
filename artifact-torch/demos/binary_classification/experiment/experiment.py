@@ -5,9 +5,9 @@ from artifact_torch.base.components.routines.loader import DataLoaderRoutine
 from artifact_torch.base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.base.trainer.trainer import Trainer
-from artifact_torch.binary_classification.experiment import BinaryClassificationExperiment
-from artifact_torch.binary_classification.model import BinaryClassifier
-from artifact_torch.binary_classification.routine import BinaryClassificationRoutine
+from artifact_torch.binary_classification._experiment import BinaryClassificationExperiment
+from artifact_torch.binary_classification._model import BinaryClassifier
+from artifact_torch.binary_classification._routine import BinaryClassificationRoutine
 
 from demos.binary_classification.components.protocols import DemoClassificationParams
 from demos.binary_classification.components.routines.artifact import DemoBinaryClassificationRoutine

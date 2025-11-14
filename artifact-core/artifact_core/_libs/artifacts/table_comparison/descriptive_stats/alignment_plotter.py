@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List
+from typing import Mapping, Sequence
 
 import numpy as np
 import pandas as pd
@@ -7,15 +7,12 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 from matplotlib.figure import Figure
 
-from artifact_core._base.types.artifact_result import Array
+from artifact_core._base.typing.artifact_result import Array
 from artifact_core._libs.artifacts.table_comparison.descriptive_stats.calculator import (
     DescriptiveStatistic,
     TableStatsCalculator,
 )
-from artifact_core._libs.artifacts.tools.plotters.plot_combiner import (
-    PlotCombinationConfig,
-    PlotCombiner,
-)
+from artifact_core._libs.tools.plotters.plot_combiner import PlotCombinationConfig, PlotCombiner
 
 
 @dataclass(frozen=True)
@@ -44,20 +41,20 @@ class DescriptiveStatsAlignmentPlotter:
         include_fig_titles=False,
         combined_title="Descriptive Statistics Comparison",
     )
-    _ls_stats: List[DescriptiveStatistic] = [stat for stat in DescriptiveStatistic]
+    _stats: Sequence[DescriptiveStatistic] = [stat for stat in DescriptiveStatistic]
 
     @classmethod
     def get_stat_alignment_plot(
         cls,
         dataset_real: pd.DataFrame,
         dataset_synthetic: pd.DataFrame,
-        ls_cts_features: List[str],
+        cts_features: Sequence[str],
         stat: DescriptiveStatistic,
     ) -> Figure:
         dict_stats = TableStatsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
-            ls_cts_features=ls_cts_features,
+            cts_features=cts_features,
             stat=stat,
         )
         if not dict_stats:
@@ -79,17 +76,15 @@ class DescriptiveStatsAlignmentPlotter:
         cls,
         dataset_real: pd.DataFrame,
         dataset_synthetic: pd.DataFrame,
-        ls_cts_features: List[str],
+        cts_features: Sequence[str],
     ) -> Figure:
-        dict_plots = cls._get_stat_alignment_plot_collection(
+        plots = cls._get_stat_alignment_plot_collection(
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cts_features=ls_cts_features,
-            ls_stats=cls._ls_stats,
+            ls_cts_features=cts_features,
+            stats=cls._stats,
         )
-        combined_plot = PlotCombiner.combine(
-            dict_plots=dict_plots, config=cls._plot_combiner_config
-        )
+        combined_plot = PlotCombiner.combine(plots=plots, config=cls._plot_combiner_config)
         return combined_plot
 
     @classmethod
@@ -97,15 +92,15 @@ class DescriptiveStatsAlignmentPlotter:
         cls,
         dataset_real: pd.DataFrame,
         dataset_synthetic: pd.DataFrame,
-        ls_cts_features: List[str],
-        ls_stats: List[DescriptiveStatistic],
-    ) -> Dict[str, Figure]:
+        ls_cts_features: Sequence[str],
+        stats: Sequence[DescriptiveStatistic],
+    ) -> Mapping[str, Figure]:
         dict_plots = {}
-        for stat in ls_stats:
+        for stat in stats:
             plot = cls.get_stat_alignment_plot(
                 dataset_real=dataset_real,
                 dataset_synthetic=dataset_synthetic,
-                ls_cts_features=ls_cts_features,
+                cts_features=ls_cts_features,
                 stat=stat,
             )
             dict_plots[stat.name] = plot

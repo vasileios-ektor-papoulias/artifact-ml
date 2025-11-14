@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Generic, List, Optional, TypeVar
+from typing import Generic, Optional, Sequence, TypeVar
 
 import pandas as pd
 from matplotlib.figure import Figure
 
-from artifact_core._base.types.artifact_result import Array
+from artifact_core._base.typing.artifact_result import Array
 from artifact_core._libs.artifacts.table_comparison.projections.base.plotter import (
     ProjectionPlotter,
 )
@@ -21,16 +21,14 @@ class ProjectorHyperparams:
 class ProjectorBase(ABC, Generic[ProjectorHyperparamsT]):
     def __init__(
         self,
-        ls_cat_features: List[str],
-        ls_cts_features: List[str],
+        cat_features: Sequence[str],
+        cts_features: Sequence[str],
         hyperparams: ProjectorHyperparamsT,
         plotter: ProjectionPlotter,
     ):
-        self._validate_resource_spec(
-            ls_cat_features=ls_cat_features, ls_cts_features=ls_cts_features
-        )
-        self._ls_cat_features = ls_cat_features
-        self._ls_cts_features = ls_cts_features
+        self._validate_resource_spec(cat_features=cat_features, cts_features=cts_features)
+        self._ls_cat_features = cat_features
+        self._ls_cts_features = cts_features
         self._hyperparams = hyperparams
         self._plotter = plotter
         self._projection_name = self._get_projection_name()
@@ -82,9 +80,9 @@ class ProjectorBase(ABC, Generic[ProjectorHyperparamsT]):
         return dataset_preprocessed
 
     @staticmethod
-    def _validate_resource_spec(ls_cat_features: List[str], ls_cts_features: List[str]):
-        if not ls_cat_features and not ls_cts_features:
+    def _validate_resource_spec(cat_features: Sequence[str], cts_features: Sequence[str]):
+        if not cat_features and not cts_features:
             raise ValueError("Both categorical and continuous feature lists are empty.")
-        overlap = set(ls_cat_features).intersection(ls_cts_features)
+        overlap = set(cat_features).intersection(cts_features)
         if overlap:
             raise ValueError(f"Categorical and continuous features overlap: {overlap}")

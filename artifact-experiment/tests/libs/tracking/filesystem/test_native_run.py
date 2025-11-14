@@ -2,7 +2,7 @@ import os
 from typing import Callable, Optional
 
 import pytest
-from artifact_experiment.libs.tracking.filesystem.native_run import FilesystemRun
+from artifact_experiment._impl.filesystem.native_run import FilesystemRun
 
 
 @pytest.mark.unit

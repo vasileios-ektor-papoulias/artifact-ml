@@ -4,7 +4,7 @@ from uuid import UUID
 
 import pytest
 from artifact_core._base.primitives import ArtifactResult
-from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter, NeptuneRunStatus
+from artifact_experiment._impl.neptune.adapter import NeptuneRunAdapter, NeptuneRunStatus
 
 
 @pytest.mark.unit

@@ -3,8 +3,8 @@ from typing import Callable, Dict, List, Optional, Tuple
 from unittest.mock import ANY
 
 import pytest
-from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRunAdapter
-from artifact_experiment.libs.tracking.filesystem.loggers.plot_collections import (
+from artifact_experiment._impl.filesystem.adapter import FilesystemRunAdapter
+from artifact_experiment._impl.filesystem.loggers.plot_collections import (
     FilesystemPlotCollectionLogger,
 )
 from pytest_mock import MockerFixture

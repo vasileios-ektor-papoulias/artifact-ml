@@ -3,21 +3,21 @@ from typing import Callable, Optional, Tuple
 from unittest.mock import MagicMock
 
 import pytest
-from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRunAdapter
-from artifact_experiment.libs.tracking.filesystem.client import FilesystemTrackingClient
-from artifact_experiment.libs.tracking.filesystem.loggers.array_collections import (
+from artifact_experiment._impl.filesystem.adapter import FilesystemRunAdapter
+from artifact_experiment._impl.filesystem.client import FilesystemTrackingClient
+from artifact_experiment._impl.filesystem.loggers.array_collections import (
     FilesystemArrayCollectionLogger,
 )
-from artifact_experiment.libs.tracking.filesystem.loggers.arrays import FilesystemArrayLogger
-from artifact_experiment.libs.tracking.filesystem.loggers.plot_collections import (
+from artifact_experiment._impl.filesystem.loggers.arrays import FilesystemArrayLogger
+from artifact_experiment._impl.filesystem.loggers.plot_collections import (
     FilesystemPlotCollectionLogger,
 )
-from artifact_experiment.libs.tracking.filesystem.loggers.plots import FilesystemPlotLogger
-from artifact_experiment.libs.tracking.filesystem.loggers.score_collections import (
+from artifact_experiment._impl.filesystem.loggers.plots import FilesystemPlotLogger
+from artifact_experiment._impl.filesystem.loggers.score_collections import (
     FilesystemScoreCollectionLogger,
 )
-from artifact_experiment.libs.tracking.filesystem.loggers.scores import FilesystemScoreLogger
-from artifact_experiment.libs.tracking.filesystem.native_run import FilesystemRun
+from artifact_experiment._impl.filesystem.loggers.scores import FilesystemScoreLogger
+from artifact_experiment._impl.filesystem.native_run import FilesystemRun
 from pytest_mock import MockerFixture
 
 

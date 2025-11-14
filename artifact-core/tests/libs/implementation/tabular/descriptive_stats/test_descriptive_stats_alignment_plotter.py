@@ -157,7 +157,7 @@ def test_get_stat_comparison_plot(
     result = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
-        ls_cts_features=ls_cts_features,
+        cts_features=ls_cts_features,
         stat=stat,
     )
     assert isinstance(result, Figure), "Result should be a Figure"

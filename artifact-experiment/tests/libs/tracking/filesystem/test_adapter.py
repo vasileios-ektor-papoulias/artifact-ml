@@ -3,8 +3,8 @@ from typing import Callable, Optional, Tuple
 from uuid import UUID
 
 import pytest
-from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRunAdapter
-from artifact_experiment.libs.tracking.filesystem.native_run import FilesystemRun
+from artifact_experiment._impl.filesystem.adapter import FilesystemRunAdapter
+from artifact_experiment._impl.filesystem.native_run import FilesystemRun
 from pytest_mock import MockerFixture
 
 

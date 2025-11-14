@@ -1,5 +1,5 @@
 import pytest
-from artifact_experiment.libs.ui.directory_open_button import DirectoryOpenButton
+from artifact_experiment._impl.ui.directory_open_button import DirectoryOpenButton
 from pytest_mock import MockerFixture
 
 

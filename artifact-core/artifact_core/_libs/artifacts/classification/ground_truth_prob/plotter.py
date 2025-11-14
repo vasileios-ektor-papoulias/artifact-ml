@@ -4,17 +4,15 @@ import pandas as pd
 from artifact_core._libs.artifacts.classification.ground_truth_prob.calculator import (
     GroundTruthProbCalculator,
 )
-from artifact_core._libs.artifacts.tools.plotters.pdf_plotter import PDFConfig, PDFPlotter
-from artifact_core._libs.resource_specs.classification.protocol import (
-    CategoricalFeatureSpecProtocol,
-)
-from artifact_core._libs.resources.classification.category_store import CategoryStore
+from artifact_core._libs.resource_specs.classification.protocol import ClassSpecProtocol
+from artifact_core._libs.resources.classification.class_store import ClassStore
 from artifact_core._libs.resources.classification.classification_results import (
     ClassificationResults,
 )
 from artifact_core._libs.resources.classification.distribution_store import (
-    CategoricalDistributionStore,
+    ClassDistributionStore,
 )
+from artifact_core._libs.tools.plotters.pdf_plotter import PDFConfig, PDFPlotter
 from matplotlib.figure import Figure
 
 
@@ -36,12 +34,12 @@ class GroundTruthProbPDFPlotter:
     def plot(
         cls,
         classification_results: ClassificationResults[
-            CategoricalFeatureSpecProtocol, CategoryStore, CategoricalDistributionStore
+            ClassSpecProtocol, ClassStore, ClassDistributionStore
         ],
-        true_category_store: CategoryStore,
+        true_class_store: ClassStore,
     ) -> Figure:
         id_to_prob_ground_truth = GroundTruthProbCalculator.compute_id_to_prob_ground_truth(
-            classification_results=classification_results, true_category_store=true_category_store
+            classification_results=classification_results, true_class_store=true_class_store
         )
         fig = cls._plot(id_to_prob_ground_truth=id_to_prob_ground_truth)
         return fig

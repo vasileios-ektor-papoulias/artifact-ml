@@ -4,20 +4,20 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
-from artifact_experiment.libs.tracking.mlflow.adapter import MlflowNativeRun, MlflowRunAdapter
-from artifact_experiment.libs.tracking.mlflow.client import MlflowTrackingClient
-from artifact_experiment.libs.tracking.mlflow.loggers.array_collections import (
+from artifact_experiment._impl.mlflow.adapter import MlflowNativeRun, MlflowRunAdapter
+from artifact_experiment._impl.mlflow.client import MlflowTrackingClient
+from artifact_experiment._impl.mlflow.loggers.array_collections import (
     MlflowArrayCollectionLogger,
 )
-from artifact_experiment.libs.tracking.mlflow.loggers.arrays import MlflowArrayLogger
-from artifact_experiment.libs.tracking.mlflow.loggers.plot_collections import (
+from artifact_experiment._impl.mlflow.loggers.arrays import MlflowArrayLogger
+from artifact_experiment._impl.mlflow.loggers.plot_collections import (
     MlflowPlotCollectionLogger,
 )
-from artifact_experiment.libs.tracking.mlflow.loggers.plots import MlflowPlotLogger
-from artifact_experiment.libs.tracking.mlflow.loggers.score_collections import (
+from artifact_experiment._impl.mlflow.loggers.plots import MlflowPlotLogger
+from artifact_experiment._impl.mlflow.loggers.score_collections import (
     MlflowScoreCollectionLogger,
 )
-from artifact_experiment.libs.tracking.mlflow.loggers.scores import MlflowScoreLogger
+from artifact_experiment._impl.mlflow.loggers.scores import MlflowScoreLogger
 from pytest_mock import MockerFixture
 
 

@@ -2,9 +2,9 @@ from dataclasses import dataclass
 from typing import Type, TypeVar, Union
 
 import pandas as pd
-from matplotlib.figure import Figure
 
-from artifact_core._base.contracts.hyperparams import ArtifactHyperparams
+from artifact_core._base.core.hyperparams import ArtifactHyperparams
+from artifact_core._base.typing.artifact_result import Plot
 from artifact_core._libs.artifacts.table_comparison.correlations.calculator import (
     CategoricalAssociationType,
     CategoricalAssociationTypeLiteral,
@@ -17,10 +17,8 @@ from artifact_core._libs.artifacts.table_comparison.correlations.heatmap_plotter
 from artifact_core.table_comparison._artifacts.base import (
     TableComparisonPlot,
 )
-from artifact_core.table_comparison._registries.plots.registry import (
-    TableComparisonPlotRegistry,
-    TableComparisonPlotType,
-)
+from artifact_core.table_comparison._registries.plots import TableComparisonPlotRegistry
+from artifact_core.table_comparison._types.plots import TableComparisonPlotType
 
 CorrelationHeatmapJuxtapositionPlotHyperparamsT = TypeVar(
     "CorrelationHeatmapJuxtapositionPlotHyperparamsT",
@@ -65,12 +63,12 @@ class CorrelationHeatmapJuxtapositionPlot(
 ):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Figure:
+    ) -> Plot:
         plot = CorrelationHeatmapPlotter.get_combined_correlation_heatmaps(
             categorical_correlation_type=self._hyperparams.categorical_association_type,
             continuous_correlation_type=self._hyperparams.continuous_association_type,
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cat_features=self._resource_spec.ls_cat_features,
+            cat_features=self._resource_spec.cat_features,
         )
         return plot

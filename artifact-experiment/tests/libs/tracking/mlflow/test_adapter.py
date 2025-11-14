@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
-from artifact_experiment.libs.tracking.mlflow.adapter import MlflowNativeRun, MlflowRunAdapter
+from artifact_experiment._impl.mlflow.adapter import MlflowNativeRun, MlflowRunAdapter
 from mlflow.entities import RunStatus
 from pytest_mock import MockerFixture
 

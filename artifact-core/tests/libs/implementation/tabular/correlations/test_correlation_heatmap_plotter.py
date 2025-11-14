@@ -44,7 +44,7 @@ def test_get_correlation_heatmap(
         categorical_correlation_type=cat_corr_type,
         continuous_correlation_type=cont_corr_type,
         dataset=df,
-        ls_cat_features=cat_features,
+        cat_features=cat_features,
     )
     assert isinstance(result, Figure), "Result should be a Figure"
     assert result.get_axes(), "Figure should have at least one axis"
@@ -98,7 +98,7 @@ def test_get_correlation_difference_heatmap(
         continuous_correlation_type=cont_corr_type,
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
-        ls_cat_features=cat_features,
+        cat_features=cat_features,
     )
     assert isinstance(result, Figure), "Result should be a Figure"
     assert result.get_axes(), "Figure should have at least one axis"
@@ -155,7 +155,7 @@ def test_get_combined_correlation_plot(
         continuous_correlation_type=cont_corr_type,
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
-        ls_cat_features=cat_features,
+        cat_features=cat_features,
     )
     assert isinstance(result, Figure), "Result should be a Figure"
     assert result.get_axes(), "Figure should have at least one axis"
@@ -208,7 +208,7 @@ def test_get_combined_correlation_plot_with_custom_config(
         continuous_correlation_type=ContinuousAssociationType.PEARSON,
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
-        ls_cat_features=cat_features,
+        cat_features=cat_features,
         plot_combiner_config=custom_config,
     )
 

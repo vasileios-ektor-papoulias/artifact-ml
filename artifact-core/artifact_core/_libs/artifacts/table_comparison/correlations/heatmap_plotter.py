@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, List, Literal
+from typing import Literal, Mapping, Sequence
 
 import pandas as pd
 import seaborn as sns
@@ -12,10 +12,7 @@ from artifact_core._libs.artifacts.table_comparison.correlations.calculator impo
     ContinuousAssociationType,
     CorrelationCalculator,
 )
-from artifact_core._libs.artifacts.tools.plotters.plot_combiner import (
-    PlotCombinationConfig,
-    PlotCombiner,
-)
+from artifact_core._libs.tools.plotters.plot_combiner import PlotCombinationConfig, PlotCombiner
 
 
 @dataclass
@@ -65,27 +62,27 @@ class CorrelationHeatmapPlotter:
         continuous_correlation_type: ContinuousAssociationType,
         dataset_real: pd.DataFrame,
         dataset_synthetic: pd.DataFrame,
-        ls_cat_features: List[str],
-    ) -> Dict[str, Figure]:
+        cat_features: Sequence[str],
+    ) -> Mapping[str, Figure]:
         dict_plots = {}
         dict_plots[cls._combined_plot_real_key] = cls.get_correlation_heatmap(
             categorical_correlation_type=categorical_correlation_type,
             continuous_correlation_type=continuous_correlation_type,
             dataset=dataset_real,
-            ls_cat_features=ls_cat_features,
+            cat_features=cat_features,
         )
         dict_plots[cls._combined_plot_synthetic_key] = cls.get_correlation_heatmap(
             categorical_correlation_type=categorical_correlation_type,
             continuous_correlation_type=continuous_correlation_type,
             dataset=dataset_synthetic,
-            ls_cat_features=ls_cat_features,
+            cat_features=cat_features,
         )
         dict_plots[cls._combined_plor_difference_key] = cls.get_correlation_difference_heatmap(
             categorical_correlation_type=categorical_correlation_type,
             continuous_correlation_type=continuous_correlation_type,
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cat_features=ls_cat_features,
+            cat_features=cat_features,
         )
         return dict_plots
 
@@ -96,7 +93,7 @@ class CorrelationHeatmapPlotter:
         continuous_correlation_type: ContinuousAssociationType,
         dataset_real: pd.DataFrame,
         dataset_synthetic: pd.DataFrame,
-        ls_cat_features: List[str],
+        cat_features: Sequence[str],
         plot_combiner_config=_plot_combiner_config,
     ) -> Figure:
         dict_plots = {}
@@ -104,22 +101,22 @@ class CorrelationHeatmapPlotter:
             categorical_correlation_type=categorical_correlation_type,
             continuous_correlation_type=continuous_correlation_type,
             dataset=dataset_real,
-            ls_cat_features=ls_cat_features,
+            cat_features=cat_features,
         )
         dict_plots[cls._combined_plot_synthetic_key] = cls.get_correlation_heatmap(
             categorical_correlation_type=categorical_correlation_type,
             continuous_correlation_type=continuous_correlation_type,
             dataset=dataset_synthetic,
-            ls_cat_features=ls_cat_features,
+            cat_features=cat_features,
         )
         dict_plots[cls._combined_plor_difference_key] = cls.get_correlation_difference_heatmap(
             categorical_correlation_type=categorical_correlation_type,
             continuous_correlation_type=continuous_correlation_type,
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cat_features=ls_cat_features,
+            cat_features=cat_features,
         )
-        combined_plot = PlotCombiner.combine(dict_plots=dict_plots, config=plot_combiner_config)
+        combined_plot = PlotCombiner.combine(plots=dict_plots, config=plot_combiner_config)
         return combined_plot
 
     @classmethod
@@ -128,13 +125,13 @@ class CorrelationHeatmapPlotter:
         categorical_correlation_type: CategoricalAssociationType,
         continuous_correlation_type: ContinuousAssociationType,
         dataset: pd.DataFrame,
-        ls_cat_features: List[str],
+        cat_features: Sequence[str],
     ) -> Figure:
         df_correlations = CorrelationCalculator.compute_df_correlations(
             categorical_correlation_type=categorical_correlation_type,
             continuous_correlation_type=continuous_correlation_type,
             dataset=dataset,
-            ls_cat_features=ls_cat_features,
+            cat_features=cat_features,
         )
         subtitle = cls._get_heatmap_subtitle(
             categorical_correlation_type=categorical_correlation_type,
@@ -155,14 +152,14 @@ class CorrelationHeatmapPlotter:
         continuous_correlation_type: ContinuousAssociationType,
         dataset_real: pd.DataFrame,
         dataset_synthetic: pd.DataFrame,
-        ls_cat_features: List[str],
+        cat_features: Sequence[str],
     ) -> Figure:
         df_correlation_difference = CorrelationCalculator.compute_df_correlation_difference(
             categorical_correlation_type=categorical_correlation_type,
             continuous_correlation_type=continuous_correlation_type,
             dataset_real=dataset_real,
             dataset_synthetic=dataset_synthetic,
-            ls_cat_features=ls_cat_features,
+            cat_features=cat_features,
         )
         subtitle = cls._get_heatmap_subtitle(
             categorical_correlation_type=categorical_correlation_type,

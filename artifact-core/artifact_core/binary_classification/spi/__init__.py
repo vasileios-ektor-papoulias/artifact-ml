@@ -1,49 +1,49 @@
 from artifact_core._libs.resource_specs.binary_classification.protocol import (
-    BinaryFeatureSpecProtocol,
+    BinaryClassSpecProtocol,
 )
-from artifact_core._libs.resources.binary_classification.category_store import BinaryCategoryStore
-from artifact_core._libs.resources.binary_classification.classification_results import (
-    BinaryClassificationResults,
-)
-from artifact_core._libs.resources.binary_classification.distribution_store import (
-    BinaryDistributionStore,
-)
-from artifact_core._libs.resources.tools.entity_store import IdentifierType
 from artifact_core.binary_classification._artifacts.base import (
+    BinaryClassificationArray,
+    BinaryClassificationArrayCollection,
     BinaryClassificationArtifact,
-    BinaryClassificationArtifactResources,
+    BinaryClassificationPlot,
+    BinaryClassificationPlotCollection,
+    BinaryClassificationScore,
+    BinaryClassificationScoreCollection,
 )
-from artifact_core.binary_classification._registries.array_collections.registry import (
+from artifact_core.binary_classification._registries.array_collections import (
     BinaryClassificationArrayCollectionRegistry,
 )
-from artifact_core.binary_classification._registries.arrays.registry import (
+from artifact_core.binary_classification._registries.arrays import (
     BinaryClassificationArrayRegistry,
 )
-from artifact_core.binary_classification._registries.plot_collections.registry import (
+from artifact_core.binary_classification._registries.plot_collections import (
     BinaryClassificationPlotCollectionRegistry,
 )
-from artifact_core.binary_classification._registries.plots.registry import (
+from artifact_core.binary_classification._registries.plots import (
     BinaryClassificationPlotRegistry,
 )
-from artifact_core.binary_classification._registries.score_collections.registry import (
+from artifact_core.binary_classification._registries.score_collections import (
     BinaryClassificationScoreCollectionRegistry,
 )
-from artifact_core.binary_classification._registries.scores.registry import (
+from artifact_core.binary_classification._registries.scores import (
     BinaryClassificationScoreRegistry,
 )
+from artifact_core.binary_classification._resources import BinaryClassificationArtifactResources
 
 __all__ = [
-    "BinaryFeatureSpecProtocol",
-    "BinaryCategoryStore",
-    "BinaryClassificationResults",
-    "BinaryDistributionStore",
-    "IdentifierType",
+    "BinaryClassSpecProtocol",
+    "BinaryClassificationArray",
+    "BinaryClassificationArrayCollection",
     "BinaryClassificationArtifact",
-    "BinaryClassificationArtifactResources",
+    "BinaryClassificationPlot",
+    "BinaryClassificationPlotCollection",
+    "BinaryClassificationScore",
+    "BinaryClassificationScoreCollection",
     "BinaryClassificationArrayCollectionRegistry",
     "BinaryClassificationArrayRegistry",
     "BinaryClassificationPlotCollectionRegistry",
     "BinaryClassificationPlotRegistry",
     "BinaryClassificationScoreCollectionRegistry",
     "BinaryClassificationScoreRegistry",
+    "BinaryClassificationArtifactResources",
 ]

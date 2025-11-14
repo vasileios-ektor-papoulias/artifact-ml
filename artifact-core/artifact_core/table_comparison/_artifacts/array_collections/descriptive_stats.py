@@ -1,18 +1,16 @@
-from typing import Dict
-
 import pandas as pd
 
-from artifact_core._base.contracts.hyperparams import NoArtifactHyperparams
-from artifact_core._base.types.artifact_result import Array
+from artifact_core._base.core.hyperparams import NoArtifactHyperparams
+from artifact_core._base.typing.artifact_result import ArrayCollection
 from artifact_core._libs.artifacts.table_comparison.descriptive_stats.calculator import (
-    DescriptiveStatistic,
     TableStatsCalculator,
 )
-from artifact_core.table_comparison._artifacts.base import (
-    TableComparisonArrayCollection,
-)
-from artifact_core.table_comparison._registries.array_collections.registry import (
+from artifact_core._libs.tools.calculators.descriptive_stats_calculator import DescriptiveStatistic
+from artifact_core.table_comparison._artifacts.base import TableComparisonArrayCollection
+from artifact_core.table_comparison._registries.array_collections import (
     TableComparisonArrayCollectionRegistry,
+)
+from artifact_core.table_comparison._types.array_collections import (
     TableComparisonArrayCollectionType,
 )
 
@@ -23,11 +21,11 @@ from artifact_core.table_comparison._registries.array_collections.registry impor
 class MeanJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Dict[str, Array]:
+    ) -> ArrayCollection:
         result = TableStatsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
-            ls_cts_features=self._resource_spec.ls_cts_features,
+            cts_features=self._resource_spec.cts_features,
             stat=DescriptiveStatistic.MEAN,
         )
         return result
@@ -39,11 +37,11 @@ class MeanJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperpara
 class STDJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Dict[str, Array]:
+    ) -> ArrayCollection:
         result = TableStatsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
-            ls_cts_features=self._resource_spec.ls_cts_features,
+            cts_features=self._resource_spec.cts_features,
             stat=DescriptiveStatistic.STD,
         )
         return result
@@ -55,11 +53,11 @@ class STDJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparam
 class VarianceJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Dict[str, Array]:
+    ) -> ArrayCollection:
         result = TableStatsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
-            ls_cts_features=self._resource_spec.ls_cts_features,
+            cts_features=self._resource_spec.cts_features,
             stat=DescriptiveStatistic.VARIANCE,
         )
         return result
@@ -71,11 +69,11 @@ class VarianceJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyper
 class MedianJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Dict[str, Array]:
+    ) -> ArrayCollection:
         result = TableStatsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
-            ls_cts_features=self._resource_spec.ls_cts_features,
+            cts_features=self._resource_spec.cts_features,
             stat=DescriptiveStatistic.MEDIAN,
         )
         return result
@@ -87,11 +85,11 @@ class MedianJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperpa
 class FirstQuartileJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Dict[str, Array]:
+    ) -> ArrayCollection:
         result = TableStatsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
-            ls_cts_features=self._resource_spec.ls_cts_features,
+            cts_features=self._resource_spec.cts_features,
             stat=DescriptiveStatistic.Q1,
         )
         return result
@@ -103,11 +101,11 @@ class FirstQuartileJuxtapositionArrays(TableComparisonArrayCollection[NoArtifact
 class ThirdQuartileJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Dict[str, Array]:
+    ) -> ArrayCollection:
         result = TableStatsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
-            ls_cts_features=self._resource_spec.ls_cts_features,
+            cts_features=self._resource_spec.cts_features,
             stat=DescriptiveStatistic.Q3,
         )
         return result
@@ -119,11 +117,11 @@ class ThirdQuartileJuxtapositionArrays(TableComparisonArrayCollection[NoArtifact
 class MinJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Dict[str, Array]:
+    ) -> ArrayCollection:
         result = TableStatsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
-            ls_cts_features=self._resource_spec.ls_cts_features,
+            cts_features=self._resource_spec.cts_features,
             stat=DescriptiveStatistic.MIN,
         )
         return result
@@ -135,11 +133,11 @@ class MinJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparam
 class MaxJuxtapositionArrays(TableComparisonArrayCollection[NoArtifactHyperparams]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
-    ) -> Dict[str, Array]:
+    ) -> ArrayCollection:
         result = TableStatsCalculator.compute_juxtaposition(
             df_real=dataset_real,
             df_synthetic=dataset_synthetic,
-            ls_cts_features=self._resource_spec.ls_cts_features,
+            cts_features=self._resource_spec.cts_features,
             stat=DescriptiveStatistic.MAX,
         )
         return result

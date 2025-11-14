@@ -6,7 +6,7 @@ from artifact_core.table_comparison._artifacts.base import (
     TableComparisonScoreCollection,
 )
 from artifact_core.table_comparison._artifacts.score_collections.js import JSDistanceScores
-from artifact_core.table_comparison._registries.score_collections.registry import (
+from artifact_core.table_comparison._registries.score_collections.score_collections import (
     TableComparisonScoreCollectionRegistry,
     TableComparisonScoreCollectionType,
 )

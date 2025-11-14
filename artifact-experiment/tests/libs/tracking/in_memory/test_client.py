@@ -2,13 +2,13 @@ from typing import Callable, Dict, List, Optional, Tuple
 from uuid import UUID
 
 import pytest
-from artifact_experiment.libs.tracking.in_memory.adapter import (
+from artifact_experiment._impl.in_memory.adapter import (
     InMemoryRunAdapter,
 )
-from artifact_experiment.libs.tracking.in_memory.client import (
+from artifact_experiment._impl.in_memory.client import (
     InMemoryTrackingClient,
 )
-from artifact_experiment.libs.tracking.in_memory.native_run import (
+from artifact_experiment._impl.in_memory.native_run import (
     InMemoryRun,
 )
 

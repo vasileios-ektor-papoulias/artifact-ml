@@ -1,28 +1,28 @@
 from typing import Callable, Optional, Tuple
 
 import pytest
-from artifact_experiment.libs.tracking.in_memory.adapter import (
+from artifact_experiment._impl.in_memory.adapter import (
     InMemoryRunAdapter,
 )
-from artifact_experiment.libs.tracking.in_memory.loggers.array_collections import (
+from artifact_experiment._impl.in_memory.loggers.array_collections import (
     InMemoryArrayCollectionLogger,
 )
-from artifact_experiment.libs.tracking.in_memory.loggers.arrays import (
+from artifact_experiment._impl.in_memory.loggers.arrays import (
     InMemoryArrayLogger,
 )
-from artifact_experiment.libs.tracking.in_memory.loggers.plot_collections import (
+from artifact_experiment._impl.in_memory.loggers.plot_collections import (
     InMemoryPlotCollectionLogger,
 )
-from artifact_experiment.libs.tracking.in_memory.loggers.plots import (
+from artifact_experiment._impl.in_memory.loggers.plots import (
     InMemoryPlotLogger,
 )
-from artifact_experiment.libs.tracking.in_memory.loggers.score_collections import (
+from artifact_experiment._impl.in_memory.loggers.score_collections import (
     InMemoryScoreCollectionLogger,
 )
-from artifact_experiment.libs.tracking.in_memory.loggers.scores import (
+from artifact_experiment._impl.in_memory.loggers.scores import (
     InMemoryScoreLogger,
 )
-from artifact_experiment.libs.tracking.in_memory.native_run import (
+from artifact_experiment._impl.in_memory.native_run import (
     InMemoryRun,
 )
 

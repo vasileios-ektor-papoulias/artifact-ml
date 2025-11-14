@@ -70,7 +70,7 @@ def test_get_cdf_plot(
     df = df_dispatcher
     result = TabularCDFPlotter.get_cdf_plot(
         dataset=df,
-        ls_cts_features=cts_features,
+        cts_features=cts_features,
     )
 
     assert isinstance(result, Figure), "Result should be a Figure"

@@ -2,7 +2,7 @@ from typing import Type, TypeVar
 
 import pandas as pd
 from artifact_core.table_comparison import TabularDataSpecProtocol
-from artifact_torch.table_comparison.model import TableSynthesizer
+from artifact_torch.table_comparison._model import TableSynthesizer
 
 from demos.table_comparison.libs.transformers.discretizer import Discretizer
 from demos.table_comparison.libs.transformers.encoder import Encoder

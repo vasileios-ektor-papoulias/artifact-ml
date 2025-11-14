@@ -1,4 +1,4 @@
-from typing import List
+from typing import Sequence
 
 import pandas as pd
 
@@ -8,9 +8,9 @@ class TableValidator:
     def validate(
         cls,
         df: pd.DataFrame,
-        ls_features: List[str],
-        ls_cts_features: List[str],
-        ls_cat_features: List[str],
+        ls_features: Sequence[str],
+        ls_cts_features: Sequence[str],
+        ls_cat_features: Sequence[str],
     ) -> pd.DataFrame:
         df = cls._validate_df(df=df, ls_features=ls_features)
         df = cls._validate_continuous_features(df=df, ls_cts_features=ls_cts_features)
@@ -20,7 +20,7 @@ class TableValidator:
     @staticmethod
     def _validate_df(
         df: pd.DataFrame,
-        ls_features: List[str],
+        ls_features: Sequence[str],
     ) -> pd.DataFrame:
         if df.empty:
             raise ValueError("DataFrame must not be empty.")
@@ -32,7 +32,7 @@ class TableValidator:
     @staticmethod
     def _validate_continuous_features(
         df: pd.DataFrame,
-        ls_cts_features: List[str],
+        ls_cts_features: Sequence[str],
     ) -> pd.DataFrame:
         df = df.copy()
         for feature in ls_cts_features:
@@ -44,7 +44,7 @@ class TableValidator:
     @staticmethod
     def _validate_categorical_features(
         df: pd.DataFrame,
-        ls_cat_features: List[str],
+        ls_cat_features: Sequence[str],
     ) -> pd.DataFrame:
         df = df.copy()
         for feature in ls_cat_features:

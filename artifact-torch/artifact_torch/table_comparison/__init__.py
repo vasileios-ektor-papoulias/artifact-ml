@@ -1,2 +1,2 @@
-from artifact_torch.table_comparison.model import TableSynthesizer
-from artifact_torch.table_comparison.routine import TableComparisonRoutine
+from artifact_torch.table_comparison._model import TableSynthesizer
+from artifact_torch.table_comparison._routine import TableComparisonRoutine

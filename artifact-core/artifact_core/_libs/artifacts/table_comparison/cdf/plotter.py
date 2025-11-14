@@ -1,13 +1,10 @@
-from typing import Dict, List
+from typing import Dict, Sequence
 
 import pandas as pd
 from matplotlib.figure import Figure
 
-from artifact_core._libs.artifacts.tools.plotters.cdf_plotter import CDFConfig, CDFPlotter
-from artifact_core._libs.artifacts.tools.plotters.plot_combiner import (
-    PlotCombinationConfig,
-    PlotCombiner,
-)
+from artifact_core._libs.tools.plotters.cdf_plotter import CDFConfig, CDFPlotter
+from artifact_core._libs.tools.plotters.plot_combiner import PlotCombinationConfig, PlotCombiner
 
 
 class TabularCDFPlotter:
@@ -44,27 +41,25 @@ class TabularCDFPlotter:
     def get_cdf_plot(
         cls,
         dataset: pd.DataFrame,
-        ls_cts_features: List[str],
+        cts_features: Sequence[str],
     ):
-        dict_plots = cls.get_cdf_plot_collection(
+        plots = cls.get_cdf_plot_collection(
             dataset=dataset,
-            ls_cts_features=ls_cts_features,
+            cts_features=cts_features,
         )
-        combined_plot = PlotCombiner.combine(
-            dict_plots=dict_plots, config=cls._plot_combiner_config
-        )
+        combined_plot = PlotCombiner.combine(plots=plots, config=cls._plot_combiner_config)
         return combined_plot
 
     @classmethod
     def get_cdf_plot_collection(
         cls,
         dataset: pd.DataFrame,
-        ls_cts_features: List[str],
+        cts_features: Sequence[str],
     ) -> Dict[str, Figure]:
-        dict_plots = {}
-        for feature in ls_cts_features:
+        plots = {}
+        for feature in cts_features:
             cdf_plot = CDFPlotter.plot_cdf(
                 sr_data=dataset[feature], feature_name=feature, config=cls._cdf_config
             )
-            dict_plots[feature] = cdf_plot
-        return dict_plots
+            plots[feature] = cdf_plot
+        return plots

@@ -1,6 +1,6 @@
 from typing import Any, Dict
 
-from artifact_core._tasks.dataset_comparison.registry import (
+from artifact_core._domains.dataset_comparison.registry import (
     ArtifactType,
     DatasetComparisonArtifactRegistry,
 )

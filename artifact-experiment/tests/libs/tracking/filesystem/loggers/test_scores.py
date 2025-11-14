@@ -3,8 +3,8 @@ from typing import Callable, Dict, List, Optional, Tuple
 
 import pandas as pd
 import pytest
-from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRunAdapter
-from artifact_experiment.libs.tracking.filesystem.loggers.scores import FilesystemScoreLogger
+from artifact_experiment._impl.filesystem.adapter import FilesystemRunAdapter
+from artifact_experiment._impl.filesystem.loggers.scores import FilesystemScoreLogger
 
 
 @pytest.mark.unit

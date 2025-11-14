@@ -8,7 +8,7 @@ from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
 from matplotlib.figure import Figure
 from matplotlib.image import AxesImage
 
-from artifact_core._base.types.artifact_result import Array
+from artifact_core._base.typing.artifact_result import Array
 from artifact_core._libs.artifacts.binary_classification.confusion.calculator import (
     NormalizedConfusionCalculator,
 )

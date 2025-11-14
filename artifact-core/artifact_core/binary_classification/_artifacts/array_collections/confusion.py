@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Dict, Sequence, Type, TypeVar, Union
 
-from artifact_core._base.contracts.hyperparams import ArtifactHyperparams
-from artifact_core._base.types.artifact_result import Array
+from artifact_core._base.core.hyperparams import ArtifactHyperparams
+from artifact_core._base.typing.artifact_result import Array
 from artifact_core._libs.artifacts.binary_classification.confusion.calculator import (
     ConfusionMatrixNormalizationStrategy,
     NormalizedConfusionCalculator,
@@ -10,17 +10,15 @@ from artifact_core._libs.artifacts.binary_classification.confusion.calculator im
 from artifact_core._libs.artifacts.binary_classification.confusion.normalizer import (
     ConfusionNormalizationStrategyLiteral,
 )
-from artifact_core._libs.resources.binary_classification.category_store import BinaryCategoryStore
+from artifact_core._libs.resources.binary_classification.class_store import BinaryClassStore
 from artifact_core._libs.resources.binary_classification.classification_results import (
     BinaryClassificationResults,
 )
-from artifact_core.binary_classification._artifacts.base import (
-    BinaryClassificationArrayCollection,
-)
-from artifact_core.binary_classification._registries.array_collections.registry import (
+from artifact_core.binary_classification._artifacts.base import BinaryClassificationArrayCollection
+from artifact_core.binary_classification._registries.array_collections import (
     BinaryClassificationArrayCollectionRegistry,
 )
-from artifact_core.binary_classification._registries.array_collections.types import (
+from artifact_core.binary_classification._types.array_collections import (
     BinaryClassificationArrayCollectionType,
 )
 
@@ -61,12 +59,12 @@ class ConfusionMatrixCollection(
 ):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, Array]:
         array_collection = (
             NormalizedConfusionCalculator.compute_confusion_matrix_multiple_normalizations(
-                true=true_category_store.id_to_is_positive,
+                true=true_class_store.id_to_is_positive,
                 predicted=classification_results.id_to_predicted_positive,
                 normalization_types=self._hyperparams.normalization_types,
             )

@@ -4,9 +4,9 @@ from artifact_torch.base.components.routines.loader import DataLoaderRoutine
 from artifact_torch.base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
 from artifact_torch.base.model.io import ModelInput, ModelOutput
 from artifact_torch.base.trainer.trainer import Trainer
-from artifact_torch.table_comparison.experiment import TabularSynthesisExperiment
-from artifact_torch.table_comparison.model import TableSynthesizer
-from artifact_torch.table_comparison.routine import TableComparisonRoutine
+from artifact_torch.table_comparison._experiment import TabularSynthesisExperiment
+from artifact_torch.table_comparison._model import TableSynthesizer
+from artifact_torch.table_comparison._routine import TableComparisonRoutine
 
 from demos.table_comparison.components.protocols import DemoGenerationParams
 from demos.table_comparison.components.routines.artifact import DemoTableComparisonRoutine

@@ -4,8 +4,8 @@ from typing import Dict, Hashable, Literal, Mapping, Sequence
 import numpy as np
 from sklearn.metrics import average_precision_score, roc_auc_score
 
-from artifact_core._base.types.artifact_result import Array
-from artifact_core._libs.utils.dict_aligner import DictAligner
+from artifact_core._base.typing.artifact_result import Array
+from artifact_core._utils.collections.map_aligner import MapAligner
 
 ThresholdVariationMetricLiteral = Literal["ROC_AUC", "PR_AUC"]
 
@@ -48,7 +48,7 @@ class ThresholdVariationMetricCalculator:
         true: Mapping[Hashable, bool],
         probs: Mapping[Hashable, float],
     ) -> float:
-        _, y_true, y_prob = DictAligner.align(left=true, right=probs)
+        _, y_true, y_prob = MapAligner.align(left=true, right=probs)
         y_pos = np.asarray(y_true, dtype=int)
         if not cls._has_both_classes(y_pos=y_pos):
             return np.nan
@@ -62,7 +62,7 @@ class ThresholdVariationMetricCalculator:
         true: Mapping[Hashable, bool],
         probs: Mapping[Hashable, float],
     ) -> float:
-        _, y_true, y_prob = DictAligner.align(left=true, right=probs)
+        _, y_true, y_prob = MapAligner.align(left=true, right=probs)
         y_pos = np.asarray(y_true, dtype=int)
         if not np.any(y_pos == 1):
             return np.nan

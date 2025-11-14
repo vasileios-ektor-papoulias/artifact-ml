@@ -28,7 +28,7 @@ def test_get_overlaid_cdf_plot_collection(
     result = TabularOverlaidCDFPlotter.get_overlaid_cdf_plot_collection(
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
-        ls_cts_features=cts_features,
+        cts_features=cts_features,
     )
 
     assert isinstance(result, dict), "Result should be a dictionary"
@@ -70,7 +70,7 @@ def test_get_overlaid_cdf_plot(
     result = TabularOverlaidCDFPlotter.get_overlaid_cdf_plot(
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
-        ls_cts_features=cts_features,
+        cts_features=cts_features,
     )
 
     assert isinstance(result, Figure), "Result should be a Figure"

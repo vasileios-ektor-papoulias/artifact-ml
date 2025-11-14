@@ -1,24 +1,24 @@
 from dataclasses import dataclass
 from typing import Dict, Sequence, Type, TypeVar, Union
 
-from artifact_core._base.contracts.hyperparams import ArtifactHyperparams
+from artifact_core._base.core.hyperparams import ArtifactHyperparams
 from artifact_core._libs.artifacts.binary_classification.score_distribution.calculator import (
     BinarySampleSplit,
     DescriptiveStatistic,
     ScoreStatsCalculator,
 )
-from artifact_core._libs.artifacts.tools.calculators.descriptive_stats_calculator import (
-    DescriptiveStatisticLiteral,
-)
-from artifact_core._libs.resources.binary_classification.category_store import BinaryCategoryStore
+from artifact_core._libs.resources.binary_classification.class_store import BinaryClassStore
 from artifact_core._libs.resources.binary_classification.classification_results import (
     BinaryClassificationResults,
 )
+from artifact_core._libs.tools.calculators.descriptive_stats_calculator import (
+    DescriptiveStatisticLiteral,
+)
 from artifact_core.binary_classification._artifacts.base import BinaryClassificationScoreCollection
-from artifact_core.binary_classification._registries.score_collections.registry import (
+from artifact_core.binary_classification._registries.score_collections import (
     BinaryClassificationScoreCollectionRegistry,
 )
-from artifact_core.binary_classification._registries.score_collections.types import (
+from artifact_core.binary_classification._types.score_collections import (
     BinaryClassificationScoreCollectionType,
 )
 
@@ -61,11 +61,11 @@ class ScoreStatsByStatHyperparams(ArtifactHyperparams):
 class ScoreStats(BinaryClassificationScoreCollection[ScoreStatsByStatHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, float]:
         dict_scores = ScoreStatsCalculator.compute_by_split(
-            id_to_is_pos=true_category_store.id_to_is_positive,
+            id_to_is_pos=true_class_store.id_to_is_positive,
             id_to_prob_pos=classification_results.id_to_prob_pos,
             stats=self._hyperparams.stat_types,
             split=BinarySampleSplit.ALL,
@@ -80,11 +80,11 @@ class ScoreStats(BinaryClassificationScoreCollection[ScoreStatsByStatHyperparams
 class PositiveClassScoreStats(BinaryClassificationScoreCollection[ScoreStatsByStatHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, float]:
         dict_scores = ScoreStatsCalculator.compute_by_split(
-            id_to_is_pos=true_category_store.id_to_is_positive,
+            id_to_is_pos=true_class_store.id_to_is_positive,
             id_to_prob_pos=classification_results.id_to_prob_pos,
             stats=self._hyperparams.stat_types,
             split=BinarySampleSplit.POSITIVE,
@@ -99,11 +99,11 @@ class PositiveClassScoreStats(BinaryClassificationScoreCollection[ScoreStatsBySt
 class NegativeClassScoreStats(BinaryClassificationScoreCollection[ScoreStatsByStatHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, float]:
         dict_scores = ScoreStatsCalculator.compute_by_split(
-            id_to_is_pos=true_category_store.id_to_is_positive,
+            id_to_is_pos=true_class_store.id_to_is_positive,
             id_to_prob_pos=classification_results.id_to_prob_pos,
             stats=self._hyperparams.stat_types,
             split=BinarySampleSplit.NEGATIVE,

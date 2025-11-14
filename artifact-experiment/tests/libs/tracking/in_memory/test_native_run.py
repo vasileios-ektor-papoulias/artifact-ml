@@ -1,7 +1,7 @@
 from typing import Callable, Dict, List, Optional
 
 import pytest
-from artifact_experiment.libs.tracking.in_memory.native_run import (
+from artifact_experiment._impl.in_memory.native_run import (
     InMemoryRun,
 )
 

@@ -1,8 +1,6 @@
 import pytest
 from artifact_core.table_comparison import (
-    TableComparisonArray,
     TableComparisonArrayCollectionType,
-    TableComparisonPlot,
     TableComparisonPlotCollectionType,
     TableComparisonScoreCollectionType,
     TableComparisonScoreType,
@@ -20,7 +18,7 @@ from artifact_core.table_comparison._registries.score_collections.registry impor
     TableComparisonScoreCollectionRegistry,
 )
 from artifact_core.table_comparison._registries.scores.registry import TableComparisonScoreRegistry
-from artifact_experiment.base.callbacks.artifact import (
+from artifact_experiment._base.components.callbacks.artifact import (
     ArtifactArrayCallback,
     ArtifactArrayCollectionCallback,
     ArtifactPlotCallback,
@@ -28,7 +26,7 @@ from artifact_experiment.base.callbacks.artifact import (
     ArtifactScoreCallback,
     ArtifactScoreCollectionCallback,
 )
-from artifact_experiment.table_comparison.callback_factory import TableComparisonCallbackFactory
+from artifact_experiment.table_comparison._callback_factory import TableComparisonCallbackFactory
 from pytest_mock import MockerFixture
 
 

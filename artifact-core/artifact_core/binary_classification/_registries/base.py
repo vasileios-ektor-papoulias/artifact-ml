@@ -1,34 +1,38 @@
-from typing import Dict, TypeVar
+from typing import TypeVar
 
-from matplotlib.figure import Figure
-
-from artifact_core._base.types.artifact_result import Array, ArtifactResult
-from artifact_core._base.types.artifact_type import ArtifactType
+from artifact_core._base.primitives.artifact_type import ArtifactType
+from artifact_core._base.typing.artifact_result import (
+    Array,
+    ArrayCollection,
+    ArtifactResult,
+    Plot,
+    PlotCollection,
+    Score,
+    ScoreCollection,
+)
+from artifact_core._domains.classification.registry import ClassificationArtifactRegistry
 from artifact_core._libs.resource_specs.binary_classification.protocol import (
-    BinaryFeatureSpecProtocol,
+    BinaryClassSpecProtocol,
 )
-from artifact_core._tasks.classification.registry import ClassificationArtifactRegistry
-from artifact_core.binary_classification._artifacts.base import (
-    BinaryClassificationArtifactResources,
-)
+from artifact_core.binary_classification._resources import BinaryClassificationArtifactResources
 
 ArtifactTypeT = TypeVar("ArtifactTypeT", bound=ArtifactType)
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 
 BinaryClassificationArtifactRegistry = ClassificationArtifactRegistry[
-    BinaryClassificationArtifactResources, BinaryFeatureSpecProtocol, ArtifactTypeT, ArtifactResultT
+    BinaryClassificationArtifactResources, BinaryClassSpecProtocol, ArtifactTypeT, ArtifactResultT
 ]
 
-BinaryClassificationScoreRegistryBase = BinaryClassificationArtifactRegistry[ArtifactTypeT, float]
+BinaryClassificationScoreRegistryBase = BinaryClassificationArtifactRegistry[ArtifactTypeT, Score]
 BinaryClassificationArrayRegistryBase = BinaryClassificationArtifactRegistry[ArtifactTypeT, Array]
-BinaryClassificationPlotRegistryBase = BinaryClassificationArtifactRegistry[ArtifactTypeT, Figure]
+BinaryClassificationPlotRegistryBase = BinaryClassificationArtifactRegistry[ArtifactTypeT, Plot]
 BinaryClassificationScoreCollectionRegistryBase = BinaryClassificationArtifactRegistry[
-    ArtifactTypeT, Dict[str, float]
+    ArtifactTypeT, ScoreCollection
 ]
 BinaryClassificationArrayCollectionRegistryBase = BinaryClassificationArtifactRegistry[
-    ArtifactTypeT, Dict[str, Array]
+    ArtifactTypeT, ArrayCollection
 ]
 BinaryClassificationPlotCollectionRegistryBase = BinaryClassificationArtifactRegistry[
-    ArtifactTypeT, Dict[str, Figure]
+    ArtifactTypeT, PlotCollection
 ]

@@ -3,7 +3,7 @@ from typing import Dict, Sequence, Type, TypeVar, Union
 
 from matplotlib.figure import Figure
 
-from artifact_core._base.contracts.hyperparams import ArtifactHyperparams
+from artifact_core._base.core.hyperparams import ArtifactHyperparams
 from artifact_core._libs.artifacts.binary_classification.score_distribution.partitioner import (
     BinarySampleSplit,
     BinarySampleSplitLiteral,
@@ -11,15 +11,15 @@ from artifact_core._libs.artifacts.binary_classification.score_distribution.part
 from artifact_core._libs.artifacts.binary_classification.score_distribution.plotter import (
     ScorePDFPlotter,
 )
-from artifact_core._libs.resources.binary_classification.category_store import BinaryCategoryStore
+from artifact_core._libs.resources.binary_classification.class_store import BinaryClassStore
 from artifact_core._libs.resources.binary_classification.classification_results import (
     BinaryClassificationResults,
 )
 from artifact_core.binary_classification._artifacts.base import BinaryClassificationPlotCollection
-from artifact_core.binary_classification._registries.plot_collections.registry import (
+from artifact_core.binary_classification._registries.plot_collections import (
     BinaryClassificationPlotCollectionRegistry,
 )
-from artifact_core.binary_classification._registries.plot_collections.types import (
+from artifact_core.binary_classification._types.plot_collections import (
     BinaryClassificationPlotCollectionType,
 )
 
@@ -56,11 +56,11 @@ class ScoreDistributionPlotsHyperparams(ArtifactHyperparams):
 class ScoreDistributionPlots(BinaryClassificationPlotCollection[ScoreDistributionPlotsHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> Dict[str, Figure]:
         dict_plots = ScorePDFPlotter.plot_multiple(
-            id_to_is_pos=true_category_store.id_to_is_positive,
+            id_to_is_pos=true_class_store.id_to_is_positive,
             id_to_prob_pos=classification_results.id_to_prob_pos,
             splits=self._hyperparams.split_types,
         )

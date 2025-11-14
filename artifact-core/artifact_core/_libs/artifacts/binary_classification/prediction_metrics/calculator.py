@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, Hashable, Literal, Mapping, Sequence
+from typing import Hashable, Literal, Mapping, Sequence
 
 from sklearn.metrics import (
     accuracy_score,
@@ -14,8 +14,8 @@ from artifact_core._libs.artifacts.binary_classification.confusion.raw import (
     ConfusionMatrixCell,
     RawConfusionCalculator,
 )
-from artifact_core._libs.artifacts.tools.calculators.safe_div_calculator import SafeDivCalculator
-from artifact_core._libs.utils.dict_aligner import DictAligner
+from artifact_core._libs.tools.calculators.safe_div_calculator import SafeDivCalculator
+from artifact_core._utils.collections.map_aligner import MapAligner
 
 BinaryPredictionMetricLiteral = Literal[
     "ACCURACY",
@@ -84,7 +84,7 @@ class BinaryPredictionMetricCalculator:
         metric_types: Sequence[BinaryPredictionMetric],
         true: Mapping[Hashable, bool],
         predicted: Mapping[Hashable, bool],
-    ) -> Dict[BinaryPredictionMetric, float]:
+    ) -> Mapping[BinaryPredictionMetric, float]:
         dict_scores = {
             metric_type: cls.compute(
                 metric_type=metric_type,
@@ -101,7 +101,7 @@ class BinaryPredictionMetricCalculator:
         true: Mapping[Hashable, bool],
         predicted: Mapping[Hashable, bool],
     ) -> float:
-        _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
+        _, y_true, y_pred = MapAligner.align(left=true, right=predicted)
         score = accuracy_score(y_true=y_true, y_pred=y_pred)
         return float(score)
 
@@ -111,7 +111,7 @@ class BinaryPredictionMetricCalculator:
         true: Mapping[Hashable, bool],
         predicted: Mapping[Hashable, bool],
     ) -> float:
-        _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
+        _, y_true, y_pred = MapAligner.align(left=true, right=predicted)
         score = balanced_accuracy_score(y_true=y_true, y_pred=y_pred, adjusted=False)
         return float(score)
 
@@ -121,7 +121,7 @@ class BinaryPredictionMetricCalculator:
         true: Mapping[Hashable, bool],
         predicted: Mapping[Hashable, bool],
     ) -> float:
-        _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
+        _, y_true, y_pred = MapAligner.align(left=true, right=predicted)
         score = precision_score(
             y_true=y_true,
             y_pred=y_pred,
@@ -137,7 +137,7 @@ class BinaryPredictionMetricCalculator:
         true: Mapping[Hashable, bool],
         predicted: Mapping[Hashable, bool],
     ) -> float:
-        _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
+        _, y_true, y_pred = MapAligner.align(left=true, right=predicted)
         score = recall_score(
             y_true=y_true,
             y_pred=y_pred,
@@ -153,7 +153,7 @@ class BinaryPredictionMetricCalculator:
         true: Mapping[Hashable, bool],
         predicted: Mapping[Hashable, bool],
     ) -> float:
-        _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
+        _, y_true, y_pred = MapAligner.align(left=true, right=predicted)
         score = f1_score(
             y_true=y_true,
             y_pred=y_pred,
@@ -169,7 +169,7 @@ class BinaryPredictionMetricCalculator:
         true: Mapping[Hashable, bool],
         predicted: Mapping[Hashable, bool],
     ) -> float:
-        _, y_true, y_pred = DictAligner.align(left=true, right=predicted)
+        _, y_true, y_pred = MapAligner.align(left=true, right=predicted)
         score = matthews_corrcoef(y_true=y_true, y_pred=y_pred)
         return float(score)
 

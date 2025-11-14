@@ -14,7 +14,7 @@ from artifact_core.table_comparison._artifacts.plot_collections.correlations imp
 from artifact_core.table_comparison._artifacts.plot_collections.pdf import (
     PDFPlots,
 )
-from artifact_core.table_comparison._registries.plot_collections.registry import (
+from artifact_core.table_comparison._registries.plot_collections.plot_collections import (
     TableComparisonPlotCollectionRegistry,
     TableComparisonPlotCollectionType,
 )

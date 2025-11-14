@@ -1,31 +1,27 @@
-from artifact_core._base.contracts.hyperparams import NoArtifactHyperparams
+from artifact_core._base.core.hyperparams import NoArtifactHyperparams
 from artifact_core._libs.artifacts.binary_classification.prediction_metrics.calculator import (
     BinaryPredictionMetric,
     BinaryPredictionMetricCalculator,
 )
-from artifact_core._libs.resources.binary_classification.category_store import BinaryCategoryStore
+from artifact_core._libs.resources.binary_classification.class_store import BinaryClassStore
 from artifact_core._libs.resources.binary_classification.classification_results import (
     BinaryClassificationResults,
 )
 from artifact_core.binary_classification._artifacts.base import BinaryClassificationScore
-from artifact_core.binary_classification._registries.scores.registry import (
-    BinaryClassificationScoreRegistry,
-)
-from artifact_core.binary_classification._registries.scores.types import (
-    BinaryClassificationScoreType,
-)
+from artifact_core.binary_classification._registries.scores import BinaryClassificationScoreRegistry
+from artifact_core.binary_classification._types.scores import BinaryClassificationScoreType
 
 
 @BinaryClassificationScoreRegistry.register_artifact(BinaryClassificationScoreType.ACCURACY)
 class AccuracyScore(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.ACCURACY,
-            true=true_category_store.id_to_is_positive,
+            true=true_class_store.id_to_is_positive,
             predicted=classification_results.id_to_predicted_positive,
         )
         return result
@@ -37,12 +33,12 @@ class AccuracyScore(BinaryClassificationScore[NoArtifactHyperparams]):
 class BalancedAccuracyScore(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.BALANCED_ACCURACY,
-            true=true_category_store.id_to_is_positive,
+            true=true_class_store.id_to_is_positive,
             predicted=classification_results.id_to_predicted_positive,
         )
         return result
@@ -52,12 +48,12 @@ class BalancedAccuracyScore(BinaryClassificationScore[NoArtifactHyperparams]):
 class PrecisionScore(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.PRECISION,
-            true=true_category_store.id_to_is_positive,
+            true=true_class_store.id_to_is_positive,
             predicted=classification_results.id_to_predicted_positive,
         )
         return result
@@ -67,12 +63,12 @@ class PrecisionScore(BinaryClassificationScore[NoArtifactHyperparams]):
 class NPVScore(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.NPV,
-            true=true_category_store.id_to_is_positive,
+            true=true_class_store.id_to_is_positive,
             predicted=classification_results.id_to_predicted_positive,
         )
         return result
@@ -82,12 +78,12 @@ class NPVScore(BinaryClassificationScore[NoArtifactHyperparams]):
 class RecallScore(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.RECALL,
-            true=true_category_store.id_to_is_positive,
+            true=true_class_store.id_to_is_positive,
             predicted=classification_results.id_to_predicted_positive,
         )
         return result
@@ -97,12 +93,12 @@ class RecallScore(BinaryClassificationScore[NoArtifactHyperparams]):
 class TNRScore(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.TNR,
-            true=true_category_store.id_to_is_positive,
+            true=true_class_store.id_to_is_positive,
             predicted=classification_results.id_to_predicted_positive,
         )
         return result
@@ -112,12 +108,12 @@ class TNRScore(BinaryClassificationScore[NoArtifactHyperparams]):
 class FPRScore(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.FPR,
-            true=true_category_store.id_to_is_positive,
+            true=true_class_store.id_to_is_positive,
             predicted=classification_results.id_to_predicted_positive,
         )
         return result
@@ -127,12 +123,12 @@ class FPRScore(BinaryClassificationScore[NoArtifactHyperparams]):
 class FNRScore(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.FNR,
-            true=true_category_store.id_to_is_positive,
+            true=true_class_store.id_to_is_positive,
             predicted=classification_results.id_to_predicted_positive,
         )
         return result
@@ -142,12 +138,12 @@ class FNRScore(BinaryClassificationScore[NoArtifactHyperparams]):
 class F1ScoreScore(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.F1,
-            true=true_category_store.id_to_is_positive,
+            true=true_class_store.id_to_is_positive,
             predicted=classification_results.id_to_predicted_positive,
         )
         return result
@@ -157,12 +153,12 @@ class F1ScoreScore(BinaryClassificationScore[NoArtifactHyperparams]):
 class MCCScore(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         result = BinaryPredictionMetricCalculator.compute(
             metric_type=BinaryPredictionMetric.MCC,
-            true=true_category_store.id_to_is_positive,
+            true=true_class_store.id_to_is_positive,
             predicted=classification_results.id_to_predicted_positive,
         )
         return result

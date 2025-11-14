@@ -3,8 +3,6 @@ from typing import List, Literal
 
 import numpy as np
 
-from artifact_core._base.types.artifact_result import Array
-
 BinarySampleSplitLiteral = Literal["ALL", "POSITIVE", "NEGATIVE"]
 
 
@@ -20,7 +18,7 @@ class BinarySamplePartitioner:
         y_true_bin: List[bool],
         y_prob: List[float],
         split: BinarySampleSplit,
-    ) -> Array:
+    ) -> np.ndarray:
         y_true_arr = np.array(y_true_bin, dtype=bool)
         y_prob_arr = np.array(y_prob, dtype=float)
         if split is BinarySampleSplit.ALL:

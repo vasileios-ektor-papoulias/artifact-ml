@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, Hashable, Literal, Mapping, Sequence, Tuple
+from typing import Hashable, Literal, Mapping, Sequence, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,8 +14,8 @@ from sklearn.metrics import (
     roc_curve,
 )
 
-from artifact_core._base.types.artifact_result import Array
-from artifact_core._libs.utils.dict_aligner import DictAligner
+from artifact_core._base.typing.artifact_result import Array
+from artifact_core._utils.collections.map_aligner import MapAligner
 
 ThresholdVariationCurveTypeLiteral = Literal[
     "ROC", "PR", "DET", "TPR_THRESHOLD", "PRECISION_THRESHOLD"
@@ -52,7 +52,7 @@ class ThresholdVariationCurvePlotter:
         true: Mapping[Hashable, bool],
         probs: Mapping[Hashable, float],
         config: ThresholdVariationCurvePlotterConfig = ThresholdVariationCurvePlotterConfig(),
-    ) -> Dict[ThresholdVariationCurveType, Figure]:
+    ) -> Mapping[ThresholdVariationCurveType, Figure]:
         dict_plots = {
             curve_type: cls.plot(curve_type=curve_type, true=true, probs=probs, config=config)
             for curve_type in curve_types
@@ -67,7 +67,7 @@ class ThresholdVariationCurvePlotter:
         probs: Mapping[Hashable, float],
         config: ThresholdVariationCurvePlotterConfig = ThresholdVariationCurvePlotterConfig(),
     ) -> Figure:
-        _, y_true, y_probs = DictAligner.align(left=true, right=probs)
+        _, y_true, y_probs = MapAligner.align(left=true, right=probs)
         y_true_bin = np.asarray(y_true, dtype=int)
         y_probs = np.asarray(y_probs, dtype=float)
         if curve_type is ThresholdVariationCurveType.ROC:

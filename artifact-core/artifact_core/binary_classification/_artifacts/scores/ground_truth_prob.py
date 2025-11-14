@@ -1,19 +1,15 @@
-from artifact_core._base.contracts.hyperparams import NoArtifactHyperparams
+from artifact_core._base.core.hyperparams import NoArtifactHyperparams
 from artifact_core._libs.artifacts.classification.ground_truth_prob.stats_calculator import (
     DescriptiveStatistic,
     GroundTruthProbStatsCalculator,
 )
-from artifact_core._libs.resources.binary_classification.category_store import BinaryCategoryStore
+from artifact_core._libs.resources.binary_classification.class_store import BinaryClassStore
 from artifact_core._libs.resources.binary_classification.classification_results import (
     BinaryClassificationResults,
 )
 from artifact_core.binary_classification._artifacts.base import BinaryClassificationScore
-from artifact_core.binary_classification._registries.scores.registry import (
-    BinaryClassificationScoreRegistry,
-)
-from artifact_core.binary_classification._registries.scores.types import (
-    BinaryClassificationScoreType,
-)
+from artifact_core.binary_classification._registries.scores import BinaryClassificationScoreRegistry
+from artifact_core.binary_classification._types.scores import BinaryClassificationScoreType
 
 
 @BinaryClassificationScoreRegistry.register_artifact(
@@ -22,12 +18,12 @@ from artifact_core.binary_classification._registries.scores.types import (
 class GroundTruthProbMean(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         score = GroundTruthProbStatsCalculator.compute(
             stat=DescriptiveStatistic.MEAN,
-            true_category_store=true_category_store,
+            true_class_store=true_class_store,
             classification_results=classification_results,
         )
         return score
@@ -39,12 +35,12 @@ class GroundTruthProbMean(BinaryClassificationScore[NoArtifactHyperparams]):
 class GroundTruthProbSTD(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         score = GroundTruthProbStatsCalculator.compute(
             stat=DescriptiveStatistic.STD,
-            true_category_store=true_category_store,
+            true_class_store=true_class_store,
             classification_results=classification_results,
         )
         return score
@@ -56,12 +52,12 @@ class GroundTruthProbSTD(BinaryClassificationScore[NoArtifactHyperparams]):
 class GroundTruthProbVariance(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         score = GroundTruthProbStatsCalculator.compute(
             stat=DescriptiveStatistic.VARIANCE,
-            true_category_store=true_category_store,
+            true_class_store=true_class_store,
             classification_results=classification_results,
         )
         return score
@@ -73,12 +69,12 @@ class GroundTruthProbVariance(BinaryClassificationScore[NoArtifactHyperparams]):
 class GroundTruthProbMedian(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         score = GroundTruthProbStatsCalculator.compute(
             stat=DescriptiveStatistic.MEDIAN,
-            true_category_store=true_category_store,
+            true_class_store=true_class_store,
             classification_results=classification_results,
         )
         return score
@@ -90,12 +86,12 @@ class GroundTruthProbMedian(BinaryClassificationScore[NoArtifactHyperparams]):
 class GroundTruthProbFirstQuartile(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         score = GroundTruthProbStatsCalculator.compute(
             stat=DescriptiveStatistic.Q1,
-            true_category_store=true_category_store,
+            true_class_store=true_class_store,
             classification_results=classification_results,
         )
         return score
@@ -107,12 +103,12 @@ class GroundTruthProbFirstQuartile(BinaryClassificationScore[NoArtifactHyperpara
 class GroundTruthProbThirdQuartile(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         score = GroundTruthProbStatsCalculator.compute(
             stat=DescriptiveStatistic.Q3,
-            true_category_store=true_category_store,
+            true_class_store=true_class_store,
             classification_results=classification_results,
         )
         return score
@@ -124,12 +120,12 @@ class GroundTruthProbThirdQuartile(BinaryClassificationScore[NoArtifactHyperpara
 class GroundTruthProbMin(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         score = GroundTruthProbStatsCalculator.compute(
             stat=DescriptiveStatistic.MIN,
-            true_category_store=true_category_store,
+            true_class_store=true_class_store,
             classification_results=classification_results,
         )
         return score
@@ -141,12 +137,12 @@ class GroundTruthProbMin(BinaryClassificationScore[NoArtifactHyperparams]):
 class GroundTruthProbMax(BinaryClassificationScore[NoArtifactHyperparams]):
     def _evaluate_classification(
         self,
-        true_category_store: BinaryCategoryStore,
+        true_class_store: BinaryClassStore,
         classification_results: BinaryClassificationResults,
     ) -> float:
         score = GroundTruthProbStatsCalculator.compute(
             stat=DescriptiveStatistic.MAX,
-            true_category_store=true_category_store,
+            true_class_store=true_class_store,
             classification_results=classification_results,
         )
         return score

@@ -3,14 +3,10 @@ from typing import Type
 from artifact_core.binary_classification._engine.base import (
     BinaryClassificationEngineBase,
 )
-from artifact_core.binary_classification._registries.array_collections.registry import (
+from artifact_core.binary_classification._registries.array_collections import (
     BinaryClassificationArrayCollectionRegistry,
-    BinaryClassificationArrayCollectionType,
 )
-from artifact_core.binary_classification._registries.arrays.registry import (
-    BinaryClassificationArrayRegistry,
-    BinaryClassificationArrayType,
-)
+from artifact_core.binary_classification._registries.arrays import BinaryClassificationArrayRegistry
 from artifact_core.binary_classification._registries.base import (
     BinaryClassificationArrayCollectionRegistryBase,
     BinaryClassificationArrayRegistryBase,
@@ -19,22 +15,26 @@ from artifact_core.binary_classification._registries.base import (
     BinaryClassificationScoreCollectionRegistryBase,
     BinaryClassificationScoreRegistryBase,
 )
-from artifact_core.binary_classification._registries.plot_collections.registry import (
+from artifact_core.binary_classification._registries.plot_collections import (
     BinaryClassificationPlotCollectionRegistry,
+)
+from artifact_core.binary_classification._registries.plots import BinaryClassificationPlotRegistry
+from artifact_core.binary_classification._registries.score_collections import (
+    BinaryClassificationScoreCollectionRegistry,
+)
+from artifact_core.binary_classification._registries.scores import BinaryClassificationScoreRegistry
+from artifact_core.binary_classification._types.array_collections import (
+    BinaryClassificationArrayCollectionType,
+)
+from artifact_core.binary_classification._types.arrays import BinaryClassificationArrayType
+from artifact_core.binary_classification._types.plot_collections import (
     BinaryClassificationPlotCollectionType,
 )
-from artifact_core.binary_classification._registries.plots.registry import (
-    BinaryClassificationPlotRegistry,
-    BinaryClassificationPlotType,
-)
-from artifact_core.binary_classification._registries.score_collections.registry import (
-    BinaryClassificationScoreCollectionRegistry,
+from artifact_core.binary_classification._types.plots import BinaryClassificationPlotType
+from artifact_core.binary_classification._types.score_collections import (
     BinaryClassificationScoreCollectionType,
 )
-from artifact_core.binary_classification._registries.scores.registry import (
-    BinaryClassificationScoreRegistry,
-    BinaryClassificationScoreType,
-)
+from artifact_core.binary_classification._types.scores import BinaryClassificationScoreType
 
 
 class BinaryClassificationEngine(

@@ -4,7 +4,6 @@ import pandas as pd
 import pytest
 from artifact_core.table_comparison import (
     TableComparisonArrayCollectionType,
-    TableComparisonPlot,
     TableComparisonPlotCollectionType,
     TableComparisonScoreCollectionType,
     TableComparisonScoreType,
@@ -14,7 +13,7 @@ from artifact_core.table_comparison._artifacts.base import (
     TableComparisonArtifact,
     TableComparisonArtifactResources,
 )
-from artifact_experiment.base.handlers.tracking import (
+from artifact_experiment._base.components.handlers.tracking import (
     ArrayCallbackHandler,
     ArrayCollectionCallbackHandler,
     PlotCallbackHandler,
@@ -22,8 +21,10 @@ from artifact_experiment.base.handlers.tracking import (
     ScoreCallbackHandler,
     ScoreCollectionCallbackHandler,
 )
-from artifact_experiment.table_comparison.callback_factory import TableComparisonCallbackFactory
-from artifact_experiment.table_comparison.callback_resources import TableComparisonCallbackResources
+from artifact_experiment.table_comparison._callback_factory import TableComparisonCallbackFactory
+from artifact_experiment.table_comparison._callback_resources import (
+    TableComparisonCallbackResources,
+)
 from pytest_mock import MockerFixture
 
 from tests.table_comparison.validation_plan.dummy.plan import DummyTableComparisonPlan

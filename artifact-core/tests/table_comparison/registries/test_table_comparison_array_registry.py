@@ -5,7 +5,7 @@ from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecP
 from artifact_core.table_comparison._artifacts.base import (
     TableComparisonArray,
 )
-from artifact_core.table_comparison._registries.arrays.registry import (
+from artifact_core.table_comparison._registries.arrays.arrays import (
     TableComparisonArray,
     TableComparisonArrayRegistry,
 )

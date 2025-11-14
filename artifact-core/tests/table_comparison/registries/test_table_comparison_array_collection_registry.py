@@ -15,7 +15,7 @@ from artifact_core.table_comparison._artifacts.array_collections.descriptive_sta
 from artifact_core.table_comparison._artifacts.base import (
     TableComparisonArrayCollection,
 )
-from artifact_core.table_comparison._registries.array_collections.registry import (
+from artifact_core.table_comparison._registries.array_collections.array_collections import (
     TableComparisonArrayCollectionRegistry,
     TableComparisonArrayCollectionType,
 )
