@@ -1,8 +1,8 @@
 [project]
 name = "artifact-torch"
 packages = [{ include = "artifact-torch" }]
-version = "0.1.1"
-description = "PyTorch integration for the Artifact-ML."
+version = "0.1.2"
+description = "Artifact-ML PyTorch integration: declarative builder toolkit for reusable deep learning workflows."
 authors = [
     {name = "Vasileios Ektor Papoulias",email = "hector.papoulias@gmail.com"}
 ]
