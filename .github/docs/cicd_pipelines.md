@@ -214,21 +214,16 @@ This approach aligns with GitHub Actions' standard execution context, where work
   - **Does:** parses the **commit subject** (e.g., `Merge pull request #123 from user/branch` or ``Merge pull request #123 from user:branch`), extracts the `branch` portion, then runs `extract_branch_info.sh` to validate branch naming and access the component name (`dev|hotfix|setup`).
   - **Outcome:** prints the **component name** (e.g., `artifact-core`) to stdout; exits `1` if the commit isn’t a merge or the branch naming is invalid.
 
-- `identify_new_version.sh`:
-  - **Given:** `<current_version>` (e.g., `1.2.3`) and `<bump_type>` (`patch|minor|major`).
-  - **Does:** validates `X.Y.Z` format, splits into `MAJOR.MINOR.PATCH`, and increments per the bump:  
-    `patch` → `PATCH+1`; `minor` → `MINOR+1` & `PATCH=0`; `major` → `MAJOR+1` & `MINOR=0` & `PATCH=0`.
-  - **Outcome:** prints the **new version** (e.g., `1.3.0`) to stdout; exits `1` on invalid inputs.
-
 - `get_pyproject_path.sh`:
   - **Given:** a **component name** (e.g., `artifact-core`).
   - **Does:** resolves the expected `pyproject.toml` location for that component (e.g., `artifact-core/pyproject.toml`); verifies the file exists.
   - **Outcome:** prints the absolute or repo-relative path to `pyproject.toml` to stdout; exits `1` with an error if it cannot find the required file.
 
 - `update_pyproject.sh`:
-  - **Given:** `<pyproject_path>` and `<new_version>`.
-  - **Does:** updates the `version = "X.Y.Z"` field inside the given `pyproject.toml` (using a safe in-place edit), preserving file structure and other metadata.
-  - **Outcome:** prints the **new version** to stdout (confirmation value) and exits `0`; exits `1` if the file is missing or the version field cannot be updated.
+  - **Given:** `<pyproject_path>` and `<bump_type>` (`patch|minor|major`).
+  - **Does:** uses **Poetry's `version` command** to bump the version in the given `pyproject.toml`. Poetry handles reading the current version, calculating the new version according to semantic versioning rules, and updating the file in place.
+  - **Outcome:** prints the **new version** to stdout (e.g., `1.3.0`) and exits `0`; exits `1` if the file is missing, bump type is invalid, or Poetry encounters an error.
+  - **Note:** Requires Poetry to be installed and available in PATH.
 
 - `get_component_tag.sh`:
   - **Given:** `<component_name>` and `<version>` (e.g., `artifact-core` and `1.3.0`).
@@ -242,7 +237,7 @@ This approach aligns with GitHub Actions' standard execution context, where work
 
 - `bump_component_version.sh`:
   - **Given:** `<bump_type>`, `<component_name>`, and optionally an explicit `<pyproject_path>`.
-  - **Does:** resolves the `pyproject.toml` (via `get_pyproject_path.sh` if needed), reads the **current version**, computes the **new version** (`identify_new_version.sh`), updates the file (`update_pyproject.sh`), computes the **tag** (`get_component_tag.sh`), and pushes (`push_version_update.sh`).
+  - **Does:** resolves the `pyproject.toml` (via `get_pyproject_path.sh` if needed), uses Poetry to bump the version (`update_pyproject.sh`), computes the **tag** (`get_component_tag.sh`), and pushes the changes with the tag (`push_version_update.sh`).
   - **Outcome:** prints the **new version** and **tag** to stdout (or logs), exits `0` on success; exits `1` if any step fails (resolve, update, tag, or push).
 
 - `job.sh`:
