@@ -80,14 +80,9 @@ jobs:
           echo "Package built successfully"
           ls -lh dist/
 
-      - name: Configure TestPyPI repository
-        run: |
-          cd "${{ steps.config.outputs.dir }}"
-          poetry config repositories.testpypi https://test.pypi.org/legacy/
-
       - name: Publish to TestPyPI using Trusted Publishing
-        run: |
-          cd "${{ steps.config.outputs.dir }}"
-          poetry publish --repository testpypi
-          echo "Package published to TestPyPI successfully!"
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          packages-dir: ${{ steps.config.outputs.dir }}/dist/
 

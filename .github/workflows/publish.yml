@@ -86,10 +86,9 @@ jobs:
           ls -lh dist/
 
       - name: Publish to PyPI using Trusted Publishing
-        run: |
-          cd "${{ steps.config.outputs.dir }}"
-          poetry publish
-          echo "Package published to PyPI successfully!"
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: ${{ steps.config.outputs.dir }}/dist/
 
       - name: Create GitHub Release
         if: github.event_name != 'workflow_dispatch'
