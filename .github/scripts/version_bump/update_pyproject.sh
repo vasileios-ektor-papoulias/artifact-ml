@@ -2,9 +2,7 @@
 set -euo pipefail
 
 # Purpose:
-#   Read the current version from a given pyproject.toml, compute the next version
-#   based on a bump type (patch|minor|major), update the file in place, and print
-#   the new version.
+#   Bump version in pyproject.toml using Poetry's built-in version command.
 #
 # Usage:
 #   .github/scripts/version_bump/update_pyproject.sh <pyproject_path> <bump_type>
@@ -19,30 +17,30 @@ set -euo pipefail
 #
 # Stderr on failure:
 #   ::error::-style or plain diagnostics describing missing/invalid arguments,
-#   missing file, or invalid current version format.
+#   missing file, or invalid bump type.
 #
 # Exit codes:
 #   0 — success (file updated and new version printed)
-#   1 — validation failure (bad/missing args; file missing; invalid version format)
+#   1 — validation failure (bad/missing args; file missing; invalid bump type; Poetry error)
 #
 # Behaviour:
-#   - Extracts the current version from the first line matching ^version in <pyproject_path>.
-#   - Delegates numeric increment logic to:
-#       .github/scripts/version_bump/identify_new_version.sh "<current_version>" "<bump_type>"
-#   - Replaces the version in pyproject.toml in place (sed -i).
+#   - Validates input arguments and file existence.
+#   - Navigates to the directory containing pyproject.toml.
+#   - Uses Poetry's `version` command to bump the version in place.
 #   - Prints only the new version to STDOUT.
 #
 # Notes:
-#   - Expects a PEP 621-style line like: version = "X.Y.Z" (semantic version, three integers).
-#   - Runs under GNU sed (default on Ubuntu runners). If using macOS locally, ensure GNU sed or adjust -i usage.
-#   - Only the first matching version line is updated.
+#   - Requires Poetry to be installed and available in PATH.
+#   - Poetry's version command handles reading, calculating, and updating the version.
+#   - The --short flag returns just the version number without extra output.
+#   - Works with PEP 621-style pyproject.toml files.
 #
 # Examples:
 #   .github/scripts/version_bump/update_pyproject.sh pyproject.toml minor
 #     --> 1.3.0
 #
 #   .github/scripts/version_bump/update_pyproject.sh artifact-core/pyproject.toml patch
-#     --> 0.9.3
+#     --> 0.1.1
 
 PYPROJECT_PATH="${1-}"
 BUMP_TYPE="${2-}"
@@ -57,12 +55,26 @@ if [[ ! -f "$PYPROJECT_PATH" ]]; then
     exit 1
 fi
 
-chmod +x .github/scripts/version_bump/identify_new_version.sh
+# Validate bump type
+case "$BUMP_TYPE" in
+  patch|minor|major)
+    ;;
+  *)
+    echo "Error: Unknown bump type: $BUMP_TYPE. Must be one of: patch, minor, major" >&2
+    exit 1
+    ;;
+esac
 
-CURRENT_VERSION=$(grep '^version' "$PYPROJECT_PATH" | head -1 | sed 's/.*"\(.*\)".*/\1/')
+# Navigate to the directory containing pyproject.toml
+PYPROJECT_DIR=$(dirname "$PYPROJECT_PATH")
+ORIGINAL_DIR=$(pwd)
 
-NEW_VERSION=$(.github/scripts/version_bump/identify_new_version.sh "$CURRENT_VERSION" "$BUMP_TYPE")
+cd "$PYPROJECT_DIR"
 
-sed -i "s/version = \"$CURRENT_VERSION\"/version = \"$NEW_VERSION\"/" "$PYPROJECT_PATH"
+# Use Poetry to bump the version
+# --short flag returns just the version number without extra output
+NEW_VERSION=$(poetry version "$BUMP_TYPE" --short)
+
+cd "$ORIGINAL_DIR"
 
 echo "$NEW_VERSION"
