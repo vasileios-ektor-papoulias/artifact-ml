@@ -10,9 +10,11 @@ setup() {
   TEST_DIR="$(dirname "$BATS_TEST_FILENAME")"
   REPO_ROOT="$(cd "$TEST_DIR/../../.." && pwd)"
   echo "Repository root is: $REPO_ROOT" >&2
+  
   FAKE_BIN_DIR="$BATS_TMPDIR/fakebin"
   mkdir -p "$FAKE_BIN_DIR"
   mkdir -p "$FAKE_BIN_DIR/.github/scripts/linting"
+  
   SCRIPT="$REPO_ROOT/.github/scripts/linting/lint_branch_name.sh"
   echo "Using script path to copy: $SCRIPT" >&2
   if [ ! -f "$SCRIPT" ]; then
@@ -22,6 +24,7 @@ setup() {
   cp "$SCRIPT" "$FAKE_BIN_DIR/.github/scripts/linting/"
   chmod +x "$FAKE_BIN_DIR/.github/scripts/linting/$(basename "$SCRIPT")"
 
+  # Mock extract_branch_info.sh to handle all branch patterns
   cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/linting/extract_branch_info.sh"
 #!/bin/bash
 BRANCH_NAME="$1"
@@ -30,26 +33,40 @@ if [ -z "$BRANCH_NAME" ]; then
   exit 1
 fi
 
-case "$BRANCH_NAME" in
-  dev-subrepo)
-    echo '{"branch_type":"dev","component_name":"subrepo"}'; exit 0 ;;
-  hotfix-subrepo/fix-bug)
-    echo '{"branch_type":"hotfix","component_name":"subrepo"}'; exit 0 ;;
-  setup-subrepo/configure-db)
-    echo '{"branch_type":"setup","component_name":"subrepo"}'; exit 0 ;;
-  dev-subrepo/*)
-    echo "::error::Branch name does not follow the convention!" >&2; exit 1 ;;
-  *)
-    echo "::error::Branch name does not follow the convention!" >&2; exit 1 ;;
-esac
+# Parse branch name according to the repository's convention
+# dev-<component> (no trailing slash)
+# <type>-<component>/<description> (for non-dev)
+
+if [[ "$BRANCH_NAME" =~ ^dev-([a-z_-]+)$ ]]; then
+  COMPONENT="${BASH_REMATCH[1]}"
+  echo "{\"branch_type\":\"dev\",\"component_name\":\"$COMPONENT\"}"
+  exit 0
+elif [[ "$BRANCH_NAME" =~ ^dev-([a-z_-]+)/.+ ]]; then
+  # dev branches should NOT have trailing /description
+  echo "::error::Invalid 'dev' branch shape: must NOT contain a slash after component" >&2
+  exit 1
+elif [[ "$BRANCH_NAME" =~ ^(hotfix|setup|feature|fix)-([a-z_-]+)/(.+)$ ]]; then
+  TYPE="${BASH_REMATCH[1]}"
+  COMPONENT="${BASH_REMATCH[2]}"
+  echo "{\"branch_type\":\"$TYPE\",\"component_name\":\"$COMPONENT\"}"
+  exit 0
+elif [[ "$BRANCH_NAME" =~ ^(hotfix|setup|feature|fix)-([a-z_-]+)$ ]]; then
+  # Non-dev branches REQUIRE trailing /description
+  echo "::error::Branch name does not follow the required convention: non-dev branches require /description" >&2
+  exit 1
+else
+  echo "::error::Branch name does not follow the required convention" >&2
+  exit 1
+fi
 EOF
   chmod +x "$FAKE_BIN_DIR/.github/scripts/linting/extract_branch_info.sh"
   export PATH="$FAKE_BIN_DIR:$PATH"
+  cd "$FAKE_BIN_DIR"
 }
 
 teardown() {
-  echo "Teardown: Removing fake bin directory: $FAKE_BIN_DIR" >&2
-  rm -rf "$FAKE_BIN_DIR" || echo "Warning: Failed to remove $FAKE_BIN_DIR" >&2
+  echo "Teardown: Removing fake bin directory: $BATS_TMPDIR/fakebin" >&2
+  rm -rf "$BATS_TMPDIR/fakebin" || echo "Warning: Failed to remove fake bin" >&2
 }
 
 # ----------------------------
@@ -57,7 +74,6 @@ teardown() {
 # ----------------------------
 
 @test "errors when no arguments are provided (branch_name required)" {
-  cd "$FAKE_BIN_DIR"
   run ".github/scripts/linting/$(basename "$SCRIPT")"
   [ "$status" -ne 0 ]
   combined="$(printf "%s%s" "$output" "$stderr")"
