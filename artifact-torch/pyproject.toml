@@ -10,14 +10,20 @@ license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.11"
 
+[project.urls]
+Homepage = "https://github.com/vasileios-ektor-papoulias/artifact-ml"
+Repository = "https://github.com/vasileios-ektor-papoulias/artifact-ml"
+Documentation = "https://artifact-ml.readthedocs.io/en/latest/artifact-torch"
+"Bug Tracker" = "https://github.com/vasileios-ektor-papoulias/artifact-ml/issues"
+
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.dependencies]
 python = ">=3.11,<4.0"
-artifact-core = {path = "../artifact-core", develop = true}
-artifact-experiment = {path = "../artifact-experiment", develop = true}
+artifact-core = ">=0.1.0,<1.0.0"
+artifact-experiment = ">=0.1.0,<1.0.0"
 torch = ">=2.7.0,<3.0.0"
 
 [tool.poetry.group.dev]
@@ -29,3 +35,5 @@ pytest = "^8.3.5"
 pytest-mock = "^3.14.0"
 ipykernel = "^6.29.5"
 pytest-cov = "^7.0.0"
+artifact-core = { path = "../artifact-core", develop = true }
+artifact-experiment = { path = "../artifact-experiment", develop = true }
