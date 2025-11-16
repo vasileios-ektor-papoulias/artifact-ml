@@ -3,7 +3,7 @@ from typing import Optional
 
 import torch
 from artifact_torch.binary_classification import ClassificationParams
-from artifact_torch.core import ModelInput, ModelOutput
+from artifact_torch.nn import ModelInput, ModelOutput
 
 
 class MLPClassifierInput(ModelInput):

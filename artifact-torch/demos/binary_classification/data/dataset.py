@@ -2,7 +2,7 @@ from typing import List, Type, TypeVar
 
 import pandas as pd
 import torch
-from artifact_torch.core import Dataset
+from artifact_torch.nn import Dataset
 
 from demos.binary_classification.contracts.model import MLPClassifierInput
 

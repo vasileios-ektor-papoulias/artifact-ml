@@ -1,6 +1,7 @@
 from typing import Any, Sequence
 
-from artifact_torch.callbacks.forward_hook import (
+from artifact_torch.nn import Model
+from artifact_torch.nn.callbacks.forward_hook import (
     AllActivationsPDF,
     ForwardHookArrayCallback,
     ForwardHookArrayCollectionCallback,
@@ -9,8 +10,7 @@ from artifact_torch.callbacks.forward_hook import (
     ForwardHookScoreCallback,
     ForwardHookScoreCollectionCallback,
 )
-from artifact_torch.core import Model
-from artifact_torch.plans import ForwardHookPlan, ForwardHookPlanBuildContext
+from artifact_torch.nn.plans import ForwardHookPlan, ForwardHookPlanBuildContext
 
 from demos.table_comparison.config.constants import TRAIN_LOADER_ROUTINE_PERIOD
 

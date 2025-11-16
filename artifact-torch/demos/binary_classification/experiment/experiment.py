@@ -1,11 +1,13 @@
 from typing import Any, Optional, Type
 
 import pandas as pd
-from artifact_torch.binary_classification._experiment import BinaryClassificationExperiment
-from artifact_torch.binary_classification._model import BinaryClassifier
-from artifact_torch.binary_classification._routine import BinaryClassificationRoutine
-from artifact_torch.core import ModelInput, ModelOutput, Trainer
-from artifact_torch.routines import DataLoaderRoutine, TrainDiagnosticsRoutine
+from artifact_torch.binary_classification import (
+    BinaryClassificationExperiment,
+    BinaryClassificationRoutine,
+    BinaryClassifier,
+)
+from artifact_torch.nn import ModelInput, ModelOutput, Trainer
+from artifact_torch.nn.routines import DataLoaderRoutine, TrainDiagnosticsRoutine
 
 from demos.binary_classification.components.routines.artifact import DemoBinaryClassificationRoutine
 from demos.binary_classification.components.routines.loader import DemoLoaderRoutine

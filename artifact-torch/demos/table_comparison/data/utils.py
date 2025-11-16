@@ -1,5 +1,5 @@
 import pandas as pd
-from artifact_torch.core import DataLoader
+from artifact_torch.nn import DataLoader
 from artifact_torch.table_comparison._routine import TableComparisonRoutineData
 
 from demos.table_comparison.config.constants import BATCH_SIZE, DROP_LAST, SHUFFLE

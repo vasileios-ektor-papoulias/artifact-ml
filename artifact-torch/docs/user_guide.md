@@ -93,7 +93,7 @@ Note that the above remark on lenient type requirements applies to these configu
 ```python
 from dataclasses import dataclass
 
-from artifact_torch.core.model.generative import GenerationParams
+from artifact_torch.table_comparison import GenerationParams
 
 @dataclass
 class TabularVAEGenerationParams(GenerationParams):

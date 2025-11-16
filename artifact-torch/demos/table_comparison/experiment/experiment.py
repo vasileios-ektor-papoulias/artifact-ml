@@ -1,7 +1,7 @@
 from typing import Any, Optional, Type
 
-from artifact_torch.core import Trainer
-from artifact_torch.routines import DataLoaderRoutine, TrainDiagnosticsRoutine
+from artifact_torch.nn import Trainer
+from artifact_torch.nn.routines import DataLoaderRoutine, TrainDiagnosticsRoutine
 from artifact_torch.table_comparison import (
     TableComparisonRoutine,
     TableSynthesizer,

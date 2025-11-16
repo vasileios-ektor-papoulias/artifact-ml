@@ -1,9 +1,9 @@
 from typing import Any, Optional, Type
 
 from artifact_experiment.tracking import DataSplit
-from artifact_torch.core import Model
-from artifact_torch.plans import ForwardHookPlan, ModelIOPlan
-from artifact_torch.routines import DataLoaderRoutine
+from artifact_torch.nn import Model
+from artifact_torch.nn.plans import ForwardHookPlan, ModelIOPlan
+from artifact_torch.nn.routines import DataLoaderRoutine
 
 from demos.table_comparison.components.plans.forward_hook import DemoForwardHookPlan
 from demos.table_comparison.components.plans.model_io import DemoModelIOPlan

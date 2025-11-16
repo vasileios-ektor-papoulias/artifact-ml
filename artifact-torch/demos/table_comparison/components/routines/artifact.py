@@ -1,8 +1,7 @@
 from typing import Optional, Type
 
-from artifact_experiment.table_comparison import TableComparisonPlan
 from artifact_experiment.tracking import DataSplit
-from artifact_torch.table_comparison import TableComparisonRoutine
+from artifact_torch.table_comparison import TableComparisonPlan, TableComparisonRoutine
 
 from demos.table_comparison.components.plans.artifact import DemoTableComparisonPlan
 from demos.table_comparison.config.constants import (

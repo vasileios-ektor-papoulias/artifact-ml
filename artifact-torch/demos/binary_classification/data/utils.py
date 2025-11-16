@@ -4,7 +4,7 @@ from artifact_torch.binary_classification import (
     BinaryClassSpec,
     BinaryClassStore,
 )
-from artifact_torch.core import DataLoader
+from artifact_torch.nn import DataLoader
 
 from demos.binary_classification.config.constants import BATCH_SIZE, DROP_LAST, LS_FEATURES, SHUFFLE
 from demos.binary_classification.contracts.model import MLPClassifierInput

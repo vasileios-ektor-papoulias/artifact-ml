@@ -1,9 +1,9 @@
 from typing import Any, Optional
 
 import torch
-from artifact_torch.core import Trainer
-from artifact_torch.early_stopping import EarlyStopper, EpochBoundStopper, StopperUpdateData
-from artifact_torch.model_tracking import ModelTracker, ModelTrackingCriterion
+from artifact_torch.nn import Trainer
+from artifact_torch.nn.early_stopping import EarlyStopper, EpochBoundStopper, StopperUpdateData
+from artifact_torch.nn.model_tracking import ModelTracker, ModelTrackingCriterion
 from artifact_torch.table_comparison._model import TableSynthesizer
 from torch import optim
 

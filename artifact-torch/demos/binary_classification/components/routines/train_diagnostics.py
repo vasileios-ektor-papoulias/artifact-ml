@@ -1,8 +1,8 @@
 from typing import Any, Optional, Type
 
-from artifact_torch.core import Model
-from artifact_torch.plans import BackwardHookPlan, ForwardHookPlan, ModelIOPlan
-from artifact_torch.routines import TrainDiagnosticsRoutine
+from artifact_torch.nn import Model
+from artifact_torch.nn.plans import BackwardHookPlan, ForwardHookPlan, ModelIOPlan
+from artifact_torch.nn.routines import TrainDiagnosticsRoutine
 
 from demos.binary_classification.components.plans.model_io import TrainDiagnosticsModelIOPlan
 from demos.binary_classification.contracts.workflow import WorkflowInput, WorkflowOutput

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 import torch
-from artifact_torch.core import ModelInput, ModelOutput
+from artifact_torch.nn import ModelInput, ModelOutput
 from artifact_torch.table_comparison import GenerationParams
 
 

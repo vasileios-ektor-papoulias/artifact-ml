@@ -1,6 +1,6 @@
 from typing import List
 
-from artifact_torch.callbacks.model_io import (
+from artifact_torch.nn.callbacks.model_io import (
     LossCallback,
     ModelIOArrayCallback,
     ModelIOArrayCollectionCallback,
@@ -9,7 +9,7 @@ from artifact_torch.callbacks.model_io import (
     ModelIOScoreCallback,
     ModelIOScoreCollectionCallback,
 )
-from artifact_torch.plans import ModelIOPlan, ModelIOPlanBuildContext
+from artifact_torch.nn.plans import ModelIOPlan, ModelIOPlanBuildContext
 
 from demos.table_comparison.config.constants import TRAIN_LOADER_ROUTINE_PERIOD
 from demos.table_comparison.contracts.workflow import WorkflowInput, WorkflowOutput
