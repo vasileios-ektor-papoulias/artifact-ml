@@ -57,6 +57,11 @@ All Github Actions workflows follow the naming convention:
 - `lint_description_push_main.yml` (workflow name: LINT_DESCRIPTION_PUSH[MAIN]): validates the description carried by a merge commit pushed to `main`---asserts that the description is a valid PR title according to the appropriate semantic versioning prefix convention (see *Versioning and PRs to `main`*),
 - `bump_component_push_main.yml` (workflow name: BUMP_COMPONENT_PUSH[MAIN]): bumps the relevant component version when a merge commit is pushed to `main`---the commit description and message are parsed to identify the relevant component and bump type, the relevant pyproject.toml file is updated and this change is pushed along with a git tag annotating the version change.
 
+#### Tag Triggers
+
+- `publish.yml` (workflow name: PUBLISH[PYPI]): publishes packages to PyPI when version tags are pushed (format: `artifact-<component>-v<version>`) or when manually triggered via workflow dispatch---extracts component and version information, builds the package using Poetry, publishes to PyPI using Trusted Publishing (OIDC), and creates a GitHub Release with the built artifacts (tag triggers only).
+- `publish_test.yml` (workflow name: PUBLISH[TEST_PYPI]): publishes packages to TestPyPI when manually triggered via workflow dispatch---extracts component information, builds the package using Poetry, and publishes to TestPyPI using Trusted Publishing (OIDC) for testing purposes before production release.
+
 #### PR Triggers
 
 ##### dev-core
@@ -187,6 +192,16 @@ This approach aligns with GitHub Actions' standard execution context, where work
   - **Outcome:** prints the parsed **component_name** to stdout on success; exits `1` if the commit isn’t a merge or if the subject validation fails.
 
 
+
+#### Publishing Scripts (`.github/scripts/publishing/`)
+
+- `extract_component_from_tag.sh`:
+  - **Given:** `<event_name>` (`push` | `workflow_dispatch`), `<ref_name_or_tag>` (Git tag or ref name), and `<manual_component_input>` (component name for manual triggers).
+  - **Does:** extracts the component name and version from a Git tag (e.g., `artifact-core-v1.0.0`) for tag-based triggers, or uses the manual component input for workflow dispatch triggers. Validates tag format for push events (must match `artifact-<component>-v<major>.<minor>.<patch>`).
+  - **Outcome:** prints JSON object with `component` and `version` fields to stdout (e.g., `{"component":"core","version":"1.0.0"}` for tags, or `{"component":"core","version":"manual"}` for manual triggers); exits `1` with `::error::` prefixed diagnostics if validation fails or required parameters are missing.
+  - **Examples:**
+    - Tag push: `extract_component_from_tag.sh "push" "artifact-core-v1.0.0" ""` → `{"component":"core","version":"1.0.0"}`
+    - Manual trigger: `extract_component_from_tag.sh "workflow_dispatch" "" "experiment"` → `{"component":"experiment","version":"manual"}`
 
 #### Path Enforcement Scripts (`.github/scripts/enforce_path/`)
 
