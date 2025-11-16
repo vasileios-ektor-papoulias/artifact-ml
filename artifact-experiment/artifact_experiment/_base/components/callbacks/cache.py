@@ -49,6 +49,7 @@ class CacheCallback(
     def execute(self, resources: CacheCallbackResourcesTContr):
         self._clear()
         qualified_key = self._qualify_base_key(base_key=self._base_key, resources=resources)
+        self._cache[qualified_key] = None
         value = self._compute(resources=resources)
         self._cache[qualified_key] = value
 

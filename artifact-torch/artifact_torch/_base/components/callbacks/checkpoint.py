@@ -3,7 +3,7 @@ from artifact_experiment.spi.callbacks import ExportCallback
 from artifact_experiment.tracking.spi import FileWriter
 
 from artifact_torch._base.components.resources.checkpoint import CheckpointCallbackResources
-from artifact_torch._utils.filesystem.filename_appender import FilenameAppender
+from artifact_torch._utils.filesystem.filename_appender import FilenameModifier
 from artifact_torch._utils.scheduling.periodic_actions import PeriodicActionTrigger
 
 
@@ -28,11 +28,11 @@ class CheckpointCallback(ExportCallback[CheckpointCallbackResources]):
 
     @classmethod
     def _save_local(cls, resources: CheckpointCallbackResources, filepath: str) -> str:
-        suffix = cls._get_filename_suffix(epoch=resources.epoch)
-        filepath = FilenameAppender.append(filepath=filepath, text=suffix).as_posix()
+        filename = cls._get_filename(epoch=resources.epoch)
+        filepath = FilenameModifier.replace(filepath=filepath, new_basename=filename).as_posix()
         torch.save(resources.export_data, filepath)
         return filepath
 
     @staticmethod
-    def _get_filename_suffix(epoch: int) -> str:
-        return f"_EPOCH_{epoch}"
+    def _get_filename(epoch: int) -> str:
+        return f"EPOCH_{epoch}"
