@@ -2,21 +2,21 @@ from abc import abstractmethod
 from typing import Any, Generic, List, Mapping, Optional, Type, TypeVar
 
 import torch
-from artifact_experiment.base.tracking.background.tracking_queue import TrackingQueue
-from artifact_experiment.base.types.data_split import DataSplit
+from artifact_experiment.tracking import DataSplit
+from artifact_experiment.tracking.spi import TrackingQueue
 from tqdm import tqdm
 
-from artifact_torch.base.components.callbacks.hook import HookCallbackResources
-from artifact_torch.base.components.plans.forward_hook import (
+from artifact_torch._base.components.plans.forward_hook import (
     ForwardHookPlan,
     ForwardHookPlanBuildContext,
 )
-from artifact_torch.base.components.plans.model_io import ModelIOPlan, ModelIOPlanBuildContext
-from artifact_torch.base.components.routines.base import PlanExecutionRoutine, RoutineResources
-from artifact_torch.base.data.data_loader import DataLoader
-from artifact_torch.base.model.base import Model
-from artifact_torch.base.model.io import ModelInput, ModelOutput
-from artifact_torch.libs.utils.key_selector import KeySelector
+from artifact_torch._base.components.plans.model_io import ModelIOPlan, ModelIOPlanBuildContext
+from artifact_torch._base.components.resources.hook import HookCallbackResources
+from artifact_torch._base.components.routines.routine import PlanExecutionRoutine, RoutineResources
+from artifact_torch._base.data.data_loader import DataLoader
+from artifact_torch._base.model.base import Model
+from artifact_torch._base.model.io import ModelInput, ModelOutput
+from artifact_torch._utils.collections.key_selector import KeySelector
 
 ModelTContr = TypeVar("ModelTContr", bound=Model[Any, Any], contravariant=True)
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)

@@ -1,10 +1,10 @@
 import pandas as pd
 import torch
-from artifact_torch.base.data.dataset import Dataset
+from artifact_torch.core import Dataset
 
+from demos.table_comparison.contracts.model import TabularVAEInput
 from demos.table_comparison.libs.transformers.discretizer import Discretizer
 from demos.table_comparison.libs.transformers.encoder import Encoder
-from demos.table_comparison.model.protocols import TabularVAEInput
 
 
 class TabularVAEDataset(Dataset[TabularVAEInput]):

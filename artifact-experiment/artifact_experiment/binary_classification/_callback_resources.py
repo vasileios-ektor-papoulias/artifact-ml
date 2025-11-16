@@ -1,10 +1,13 @@
 from typing import List, Mapping, Optional, Type, TypeVar
 
+from artifact_core.binary_classification.collections import (
+    BinaryClassificationResults,
+    BinaryClassStore,
+)
 from artifact_core.binary_classification.spi import (
     BinaryClassificationArtifactResources,
     BinaryClassSpecProtocol,
 )
-from artifact_core.shared.collections import BinaryClassificationResults, BinaryClassStore
 from artifact_core.typing import IdentifierType
 
 from artifact_experiment._domains.classification.callback_resources import (

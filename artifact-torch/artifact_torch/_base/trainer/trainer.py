@@ -3,29 +3,27 @@ from typing import Any, Dict, Generic, Optional, Type, TypeVar
 
 import pandas as pd
 import torch
-from artifact_experiment.base.tracking.background.writer import FileWriter
+from artifact_experiment.tracking.spi import FileWriter
 from torch import optim
 
-from artifact_torch.base.components.cache.score_cache import ScoreCache
-from artifact_torch.base.components.callbacks.checkpoint import (
-    CheckpointCallback,
-    CheckpointCallbackResources,
-)
-from artifact_torch.base.components.early_stopping.stopper import EarlyStopper, StopperUpdateData
-from artifact_torch.base.components.logging.progress import TrainingProgressLogger
-from artifact_torch.base.components.model_tracking.tracker import (
+from artifact_torch._base.components.cache.score_cache import ScoreCache
+from artifact_torch._base.components.callbacks.checkpoint import CheckpointCallback
+from artifact_torch._base.components.early_stopping.stopper import EarlyStopper, StopperUpdateData
+from artifact_torch._base.components.logging.progress import TrainingProgressLogger
+from artifact_torch._base.components.model_tracking.model_tracker import (
     ModelTracker,
     ModelTrackingCriterion,
 )
-from artifact_torch.base.components.routines.artifact import ArtifactRoutine
-from artifact_torch.base.components.routines.loader import DataLoaderRoutine
-from artifact_torch.base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
-from artifact_torch.base.data.data_loader import DataLoader
-from artifact_torch.base.model.base import Model
-from artifact_torch.base.model.io import ModelInput, ModelOutput
-from artifact_torch.base.trainer.base import TrainerBase
-from artifact_torch.base.trainer.routine_suite import RoutineSuite
-from artifact_torch.base.trainer.training_state import TrainingState
+from artifact_torch._base.components.resources.checkpoint import CheckpointCallbackResources
+from artifact_torch._base.components.routines.artifact import ArtifactRoutine
+from artifact_torch._base.components.routines.loader import DataLoaderRoutine
+from artifact_torch._base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
+from artifact_torch._base.data.data_loader import DataLoader
+from artifact_torch._base.model.base import Model
+from artifact_torch._base.model.io import ModelInput, ModelOutput
+from artifact_torch._base.trainer.base import TrainerBase
+from artifact_torch._base.trainer.routine_suite import RoutineSuite
+from artifact_torch._base.trainer.training_state import TrainingState
 
 ModelTContr = TypeVar("ModelTContr", bound=Model[Any, Any], contravariant=True)
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
@@ -45,8 +43,8 @@ class Trainer(
         ModelTrackingCriterionT,
     ],
 ):
-    _train_loss_key = "loss_train"
-    _val_loss_key = "loss_val"
+    _train_loss_key = "LOSS_EPOCH"
+    _val_loss_key = "LOSS_VAL"
 
     def __init__(
         self,
@@ -76,7 +74,7 @@ class Trainer(
         loader_routine: Optional[
             DataLoaderRoutine[ModelTContr, ModelInputTContr, ModelOutputTContr]
         ] = None,
-        artifact_routine: Optional[ArtifactRoutine[ModelTContr, Any, Any, Any, Any, Any]] = None,
+        artifact_routine: Optional[ArtifactRoutine[ModelTContr, Any, Any, Any, Any]] = None,
         file_writer: Optional[FileWriter] = None,
     ) -> TrainerT:
         optimizer = cls._get_optimizer(model=model)
@@ -135,10 +133,7 @@ class Trainer(
 
     @staticmethod
     @abstractmethod
-    def _get_model_tracker() -> Optional[ModelTracker[ModelTrackingCriterionT]]: ...
-
-    @abstractmethod
-    def _get_model_tracking_criterion(self) -> Optional[ModelTrackingCriterionT]: ...
+    def _get_checkpoint_period() -> Optional[int]: ...
 
     @staticmethod
     @abstractmethod
@@ -149,9 +144,19 @@ class Trainer(
 
     @staticmethod
     @abstractmethod
+    def _get_model_tracker() -> Optional[ModelTracker[ModelTrackingCriterionT]]: ...
+
+    @abstractmethod
+    def _get_model_tracking_criterion(self) -> Optional[ModelTrackingCriterionT]: ...
+
+    @classmethod
     def _get_checkpoint_callback(
+        cls,
         writer: Optional[FileWriter],
-    ) -> Optional[CheckpointCallback]: ...
+    ) -> Optional[CheckpointCallback]:
+        period = cls._get_checkpoint_period()
+        if period is not None and writer is not None:
+            return CheckpointCallback(writer=writer, period=period)
 
     def _should_stop(self) -> bool:
         return self._early_stopper.stopped
@@ -179,7 +184,7 @@ class Trainer(
         if self._checkpoint_callback is not None:
             checkpoint = self._get_checkpoint()
             checkpoint_callback_resources = CheckpointCallbackResources(
-                step=self._n_epochs_elapsed, export_data=checkpoint
+                export_data=checkpoint, epoch=self._n_epochs_elapsed
             )
             self._checkpoint_callback.execute(resources=checkpoint_callback_resources)
 

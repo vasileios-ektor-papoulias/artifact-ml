@@ -1,20 +1,18 @@
 from typing import Any, Optional, Type
 
-from artifact_torch.base.components.plans.backward_hook import BackwardHookPlan
-from artifact_torch.base.components.plans.forward_hook import ForwardHookPlan
-from artifact_torch.base.components.plans.model_io import ModelIOPlan
-from artifact_torch.base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
-from artifact_torch.base.model.base import Model
+from artifact_torch.core import Model
+from artifact_torch.plans import BackwardHookPlan, ForwardHookPlan, ModelIOPlan
+from artifact_torch.routines import TrainDiagnosticsRoutine
 
 from demos.binary_classification.components.plans.model_io import TrainDiagnosticsModelIOPlan
-from demos.binary_classification.components.protocols import DemoModelInput, DemoModelOutput
+from demos.binary_classification.contracts.workflow import WorkflowInput, WorkflowOutput
 
 
 class DemoTrainDiagnosticsRoutine(
-    TrainDiagnosticsRoutine[Model[Any, Any], DemoModelInput, DemoModelOutput]
+    TrainDiagnosticsRoutine[Model[Any, Any], WorkflowInput, WorkflowOutput]
 ):
     @classmethod
-    def _get_model_io_plan(cls) -> Optional[Type[ModelIOPlan[DemoModelInput, DemoModelOutput]]]:
+    def _get_model_io_plan(cls) -> Optional[Type[ModelIOPlan[WorkflowInput, WorkflowOutput]]]:
         return TrainDiagnosticsModelIOPlan
 
     @classmethod

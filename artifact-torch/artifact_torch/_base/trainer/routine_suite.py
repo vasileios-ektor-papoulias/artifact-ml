@@ -1,11 +1,20 @@
 from typing import Any, Dict, Generic, Optional, TypeVar
 
-from artifact_torch.base.components.routines.artifact import ArtifactRoutine
-from artifact_torch.base.components.routines.base import RoutineResources
-from artifact_torch.base.components.routines.loader import DataLoaderRoutine
-from artifact_torch.base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
-from artifact_torch.base.model.base import Model
-from artifact_torch.base.model.io import ModelInput, ModelOutput
+from artifact_core.typing import (
+    Array,
+    ArrayCollection,
+    Plot,
+    PlotCollection,
+    Score,
+    ScoreCollection,
+)
+
+from artifact_torch._base.components.routines.artifact import ArtifactRoutine
+from artifact_torch._base.components.routines.loader import DataLoaderRoutine
+from artifact_torch._base.components.routines.routine import RoutineResources
+from artifact_torch._base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
+from artifact_torch._base.model.base import Model
+from artifact_torch._base.model.io import ModelInput, ModelOutput
 
 ModelTContr = TypeVar("ModelTContr", bound=Model[Any, Any], contravariant=True)
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
@@ -21,14 +30,14 @@ class RoutineSuite(Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]):
         loader_routine: Optional[
             DataLoaderRoutine[ModelTContr, ModelInputTContr, ModelOutputTContr]
         ] = None,
-        artifact_routine: Optional[ArtifactRoutine[ModelTContr, Any, Any, Any, Any, Any]] = None,
+        artifact_routine: Optional[ArtifactRoutine[ModelTContr, Any, Any, Any, Any]] = None,
     ):
         self._train_diagnostics_routine = train_diagnostics_routine
         self._loader_routine = loader_routine
         self._artifact_routine = artifact_routine
 
     @property
-    def scores(self) -> Dict[str, float]:
+    def scores(self) -> Dict[str, Score]:
         scores = {}
         if self._train_diagnostics_routine is not None:
             scores.update(self._train_diagnostics_routine.scores)
@@ -50,7 +59,7 @@ class RoutineSuite(Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]):
         return arrays
 
     @property
-    def plots(self) -> Dict[str, Figure]:
+    def plots(self) -> Dict[str, Plot]:
         plots = {}
         if self._train_diagnostics_routine is not None:
             plots.update(self._train_diagnostics_routine.plots)
@@ -61,7 +70,7 @@ class RoutineSuite(Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]):
         return plots
 
     @property
-    def score_collections(self) -> Dict[str, Dict[str, float]]:
+    def score_collections(self) -> Dict[str, ScoreCollection]:
         score_collections = {}
         if self._train_diagnostics_routine is not None:
             score_collections.update(self._train_diagnostics_routine.score_collections)
@@ -72,7 +81,7 @@ class RoutineSuite(Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]):
         return score_collections
 
     @property
-    def array_collections(self) -> Dict[str, Dict[str, Array]]:
+    def array_collections(self) -> Dict[str, ArrayCollection]:
         array_collections = {}
         if self._train_diagnostics_routine is not None:
             array_collections.update(self._train_diagnostics_routine.array_collections)
@@ -83,7 +92,7 @@ class RoutineSuite(Generic[ModelTContr, ModelInputTContr, ModelOutputTContr]):
         return array_collections
 
     @property
-    def plot_collections(self) -> Dict[str, Dict[str, Figure]]:
+    def plot_collections(self) -> Dict[str, PlotCollection]:
         plot_collections = {}
         if self._train_diagnostics_routine is not None:
             plot_collections.update(self._train_diagnostics_routine.plot_collections)

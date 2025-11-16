@@ -2,13 +2,13 @@ from typing import Callable, Dict, List, Optional, Tuple
 from uuid import UUID
 
 import pytest
-from artifact_experiment._impl.in_memory.adapter import (
+from artifact_experiment._impl.backends.in_memory.adapter import (
     InMemoryRunAdapter,
 )
-from artifact_experiment._impl.in_memory.client import (
+from artifact_experiment._impl.backends.in_memory.client import (
     InMemoryTrackingClient,
 )
-from artifact_experiment._impl.in_memory.native_run import (
+from artifact_experiment._impl.backends.in_memory.native_run import (
     InMemoryRun,
 )
 
@@ -342,9 +342,9 @@ def test_upload(
     expected_store_length: int,
 ):
     adapter, client = client_factory(experiment_id, run_id)
-    assert len(adapter.uploaded_files) == 0
+    assert len(adapter.files) == 0
     for file_entry in ls_file_entries:
         client.log_file(**file_entry)
-    assert len(adapter.uploaded_files) == expected_store_length
+    assert len(adapter.files) == expected_store_length
     for i, file_entry in enumerate(ls_file_entries):
-        assert adapter.uploaded_files[i] == file_entry
+        assert adapter.files[i] == file_entry

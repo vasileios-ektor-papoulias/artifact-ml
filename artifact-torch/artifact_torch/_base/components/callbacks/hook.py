@@ -1,28 +1,23 @@
 from abc import abstractmethod
-from dataclasses import dataclass
 from typing import Dict, Generic, List, Optional, Sequence, TypeVar
 
 import torch
 import torch.nn as nn
-from artifact_core._base.primitives import ArtifactResult
-from artifact_experiment.base.tracking.background.writer import TrackingQueueWriter
+from artifact_core.typing import (
+    Array,
+    ArrayCollection,
+    ArtifactResult,
+    Plot,
+    PlotCollection,
+    Score,
+    ScoreCollection,
+)
+from artifact_experiment.tracking.spi import TrackingQueueWriter
 from torch.utils.hooks import RemovableHandle
 
-from artifact_torch.base.components.callbacks.periodic import (
-    PeriodicTrackingCallback,
-    PeriodicTrackingCallbackResources,
-)
-from artifact_torch.base.model.base import Model
-from artifact_torch.base.model.io import ModelInput
-
-ModelTCov = TypeVar("ModelTCov", bound=Model, covariant=True)
-ModelInputTCov = TypeVar("ModelInputTCov", bound=ModelInput, covariant=True)
-
-
-@dataclass(frozen=True)
-class HookCallbackResources(PeriodicTrackingCallbackResources, Generic[ModelTCov]):
-    model: ModelTCov
-
+from artifact_torch._base.components.callbacks.periodic import PeriodicTrackingCallback
+from artifact_torch._base.components.resources.hook import HookCallbackResources
+from artifact_torch._base.model.base import Model
 
 ModelTContr = TypeVar("ModelTContr", bound=Model, contravariant=True)
 CacheDataTCov = TypeVar("CacheDataTCov", bound=ArtifactResult, covariant=True)
@@ -77,18 +72,18 @@ class HookCallback(
         self._handles.clear()
 
 
-HookScoreCallback = HookCallback[ModelTContr, float, Dict[str, torch.Tensor]]
+HookScoreCallback = HookCallback[ModelTContr, Score, Dict[str, torch.Tensor]]
 
 HookArrayCallback = HookCallback[ModelTContr, Array, Dict[str, torch.Tensor]]
 
 
-HookPlotCallback = HookCallback[ModelTContr, Figure, Dict[str, torch.Tensor]]
+HookPlotCallback = HookCallback[ModelTContr, Plot, Dict[str, torch.Tensor]]
 
 
-HookScoreCollectionCallback = HookCallback[ModelTContr, Dict[str, float], Dict[str, torch.Tensor]]
+HookScoreCollectionCallback = HookCallback[ModelTContr, ScoreCollection, Dict[str, torch.Tensor]]
 
 
-HookArrayCollectionCallback = HookCallback[ModelTContr, Dict[str, Array], Dict[str, torch.Tensor]]
+HookArrayCollectionCallback = HookCallback[ModelTContr, ArrayCollection, Dict[str, torch.Tensor]]
 
 
-HookPlotCollectionCallback = HookCallback[ModelTContr, Dict[str, Figure], Dict[str, torch.Tensor]]
+HookPlotCollectionCallback = HookCallback[ModelTContr, PlotCollection, Dict[str, torch.Tensor]]

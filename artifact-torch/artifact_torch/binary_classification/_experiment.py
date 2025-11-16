@@ -1,19 +1,19 @@
 from abc import abstractmethod
 from typing import Any, Generic, Optional, Type, TypeVar
 
-from artifact_core._libs.resources_spec.binary.protocol import BinaryFeatureSpecProtocol
+from artifact_core.binary_classification.spi import BinaryClassSpecProtocol
 
-from artifact_torch.base.components.routines.loader import DataLoaderRoutine
-from artifact_torch.base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
-from artifact_torch.base.experiment.experiment import Experiment
-from artifact_torch.base.model.io import ModelInput, ModelOutput
-from artifact_torch.base.trainer.trainer import Trainer
+from artifact_torch._base.components.routines.loader import DataLoaderRoutine
+from artifact_torch._base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
+from artifact_torch._base.experiment.experiment import Experiment
+from artifact_torch._base.model.io import ModelInput, ModelOutput
+from artifact_torch._base.trainer.trainer import Trainer
+from artifact_torch._domains.classification.model import ClassificationParams
 from artifact_torch.binary_classification._model import BinaryClassifier
 from artifact_torch.binary_classification._routine import (
     BinaryClassificationRoutine,
     BinaryClassificationRoutineData,
 )
-from artifact_torch.core.model.classifier import ClassificationParams
 
 BinaryClassifierTContr = TypeVar(
     "BinaryClassifierTContr", bound=BinaryClassifier[Any, Any, Any, Any]
@@ -33,7 +33,7 @@ class BinaryClassificationExperiment(
         ModelInputTContr,
         ModelOutputTContr,
         BinaryClassificationRoutineData[ClassificationDataTContr],
-        BinaryFeatureSpecProtocol,
+        BinaryClassSpecProtocol,
     ],
     Generic[
         BinaryClassifierTContr,

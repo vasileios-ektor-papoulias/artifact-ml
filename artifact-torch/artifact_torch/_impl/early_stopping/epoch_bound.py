@@ -1,4 +1,4 @@
-from artifact_torch.base.components.early_stopping.stopper import EarlyStopper, StopperUpdateData
+from artifact_torch._base.components.early_stopping.stopper import EarlyStopper, StopperUpdateData
 
 
 class EpochBoundStopper(EarlyStopper[StopperUpdateData]):

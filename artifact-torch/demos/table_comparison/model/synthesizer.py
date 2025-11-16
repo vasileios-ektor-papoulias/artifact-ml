@@ -1,16 +1,16 @@
 from typing import Type, TypeVar
 
 import pandas as pd
-from artifact_core.table_comparison import TabularDataSpecProtocol
+from artifact_torch.table_comparison import TabularDataSpec
 from artifact_torch.table_comparison._model import TableSynthesizer
 
-from demos.table_comparison.libs.transformers.discretizer import Discretizer
-from demos.table_comparison.libs.transformers.encoder import Encoder
-from demos.table_comparison.model.protocols import (
+from demos.table_comparison.contracts.model import (
     TabularVAEGenerationParams,
     TabularVAEInput,
     TabularVAEOutput,
 )
+from demos.table_comparison.libs.transformers.discretizer import Discretizer
+from demos.table_comparison.libs.transformers.encoder import Encoder
 from demos.table_comparison.model.vae import VAEArchitectureConfig, VariationalAutoencoder
 
 TabularVAESynthesizerT = TypeVar("TabularVAESynthesizerT", bound="TabularVAESynthesizer")
@@ -24,7 +24,7 @@ class TabularVAESynthesizer(
 
     def __init__(
         self,
-        data_spec: TabularDataSpecProtocol,
+        data_spec: TabularDataSpec,
         discretizer: Discretizer,
         encoder: Encoder,
         vae: VariationalAutoencoder,
@@ -38,7 +38,7 @@ class TabularVAESynthesizer(
     @classmethod
     def build(
         cls: Type[TabularVAESynthesizerT],
-        data_spec: TabularDataSpecProtocol,
+        data_spec: TabularDataSpec,
         discretizer: Discretizer,
         encoder: Encoder,
         architecture_config: VAEArchitectureConfig = VAEArchitectureConfig(),
@@ -72,7 +72,7 @@ class TabularVAESynthesizer(
             device=self.device,
         )
         df_synthetic_encoded = pd.DataFrame(
-            t_preds.cpu().numpy(), columns=self._data_spec.ls_features
+            t_preds.cpu().numpy(), columns=list(self._data_spec.features)
         ).astype(int)
         df_synthetic = self._encoder.inverse_transform(df_encoded=df_synthetic_encoded)
         if self._sample:

@@ -1,19 +1,21 @@
 from typing import Any, Optional, Type
 
 import pandas as pd
-from artifact_torch.base.components.routines.loader import DataLoaderRoutine
-from artifact_torch.base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
-from artifact_torch.base.model.io import ModelInput, ModelOutput
-from artifact_torch.base.trainer.trainer import Trainer
 from artifact_torch.binary_classification._experiment import BinaryClassificationExperiment
 from artifact_torch.binary_classification._model import BinaryClassifier
 from artifact_torch.binary_classification._routine import BinaryClassificationRoutine
+from artifact_torch.core import ModelInput, ModelOutput, Trainer
+from artifact_torch.routines import DataLoaderRoutine, TrainDiagnosticsRoutine
 
-from demos.binary_classification.components.protocols import DemoClassificationParams
 from demos.binary_classification.components.routines.artifact import DemoBinaryClassificationRoutine
 from demos.binary_classification.components.routines.loader import DemoLoaderRoutine
 from demos.binary_classification.components.routines.train_diagnostics import (
     DemoTrainDiagnosticsRoutine,
+)
+from demos.binary_classification.contracts.workflow import (
+    WorkflowClassificationParams,
+    WorkflowInput,
+    WorkflowOutput,
 )
 from demos.binary_classification.trainer.trainer import DemoTrainer
 
@@ -23,12 +25,12 @@ class DemoBinaryClassificationExperiment(
         BinaryClassifier[
             Any,
             ModelOutput,
-            DemoClassificationParams,
+            WorkflowClassificationParams,
             pd.DataFrame,
         ],
-        ModelInput,
-        ModelOutput,
-        DemoClassificationParams,
+        WorkflowInput,
+        WorkflowOutput,
+        WorkflowClassificationParams,
         pd.DataFrame,
     ]
 ):
@@ -40,7 +42,7 @@ class DemoBinaryClassificationExperiment(
             BinaryClassifier[
                 Any,
                 ModelOutput,
-                DemoClassificationParams,
+                WorkflowClassificationParams,
                 pd.DataFrame,
             ],
             ModelInput,
@@ -60,7 +62,7 @@ class DemoBinaryClassificationExperiment(
                 BinaryClassifier[
                     Any,
                     ModelOutput,
-                    DemoClassificationParams,
+                    WorkflowClassificationParams,
                     pd.DataFrame,
                 ],
                 ModelInput,
@@ -79,7 +81,7 @@ class DemoBinaryClassificationExperiment(
                 BinaryClassifier[
                     Any,
                     ModelOutput,
-                    DemoClassificationParams,
+                    WorkflowClassificationParams,
                     pd.DataFrame,
                 ],
                 ModelInput,
@@ -92,5 +94,5 @@ class DemoBinaryClassificationExperiment(
     @classmethod
     def _get_artifact_routine(
         cls,
-    ) -> Optional[Type[BinaryClassificationRoutine[DemoClassificationParams, pd.DataFrame]]]:
+    ) -> Optional[Type[BinaryClassificationRoutine[WorkflowClassificationParams, pd.DataFrame]]]:
         return DemoBinaryClassificationRoutine

@@ -2,19 +2,17 @@ from abc import ABC, abstractmethod
 from typing import Any, Generic, Mapping, Optional, Type, TypeVar
 
 import pandas as pd
-from artifact_core._base.artifact import ResourceSpecProtocol
-from artifact_experiment.base.tracking.backend.client import TrackingClient
-from artifact_experiment.base.tracking.background.tracking_queue import TrackingQueue
-from artifact_experiment.base.tracking.background.writer import FileWriter
-from artifact_experiment.base.types.data_split import DataSplit
+from artifact_core.spi.resources import ResourceSpecProtocol
+from artifact_experiment.tracking import DataSplit
+from artifact_experiment.tracking.spi import FileWriter, TrackingClient, TrackingQueue
 
-from artifact_torch.base.components.routines.artifact import ArtifactRoutine, ArtifactRoutineData
-from artifact_torch.base.components.routines.loader import DataLoaderRoutine
-from artifact_torch.base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
-from artifact_torch.base.data.data_loader import DataLoader
-from artifact_torch.base.model.base import Model
-from artifact_torch.base.model.io import ModelInput, ModelOutput
-from artifact_torch.base.trainer.trainer import Trainer
+from artifact_torch._base.components.routines.artifact import ArtifactRoutine, ArtifactRoutineData
+from artifact_torch._base.components.routines.loader import DataLoaderRoutine
+from artifact_torch._base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
+from artifact_torch._base.data.data_loader import DataLoader
+from artifact_torch._base.model.base import Model
+from artifact_torch._base.model.io import ModelInput, ModelOutput
+from artifact_torch._base.trainer.trainer import Trainer
 
 ModelTContr = TypeVar("ModelTContr", bound=Model[Any, Any], contravariant=True)
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
@@ -22,8 +20,8 @@ ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput, contravarian
 ArtifactRoutineDataTContr = TypeVar(
     "ArtifactRoutineDataTContr", bound=ArtifactRoutineData, contravariant=True
 )
-DataSpecProtocolTContr = TypeVar(
-    "DataSpecProtocolTContr", bound=ResourceSpecProtocol, contravariant=True
+ResourceSpecProtocolTContr = TypeVar(
+    "ResourceSpecProtocolTContr", bound=ResourceSpecProtocol, contravariant=True
 )
 ExperimentT = TypeVar("ExperimentT", bound="Experiment")
 
@@ -35,7 +33,7 @@ class Experiment(
         ModelInputTContr,
         ModelOutputTContr,
         ArtifactRoutineDataTContr,
-        DataSpecProtocolTContr,
+        ResourceSpecProtocolTContr,
     ],
 ):
     def __init__(
@@ -49,7 +47,7 @@ class Experiment(
         model: ModelTContr,
         data_loaders: Mapping[DataSplit, DataLoader[ModelInputTContr]],
         artifact_routine_data: Mapping[DataSplit, ArtifactRoutineDataTContr],
-        artifact_routine_data_spec: Optional[DataSpecProtocolTContr] = None,
+        artifact_routine_data_spec: Optional[ResourceSpecProtocolTContr] = None,
         tracking_client: Optional[TrackingClient[Any]] = None,
     ) -> ExperimentT:
         assert DataSplit.TRAIN in data_loaders, "Training data not provided."
@@ -108,7 +106,7 @@ class Experiment(
     ) -> Optional[
         Type[
             ArtifactRoutine[
-                ModelTContr, Any, ArtifactRoutineDataTContr, Any, DataSpecProtocolTContr, Any
+                ModelTContr, ArtifactRoutineDataTContr, Any, Any, ResourceSpecProtocolTContr
             ]
         ]
     ]: ...
@@ -129,7 +127,7 @@ class Experiment(
         ],
         artifact_routine: Optional[
             ArtifactRoutine[
-                ModelTContr, Any, ArtifactRoutineDataTContr, Any, DataSpecProtocolTContr, Any
+                ModelTContr, ArtifactRoutineDataTContr, Any, Any, ResourceSpecProtocolTContr
             ]
         ],
         file_writer: Optional[FileWriter],
@@ -171,11 +169,11 @@ class Experiment(
     def _build_artifact_routine(
         cls,
         data: Mapping[DataSplit, ArtifactRoutineDataTContr],
-        data_spec: Optional[DataSpecProtocolTContr],
+        data_spec: Optional[ResourceSpecProtocolTContr],
         tracking_queue: Optional[TrackingQueue],
     ) -> Optional[
         ArtifactRoutine[
-            ModelTContr, Any, ArtifactRoutineDataTContr, Any, DataSpecProtocolTContr, Any
+            ModelTContr, ArtifactRoutineDataTContr, Any, Any, ResourceSpecProtocolTContr
         ]
     ]:
         routine = None

@@ -2,9 +2,9 @@ from typing import List, Type, TypeVar
 
 import pandas as pd
 import torch
-from artifact_torch.base.data.dataset import Dataset
+from artifact_torch.core import Dataset
 
-from demos.binary_classification.model.protocols import MLPClassifierInput
+from demos.binary_classification.contracts.model import MLPClassifierInput
 
 TabularVAEDatasetT = TypeVar("TabularVAEDatasetT", bound="MLPClassifierDataset")
 

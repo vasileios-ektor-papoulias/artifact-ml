@@ -2,8 +2,8 @@ import os
 from typing import Callable, Dict, List, Optional, Tuple
 
 import pytest
-from artifact_experiment._impl.neptune.adapter import NeptuneRunAdapter
-from artifact_experiment._impl.neptune.loggers.score_collections import (
+from artifact_experiment._impl.backends.neptune.adapter import NeptuneRunAdapter
+from artifact_experiment._impl.backends.neptune.loggers.score_collections import (
     NeptuneScoreCollectionLogger,
 )
 from pytest_mock import MockerFixture

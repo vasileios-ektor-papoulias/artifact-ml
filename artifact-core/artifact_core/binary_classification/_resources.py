@@ -1,4 +1,4 @@
-from typing import Mapping, Optional, Sequence, Type, TypeVar
+from typing import Any, Mapping, Optional, Sequence, Type, TypeVar
 
 from artifact_core._domains.classification.resources import ClassificationArtifactResources
 from artifact_core._libs.resource_specs.binary_classification.protocol import (
@@ -63,3 +63,20 @@ class BinaryClassificationArtifactResources(
             true_class_store=true_class_store, classification_results=classification_results
         )
         return artifact_resources
+
+    def serialize(self) -> Mapping[str, Any]:
+        true = self.true_class_store.id_to_class_name
+        true = {str(identifier): category for identifier, category in true.items()}
+        predicted = self.classification_results.id_to_predicted_class
+        predicted = {str(identifier): category for identifier, category in predicted.items()}
+        probs = self.classification_results.id_to_prob_pos
+        probs = {str(identifier): prob for identifier, prob in probs.items()}
+        dict_artifact_resources = {
+            identifier: {
+                "true": true.get(identifier),
+                "predicted": predicted.get(identifier),
+                "prob_pos": probs.get(identifier),
+            }
+            for identifier in sorted(set(true) | set(predicted) | set(probs), key=int)
+        }
+        return dict_artifact_resources

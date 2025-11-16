@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 import numpy as np
 import pandas as pd
 
-from artifact_torch.base.components.cache.cache import AlignedCache
+from artifact_torch._base.components.cache.cache import AlignedCache
 
 
 class ScoreCache(AlignedCache[float]):

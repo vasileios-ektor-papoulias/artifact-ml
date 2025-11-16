@@ -1,12 +1,9 @@
 from abc import abstractmethod
 from typing import Generic, TypeVar
 
-from artifact_core._libs.resourcess.classification.binary_classification_results import (
-    BinaryClassificationResults,
-)
-
-from artifact_torch.base.model.io import ModelInput, ModelOutput
-from artifact_torch.core.model.classifier import ClassificationParams, Classifier
+from artifact_torch._base.model.io import ModelInput, ModelOutput
+from artifact_torch._domains.classification.model import ClassificationParams, Classifier
+from artifact_torch.binary_classification import BinaryClassificationResults
 
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
 ModelOutputTCov = TypeVar("ModelOutputTCov", bound=ModelOutput, covariant=True)

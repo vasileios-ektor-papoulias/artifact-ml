@@ -4,7 +4,7 @@ from uuid import UUID
 
 import pytest
 from artifact_core._base.primitives import ArtifactResult
-from artifact_experiment._impl.neptune.adapter import NeptuneRunAdapter, NeptuneRunStatus
+from artifact_experiment._impl.backends.neptune.adapter import NeptuneRunAdapter, NeptuneRunStatus
 
 
 @pytest.mark.unit
@@ -153,5 +153,5 @@ def test_upload(
     expected_log_path: str,
 ):
     native_run, adapter = adapter_factory(experiment_id, run_id)
-    adapter.upload(path_source=path_source, dir_target=dir_target)
+    adapter.log_file(path_source=path_source, backend_dir=dir_target)
     native_run[expected_log_path].upload.assert_called_once_with(path_source)

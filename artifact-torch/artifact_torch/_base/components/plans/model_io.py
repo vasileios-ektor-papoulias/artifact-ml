@@ -2,21 +2,21 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Any, Generic, Sequence, Type, TypeVar
 
-from artifact_core._base.primitives import ArtifactResult
-from artifact_experiment.base.components.plans.base import CallbackExecutionPlan, PlanBuildContext
+from artifact_core.typing import ArtifactResult
+from artifact_experiment.spi.plans import CallbackExecutionPlan, PlanBuildContext
 
-from artifact_torch.base.components.callbacks.model_io import (
+from artifact_torch._base.components.callbacks.model_io import (
     ModelIOArrayCallback,
     ModelIOArrayCollectionCallback,
     ModelIOCallback,
-    ModelIOCallbackResources,
     ModelIOPlotCallback,
     ModelIOPlotCollectionCallback,
     ModelIOScoreCallback,
     ModelIOScoreCollectionCallback,
 )
-from artifact_torch.base.components.handler_suites.model_io import ModelIOCallbackHandlerSuite
-from artifact_torch.base.model.io import ModelInput, ModelOutput
+from artifact_torch._base.components.handler_suites.model_io import ModelIOCallbackHandlerSuite
+from artifact_torch._base.components.resources.model_io import ModelIOCallbackResources
+from artifact_torch._base.model.io import ModelInput, ModelOutput
 
 
 @dataclass(frozen=True)
@@ -78,7 +78,7 @@ class ModelIOPlan(
         return self._handler_suite.attach(resources=resources)
 
     @classmethod
-    def _get_handler_suite_type(
+    def _get_handler_suite(
         cls,
     ) -> Type[ModelIOCallbackHandlerSuite[ModelInputTContr, ModelOutputTContr]]:
         return ModelIOCallbackHandlerSuite

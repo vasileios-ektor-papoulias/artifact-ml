@@ -106,8 +106,8 @@ class TrackingClient(Generic[RunAdapterT]):
         self._tracking_queue.put_plot_collection(name=name, value=plot_collection)
 
     def log_file(self, path_source: str, name: str):
-        upload_data = File(path_source=path_source)
-        self._tracking_queue.put_file(name=name, value=upload_data)
+        file = File(path_source=path_source)
+        self._tracking_queue.put_file(name=name, value=file)
 
     def stop(self):
         self._logger_worker.stop()

@@ -1,29 +1,38 @@
-import os
-from abc import abstractmethod
-from typing import Any, Dict
-
 import torch
+from artifact_experiment.spi.callbacks import ExportCallback
+from artifact_experiment.tracking.spi import FileWriter
 
-from artifact_torch.base.components.callbacks.export import ExportCallback, ExportCallbackResources
+from artifact_torch._base.components.resources.checkpoint import CheckpointCallbackResources
+from artifact_torch._utils.filesystem.filename_appender import FilenameAppender
+from artifact_torch._utils.scheduling.periodic_actions import PeriodicActionTrigger
 
-CheckpointCallbackResources = ExportCallbackResources[Dict[str, Any]]
 
+class CheckpointCallback(ExportCallback[CheckpointCallbackResources]):
+    _export_name = "TRAINING_CHECKPOINTS"
 
-class CheckpointCallback(ExportCallback[Dict[str, Any]]):
-    @classmethod
-    @abstractmethod
-    def _get_checkpoint_name(cls) -> str: ...
+    def __init__(self, period: int, writer: FileWriter):
+        super().__init__(writer=writer)
+        self._period = period
 
     @classmethod
     def _get_export_name(cls) -> str:
-        return cls._get_checkpoint_name()
+        return cls._export_name
 
     @classmethod
     def _get_extension(cls) -> str:
         return "pth"
 
+    def execute(self, resources: CheckpointCallbackResources):
+        if PeriodicActionTrigger.should_trigger(step=resources.epoch, period=self._period):
+            super().execute(resources=resources)
+
     @classmethod
-    def _save_local(cls, data: Dict[str, Any], dir_target: str, filename: str) -> str:
-        filepath = os.path.join(dir_target, filename)
-        torch.save(data, filepath)
+    def _save_local(cls, resources: CheckpointCallbackResources, filepath: str) -> str:
+        suffix = cls._get_filename_suffix(epoch=resources.epoch)
+        filepath = FilenameAppender.append(filepath=filepath, text=suffix).as_posix()
+        torch.save(resources.export_data, filepath)
         return filepath
+
+    @staticmethod
+    def _get_filename_suffix(epoch: int) -> str:
+        return f"_EPOCH_{epoch}"

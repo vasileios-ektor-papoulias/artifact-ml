@@ -4,18 +4,19 @@ from typing import Any, Dict, Generic, List, Optional, Tuple, TypeVar
 
 import torch
 import torch.nn as nn
-from artifact_core._base.primitives import ArtifactResult
+from artifact_core.typing import (
+    Array,
+    ArrayCollection,
+    ArtifactResult,
+    Plot,
+    PlotCollection,
+    Score,
+    ScoreCollection,
+)
 
-from artifact_torch.base.components.callbacks.forward_hook import ForwardHookCallback
-from artifact_torch.base.components.callbacks.hook import HookCallbackResources
-from artifact_torch.base.model.base import Model
-from artifact_torch.base.model.io import ModelInput, ModelOutput
-
-ModelOutputTCov = TypeVar("ModelOutputTCov", bound=ModelOutput, covariant=True)
-
-
-ModelIOCallbackResources = HookCallbackResources[Model[Any, ModelOutputTCov]]
-
+from artifact_torch._base.components.callbacks.forward_hook import ForwardHookCallback
+from artifact_torch._base.model.base import Model
+from artifact_torch._base.model.io import ModelInput, ModelOutput
 
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
 ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput, contravariant=True)
@@ -59,7 +60,7 @@ class ModelIOCallback(
 
 
 ModelIOScoreCallback = ModelIOCallback[
-    ModelInputTContr, ModelOutputTContr, float, Dict[str, torch.Tensor]
+    ModelInputTContr, ModelOutputTContr, Score, Dict[str, torch.Tensor]
 ]
 
 
@@ -69,20 +70,20 @@ ModelIOArrayCallback = ModelIOCallback[
 
 
 ModelIOPlotCallback = ModelIOCallback[
-    ModelInputTContr, ModelOutputTContr, Figure, Dict[str, torch.Tensor]
+    ModelInputTContr, ModelOutputTContr, Plot, Dict[str, torch.Tensor]
 ]
 
 
 ModelIOScoreCollectionCallback = ModelIOCallback[
-    ModelInputTContr, ModelOutputTContr, Dict[str, float], Dict[str, torch.Tensor]
+    ModelInputTContr, ModelOutputTContr, ScoreCollection, Dict[str, torch.Tensor]
 ]
 
 
 ModelIOArrayCollectionCallback = ModelIOCallback[
-    ModelInputTContr, ModelOutputTContr, Dict[str, Array], Dict[str, torch.Tensor]
+    ModelInputTContr, ModelOutputTContr, ArrayCollection, Dict[str, torch.Tensor]
 ]
 
 
 ModelIOPlotCollectionCallback = ModelIOCallback[
-    ModelInputTContr, ModelOutputTContr, Dict[str, Figure], Dict[str, torch.Tensor]
+    ModelInputTContr, ModelOutputTContr, PlotCollection, Dict[str, torch.Tensor]
 ]

@@ -1,18 +1,10 @@
 from typing import Any, Optional
 
 import torch
-from artifact_experiment.base.tracking.background.writer import FileWriter
-from artifact_torch.base.components.callbacks.checkpoint import CheckpointCallback
-from artifact_torch.base.components.early_stopping.stopper import EarlyStopper, StopperUpdateData
-from artifact_torch.base.components.model_tracking.tracker import (
-    ModelTracker,
-    ModelTrackingCriterion,
-)
-from artifact_torch.base.model.io import ModelInput, ModelOutput
-from artifact_torch.base.trainer.trainer import Trainer
-from artifact_torch.binary_classification._model import BinaryClassifier
-from artifact_torch.libs.components.callbacks.export.checkpoint import TorchCheckpointCallback
-from artifact_torch.libs.components.early_stopping.epoch_bound import EpochBoundStopper
+from artifact_torch.binary_classification import BinaryClassifier
+from artifact_torch.core import Trainer
+from artifact_torch.early_stopping import EarlyStopper, EpochBoundStopper, StopperUpdateData
+from artifact_torch.model_tracking import ModelTracker, ModelTrackingCriterion
 from torch import optim
 
 from demos.binary_classification.config.constants import (
@@ -21,13 +13,14 @@ from demos.binary_classification.config.constants import (
     LEARNING_RATE,
     MAX_N_EPOCHS,
 )
+from demos.binary_classification.contracts.workflow import WorkflowInput, WorkflowOutput
 
 
 class DemoTrainer(
     Trainer[
         BinaryClassifier[Any, Any, Any, Any],
-        ModelInput,
-        ModelOutput,
+        WorkflowInput,
+        WorkflowOutput,
         StopperUpdateData,
         ModelTrackingCriterion,
     ]
@@ -49,6 +42,10 @@ class DemoTrainer(
         return DEVICE
 
     @staticmethod
+    def _get_checkpoint_period() -> Optional[int]:
+        return CHECKPOINT_PERIOD
+
+    @staticmethod
     def _get_model_tracker() -> Optional[ModelTracker[ModelTrackingCriterion]]:
         pass
 
@@ -61,10 +58,3 @@ class DemoTrainer(
 
     def _get_stopper_update_data(self) -> StopperUpdateData:
         return StopperUpdateData(n_epochs_elapsed=self.n_epochs_elapsed)
-
-    @staticmethod
-    def _get_checkpoint_callback(
-        writer: Optional[FileWriter],
-    ) -> Optional[CheckpointCallback]:
-        if writer is not None:
-            return TorchCheckpointCallback(period=CHECKPOINT_PERIOD, writer=writer)

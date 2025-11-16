@@ -9,6 +9,4 @@ class ConfigOverrideLocator:
 
     @classmethod
     def find(cls) -> Optional[Path]:
-        override_dir = DirectoryLocator.find(marker=cls._override_dir_name)
-        if override_dir is not None:
-            return override_dir
+        return DirectoryLocator.find(marker=cls._override_dir_name)

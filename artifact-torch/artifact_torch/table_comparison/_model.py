@@ -3,11 +3,11 @@ from typing import Generic, TypeVar
 
 import pandas as pd
 
-from artifact_torch.base.model.io import (
+from artifact_torch._base.model.io import (
     ModelInput,
     ModelOutput,
 )
-from artifact_torch.core.model.generative import GenerationParams, GenerativeModel
+from artifact_torch._domains.generation.model import GenerationParams, GenerativeModel
 
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
 ModelOutputTCov = TypeVar("ModelOutputTCov", bound=ModelOutput, covariant=True)

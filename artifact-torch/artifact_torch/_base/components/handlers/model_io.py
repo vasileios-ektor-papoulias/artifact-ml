@@ -1,10 +1,18 @@
-from typing import Any, Dict, Generic, TypeVar
+from typing import Any, Generic, TypeVar
 
-from artifact_core._base.primitives import ArtifactResult
+from artifact_core.typing import (
+    Array,
+    ArrayCollection,
+    ArtifactResult,
+    Plot,
+    PlotCollection,
+    Score,
+    ScoreCollection,
+)
 
-from artifact_torch.base.components.handlers.hook import HookCallbackHandler
-from artifact_torch.base.model.base import Model
-from artifact_torch.base.model.io import ModelInput, ModelOutput
+from artifact_torch._base.components.handlers.hook import HookCallbackHandler
+from artifact_torch._base.model.base import Model
+from artifact_torch._base.model.io import ModelInput, ModelOutput
 
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)
 ModelOutputTContr = TypeVar("ModelOutputTContr", bound=ModelOutput, contravariant=True)
@@ -18,19 +26,19 @@ class ModelIOCallbackHandler(
     pass
 
 
-ModelIOScoreHandler = ModelIOCallbackHandler[ModelOutputTContr, float]
+ModelIOScoreHandler = ModelIOCallbackHandler[ModelOutputTContr, Score]
 
 
 ModelIOArrayHandler = ModelIOCallbackHandler[ModelOutputTContr, Array]
 
 
-ModelIOPlotHandler = ModelIOCallbackHandler[ModelOutputTContr, Figure]
+ModelIOPlotHandler = ModelIOCallbackHandler[ModelOutputTContr, Plot]
 
 
-ModelIOScoreCollectionHandler = ModelIOCallbackHandler[ModelOutputTContr, Dict[str, float]]
+ModelIOScoreCollectionHandler = ModelIOCallbackHandler[ModelOutputTContr, ScoreCollection]
 
 
-ModelIOArrayCollectionHandler = ModelIOCallbackHandler[ModelOutputTContr, Dict[str, Array]]
+ModelIOArrayCollectionHandler = ModelIOCallbackHandler[ModelOutputTContr, ArrayCollection]
 
 
-ModelIOPlotCollectionHandler = ModelIOCallbackHandler[ModelOutputTContr, Dict[str, Figure]]
+ModelIOPlotCollectionHandler = ModelIOCallbackHandler[ModelOutputTContr, PlotCollection]

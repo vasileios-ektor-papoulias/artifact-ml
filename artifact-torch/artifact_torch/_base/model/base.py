@@ -4,10 +4,7 @@ from typing import Any, Dict, Generic, TypeVar
 import torch
 import torch.nn as nn
 
-from artifact_torch.base.model.io import (
-    ModelInput,
-    ModelOutput,
-)
+from artifact_torch._base.model.io import ModelInput, ModelOutput
 
 ModelInputTContr = TypeVar("ModelInputTContr", bound="ModelInput", contravariant=True)
 ModelOutputTCov = TypeVar("ModelOutputTCov", bound="ModelOutput", covariant=True)

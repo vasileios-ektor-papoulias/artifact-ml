@@ -2,8 +2,8 @@ import os
 from typing import Callable, Dict, List, Optional, Tuple
 
 import pytest
-from artifact_experiment._impl.filesystem.adapter import FilesystemRunAdapter
-from artifact_experiment._impl.filesystem.loggers.array_collections import (
+from artifact_experiment._impl.backends.filesystem.adapter import FilesystemRunAdapter
+from artifact_experiment._impl.backends.filesystem.loggers.array_collections import (
     FilesystemArrayCollectionLogger,
 )
 from pytest_mock import MockerFixture

@@ -15,9 +15,16 @@ from artifact_core.table_comparison.spi import (
     TabularDataSpecProtocol,
 )
 
+from artifact_experiment._base.components.callbacks.export import ExportCallback
 from artifact_experiment._base.components.factories.artifact import ArtifactCallbackFactory
-from artifact_experiment._base.components.plans.artifact import ArtifactPlan
+from artifact_experiment._base.components.plans.artifact import (
+    ArtifactPlan,
+    ArtifactPlanBuildContext,
+)
+from artifact_experiment._base.components.resources.artifact import ArtifactCallbackResources
+from artifact_experiment._base.components.resources.export import ExportCallbackResources
 from artifact_experiment._base.primitives.data_split import DataSplit
+from artifact_experiment._impl.callbacks.table_export import TableExportCallback
 from artifact_experiment.table_comparison._callback_factory import TableComparisonCallbackFactory
 
 
@@ -31,6 +38,7 @@ class TableComparisonPlan(
         TableComparisonScoreCollectionType,
         TableComparisonArrayCollectionType,
         TableComparisonPlotCollectionType,
+        pd.DataFrame,
     ]
 ):
     @staticmethod
@@ -82,3 +90,19 @@ class TableComparisonPlan(
         ]
     ]:
         return TableComparisonCallbackFactory
+
+    @classmethod
+    def _get_export_callback(
+        cls, context: ArtifactPlanBuildContext[TabularDataSpecProtocol]
+    ) -> Optional[ExportCallback[ExportCallbackResources[pd.DataFrame]]]:
+        if context.file_writer is not None:
+            return TableExportCallback(writer=context.file_writer)
+
+    @classmethod
+    def _get_export_resources(
+        cls, resources: ArtifactCallbackResources[TableComparisonArtifactResources]
+    ) -> ExportCallbackResources[pd.DataFrame]:
+        export_resources = ExportCallbackResources(
+            export_data=resources.artifact_resources.dataset_synthetic, trigger="SYNTHETIC"
+        )
+        return export_resources

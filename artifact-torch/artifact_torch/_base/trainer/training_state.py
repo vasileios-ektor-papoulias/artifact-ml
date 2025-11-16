@@ -4,7 +4,7 @@ from typing import Any, Dict, Generic, Optional, TypeVar, Union
 import torch
 from torch import optim
 
-from artifact_torch.base.model.base import Model
+from artifact_torch._base.model.base import Model
 
 ModelTCov = TypeVar("ModelTCov", bound=Model[Any, Any], covariant=True)
 

@@ -2,10 +2,10 @@ from abc import abstractmethod
 from dataclasses import dataclass
 from typing import Any, Generic, Sequence, Type, TypeVar
 
-from artifact_core._base.primitives import ArtifactResult
-from artifact_experiment.base.components.plans.base import CallbackExecutionPlan, PlanBuildContext
+from artifact_core.typing import ArtifactResult
+from artifact_experiment.spi.plans import CallbackExecutionPlan, PlanBuildContext
 
-from artifact_torch.base.components.callbacks.forward_hook import (
+from artifact_torch._base.components.callbacks.forward_hook import (
     ForwardHookArrayCallback,
     ForwardHookArrayCollectionCallback,
     ForwardHookCallback,
@@ -14,9 +14,9 @@ from artifact_torch.base.components.callbacks.forward_hook import (
     ForwardHookScoreCallback,
     ForwardHookScoreCollectionCallback,
 )
-from artifact_torch.base.components.callbacks.hook import HookCallbackResources
-from artifact_torch.base.components.handler_suites.hook import HookCallbackHandlerSuite
-from artifact_torch.base.model.base import Model
+from artifact_torch._base.components.callbacks.hook import HookCallbackResources
+from artifact_torch._base.components.handler_suites.hook import HookCallbackHandlerSuite
+from artifact_torch._base.model.base import Model
 
 
 @dataclass(frozen=True)
@@ -77,5 +77,5 @@ class ForwardHookPlan(
         return self._handler_suite.attach(resources=resources)
 
     @classmethod
-    def _get_handler_suite_type(cls) -> Type[HookCallbackHandlerSuite[ModelTContr]]:
+    def _get_handler_suite(cls) -> Type[HookCallbackHandlerSuite[ModelTContr]]:
         return HookCallbackHandlerSuite

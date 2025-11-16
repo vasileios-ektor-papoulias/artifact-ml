@@ -5,8 +5,8 @@ from unittest.mock import MagicMock
 
 import numpy as np
 import pytest
-from artifact_experiment._impl.mlflow.adapter import MlflowRunAdapter
-from artifact_experiment._impl.mlflow.loggers.arrays import MlflowArrayLogger
+from artifact_experiment._impl.backends.mlflow.adapter import MlflowRunAdapter
+from artifact_experiment._impl.backends.mlflow.loggers.arrays import MlflowArrayLogger
 from artifact_experiment._utils.incremental_path_generator import IncrementalPathGenerator
 from pytest_mock import MockerFixture
 

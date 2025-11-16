@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
-from artifact_experiment._impl.mlflow.adapter import MlflowNativeRun, MlflowRunAdapter
+from artifact_experiment._impl.backends.mlflow.adapter import MlflowNativeRun, MlflowRunAdapter
 from mlflow.entities import RunStatus
 from pytest_mock import MockerFixture
 
@@ -140,7 +140,7 @@ def test_upload(
 ):
     mock_client, _, mock_run, _, adapter = adapter_factory(experiment_id, run_id)
     mock_log_artifact = mocker.patch.object(mock_client, "log_artifact")
-    adapter.upload(path_source=path_source, dir_target=dir_target)
+    adapter.log_file(file=path_source, backend_dir=dir_target)
     mock_log_artifact.assert_called_once_with(
         run_id=mock_run.info.run_id,
         local_path=path_source,

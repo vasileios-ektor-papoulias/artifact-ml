@@ -6,10 +6,10 @@ import torch
 from torch import optim
 from tqdm import tqdm
 
-from artifact_torch.base.data.data_loader import DataLoader
-from artifact_torch.base.model.base import Model
-from artifact_torch.base.model.io import ModelInput, ModelOutput
-from artifact_torch.base.trainer.training_state import TrainingState
+from artifact_torch._base.data.data_loader import DataLoader
+from artifact_torch._base.model.base import Model
+from artifact_torch._base.model.io import ModelInput, ModelOutput
+from artifact_torch._base.trainer.training_state import TrainingState
 
 ModelTContr = TypeVar("ModelTContr", bound=Model[Any, Any], contravariant=True)
 ModelInputTContr = TypeVar("ModelInputTContr", bound=ModelInput, contravariant=True)

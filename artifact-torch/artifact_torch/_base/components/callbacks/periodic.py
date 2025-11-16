@@ -1,25 +1,16 @@
 from abc import abstractmethod
-from dataclasses import dataclass
 from typing import Generic, Optional, TypeVar
 
-from artifact_experiment.base.components.callbacks.base import Callback, CallbackResources
-from artifact_experiment.base.components.callbacks.cache import (
-    CacheCallback,
-    CacheCallbackResources,
+from artifact_experiment.spi.callbacks import CacheCallback, Callback, TrackingCallback
+from artifact_experiment.tracking.spi import TrackingQueueWriter
+from artifact_experiment.typing import TrackingData
+
+from artifact_torch._base.components.resources.periodic import (
+    PeriodicCacheCallbackResources,
+    PeriodicCallbackResources,
+    PeriodicTrackingCallbackResources,
 )
-from artifact_experiment.base.components.callbacks.tracking import (
-    TrackingCallback,
-    TrackingCallbackResources,
-)
-from artifact_experiment.base.tracking.background.writer import TrackingData, TrackingQueueWriter
-
-from artifact_torch.base.components.utils.periodic_action_trigger import PeriodicActionTrigger
-
-
-@dataclass(frozen=True)
-class PeriodicCallbackResources(CallbackResources):
-    step: int
-
+from artifact_torch._utils.scheduling.periodic_actions import PeriodicActionTrigger
 
 PeriodicCallbackResourcesTContr = TypeVar(
     "PeriodicCallbackResourcesTContr", bound=PeriodicCallbackResources, contravariant=True
@@ -48,11 +39,6 @@ class PeriodicCallback(
     def _should_trigger(self, step: int):
         should_trigger = PeriodicActionTrigger.should_trigger(step=step, period=self._period)
         return should_trigger
-
-
-@dataclass(frozen=True)
-class PeriodicCacheCallbackResources(CacheCallbackResources):
-    step: int
 
 
 PeriodicCacheCallbackResourcesTContr = TypeVar(
@@ -87,17 +73,11 @@ class PeriodicCacheCallback(
         return should_trigger
 
 
-@dataclass(frozen=True)
-class PeriodicTrackingCallbackResources(TrackingCallbackResources):
-    step: int
-
-
 PeriodicTrackingCallbackResourcesTContr = TypeVar(
     "PeriodicTrackingCallbackResourcesTContr",
     bound=PeriodicTrackingCallbackResources,
     contravariant=True,
 )
-CacheDataTCov = TypeVar("CacheDataTCov", bound=TrackingData, covariant=True)
 
 
 class PeriodicTrackingCallback(

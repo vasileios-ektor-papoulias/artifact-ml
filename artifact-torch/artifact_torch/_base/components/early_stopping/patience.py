@@ -5,11 +5,7 @@ from typing import Generic, List, Optional, TypeVar
 
 from artifact_torch._base.components.early_stopping.stopper import EarlyStopper, StopperUpdateData
 
-PatienceStopperCriterionT = TypeVar("PatienceStopperCriterionT", bound="PatienceStopperCriterion")
-
-
-@dataclass
-class PatienceStopperCriterion: ...
+PatienceStopperCriterionT = TypeVar("PatienceStopperCriterionT")
 
 
 @dataclass
@@ -48,7 +44,7 @@ class PatienceStopper(
     def stopping_condition_met(self) -> bool:
         pass
 
-    def _update(self, update_data: PatienceStopperUpdateData):
+    def _update(self, update_data: PatienceStopperUpdateData[PatienceStopperCriterionT]):
         super()._update(update_data=update_data)
         self._criterion_history.append(update_data.criterion)
         self._current_criterion = update_data.criterion

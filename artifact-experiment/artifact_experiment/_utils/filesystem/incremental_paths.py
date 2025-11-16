@@ -1,30 +1,38 @@
 import os
 from typing import List, Optional
 
+from artifact_experiment._utils.filesystem.extension_normalizer import ExtensionNormalizer
 
-class IncrementalPathGenerator:
-    @classmethod
-    def generate(cls, dir_path: str, fmt: Optional[str] = None) -> str:
-        if fmt is not None:
-            fmt = cls._ensure_extension(fmt=fmt)
-        cls._ensure_directory(dir_path=dir_path)
-        ls_filenames = os.listdir(dir_path)
-        ls_indices = cls._gather_indices(ls_filenames=ls_filenames, fmt=fmt)
-        next_idx = cls._compute_next_index(ls_indices=ls_indices)
-        path = cls.format_path(dir_path=dir_path, next_idx=next_idx, fmt=fmt)
-        return path
 
+class IncrementalPathFormatter:
     @classmethod
-    def format_path(
+    def format(
         cls,
         dir_path: str,
         next_idx: int,
-        fmt: Optional[str] = None,
+        extension: Optional[str] = None,
     ) -> str:
-        if fmt is not None:
-            fmt = cls._ensure_extension(fmt=fmt)
-        filename = cls._format_filename(index=next_idx, fmt=fmt)
+        if extension is not None:
+            extension = ExtensionNormalizer.normalize(extension=extension)
+        filename = cls._format_filename(index=next_idx, fmt=extension)
         path = os.path.join(dir_path, filename)
+        return path
+
+    @staticmethod
+    def _format_filename(index: int, fmt: Optional[str]) -> str:
+        return f"{index}{fmt}" if fmt else str(index)
+
+
+class IncrementalPathGenerator:
+    @classmethod
+    def generate(cls, dir_path: str, ext: Optional[str] = None) -> str:
+        if ext is not None:
+            ext = ExtensionNormalizer.normalize(extension=ext)
+        cls._ensure_directory(dir_path=dir_path)
+        ls_filenames = os.listdir(dir_path)
+        ls_indices = cls._gather_indices(ls_filenames=ls_filenames, fmt=ext)
+        next_idx = cls._compute_next_index(ls_indices=ls_indices)
+        path = IncrementalPathFormatter.format(dir_path=dir_path, next_idx=next_idx, extension=ext)
         return path
 
     @staticmethod
@@ -51,15 +59,5 @@ class IncrementalPathGenerator:
             return index
 
     @staticmethod
-    def _format_filename(index: int, fmt: Optional[str]) -> str:
-        return f"{index}{fmt}" if fmt else str(index)
-
-    @staticmethod
     def _ensure_directory(dir_path: str):
         os.makedirs(name=dir_path, exist_ok=True)
-
-    @staticmethod
-    def _ensure_extension(fmt: str) -> str:
-        if not fmt.startswith("."):
-            fmt = "." + fmt
-        return fmt

@@ -4,7 +4,7 @@ from typing import Generic, Iterator, TypeVar
 from torch.utils.data import Dataset as NativeDataset
 from torch.utils.data import IterableDataset as NativeIterableDataset
 
-from artifact_torch.base.model.io import ModelInput
+from artifact_torch._base.model.io import ModelInput
 
 ModelInputTCov = TypeVar("ModelInputTCov", bound=ModelInput, covariant=True)
 

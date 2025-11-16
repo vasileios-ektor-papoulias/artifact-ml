@@ -3,23 +3,17 @@ from dataclasses import dataclass
 from typing import Any, Generic, Mapping, Optional, Type, TypeVar
 
 import pandas as pd
-from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison._artifacts.base import TableComparisonArtifactResources
-from artifact_experiment import DataSplit
-from artifact_experiment.base.tracking.background.tracking_queue import TrackingQueue
-from artifact_experiment.table_comparison.plan import TableComparisonPlan
+from artifact_core.table_comparison.spi import TabularDataSpecProtocol
+from artifact_experiment.table_comparison import TableComparisonPlan
+from artifact_experiment.tracking import DataSplit
 
-from artifact_torch.base.components.callbacks.export import ExportCallback
-from artifact_torch.base.components.routines.artifact import (
+from artifact_torch._base.components.routines.artifact import (
     ArtifactRoutine,
     ArtifactRoutineData,
     ArtifactRoutineHyperparams,
 )
-from artifact_torch.core.model.generative import GenerationParams
-from artifact_torch.libs.components.callbacks.export.table import (
-    TableExportCallback,
-    TableExportCallbackResources,
-)
+from artifact_torch._domains.generation.model import GenerationParams
 from artifact_torch.table_comparison._model import TableSynthesizer
 
 GenerationParamsTCov = TypeVar("GenerationParamsTCov", bound=GenerationParams, covariant=True)
@@ -39,16 +33,13 @@ class TableComparisonRoutineData(ArtifactRoutineData):
 class TableComparisonRoutine(
     ArtifactRoutine[
         TableSynthesizer[Any, Any, GenerationParamsTCov],
-        TableComparisonRoutineHyperparams[GenerationParamsTCov],
         TableComparisonRoutineData,
+        TableComparisonRoutineHyperparams[GenerationParamsTCov],
         TableComparisonArtifactResources,
         TabularDataSpecProtocol,
-        pd.DataFrame,
     ],
     Generic[GenerationParamsTCov],
 ):
-    _resource_export_trigger_identifier = "SYNTHETIC"
-
     @classmethod
     @abstractmethod
     def _get_period(
@@ -58,11 +49,11 @@ class TableComparisonRoutine(
 
     @classmethod
     @abstractmethod
-    def _get_generation_params(cls) -> GenerationParamsTCov: ...
+    def _get_artifact_plan(cls, data_split: DataSplit) -> Optional[Type[TableComparisonPlan]]: ...
 
     @classmethod
     @abstractmethod
-    def _get_artifact_plan(cls, data_split: DataSplit) -> Optional[Type[TableComparisonPlan]]: ...
+    def _get_generation_params(cls) -> GenerationParamsTCov: ...
 
     @classmethod
     def _get_hyperparams(cls) -> TableComparisonRoutineHyperparams[GenerationParamsTCov]:
@@ -71,13 +62,6 @@ class TableComparisonRoutine(
             generation_params=generation_params
         )
         return hyperparams
-
-    @classmethod
-    def _get_export_callback(
-        cls, tracking_queue: Optional[TrackingQueue]
-    ) -> Optional[ExportCallback[pd.DataFrame]]:
-        if tracking_queue is not None:
-            return TableExportCallback(period=1, writer=tracking_queue.file_writer)
 
     def _generate_artifact_resources(
         self,
@@ -91,19 +75,3 @@ class TableComparisonRoutine(
             )
             resources_by_split[data_split] = resources
         return resources_by_split
-
-    @classmethod
-    def _export_artifact_resources(
-        cls,
-        artifact_resources: TableComparisonArtifactResources,
-        export_callback: ExportCallback[pd.DataFrame],
-        n_epochs_elapsed: int,
-        data_split: DataSplit,
-    ):
-        _ = data_split
-        export_callback_resources = TableExportCallbackResources(
-            step=n_epochs_elapsed,
-            export_data=artifact_resources.dataset_synthetic,
-            trigger=cls._resource_export_trigger_identifier,
-        )
-        export_callback.execute(resources=export_callback_resources)

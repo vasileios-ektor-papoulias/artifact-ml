@@ -1,14 +1,14 @@
 from typing import List
 
-from artifact_core.binary_classification import (
-    BinaryClassificationArray,
+from artifact_torch.binary_classification import (
     BinaryClassificationArrayCollectionType,
-    BinaryClassificationPlot,
+    BinaryClassificationArrayType,
+    BinaryClassificationPlan,
     BinaryClassificationPlotCollectionType,
+    BinaryClassificationPlotType,
     BinaryClassificationScoreCollectionType,
     BinaryClassificationScoreType,
 )
-from artifact_experiment.binary_classification import BinaryClassificationPlan
 
 
 class DemoBinaryClassificationPlan(BinaryClassificationPlan):
@@ -22,14 +22,14 @@ class DemoBinaryClassificationPlan(BinaryClassificationPlan):
         ]
 
     @staticmethod
-    def _get_array_types() -> List[BinaryClassificationArray]:
+    def _get_array_types() -> List[BinaryClassificationArrayType]:
         return []
 
     @staticmethod
-    def _get_plot_types() -> List[BinaryClassificationPlot]:
+    def _get_plot_types() -> List[BinaryClassificationPlotType]:
         return [
-            BinaryClassificationPlot.SCORE_PDF,
-            BinaryClassificationPlot.GROUND_TRUTH_PROB_PDF,
+            BinaryClassificationPlotType.SCORE_PDF,
+            BinaryClassificationPlotType.GROUND_TRUTH_PROB_PDF,
         ]
 
     @staticmethod

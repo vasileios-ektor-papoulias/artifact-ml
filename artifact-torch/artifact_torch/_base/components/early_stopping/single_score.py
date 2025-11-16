@@ -1,36 +1,23 @@
 from abc import abstractmethod
-from dataclasses import dataclass
 from typing import List, Optional
 
-from artifact_torch._base.components.early_stopping.patience import (
-    PatienceStopper,
-    PatienceStopperCriterion,
-    PatienceStopperUpdateData,
-)
+from artifact_torch._base.components.early_stopping.patience import PatienceStopper
 
 
-@dataclass
-class SingleScoreCriterion(PatienceStopperCriterion):
-    score: float
-
-
-SingleScoreUpdateData = PatienceStopperUpdateData[SingleScoreCriterion]
-
-
-class SingleScoreStopper(PatienceStopper[SingleScoreCriterion]):
+class SingleScoreStopper(PatienceStopper[float]):
     @property
     def score_history(self) -> List[float]:
-        return [criterion.score for criterion in self.criterion_history]
+        return [criterion for criterion in self.criterion_history]
 
     @property
     def latest_score(self) -> Optional[float]:
         if self.latest_criterion is not None:
-            return self.latest_criterion.score
+            return self.latest_criterion
 
     @property
     def earliest_score(self) -> Optional[float]:
         if self.earliest_criterion is not None:
-            return self.earliest_criterion.score
+            return self.earliest_criterion
 
     @property
     def min_score(self) -> Optional[float]:

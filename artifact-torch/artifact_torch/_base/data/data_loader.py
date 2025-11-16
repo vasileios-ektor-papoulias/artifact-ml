@@ -3,9 +3,9 @@ from typing import Generic, Iterator, TypeVar, Union
 import torch
 from torch.utils.data import DataLoader as NativeDataLoader
 
-from artifact_torch.base.data.dataset import Dataset, IterableDataset
-from artifact_torch.base.data.device_manager import DeviceManager
-from artifact_torch.base.model.io import ModelInput
+from artifact_torch._base.data.dataset import Dataset, IterableDataset
+from artifact_torch._base.data.device_manager import DeviceManager
+from artifact_torch._base.model.io import ModelInput
 
 ModelInputTCov = TypeVar("ModelInputTCov", bound=ModelInput, covariant=True)
 

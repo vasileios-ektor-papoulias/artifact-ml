@@ -1,6 +1,7 @@
 from typing import Any, Sequence
 
-from artifact_torch.base.components.callbacks.forward_hook import (
+from artifact_torch.callbacks.forward_hook import (
+    AllActivationsPDF,
     ForwardHookArrayCallback,
     ForwardHookArrayCollectionCallback,
     ForwardHookPlotCallback,
@@ -8,12 +9,8 @@ from artifact_torch.base.components.callbacks.forward_hook import (
     ForwardHookScoreCallback,
     ForwardHookScoreCollectionCallback,
 )
-from artifact_torch.base.components.plans.forward_hook import (
-    ForwardHookPlan,
-    ForwardHookPlanBuildContext,
-)
-from artifact_torch.base.model.base import Model
-from artifact_torch.libs.components.callbacks.forward_hook.activation_pdf import AllActivationsPDF
+from artifact_torch.core import Model
+from artifact_torch.plans import ForwardHookPlan, ForwardHookPlanBuildContext
 
 from demos.binary_classification.config.constants import (
     LOADER_VALIDATION_PERIOD,

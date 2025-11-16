@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, TypeVar
+from typing import Dict, List, Mapping, Optional, TypeVar
 
 import numpy as np
 import pandas as pd
@@ -7,13 +7,15 @@ EncoderT = TypeVar("EncoderT", bound="Encoder")
 
 
 class Encoder:
-    def __init__(self, cat_unique_map: Optional[Dict[str, List[str]]] = None):
-        self._cat_unique_map: Dict[str, List[str]] = cat_unique_map or {}
+    def __init__(self, cat_unique_map: Optional[Mapping[str, List[str]]] = None):
+        self._cat_unique_map: Dict[str, List[str]] = (
+            dict(cat_unique_map) if cat_unique_map is not None else {}
+        )
         self._ls_cat_features: List[str] = list(self._cat_unique_map.keys())
         self._mappings: Dict[str, Dict[str, int]] = {}
         self._is_fitted: bool = False
 
-    def get_mappings(self) -> Dict[str, Dict[str, int]]:
+    def get_mappings(self) -> Mapping[str, Mapping[str, int]]:
         self._raise_if_not_fitted()
         return self._mappings
 

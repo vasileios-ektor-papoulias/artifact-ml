@@ -2,13 +2,13 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 import torch
-from artifact_core._libs.artifacts.tools.plotters.pdf_plotter import PDFConfig, PDFPlotter
+from artifact_core.shared.plotters import PDFConfig, PDFPlotter
+from artifact_core.typing import Plot
+from artifact_torch._base.components.callbacks.forward_hook import ForwardHookPlotCallback
+from artifact_torch._base.model.base import Model
+from artifact_torch._utils.collections.tensor_flattener import TensorFlattener
 from torch import Tensor
 from torch.nn import Module
-
-from artifact_torch.base.components.callbacks.forward_hook import ForwardHookPlotCallback
-from artifact_torch.base.model.base import Model
-from artifact_torch.libs.utils.tensor_flattener import TensorFlattener
 
 
 class AllActivationsPDF(ForwardHookPlotCallback[Model[Any, Any]]):
@@ -42,7 +42,7 @@ class AllActivationsPDF(ForwardHookPlotCallback[Model[Any, Any]]):
     def _aggregate(
         cls,
         hook_results: Dict[str, List[Dict[str, Tensor]]],
-    ) -> Figure:
+    ) -> Plot:
         collected = cls._collect_activations(hook_results)
         sr = cls._activations_to_series(collected)
         return cls._plot_pdf(sr)
@@ -78,7 +78,7 @@ class AllActivationsPDF(ForwardHookPlotCallback[Model[Any, Any]]):
         return pd.Series(all_vals, dtype=float)
 
     @classmethod
-    def _plot_pdf(cls, sr: pd.Series) -> Figure:
+    def _plot_pdf(cls, sr: pd.Series) -> Plot:
         return PDFPlotter.plot_pdf(
             sr_data=sr,
             feature_name=cls._plot_feature_name,

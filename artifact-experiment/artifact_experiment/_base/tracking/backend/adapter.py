@@ -46,9 +46,6 @@ class RunAdapter(ABC, Generic[NativeRunT]):
     @abstractmethod
     def stop(self): ...
 
-    @abstractmethod
-    def upload(self, path_source: str, dir_target: str): ...
-
     @classmethod
     @abstractmethod
     def _build_native_run(cls, experiment_id: str, run_id: str) -> NativeRunT: ...

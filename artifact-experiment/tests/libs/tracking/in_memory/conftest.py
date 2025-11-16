@@ -1,13 +1,13 @@
 from typing import Callable, Optional, Tuple
 
 import pytest
-from artifact_experiment._impl.in_memory.adapter import (
+from artifact_experiment._impl.backends.in_memory.adapter import (
     InMemoryRunAdapter,
 )
-from artifact_experiment._impl.in_memory.client import (
+from artifact_experiment._impl.backends.in_memory.client import (
     InMemoryTrackingClient,
 )
-from artifact_experiment._impl.in_memory.native_run import (
+from artifact_experiment._impl.backends.in_memory.native_run import (
     InMemoryRun,
 )
 

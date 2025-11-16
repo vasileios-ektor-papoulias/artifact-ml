@@ -1,26 +1,29 @@
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple, TypeVar
 
 import numpy as np
 import pandas as pd
+from artifact_core.typing import Array
+
+DiscretizerT = TypeVar("DiscretizerT", bound="Discretizer")
 
 
 class Discretizer:
-    def __init__(self, n_bins: int = 5, ls_cts_features: Optional[List[str]] = None):
+    def __init__(self, n_bins: int = 5, ls_cts_features: Optional[Sequence[str]] = None):
         self._n_bins = n_bins
         if ls_cts_features is None:
             ls_cts_features = []
-        self._ls_cts_features = ls_cts_features
+        self._ls_cts_features: List[str] = list(ls_cts_features)
         self._bin_edges: Dict[str, Array] = {}
         self._is_fitted: bool = False
 
     def fit(
-        self,
+        self: DiscretizerT,
         df: pd.DataFrame,
         n_bins: Optional[int] = None,
-        ls_cts_features: Optional[List[str]] = None,
-    ) -> "Discretizer":
-        if ls_cts_features is not None:
-            self._ls_cts_features = ls_cts_features
+        cts_features: Optional[Sequence[str]] = None,
+    ) -> DiscretizerT:
+        if cts_features is not None:
+            self._ls_cts_features = list(cts_features)
         if n_bins is not None:
             self._n_bins = n_bins
         self._bin_edges = self._fit(
@@ -31,16 +34,16 @@ class Discretizer:
 
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
         self._check_is_fitted()
-        return self._transform(
-            df=df, continuous_features=self._ls_cts_features, bin_edges=self._bin_edges
-        )
+        return self._transform(df=df, cts_features=self._ls_cts_features, bin_edges=self._bin_edges)
 
     def inverse_transform(self, df_binned: pd.DataFrame) -> pd.DataFrame:
         self._check_is_fitted()
         return self._inverse_transform(df_binned=df_binned, bin_edges=self._bin_edges)
 
     @classmethod
-    def _fit(cls, df: pd.DataFrame, ls_cts_features: List[str], n_bins: int) -> Dict[str, Array]:
+    def _fit(
+        cls, df: pd.DataFrame, ls_cts_features: Sequence[str], n_bins: int
+    ) -> Dict[str, Array]:
         bin_edges: Dict[str, Array] = {}
         for feature in ls_cts_features:
             cls._validate_feature(df=df, feature=feature)
@@ -50,11 +53,11 @@ class Discretizer:
 
     @classmethod
     def _transform(
-        cls, df: pd.DataFrame, continuous_features: List[str], bin_edges: Dict[str, Array]
+        cls, df: pd.DataFrame, cts_features: Sequence[str], bin_edges: Dict[str, Array]
     ) -> pd.DataFrame:
         df_binned = df.copy()
 
-        for feature in continuous_features:
+        for feature in cts_features:
             cls._validate_feature(df=df_binned, feature=feature)
             binned_series, _ = cls._bin_feature(
                 series=df_binned[feature], bins=0, bin_edges=bin_edges[feature]

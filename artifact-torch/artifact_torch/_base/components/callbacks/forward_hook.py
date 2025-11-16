@@ -4,11 +4,19 @@ from typing import Any, Dict, Generic, List, Optional, Tuple, TypeVar
 
 import torch
 import torch.nn as nn
-from artifact_core._base.primitives import ArtifactResult
+from artifact_core.typing import (
+    Array,
+    ArrayCollection,
+    ArtifactResult,
+    Plot,
+    PlotCollection,
+    Score,
+    ScoreCollection,
+)
 from torch.utils.hooks import RemovableHandle
 
-from artifact_torch.base.components.callbacks.hook import HookCallback
-from artifact_torch.base.model.base import Model
+from artifact_torch._base.components.callbacks.hook import HookCallback
+from artifact_torch._base.model.base import Model
 
 ModelTContr = TypeVar("ModelTContr", bound=Model, contravariant=True)
 CacheDataTCov = TypeVar("CacheDataTCov", bound=ArtifactResult, covariant=True)
@@ -53,24 +61,24 @@ class ForwardHookCallback(
             handles.append(module.register_forward_hook(_wrapped_hook))
 
 
-ForwardHookScoreCallback = ForwardHookCallback[ModelTContr, float, Dict[str, torch.Tensor]]
+ForwardHookScoreCallback = ForwardHookCallback[ModelTContr, Score, Dict[str, torch.Tensor]]
 
 ForwardHookArrayCallback = ForwardHookCallback[ModelTContr, Array, Dict[str, torch.Tensor]]
 
 
-ForwardHookPlotCallback = ForwardHookCallback[ModelTContr, Figure, Dict[str, torch.Tensor]]
+ForwardHookPlotCallback = ForwardHookCallback[ModelTContr, Plot, Dict[str, torch.Tensor]]
 
 
 ForwardHookScoreCollectionCallback = ForwardHookCallback[
-    ModelTContr, Dict[str, float], Dict[str, torch.Tensor]
+    ModelTContr, ScoreCollection, Dict[str, torch.Tensor]
 ]
 
 
 ForwardHookArrayCollectionCallback = ForwardHookCallback[
-    ModelTContr, Dict[str, Array], Dict[str, torch.Tensor]
+    ModelTContr, ArrayCollection, Dict[str, torch.Tensor]
 ]
 
 
 ForwardHookPlotCollectionCallback = ForwardHookCallback[
-    ModelTContr, Dict[str, Figure], Dict[str, torch.Tensor]
+    ModelTContr, PlotCollection, Dict[str, torch.Tensor]
 ]

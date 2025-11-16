@@ -4,11 +4,19 @@ from typing import Dict, Generic, List, Optional, Tuple, TypeVar
 
 import torch
 import torch.nn as nn
-from artifact_core._base.primitives import ArtifactResult
+from artifact_core.typing import (
+    Array,
+    ArrayCollection,
+    ArtifactResult,
+    Plot,
+    PlotCollection,
+    Score,
+    ScoreCollection,
+)
 from torch.utils.hooks import RemovableHandle
 
-from artifact_torch.base.components.callbacks.hook import HookCallback
-from artifact_torch.base.model.base import Model
+from artifact_torch._base.components.callbacks.hook import HookCallback
+from artifact_torch._base.model.base import Model
 
 ModelTContr = TypeVar("ModelTContr", bound=Model, contravariant=True)
 CacheDataTCov = TypeVar("CacheDataTCov", bound=ArtifactResult, covariant=True)
@@ -61,24 +69,24 @@ class BackwardHookCallback(
             handles.append(handle)
 
 
-BackwardHookScoreCallback = BackwardHookCallback[ModelTContr, float, Dict[str, torch.Tensor]]
+BackwardHookScoreCallback = BackwardHookCallback[ModelTContr, Score, Dict[str, torch.Tensor]]
 
 BackwardHookArrayCallback = BackwardHookCallback[ModelTContr, Array, Dict[str, torch.Tensor]]
 
 
-BackwardHookPlotCallback = BackwardHookCallback[ModelTContr, Figure, Dict[str, torch.Tensor]]
+BackwardHookPlotCallback = BackwardHookCallback[ModelTContr, Plot, Dict[str, torch.Tensor]]
 
 
 BackwardHookScoreCollectionCallback = BackwardHookCallback[
-    ModelTContr, Dict[str, float], Dict[str, torch.Tensor]
+    ModelTContr, ScoreCollection, Dict[str, torch.Tensor]
 ]
 
 
 BackwardHookArrayCollectionCallback = BackwardHookCallback[
-    ModelTContr, Dict[str, Array], Dict[str, torch.Tensor]
+    ModelTContr, ArrayCollection, Dict[str, torch.Tensor]
 ]
 
 
 BackwardHookPlotCollectionCallback = BackwardHookCallback[
-    ModelTContr, Dict[str, Figure], Dict[str, torch.Tensor]
+    ModelTContr, PlotCollection, Dict[str, torch.Tensor]
 ]

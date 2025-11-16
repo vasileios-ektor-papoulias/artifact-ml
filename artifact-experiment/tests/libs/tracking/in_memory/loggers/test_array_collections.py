@@ -2,8 +2,8 @@ from pathlib import Path
 from typing import Callable, Dict, List, Optional, Tuple
 
 import pytest
-from artifact_experiment._impl.in_memory.adapter import InMemoryRunAdapter
-from artifact_experiment._impl.in_memory.loggers.array_collections import (
+from artifact_experiment._impl.backends.in_memory.adapter import InMemoryRunAdapter
+from artifact_experiment._impl.backends.in_memory.loggers.array_collections import (
     InMemoryArrayCollectionLogger,
 )
 from pytest_mock import MockerFixture

@@ -1,22 +1,20 @@
 from collections.abc import Sequence
 from typing import Any, Generic, Type, TypeVar
 
-from artifact_experiment.base.components.handler_suites.tracking import TrackingCallbackHandlerSuite
+from artifact_experiment.spi.handler_suites import TrackingCallbackHandlerSuite
 
-from artifact_torch.base.components.callbacks.hook import (
+from artifact_torch._base.components.callbacks.hook import (
     HookArrayCallback,
     HookArrayCollectionCallback,
     HookCallback,
-    HookCallbackResources,
     HookPlotCallback,
     HookPlotCollectionCallback,
     HookScoreCallback,
     HookScoreCollectionCallback,
 )
-from artifact_torch.base.components.handlers.hook import (
-    HookCallbackHandler,
-)
-from artifact_torch.base.model.base import Model
+from artifact_torch._base.components.handlers.hook import HookCallbackHandler
+from artifact_torch._base.components.resources.hook import HookCallbackResources
+from artifact_torch._base.model.base import Model
 
 ModelTContr = TypeVar("ModelTContr", bound=Model, contravariant=True)
 HookCallbackHandlerSuiteT = TypeVar(

@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Tuple, overload
 
 import torch
 
-from artifact_torch.base.model.io import ModelIO
+from artifact_torch._base.model.io import ModelIO
 
 
 class DeviceManager:

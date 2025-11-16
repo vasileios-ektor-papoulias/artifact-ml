@@ -1,14 +1,14 @@
 from abc import abstractmethod
 from typing import Any, Generic, Optional, Type, TypeVar
 
-from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.table_comparison.spi import TabularDataSpecProtocol
 
-from artifact_torch.base.components.routines.loader import DataLoaderRoutine
-from artifact_torch.base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
-from artifact_torch.base.experiment.experiment import Experiment
-from artifact_torch.base.model.io import ModelInput, ModelOutput
-from artifact_torch.base.trainer.trainer import Trainer
-from artifact_torch.core.model.generative import GenerationParams
+from artifact_torch._base.components.routines.loader import DataLoaderRoutine
+from artifact_torch._base.components.routines.train_diagnostics import TrainDiagnosticsRoutine
+from artifact_torch._base.experiment.experiment import Experiment
+from artifact_torch._base.model.io import ModelInput, ModelOutput
+from artifact_torch._base.trainer.trainer import Trainer
+from artifact_torch._domains.generation.model import GenerationParams
 from artifact_torch.table_comparison._model import TableSynthesizer
 from artifact_torch.table_comparison._routine import (
     TableComparisonRoutine,
