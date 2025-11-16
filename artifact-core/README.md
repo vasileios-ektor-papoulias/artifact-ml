@@ -3,7 +3,7 @@
 > A unified interface for the declarative computation of diverse validation artifacts in ML experiments.
 
 <p align="center">
-  <img src="./assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
+  <img src="https://raw.githubusercontent.com/vasileios-ektor-papoulias/artifact-ml/main/artifact-core/assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
 </p>
 
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue)](https://artifact-ml.readthedocs.io/en/latest/artifact-core)
