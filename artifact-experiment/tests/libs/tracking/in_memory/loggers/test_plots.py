@@ -2,9 +2,8 @@ from pathlib import Path
 from typing import Callable, List, Optional, Tuple
 
 import pytest
-from artifact_experiment.libs.tracking.in_memory.adapter import InMemoryRunAdapter
-from artifact_experiment.libs.tracking.in_memory.loggers.plots import InMemoryPlotLogger
-from matplotlib.figure import Figure
+from artifact_experiment._impl.backends.in_memory.adapter import InMemoryRunAdapter
+from artifact_experiment._impl.backends.in_memory.loggers.plots import InMemoryPlotLogger
 from pytest_mock import MockerFixture
 
 

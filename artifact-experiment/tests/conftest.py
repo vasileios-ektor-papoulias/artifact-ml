@@ -3,8 +3,7 @@ from typing import Dict, List
 import matplotlib
 import numpy as np
 import pytest
-from artifact_core.base.artifact_dependencies import ArtifactResult
-from matplotlib.figure import Figure
+from artifact_core._base.primitives import ArtifactResult
 
 matplotlib.use("Agg")
 
@@ -25,7 +24,7 @@ def score(request) -> float:
 
 
 @pytest.fixture
-def array(request) -> np.ndarray:
+def array(request) -> Array:
     return request.getfixturevalue(request.param)
 
 
@@ -40,7 +39,7 @@ def score_collection(request) -> Dict[str, float]:
 
 
 @pytest.fixture
-def array_collection(request) -> Dict[str, np.ndarray]:
+def array_collection(request) -> Dict[str, Array]:
     return request.getfixturevalue(request.param)
 
 
@@ -60,7 +59,7 @@ def ls_scores(request) -> List[float]:
 
 
 @pytest.fixture
-def ls_arrays(request) -> List[np.ndarray]:
+def ls_arrays(request) -> List[Array]:
     return [request.getfixturevalue(name) for name in request.param]
 
 
@@ -75,7 +74,7 @@ def ls_score_collections(request) -> List[Dict[str, float]]:
 
 
 @pytest.fixture
-def ls_array_collections(request) -> List[Dict[str, np.ndarray]]:
+def ls_array_collections(request) -> List[Dict[str, Array]]:
     return [request.getfixturevalue(name) for name in request.param]
 
 
@@ -110,27 +109,27 @@ def score_5() -> float:
 
 
 @pytest.fixture
-def array_1() -> np.ndarray:
+def array_1() -> Array:
     return np.array([1, 2, 3, 4, 5])
 
 
 @pytest.fixture
-def array_2() -> np.ndarray:
+def array_2() -> Array:
     return np.array([10, 20, 30])
 
 
 @pytest.fixture
-def array_3() -> np.ndarray:
+def array_3() -> Array:
     return np.array([0.1, 0.2, 0.3, 0.4])
 
 
 @pytest.fixture
-def array_4() -> np.ndarray:
+def array_4() -> Array:
     return np.array([100, 200, 300, 400, 500])
 
 
 @pytest.fixture
-def array_5() -> np.ndarray:
+def array_5() -> Array:
     return np.array([1.1, 2.2, 3.3])
 
 
@@ -200,7 +199,7 @@ def score_collection_5() -> Dict[str, float]:
 
 
 @pytest.fixture
-def array_collection_1() -> Dict[str, np.ndarray]:
+def array_collection_1() -> Dict[str, Array]:
     return {
         "predictions": np.array([1, 0, 1, 1, 0]),
         "targets": np.array([1, 0, 1, 0, 1]),
@@ -208,7 +207,7 @@ def array_collection_1() -> Dict[str, np.ndarray]:
 
 
 @pytest.fixture
-def array_collection_2() -> Dict[str, np.ndarray]:
+def array_collection_2() -> Dict[str, Array]:
     return {
         "features": np.array([1.0, 2.0, 3.0]),
         "weights": np.array([0.1, 0.2, 0.3]),
@@ -216,7 +215,7 @@ def array_collection_2() -> Dict[str, np.ndarray]:
 
 
 @pytest.fixture
-def array_collection_3() -> Dict[str, np.ndarray]:
+def array_collection_3() -> Dict[str, Array]:
     return {
         "train_loss": np.array([0.8, 0.6, 0.4]),
         "val_loss": np.array([0.9, 0.7, 0.5]),
@@ -224,7 +223,7 @@ def array_collection_3() -> Dict[str, np.ndarray]:
 
 
 @pytest.fixture
-def array_collection_4() -> Dict[str, np.ndarray]:
+def array_collection_4() -> Dict[str, Array]:
     return {
         "embeddings": np.array([0.1, 0.2, 0.3, 0.4]),
         "labels": np.array([0, 1, 0, 1]),
@@ -232,7 +231,7 @@ def array_collection_4() -> Dict[str, np.ndarray]:
 
 
 @pytest.fixture
-def array_collection_5() -> Dict[str, np.ndarray]:
+def array_collection_5() -> Dict[str, Array]:
     return {
         "probabilities": np.array([0.9, 0.1, 0.8, 0.2]),
         "confidence": np.array([0.95, 0.85, 0.9, 0.8]),

@@ -3,8 +3,7 @@ from unittest.mock import MagicMock
 
 import numpy as np
 import pytest
-from artifact_core.base.artifact_dependencies import ArtifactResult
-from matplotlib.figure import Figure
+from artifact_core._base.primitives import ArtifactResult
 from pytest_mock import MockerFixture
 
 from tests.base.dummy.artifact_dependencies import DummyArtifactResources, DummyResourceSpec
@@ -67,7 +66,7 @@ def test_produce_array(
     mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
     resource_spec: DummyResourceSpec,
     resources: DummyArtifactResources,
-    expected_result: np.ndarray,
+    expected_result: Array,
 ):
     artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 
@@ -159,7 +158,7 @@ def test_produce_array_collection(
     mock_dependency_factory: Callable[[ArtifactResult], Tuple[MagicMock, MagicMock, MagicMock]],
     resource_spec: DummyResourceSpec,
     resources: DummyArtifactResources,
-    expected_result: Dict[str, np.ndarray],
+    expected_result: Dict[str, Array],
 ):
     artifact_type, artifact, registry = mock_dependency_factory(expected_result)
 

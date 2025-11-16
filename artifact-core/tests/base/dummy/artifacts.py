@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional, TypeVar
 
-from artifact_core.base.artifact import Artifact
-from artifact_core.base.artifact_dependencies import (
+from artifact_core._base.artifact import Artifact
+from artifact_core._base.primitives import (
     ArtifactHyperparams,
     ArtifactResult,
     NoArtifactHyperparams,

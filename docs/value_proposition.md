@@ -26,7 +26,7 @@ This contamination of intent with implementation details forces researchers to r
 
 [Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml) addresses the above by providing the tools to build reusable ML experiment workflows declaratively.
 
-By *reusable*, we refer to workflows that are defined once with the potential to be reused by any model within the same task category.
+By *reusable*, we refer to workflows that are defined once with the potential to be reused by any compatible model.
 
 By *declarative*, we refer to building through expressing high-level intent---rather than catering to implementation details.
 

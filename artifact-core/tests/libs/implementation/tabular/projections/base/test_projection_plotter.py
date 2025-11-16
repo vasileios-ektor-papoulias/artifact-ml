@@ -1,11 +1,9 @@
 from typing import Dict, Optional, Tuple
 
-import numpy as np
 import pytest
-from artifact_core.libs.implementation.tabular.projections.base.plotter import (
+from artifact_core._libs.artifacts.table_comparison.projections.base.plotter import (
     ProjectionPlotter,
 )
-from matplotlib.figure import Figure
 
 
 @pytest.mark.unit
@@ -46,7 +44,7 @@ from matplotlib.figure import Figure
 def test_produce_projection_plot(
     set_agg_backend,
     close_all_figs_after_test,
-    projection_2d_real_dispatcher: Optional[np.ndarray],
+    projection_2d_real_dispatcher: Optional[Array],
     projection_plotter_dispatcher: ProjectionPlotter,
     projection_name: str,
     expected_title_contains: str,
@@ -134,8 +132,8 @@ def test_produce_projection_plot(
 def test_produce_projection_comparison_plot(
     set_agg_backend,
     close_all_figs_after_test,
-    projection_2d_real_dispatcher: Optional[np.ndarray],
-    projection_2d_synthetic_dispatcher: Optional[np.ndarray],
+    projection_2d_real_dispatcher: Optional[Array],
+    projection_2d_synthetic_dispatcher: Optional[Array],
     projection_plotter_dispatcher: ProjectionPlotter,
     projection_name: str,
     expected_title: str,

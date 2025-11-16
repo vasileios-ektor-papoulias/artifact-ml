@@ -1,15 +1,16 @@
-from typing import TypeVar
-
 import pandas as pd
 import torch
-from artifact_torch.base.data.dataset import Dataset
-from demos.table_comparison.model.io import TabularVAEInput
+from artifact_torch.nn import Dataset
 
-TabularVAEDatasetT = TypeVar("TabularVAEDatasetT", bound="TabularVAEDataset")
+from demos.table_comparison.contracts.model import TabularVAEInput
+from demos.table_comparison.libs.transformers.discretizer import Discretizer
+from demos.table_comparison.libs.transformers.encoder import Encoder
 
 
 class TabularVAEDataset(Dataset[TabularVAEInput]):
-    def __init__(self, df_encoded: pd.DataFrame):
+    def __init__(self, df_raw: pd.DataFrame, discretizer: Discretizer, encoder: Encoder):
+        df_discretized = discretizer.transform(df=df_raw)
+        df_encoded = encoder.transform(df=df_discretized)
         self._t_data = torch.tensor(df_encoded.values, dtype=torch.float32)
 
     def __len__(self) -> int:

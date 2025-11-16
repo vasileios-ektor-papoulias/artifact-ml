@@ -1,8 +1,8 @@
 from typing import Dict, Optional
 
 import numpy as np
-from artifact_experiment.base.callbacks.base import CallbackResources
-from artifact_experiment.base.callbacks.tracking import (
+from artifact_experiment.base.components.callbacks.base import CallbackResources
+from artifact_experiment.base.components.callbacks.tracking import (
     ArrayCallback,
     ArrayCollectionCallback,
     PlotCallback,
@@ -10,8 +10,7 @@ from artifact_experiment.base.callbacks.tracking import (
     ScoreCallback,
     ScoreCollectionCallback,
 )
-from artifact_experiment.base.tracking.client import TrackingClient
-from matplotlib.figure import Figure
+from artifact_experiment.base.tracking.backend.client import TrackingClient
 
 
 class DummyScoreCallback(ScoreCallback[CallbackResources]):
@@ -37,13 +36,13 @@ class DummyArrayCallback(ArrayCallback[CallbackResources]):
     def __init__(
         self,
         key: str,
-        compute_value: Optional[np.ndarray] = None,
+        compute_value: Optional[Array] = None,
         tracking_client: Optional[TrackingClient] = None,
     ):
         super().__init__(key=key, tracking_client=tracking_client)
         self._compute_value = compute_value if compute_value is not None else self.DEFAULT_VALUE
 
-    def _compute(self, resources: CallbackResources) -> np.ndarray:
+    def _compute(self, resources: CallbackResources) -> Array:
         _ = resources
         return self._compute_value
 
@@ -88,13 +87,13 @@ class DummyArrayCollectionCallback(ArrayCollectionCallback[CallbackResources]):
     def __init__(
         self,
         key: str,
-        compute_value: Optional[Dict[str, np.ndarray]] = None,
+        compute_value: Optional[Dict[str, Array]] = None,
         tracking_client: Optional[TrackingClient] = None,
     ):
         super().__init__(key=key, tracking_client=tracking_client)
         self._compute_value = compute_value if compute_value is not None else self.DEFAULT_VALUE
 
-    def _compute(self, resources: CallbackResources) -> Dict[str, np.ndarray]:
+    def _compute(self, resources: CallbackResources) -> Dict[str, Array]:
         _ = resources
         return self._compute_value
 

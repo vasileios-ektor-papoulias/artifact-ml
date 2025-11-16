@@ -3,7 +3,7 @@ import sys
 from typing import Any, Tuple
 
 import pytest
-from artifact_experiment.libs.utils.directory_opener import DirectoryOpener
+from artifact_experiment._utils.directory_opener import DirectoryOpener
 from pytest_mock import MockerFixture
 
 

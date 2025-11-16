@@ -2,23 +2,23 @@ from typing import Callable, Optional, Tuple
 from unittest.mock import MagicMock
 
 import pytest
-from artifact_experiment.libs.tracking.mlflow.adapter import (
+from artifact_experiment._impl.backends.mlflow.adapter import (
     MlflowNativeRun,
     MlflowRunAdapter,
 )
-from artifact_experiment.libs.tracking.mlflow.client import MlflowTrackingClient
-from artifact_experiment.libs.tracking.mlflow.loggers.array_collections import (
+from artifact_experiment._impl.backends.mlflow.client import MlflowTrackingClient
+from artifact_experiment._impl.backends.mlflow.loggers.array_collections import (
     MlflowArrayCollectionLogger,
 )
-from artifact_experiment.libs.tracking.mlflow.loggers.arrays import MlflowArrayLogger
-from artifact_experiment.libs.tracking.mlflow.loggers.plot_collections import (
+from artifact_experiment._impl.backends.mlflow.loggers.arrays import MlflowArrayLogger
+from artifact_experiment._impl.backends.mlflow.loggers.plot_collections import (
     MlflowPlotCollectionLogger,
 )
-from artifact_experiment.libs.tracking.mlflow.loggers.plots import MlflowPlotLogger
-from artifact_experiment.libs.tracking.mlflow.loggers.score_collections import (
+from artifact_experiment._impl.backends.mlflow.loggers.plots import MlflowPlotLogger
+from artifact_experiment._impl.backends.mlflow.loggers.score_collections import (
     MlflowScoreCollectionLogger,
 )
-from artifact_experiment.libs.tracking.mlflow.loggers.scores import MlflowScoreLogger
+from artifact_experiment._impl.backends.mlflow.loggers.scores import MlflowScoreLogger
 from mlflow.entities import Run, RunStatus
 from mlflow.tracking import MlflowClient
 from pytest_mock import MockerFixture

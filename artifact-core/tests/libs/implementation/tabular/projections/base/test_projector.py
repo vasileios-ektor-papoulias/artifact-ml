@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import numpy as np
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.projections.base.plotter import (
+from artifact_core._libs.artifacts.table_comparison.projections.base.plotter import (
     ProjectionPlotter,
 )
 
@@ -161,7 +161,7 @@ def test_project(
             )
     else:
         result = projector.project(dataset=df)
-        assert isinstance(result, np.ndarray)
+        assert isinstance(result, Array)
         assert result.shape == expected_shape
         assert np.all(result >= 0) and np.all(result <= 1), (
             "Dummy projector should map in the interval [0, 1]"

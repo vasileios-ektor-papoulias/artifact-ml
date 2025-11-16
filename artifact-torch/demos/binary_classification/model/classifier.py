@@ -1,36 +1,32 @@
-from dataclasses import dataclass
 from typing import Dict, Hashable, List, Tuple, Type, TypeVar
 
 import pandas as pd
 import torch
-from artifact_core.binary_classification import BinaryFeatureSpecProtocol
-from artifact_core.libs.resources.classification.binary_classification_results import (
+from artifact_torch.binary_classification import (
     BinaryClassificationResults,
+    BinaryClassifier,
+    BinaryClassSpec,
 )
-from artifact_torch.binary_classification import BinaryClassifier
-from artifact_torch.core.model.classifier import ClassificationParams
 
-from demos.binary_classification.model.io import MLPClassifierInput, MLPClassifierOutput
+from demos.binary_classification.contracts.model import (
+    MLPClassificationParams,
+    MLPClassifierInput,
+    MLPClassifierOutput,
+)
 from demos.binary_classification.model.mlp_encoder import MLPEncoderConfig
 from demos.binary_classification.model.mlp_predictor import MLPPredictor
 
-
-@dataclass
-class MLPClassificationParams(ClassificationParams):
-    threshold: float
+MLPClassifierT = TypeVar("MLPClassifierT", bound="MLPClassifier")
 
 
-MLPClassifierModelT = TypeVar("MLPClassifierModelT", bound="MLPClassifierModel")
-
-
-class MLPClassifierModel(
-    BinaryClassifier[MLPClassifierInput, MLPClassifierOutput, MLPClassificationParams]
+class MLPClassifier(
+    BinaryClassifier[MLPClassifierInput, MLPClassifierOutput, MLPClassificationParams, pd.DataFrame]
 ):
     _n_classes = 2
 
     def __init__(
         self,
-        class_spec: BinaryFeatureSpecProtocol,
+        class_spec: BinaryClassSpec,
         ls_features: List[str],
         mlp: MLPPredictor,
     ):
@@ -41,11 +37,11 @@ class MLPClassifierModel(
 
     @classmethod
     def build(
-        cls: Type[MLPClassifierModelT],
-        class_spec: BinaryFeatureSpecProtocol,
+        cls: Type[MLPClassifierT],
+        class_spec: BinaryClassSpec,
         ls_features: List[str],
         architecture_config: MLPEncoderConfig = MLPEncoderConfig(),
-    ) -> MLPClassifierModelT:
+    ) -> MLPClassifierT:
         if not ls_features:
             raise ValueError(f"ls_features must be a nonempty list, got: {ls_features}.")
         mlp = MLPPredictor.build(
@@ -72,15 +68,15 @@ class MLPClassifierModel(
         t_features = self._to_t_features(df=data)  # (B, in_dim)
         t_prob_pos = self._infer_prob_pos(t_features=t_features)  # (B,)
         t_preds_bin = self._apply_threshold(
-            t_prob_pos=t_prob_pos, threshold=params.threshold
+            t_prob_pos=t_prob_pos, threshold=params["threshold"]
         )  # (B,)
-        id_to_category, id_to_prob_pos = self._build_classification_result_maps(
+        id_to_class, id_to_prob_pos = self._build_classification_result_maps(
             data_index=data.index.tolist(),
             t_preds_bin=t_preds_bin,
             t_prob_pos=t_prob_pos,
         )
         classification_results = self._build_classification_results(
-            id_to_category=id_to_category, id_to_prob_pos=id_to_prob_pos
+            id_to_class=id_to_class, id_to_prob_pos=id_to_prob_pos
         )
         return classification_results
 
@@ -96,7 +92,7 @@ class MLPClassifierModel(
     def _infer_prob_pos(self, t_features: torch.Tensor) -> torch.Tensor:
         t_logits = self._mlp(t_features)  # (B, C)
         t_probs_full = torch.softmax(t_logits, dim=-1)  # (B, C)
-        return t_probs_full[..., self._class_spec.positive_category_idx]
+        return t_probs_full[..., self._class_spec.positive_class_idx]
 
     @staticmethod
     def _apply_threshold(t_prob_pos: torch.Tensor, threshold: float) -> torch.Tensor:
@@ -111,24 +107,24 @@ class MLPClassifierModel(
         t_preds_bin: torch.Tensor,
         t_prob_pos: torch.Tensor,
     ) -> Tuple[Dict[Hashable, str], Dict[Hashable, float]]:
-        pos = self._class_spec.positive_category
-        neg = self._class_spec.negative_category
+        pos = self._class_spec.positive_class
+        neg = self._class_spec.negative_class
         pred_labels = [pos if b.item() else neg for b in t_preds_bin]
-        id_to_category = {idx: label for idx, label in zip(data_index, pred_labels)}
+        id_to_class = {idx: label for idx, label in zip(data_index, pred_labels)}
         id_to_prob_pos = {idx: float(p) for idx, p in zip(data_index, t_prob_pos.tolist())}
-        return id_to_category, id_to_prob_pos
+        return id_to_class, id_to_prob_pos
 
     def _build_classification_results(
         self,
-        id_to_category: Dict,
+        id_to_class: Dict,
         id_to_prob_pos: Dict,
     ) -> BinaryClassificationResults:
-        pos = self._class_spec.positive_category
-        ls_categories = self._class_spec.ls_categories
+        pos = self._class_spec.positive_class
+        class_names = self._class_spec.class_names
         classification_results = BinaryClassificationResults.build(
-            ls_categories=ls_categories,
-            positive_category=pos,
-            id_to_category=id_to_category,
+            class_names=class_names,
+            positive_class=pos,
+            id_to_class=id_to_class,
             id_to_prob_pos=id_to_prob_pos,
         )
         return classification_results

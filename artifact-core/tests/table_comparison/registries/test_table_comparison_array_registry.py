@@ -1,13 +1,13 @@
 from typing import Type
 
 import pytest
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.table_comparison.artifacts.base import (
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.table_comparison._artifacts.base import (
     TableComparisonArray,
 )
-from artifact_core.table_comparison.registries.arrays.registry import (
+from artifact_core.table_comparison._registries.arrays.arrays import (
+    TableComparisonArray,
     TableComparisonArrayRegistry,
-    TableComparisonArrayType,
 )
 
 
@@ -18,7 +18,7 @@ from artifact_core.table_comparison.registries.arrays.registry import (
 )
 def test_get(
     resource_spec: TabularDataSpecProtocol,
-    artifact_type: TableComparisonArrayType,
+    artifact_type: TableComparisonArray,
     artifact_class: Type[TableComparisonArray],
 ):
     artifact = TableComparisonArrayRegistry.get(

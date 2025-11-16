@@ -2,9 +2,8 @@ import os
 from typing import Callable, List, Optional, Tuple
 
 import pytest
-from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRunAdapter
-from artifact_experiment.libs.tracking.filesystem.loggers.arrays import FilesystemArrayLogger
-from numpy import ndarray
+from artifact_experiment._impl.backends.filesystem.adapter import FilesystemRunAdapter
+from artifact_experiment._impl.backends.filesystem.loggers.arrays import FilesystemArrayLogger
 from pytest_mock import MockerFixture
 
 
@@ -56,7 +55,7 @@ def test_log(
     experiment_id: str,
     run_id: str,
     ls_array_names: List[str],
-    ls_arrays: List[ndarray],
+    ls_arrays: List[Array],
     ls_step: List[int],
 ):
     _, logger = array_logger_factory(experiment_id, run_id)

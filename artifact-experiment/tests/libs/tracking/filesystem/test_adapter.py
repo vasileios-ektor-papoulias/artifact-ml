@@ -3,8 +3,8 @@ from typing import Callable, Optional, Tuple
 from uuid import UUID
 
 import pytest
-from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRunAdapter
-from artifact_experiment.libs.tracking.filesystem.native_run import FilesystemRun
+from artifact_experiment._impl.backends.filesystem.adapter import FilesystemRunAdapter
+from artifact_experiment._impl.backends.filesystem.native_run import FilesystemRun
 from pytest_mock import MockerFixture
 
 
@@ -121,6 +121,6 @@ def test_upload(
 ):
     native_run, adapter = adapter_factory(experiment_id, run_id)
     mock_copy = mocker.patch("shutil.copy2")
-    adapter.upload(path_source=path_source, dir_target=dir_target)
+    adapter.log_file(path_source=path_source, backend_dir=dir_target)
     expected_target_dir = os.path.join(native_run.run_dir, dir_target)
     mock_copy.assert_called_once_with(path_source, expected_target_dir)

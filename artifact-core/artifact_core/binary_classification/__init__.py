@@ -1,23 +1,39 @@
-from artifact_core.binary_classification.config.parsed import (
-    ARTIFACT_CORE_ROOT,
-    CUSTOM_ARTIFACT_PATH,
-    NATIVE_ARTIFACT_PATH,
-)
-from artifact_core.binary_classification.engine.engine import (
+from artifact_core._libs.resource_specs.binary_classification.spec import BinaryClassSpec
+from artifact_core.binary_classification._engine.engine import BinaryClassificationEngine
+from artifact_core.binary_classification._types.array_collections import (
     BinaryClassificationArrayCollectionType,
-    BinaryClassificationArrayType,
-    BinaryClassificationEngine,
-    BinaryClassificationPlotCollectionType,
-    BinaryClassificationPlotType,
-    BinaryClassificationScoreCollectionType,
-    BinaryClassificationScoreType,
 )
-from artifact_core.libs.resource_spec.binary.protocol import BinaryFeatureSpecProtocol
-from artifact_core.libs.resource_spec.binary.spec import BinaryFeatureSpec
-from artifact_core.libs.utils.system.package_importer import PackageImporter
+from artifact_core.binary_classification._types.arrays import BinaryClassificationArrayType
+from artifact_core.binary_classification._types.plot_collections import (
+    BinaryClassificationPlotCollectionType,
+)
+from artifact_core.binary_classification._types.plots import BinaryClassificationPlotType
+from artifact_core.binary_classification._types.score_collections import (
+    BinaryClassificationScoreCollectionType,
+)
+from artifact_core.binary_classification._types.scores import BinaryClassificationScoreType
 
-if NATIVE_ARTIFACT_PATH is None:
-    raise ValueError("Null native artifact path: edit the toolkit configuration file.")
-PackageImporter.import_all_from_package_path(path=NATIVE_ARTIFACT_PATH, root=ARTIFACT_CORE_ROOT)
-if CUSTOM_ARTIFACT_PATH is not None:
-    PackageImporter.import_all_from_package_path(path=CUSTOM_ARTIFACT_PATH)
+__all__ = [
+    "BinaryClassSpec",
+    "BinaryClassificationEngine",
+    "BinaryClassificationArrayCollectionType",
+    "BinaryClassificationArrayType",
+    "BinaryClassificationPlotCollectionType",
+    "BinaryClassificationPlotType",
+    "BinaryClassificationScoreCollectionType",
+    "BinaryClassificationScoreType",
+]
+
+
+def _init_toolkit():
+    from artifact_core._bootstrap.primitives.domain_toolkit import DomainToolkit
+    from artifact_core._bootstrap.toolkit_initializer import ToolkitInitializer
+    from artifact_core.binary_classification._config.parsed import CONFIG
+
+    ToolkitInitializer.init_toolkit(
+        domain_toolkit=DomainToolkit.BINARY_CLASSIFICATION, config=CONFIG
+    )
+
+
+_init_toolkit()
+del _init_toolkit

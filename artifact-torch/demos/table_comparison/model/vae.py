@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple, Type, TypeVar
+from typing import List, Mapping, Tuple, Type, TypeVar
 
 import torch
 import torch.nn as nn
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_torch.table_comparison import TabularDataSpec
 
 from demos.table_comparison.config.constants import (
     BN_EPSILON,
@@ -64,7 +64,7 @@ class VariationalAutoencoder(nn.Module):
     @classmethod
     def build(
         cls: Type[VariationalAutoencoderT],
-        data_spec: TabularDataSpecProtocol,
+        data_spec: TabularDataSpec,
         config: VAEArchitectureConfig = VAEArchitectureConfig(),
     ) -> VariationalAutoencoderT:
         ls_n_cat_n_embd = cls._get_ls_n_cat_n_embd(
@@ -100,7 +100,7 @@ class VariationalAutoencoder(nn.Module):
 
     def forward(
         self, t_features: torch.Tensor
-    ) -> Tuple[List[torch.Tensor], torch.Tensor, torch.Tensor, Optional[torch.Tensor]]:
+    ) -> Tuple[List[torch.Tensor], torch.Tensor, torch.Tensor, torch.Tensor]:
         t_embedded = self._embedder(t_features)
         t_input = self._embedding_bridge(t_embedded)
         t_hidden = self._encoder(t_input)
@@ -140,7 +140,7 @@ class VariationalAutoencoder(nn.Module):
 
     @staticmethod
     def _get_ls_n_cat_n_embd(
-        dict_unique_counts: Dict[str, int],
+        dict_unique_counts: Mapping[str, int],
         n_embd: int,
     ) -> List[Tuple[int, int]]:
         ls_n_cat_n_embd = [(n_cat, n_embd) for n_cat in dict_unique_counts.values()]

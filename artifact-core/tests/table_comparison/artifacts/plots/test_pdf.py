@@ -1,12 +1,13 @@
 from unittest.mock import ANY
 
 import pandas as pd
-from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
-from artifact_core.libs.implementation.tabular.pdf.overlaid_plotter import TabularOverlaidPDFPlotter
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.table_comparison.artifacts.base import DatasetComparisonArtifactResources
-from artifact_core.table_comparison.artifacts.plots.pdf import PDFPlot
-from matplotlib.figure import Figure
+from artifact_core._base.primitives import NO_ARTIFACT_HYPERPARAMS
+from artifact_core._libs.artifacts.table_comparison.pdf.overlaid_plotter import (
+    TabularOverlaidPDFPlotter,
+)
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.table_comparison._artifacts.base import DatasetComparisonArtifactResources
+from artifact_core.table_comparison._artifacts.plots.pdf import PDFPlot
 from pytest_mock import MockerFixture
 
 

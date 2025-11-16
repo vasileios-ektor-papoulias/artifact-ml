@@ -2,10 +2,9 @@ from typing import Dict, List, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.pdf.overlaid_plotter import (
+from artifact_core._libs.artifacts.table_comparison.pdf.overlaid_plotter import (
     TabularOverlaidPDFPlotter,
 )
-from matplotlib.figure import Figure
 
 
 @pytest.mark.unit
@@ -67,9 +66,9 @@ def test_get_overlaid_pdf_plot_collection(
     result = TabularOverlaidPDFPlotter.get_overlaid_pdf_plot_collection(
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
-        ls_features_order=features_order,
-        ls_cts_features=cts_features,
-        ls_cat_features=cat_features,
+        features_order=features_order,
+        cts_features=cts_features,
+        cat_features=cat_features,
         cat_unique_map=cat_unique_map,
     )
 

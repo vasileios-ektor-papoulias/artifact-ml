@@ -1,0 +1,1 @@
+from artifact_core._interfaces.serializable import Serializable

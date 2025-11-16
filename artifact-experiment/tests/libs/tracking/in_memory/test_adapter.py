@@ -2,14 +2,12 @@ from typing import Callable, Dict, List, Optional, Tuple
 from uuid import UUID
 
 import pytest
-from artifact_experiment.libs.tracking.in_memory.adapter import (
+from artifact_experiment._impl.backends.in_memory.adapter import (
     InMemoryRunAdapter,
 )
-from artifact_experiment.libs.tracking.in_memory.native_run import (
+from artifact_experiment._impl.backends.in_memory.native_run import (
     InMemoryRun,
 )
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 
 @pytest.mark.unit
@@ -138,7 +136,7 @@ def test_log_array(
     experiment_id: str,
     run_id: str,
     array_key: str,
-    array: ndarray,
+    array: Array,
 ):
     _, adapter = adapter_factory(experiment_id, run_id)
     assert adapter.n_arrays == 0
@@ -228,7 +226,7 @@ def test_log_array_collection(
     experiment_id: str,
     run_id: str,
     array_collection_key: str,
-    array_collection: Dict[str, ndarray],
+    array_collection: Dict[str, Array],
 ):
     _, adapter = adapter_factory(experiment_id, run_id)
     assert adapter.n_array_collections == 0
@@ -302,12 +300,12 @@ def test_upload(
     expected_store_length: int,
 ):
     _, adapter = adapter_factory(None, None)
-    assert len(adapter.uploaded_files) == 0
+    assert len(adapter.files) == 0
     for file_entry in ls_file_entries:
         adapter.upload(**file_entry)
-    assert len(adapter.uploaded_files) == expected_store_length
+    assert len(adapter.files) == expected_store_length
     for i, file_entry in enumerate(ls_file_entries):
-        assert adapter.uploaded_files[i] == file_entry
+        assert adapter.files[i] == file_entry
 
 
 @pytest.mark.unit
@@ -338,7 +336,7 @@ def test_search_score(
     expected_ls_paths: List[str],
 ):
     _, adapter = populated_adapter_factory(experiment_id, run_id)
-    ls_paths = adapter.search_score_store(artifact_path=artifact_path)
+    ls_paths = adapter.search_score_store(store_path=artifact_path)
     assert ls_paths == expected_ls_paths
 
 
@@ -370,7 +368,7 @@ def test_search_array(
     expected_ls_paths: List[str],
 ):
     _, adapter = populated_adapter_factory(experiment_id, run_id)
-    ls_paths = adapter.search_array_store(artifact_path=artifact_path)
+    ls_paths = adapter.search_array_store(store_path=artifact_path)
     assert ls_paths == expected_ls_paths
 
 
@@ -402,7 +400,7 @@ def test_search_plot(
     expected_ls_paths: List[str],
 ):
     _, adapter = populated_adapter_factory(experiment_id, run_id)
-    ls_paths = adapter.search_plot_store(artifact_path=artifact_path)
+    ls_paths = adapter.search_plot_store(store_path=artifact_path)
     assert ls_paths == expected_ls_paths
 
 
@@ -452,7 +450,7 @@ def test_search_score_collection(
     expected_ls_paths: List[str],
 ):
     _, adapter = populated_adapter_factory(experiment_id, run_id)
-    ls_paths = adapter.search_score_collection_store(artifact_path=artifact_path)
+    ls_paths = adapter.search_score_collection_store(store_path=artifact_path)
     assert ls_paths == expected_ls_paths
 
 
@@ -502,7 +500,7 @@ def test_search_array_collection(
     expected_ls_paths: List[str],
 ):
     _, adapter = populated_adapter_factory(experiment_id, run_id)
-    ls_paths = adapter.search_array_collection_store(artifact_path=artifact_path)
+    ls_paths = adapter.search_array_collection_store(store_path=artifact_path)
     assert ls_paths == expected_ls_paths
 
 
@@ -552,5 +550,5 @@ def test_search_plot_collection(
     expected_ls_paths: List[str],
 ):
     _, adapter = populated_adapter_factory(experiment_id, run_id)
-    ls_paths = adapter.search_plot_collection_store(artifact_path=artifact_path)
+    ls_paths = adapter.search_plot_collection_store(store_path=artifact_path)
     assert ls_paths == expected_ls_paths

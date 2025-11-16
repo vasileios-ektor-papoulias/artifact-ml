@@ -1,47 +1,28 @@
-from typing import List
+from typing import Any, Optional, Type
 
-from artifact_torch.base.components.callbacks.data_loader import (
-    DataLoaderArrayCallback,
-    DataLoaderArrayCollectionCallback,
-    DataLoaderPlotCallback,
-    DataLoaderPlotCollectionCallback,
-    DataLoaderScoreCallback,
-    DataLoaderScoreCollectionCallback,
-)
-from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
-from artifact_torch.libs.components.callbacks.data_loader.loss import TrainLossCallback
+from artifact_experiment.tracking import DataSplit
+from artifact_torch.nn import Model
+from artifact_torch.nn.plans import ForwardHookPlan, ModelIOPlan
+from artifact_torch.nn.routines import DataLoaderRoutine
 
-from demos.table_comparison.config.constants import TRAIN_LOADER_CALLBACK_PERIOD
-from demos.table_comparison.model.io import TabularVAEInput, TabularVAEOutput
+from demos.table_comparison.components.plans.forward_hook import DemoForwardHookPlan
+from demos.table_comparison.components.plans.model_io import DemoModelIOPlan
+from demos.table_comparison.contracts.workflow import WorkflowInput, WorkflowOutput
 
 
-class DemoLoaderRoutine(DataLoaderRoutine[TabularVAEInput, TabularVAEOutput]):
-    @staticmethod
-    def _get_score_callbacks() -> List[DataLoaderScoreCallback[TabularVAEInput, TabularVAEOutput]]:
-        return [TrainLossCallback(period=TRAIN_LOADER_CALLBACK_PERIOD)]
+class DemoLoaderRoutine(
+    DataLoaderRoutine[Model[Any, WorkflowOutput], WorkflowInput, WorkflowOutput]
+):
+    @classmethod
+    def _get_model_io_plan(
+        cls, data_split: DataSplit
+    ) -> Optional[Type[ModelIOPlan[WorkflowInput, WorkflowOutput]]]:
+        if data_split is DataSplit.TRAIN:
+            return DemoModelIOPlan
 
-    @staticmethod
-    def _get_array_callbacks() -> List[DataLoaderArrayCallback[TabularVAEInput, TabularVAEOutput]]:
-        return []
-
-    @staticmethod
-    def _get_plot_callbacks() -> List[DataLoaderPlotCallback[TabularVAEInput, TabularVAEOutput]]:
-        return []
-
-    @staticmethod
-    def _get_score_collection_callbacks() -> List[
-        DataLoaderScoreCollectionCallback[TabularVAEInput, TabularVAEOutput]
-    ]:
-        return []
-
-    @staticmethod
-    def _get_array_collection_callbacks() -> List[
-        DataLoaderArrayCollectionCallback[TabularVAEInput, TabularVAEOutput]
-    ]:
-        return []
-
-    @staticmethod
-    def _get_plot_collection_callbacks() -> List[
-        DataLoaderPlotCollectionCallback[TabularVAEInput, TabularVAEOutput]
-    ]:
-        return []
+    @classmethod
+    def _get_forward_hook_plan(
+        cls, data_split: DataSplit
+    ) -> Optional[Type[ForwardHookPlan[Model[Any, Any]]]]:
+        if data_split is DataSplit.TRAIN:
+            return DemoForwardHookPlan

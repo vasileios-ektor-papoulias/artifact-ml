@@ -4,22 +4,20 @@ from unittest.mock import MagicMock
 from uuid import UUID
 
 import pytest
-from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter
-from artifact_experiment.libs.tracking.neptune.client import NeptuneTrackingClient
-from artifact_experiment.libs.tracking.neptune.loggers.array_collections import (
+from artifact_experiment._impl.backends.neptune.adapter import NeptuneRunAdapter
+from artifact_experiment._impl.backends.neptune.client import NeptuneTrackingClient
+from artifact_experiment._impl.backends.neptune.loggers.array_collections import (
     NeptuneArrayCollectionLogger,
 )
-from artifact_experiment.libs.tracking.neptune.loggers.arrays import NeptuneArrayLogger
-from artifact_experiment.libs.tracking.neptune.loggers.plot_collections import (
+from artifact_experiment._impl.backends.neptune.loggers.arrays import NeptuneArrayLogger
+from artifact_experiment._impl.backends.neptune.loggers.plot_collections import (
     NeptunePlotCollectionLogger,
 )
-from artifact_experiment.libs.tracking.neptune.loggers.plots import NeptunePlotLogger
-from artifact_experiment.libs.tracking.neptune.loggers.score_collections import (
+from artifact_experiment._impl.backends.neptune.loggers.plots import NeptunePlotLogger
+from artifact_experiment._impl.backends.neptune.loggers.score_collections import (
     NeptuneScoreCollectionLogger,
 )
-from artifact_experiment.libs.tracking.neptune.loggers.scores import NeptuneScoreLogger
-from matplotlib.figure import Figure
-from numpy import ndarray
+from artifact_experiment._impl.backends.neptune.loggers.scores import NeptuneScoreLogger
 from pytest_mock import MockerFixture
 
 
@@ -231,7 +229,7 @@ def test_log_array(
     ],
     experiment_id: str,
     run_id: str,
-    ls_arrays: List[ndarray],
+    ls_arrays: List[Array],
 ):
     (
         adapter,
@@ -436,7 +434,7 @@ def test_log_array_collection(
     ],
     experiment_id: str,
     run_id: str,
-    ls_array_collections: List[Dict[str, ndarray]],
+    ls_array_collections: List[Dict[str, Array]],
 ):
     (
         adapter,
@@ -587,7 +585,7 @@ def test_upload(
     ) = client_factory(experiment_id, run_id)
     spy_adapter_upload = mocker.spy(adapter, "upload")
     for file_entry in ls_file_entries:
-        client.upload(**file_entry)
+        client.log_file(**file_entry)
     assert spy_adapter_upload.call_count == len(ls_file_entries)
     for entry in ls_file_entries:
         spy_adapter_upload.assert_any_call(

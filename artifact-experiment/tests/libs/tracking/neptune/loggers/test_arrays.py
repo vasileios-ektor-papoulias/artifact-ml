@@ -2,9 +2,8 @@ import os
 from typing import Callable, List, Optional, Tuple
 
 import pytest
-from artifact_experiment.libs.tracking.neptune.adapter import NeptuneRunAdapter
-from artifact_experiment.libs.tracking.neptune.loggers.arrays import NeptuneArrayLogger
-from numpy import ndarray
+from artifact_experiment._impl.backends.neptune.adapter import NeptuneRunAdapter
+from artifact_experiment._impl.backends.neptune.loggers.arrays import NeptuneArrayLogger
 from pytest_mock import MockerFixture
 
 
@@ -34,7 +33,7 @@ def test_log(
     experiment_id: str,
     run_id: str,
     ls_array_names: List[str],
-    ls_arrays: List[ndarray],
+    ls_arrays: List[Array],
 ):
     adapter, logger = array_logger_factory(experiment_id, run_id)
     spy_adapter_log = mocker.spy(adapter, "log")

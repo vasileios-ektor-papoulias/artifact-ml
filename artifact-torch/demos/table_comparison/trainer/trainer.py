@@ -1,45 +1,33 @@
 from typing import Any, Optional
 
 import torch
-from artifact_experiment.tracking import TrackingClient
-from artifact_torch.base.components.callbacks.checkpoint import CheckpointCallback
-from artifact_torch.base.components.early_stopping.stopper import EarlyStopper, StopperUpdateData
-from artifact_torch.base.components.model_tracking.tracker import (
-    ModelTracker,
-    ModelTrackingCriterion,
-)
-from artifact_torch.base.components.routines.batch import BatchRoutine
-from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
-from artifact_torch.base.data.data_loader import DataLoader
-from artifact_torch.base.trainer.custom import CustomTrainer
-from artifact_torch.libs.components.callbacks.checkpoint.standard import StandardCheckpointCallback
-from artifact_torch.libs.components.early_stopping.epoch_bound import EpochBoundStopper
-from artifact_torch.table_comparison.model import TableSynthesizer
+from artifact_torch.nn import Trainer
+from artifact_torch.nn.early_stopping import EarlyStopper, EpochBoundStopper, StopperUpdateData
+from artifact_torch.nn.model_tracking import ModelTracker, ModelTrackingCriterion
+from artifact_torch.table_comparison._model import TableSynthesizer
 from torch import optim
 
-from demos.table_comparison.components.routines.batch import DemoBatchRoutine
-from demos.table_comparison.components.routines.loader import DemoLoaderRoutine
 from demos.table_comparison.config.constants import (
     CHECKPOINT_PERIOD,
     DEVICE,
     LEARNING_RATE,
     MAX_N_EPOCHS,
 )
-from demos.table_comparison.model.io import TabularVAEInput, TabularVAEOutput
+from demos.table_comparison.contracts.workflow import WorkflowInput, WorkflowOutput
 
 
-class TabularVAETrainer(
-    CustomTrainer[
-        TableSynthesizer[TabularVAEInput, TabularVAEOutput, Any],
-        TabularVAEInput,
-        TabularVAEOutput,
-        ModelTrackingCriterion,
+class DemoTrainer(
+    Trainer[
+        TableSynthesizer[Any, Any, Any],
+        WorkflowInput,
+        WorkflowOutput,
         StopperUpdateData,
+        ModelTrackingCriterion,
     ]
 ):
     @staticmethod
     def _get_optimizer(
-        model: TableSynthesizer[TabularVAEInput, TabularVAEOutput, Any],
+        model: TableSynthesizer[Any, Any, Any],
     ) -> optim.Optimizer:
         return optim.Adam(params=model.parameters(), lr=LEARNING_RATE)
 
@@ -54,6 +42,10 @@ class TabularVAETrainer(
         return DEVICE
 
     @staticmethod
+    def _get_checkpoint_period() -> Optional[int]:
+        return CHECKPOINT_PERIOD
+
+    @staticmethod
     def _get_model_tracker() -> Optional[ModelTracker[ModelTrackingCriterion]]:
         pass
 
@@ -66,31 +58,3 @@ class TabularVAETrainer(
 
     def _get_stopper_update_data(self) -> StopperUpdateData:
         return StopperUpdateData(n_epochs_elapsed=self.n_epochs_elapsed)
-
-    @staticmethod
-    def _get_checkpoint_callback(
-        tracking_client: Optional[TrackingClient],
-    ) -> Optional[CheckpointCallback]:
-        if tracking_client is not None:
-            return StandardCheckpointCallback(
-                period=CHECKPOINT_PERIOD, tracking_client=tracking_client
-            )
-
-    @staticmethod
-    def _get_batch_routine(
-        tracking_client: Optional[TrackingClient],
-    ) -> Optional[
-        BatchRoutine[
-            TabularVAEInput,
-            TabularVAEOutput,
-            TableSynthesizer[TabularVAEInput, TabularVAEOutput, Any],
-        ]
-    ]:
-        return DemoBatchRoutine.build(tracking_client=tracking_client)
-
-    @staticmethod
-    def _get_train_loader_routine(
-        data_loader: DataLoader[TabularVAEInput],
-        tracking_client: Optional[TrackingClient],
-    ) -> Optional[DataLoaderRoutine[TabularVAEInput, TabularVAEOutput]]:
-        return DemoLoaderRoutine.build(data_loader=data_loader, tracking_client=tracking_client)

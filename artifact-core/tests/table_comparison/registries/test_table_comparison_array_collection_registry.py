@@ -1,8 +1,8 @@
 from typing import Type
 
 import pytest
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.table_comparison.artifacts.array_collections.descriptive_stats import (
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.table_comparison._artifacts.array_collections.descriptive_stats import (
     FirstQuartileJuxtapositionArrays,
     MaxJuxtapositionArrays,
     MeanJuxtapositionArrays,
@@ -12,10 +12,10 @@ from artifact_core.table_comparison.artifacts.array_collections.descriptive_stat
     ThirdQuartileJuxtapositionArrays,
     VarianceJuxtapositionArrays,
 )
-from artifact_core.table_comparison.artifacts.base import (
+from artifact_core.table_comparison._artifacts.base import (
     TableComparisonArrayCollection,
 )
-from artifact_core.table_comparison.registries.array_collections.registry import (
+from artifact_core.table_comparison._registries.array_collections.array_collections import (
     TableComparisonArrayCollectionRegistry,
     TableComparisonArrayCollectionType,
 )

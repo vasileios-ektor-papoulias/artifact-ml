@@ -1,11 +1,9 @@
 from typing import Any, Dict
 
-from artifact_core.base.registry import (
+from artifact_core._base.registry import (
     ArtifactRegistry,
     ArtifactType,
 )
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 from tests.base.dummy_artifact_toolkit.artifact_dependencies import (
     DummyArtifactResources,
@@ -18,31 +16,31 @@ class DummyScoreType(ArtifactType):
 
 
 class DummyScoreRegistry(
-    ArtifactRegistry[DummyScoreType, DummyArtifactResources, float, DummyResourceSpec]
+    ArtifactRegistry[DummyArtifactResources, DummyResourceSpec, DummyScoreType, float]
 ):
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
         return {}
 
 
-class DummyArrayType(ArtifactType):
+class DummyArray(ArtifactType):
     DUMMY_ARRAY_1 = "dummy_array_1"
 
 
 class DummyArrayRegistry(
-    ArtifactRegistry[DummyArrayType, DummyArtifactResources, ndarray, DummyResourceSpec]
+    ArtifactRegistry[DummyArtifactResources, DummyResourceSpec, DummyArray, Array]
 ):
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
         return {}
 
 
-class DummyPlotType(ArtifactType):
+class DummyPlot(ArtifactType):
     DUMMY_PLOT_1 = "dummy_plot_1"
 
 
 class DummyPlotRegistry(
-    ArtifactRegistry[DummyPlotType, DummyArtifactResources, Figure, DummyResourceSpec]
+    ArtifactRegistry[DummyArtifactResources, DummyResourceSpec, DummyPlot, Figure]
 ):
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
@@ -55,7 +53,7 @@ class DummyScoreCollectionType(ArtifactType):
 
 class DummyScoreCollectionRegistry(
     ArtifactRegistry[
-        DummyScoreCollectionType, DummyArtifactResources, Dict[str, float], DummyResourceSpec
+        DummyArtifactResources, DummyResourceSpec, DummyScoreCollectionType, Dict[str, float]
     ]
 ):
     @classmethod
@@ -69,7 +67,10 @@ class DummyArrayCollectionType(ArtifactType):
 
 class DummyArrayCollectionRegistry(
     ArtifactRegistry[
-        DummyArrayCollectionType, DummyArtifactResources, Dict[str, ndarray], DummyResourceSpec
+        DummyArtifactResources,
+        DummyResourceSpec,
+        DummyArrayCollectionType,
+        Dict[str, Array],
     ]
 ):
     @classmethod
@@ -83,7 +84,10 @@ class DummyPlotCollectionType(ArtifactType):
 
 class DummyPlotCollectionRegistry(
     ArtifactRegistry[
-        DummyPlotCollectionType, DummyArtifactResources, Dict[str, Figure], DummyResourceSpec
+        DummyArtifactResources,
+        DummyResourceSpec,
+        DummyPlotCollectionType,
+        Dict[str, Figure],
     ]
 ):
     @classmethod

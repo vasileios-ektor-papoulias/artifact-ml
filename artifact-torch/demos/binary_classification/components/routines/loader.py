@@ -1,53 +1,28 @@
-from typing import List
+from typing import Any, Optional, Type
 
-from artifact_torch.base.components.callbacks.data_loader import (
-    DataLoaderArrayCallback,
-    DataLoaderArrayCollectionCallback,
-    DataLoaderPlotCallback,
-    DataLoaderPlotCollectionCallback,
-    DataLoaderScoreCallback,
-    DataLoaderScoreCollectionCallback,
-)
-from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
-from artifact_torch.libs.components.callbacks.data_loader.loss import TrainLossCallback
+from artifact_experiment.tracking import DataSplit
+from artifact_torch.nn import Model
+from artifact_torch.nn.plans import ForwardHookPlan, ModelIOPlan
+from artifact_torch.nn.routines import DataLoaderRoutine
 
-from demos.binary_classification.config.constants import TRAIN_LOADER_CALLBACK_PERIOD
-from demos.binary_classification.model.io import MLPClassifierInput, MLPClassifierOutput
+from demos.binary_classification.components.plans.forward_hook import DataLoaderForwardHookPlan
+from demos.binary_classification.components.plans.model_io import DataLoaderModelIOPlan
+from demos.binary_classification.contracts.workflow import WorkflowInput, WorkflowOutput
 
 
-class DemoLoaderRoutine(DataLoaderRoutine[MLPClassifierInput, MLPClassifierOutput]):
-    @staticmethod
-    def _get_score_callbacks() -> List[
-        DataLoaderScoreCallback[MLPClassifierInput, MLPClassifierOutput]
-    ]:
-        return [TrainLossCallback(period=TRAIN_LOADER_CALLBACK_PERIOD)]
+class DemoLoaderRoutine(DataLoaderRoutine[Model[Any, Any], WorkflowInput, WorkflowOutput]):
+    @classmethod
+    def _get_model_io_plan(
+        cls, data_split: DataSplit
+    ) -> Optional[Type[ModelIOPlan[WorkflowInput, WorkflowOutput]]]:
+        if data_split is DataSplit.TRAIN:
+            return DataLoaderModelIOPlan
+        elif data_split is DataSplit.VALIDATION:
+            return DataLoaderModelIOPlan
 
-    @staticmethod
-    def _get_array_callbacks() -> List[
-        DataLoaderArrayCallback[MLPClassifierInput, MLPClassifierOutput]
-    ]:
-        return []
-
-    @staticmethod
-    def _get_plot_callbacks() -> List[
-        DataLoaderPlotCallback[MLPClassifierInput, MLPClassifierOutput]
-    ]:
-        return []
-
-    @staticmethod
-    def _get_score_collection_callbacks() -> List[
-        DataLoaderScoreCollectionCallback[MLPClassifierInput, MLPClassifierOutput]
-    ]:
-        return []
-
-    @staticmethod
-    def _get_array_collection_callbacks() -> List[
-        DataLoaderArrayCollectionCallback[MLPClassifierInput, MLPClassifierOutput]
-    ]:
-        return []
-
-    @staticmethod
-    def _get_plot_collection_callbacks() -> List[
-        DataLoaderPlotCollectionCallback[MLPClassifierInput, MLPClassifierOutput]
-    ]:
-        return []
+    @classmethod
+    def _get_forward_hook_plan(
+        cls, data_split: DataSplit
+    ) -> Optional[Type[ForwardHookPlan[Model[Any, Any]]]]:
+        if data_split is DataSplit.TRAIN:
+            return DataLoaderForwardHookPlan

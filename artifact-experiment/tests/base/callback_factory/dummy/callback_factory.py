@@ -1,17 +1,17 @@
 from typing import Type
 
-from artifact_experiment.base.callback_factory import ArtifactCallbackFactory
+from artifact_experiment.base.plans.callback_factory import ArtifactCallbackFactory
 
 from tests.base.dummy_artifact_toolkit import (
+    DummyArray,
     DummyArrayCollectionRegistry,
     DummyArrayCollectionType,
     DummyArrayRegistry,
-    DummyArrayType,
     DummyArtifactResources,
+    DummyPlot,
     DummyPlotCollectionRegistry,
     DummyPlotCollectionType,
     DummyPlotRegistry,
-    DummyPlotType,
     DummyResourceSpec,
     DummyScoreCollectionRegistry,
     DummyScoreCollectionType,
@@ -22,14 +22,14 @@ from tests.base.dummy_artifact_toolkit import (
 
 class DummyCallbackFactory(
     ArtifactCallbackFactory[
+        DummyArtifactResources,
+        DummyResourceSpec,
         DummyScoreType,
-        DummyArrayType,
-        DummyPlotType,
+        DummyArray,
+        DummyPlot,
         DummyScoreCollectionType,
         DummyArrayCollectionType,
         DummyPlotCollectionType,
-        DummyArtifactResources,
-        DummyResourceSpec,
     ]
 ):
     @staticmethod

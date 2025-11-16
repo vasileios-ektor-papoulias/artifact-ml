@@ -1,14 +1,10 @@
 from typing import Dict, Optional, Type, TypeVar
 
-import numpy as np
-from artifact_experiment.base.tracking.client import TrackingClient
-from artifact_experiment.base.tracking.logger import ArtifactLogger
-from matplotlib.figure import Figure
+from artifact_experiment.base.tracking.backend.client import TrackingClient
+from artifact_experiment.base.tracking.backend.logger import ArtifactLogger
 
 from tests.base.tracking.dummy.adapter import DummyNativeRun, DummyRunAdapter
-from tests.base.tracking.dummy.logger import (
-    DummyArtifactLogger,
-)
+from tests.base.tracking.dummy.logger import DummyArtifactLogger
 
 DummyTrackingClientT = TypeVar("DummyTrackingClientT", bound="DummyTrackingClient")
 
@@ -39,7 +35,7 @@ class DummyTrackingClient(TrackingClient[DummyRunAdapter]):
     @staticmethod
     def _get_array_logger(
         run: DummyRunAdapter,
-    ) -> ArtifactLogger[np.ndarray, DummyRunAdapter]:
+    ) -> ArtifactLogger[Array, DummyRunAdapter]:
         return DummyArtifactLogger(run=run)
 
     @staticmethod
@@ -57,7 +53,7 @@ class DummyTrackingClient(TrackingClient[DummyRunAdapter]):
     @staticmethod
     def _get_array_collection_logger(
         run: DummyRunAdapter,
-    ) -> ArtifactLogger[Dict[str, np.ndarray], DummyRunAdapter]:
+    ) -> ArtifactLogger[Dict[str, Array], DummyRunAdapter]:
         return DummyArtifactLogger(run=run)
 
     @staticmethod
@@ -66,5 +62,5 @@ class DummyTrackingClient(TrackingClient[DummyRunAdapter]):
     ) -> ArtifactLogger[Dict[str, Figure], DummyRunAdapter]:
         return DummyArtifactLogger(run=run)
 
-    def upload(self, path_source: str, dir_target: str):
+    def log_file(self, path_source: str, dir_target: str):
         self._run.upload(path_source=path_source, dir_target=dir_target)

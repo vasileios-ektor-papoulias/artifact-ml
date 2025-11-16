@@ -1,14 +1,13 @@
 from typing import Callable, Optional, Tuple
 
-import numpy as np
 import pytest
-from artifact_experiment.libs.tracking.in_memory.adapter import (
+from artifact_experiment._impl.backends.in_memory.adapter import (
     InMemoryRunAdapter,
 )
-from artifact_experiment.libs.tracking.in_memory.client import (
+from artifact_experiment._impl.backends.in_memory.client import (
     InMemoryTrackingClient,
 )
-from artifact_experiment.libs.tracking.in_memory.native_run import (
+from artifact_experiment._impl.backends.in_memory.native_run import (
     InMemoryRun,
 )
 
@@ -67,7 +66,7 @@ def populated_adapter_factory(
             if isinstance(artifact, float):
                 native_run.log_score(key=f"test_score/{score_idx}", score=artifact)
                 score_idx += 1
-            elif isinstance(artifact, np.ndarray):
+            elif isinstance(artifact, Array):
                 native_run.log_array(key=f"test_array/{array_idx}", array=artifact)
                 array_idx += 1
             elif hasattr(artifact, "add_subplot"):
@@ -81,7 +80,7 @@ def populated_adapter_factory(
                         score_collection=artifact,
                     )
                     score_collection_idx += 1
-                elif all(isinstance(v, np.ndarray) for v in values):
+                elif all(isinstance(v, Array) for v in values):
                     native_run.log_array_collection(
                         key=f"test_array_collection/{array_collection_idx}",
                         array_collection=artifact,

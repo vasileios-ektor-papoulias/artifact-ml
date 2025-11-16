@@ -5,7 +5,7 @@ from typing import Generator, List, Optional, Tuple, Union
 from unittest.mock import MagicMock
 
 import pytest
-from artifact_core.libs.utils.system.package_importer import PackageImporter
+from artifact_core._libs.utils.system.package_importer import PackageImporter
 from pytest_mock import MockerFixture
 
 

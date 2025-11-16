@@ -2,8 +2,8 @@ import os
 from typing import Callable, Dict, List, Optional, Tuple
 
 import pytest
-from artifact_experiment.libs.tracking.mlflow.adapter import MlflowRunAdapter
-from artifact_experiment.libs.tracking.mlflow.loggers.score_collections import (
+from artifact_experiment._impl.backends.mlflow.adapter import MlflowRunAdapter
+from artifact_experiment._impl.backends.mlflow.loggers.score_collections import (
     MlflowScoreCollectionLogger,
 )
 from pytest_mock import MockerFixture

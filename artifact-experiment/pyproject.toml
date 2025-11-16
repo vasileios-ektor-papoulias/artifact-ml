@@ -2,7 +2,7 @@
 name = "artifact-experiment"
 packages = [{ include = "artifact-experiment" }]
 version = "0.1.0"
-description = "Experiment orchestration and tracking for the Artifact framework."
+description = "Experiment orchestration and tracking extension to Artifact-ML."
 authors = [
     {name = "Vasileios Ektor Papoulias",email = "hector.papoulias@gmail.com"}
 ]

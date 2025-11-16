@@ -24,11 +24,14 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Poetry and Dependencies
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install Dependencies
         run: |
           cd ${{ env.COMPONENT }}
-          curl -sSL https://install.python-poetry.org | python -
-          export PATH="$HOME/.local/bin:$PATH"
           poetry install --with dev
 
       - name: Run Linting with Ruff

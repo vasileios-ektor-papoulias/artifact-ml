@@ -2,22 +2,21 @@ from unittest.mock import ANY
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.correlations.calculator import (
+from artifact_core._libs.artifacts.table_comparison.correlations.calculator import (
     CategoricalAssociationType,
     ContinuousAssociationType,
 )
-from artifact_core.libs.implementation.tabular.correlations.heatmap_plotter import (
+from artifact_core._libs.artifacts.table_comparison.correlations.heatmap_plotter import (
     CorrelationHeatmapPlotter,
 )
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.table_comparison.artifacts.base import (
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.table_comparison._artifacts.base import (
     DatasetComparisonArtifactResources,
 )
-from artifact_core.table_comparison.artifacts.plots.correlations import (
+from artifact_core.table_comparison._artifacts.plots.correlations import (
     CorrelationHeatmapJuxtapositionPlot,
     CorrelationHeatmapJuxtapositionPlotHyperparams,
 )
-from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 

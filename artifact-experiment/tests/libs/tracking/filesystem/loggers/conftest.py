@@ -4,20 +4,20 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import pandas as pd
 import pytest
-from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRunAdapter
-from artifact_experiment.libs.tracking.filesystem.loggers.array_collections import (
+from artifact_experiment._impl.backends.filesystem.adapter import FilesystemRunAdapter
+from artifact_experiment._impl.backends.filesystem.loggers.array_collections import (
     FilesystemArrayCollectionLogger,
 )
-from artifact_experiment.libs.tracking.filesystem.loggers.arrays import FilesystemArrayLogger
-from artifact_experiment.libs.tracking.filesystem.loggers.plot_collections import (
+from artifact_experiment._impl.backends.filesystem.loggers.arrays import FilesystemArrayLogger
+from artifact_experiment._impl.backends.filesystem.loggers.plot_collections import (
     FilesystemPlotCollectionLogger,
 )
-from artifact_experiment.libs.tracking.filesystem.loggers.plots import FilesystemPlotLogger
-from artifact_experiment.libs.tracking.filesystem.loggers.score_collections import (
+from artifact_experiment._impl.backends.filesystem.loggers.plots import FilesystemPlotLogger
+from artifact_experiment._impl.backends.filesystem.loggers.score_collections import (
     FilesystemScoreCollectionLogger,
 )
-from artifact_experiment.libs.tracking.filesystem.loggers.scores import FilesystemScoreLogger
-from artifact_experiment.libs.tracking.filesystem.native_run import FilesystemRun
+from artifact_experiment._impl.backends.filesystem.loggers.scores import FilesystemScoreLogger
+from artifact_experiment._impl.backends.filesystem.native_run import FilesystemRun
 from pytest_mock import MockerFixture
 
 

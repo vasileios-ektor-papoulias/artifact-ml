@@ -5,11 +5,11 @@ from unittest.mock import MagicMock
 
 import numpy as np
 import pytest
-from artifact_experiment.libs.tracking.mlflow.adapter import MlflowRunAdapter
-from artifact_experiment.libs.tracking.mlflow.loggers.array_collections import (
+from artifact_experiment._impl.backends.mlflow.adapter import MlflowRunAdapter
+from artifact_experiment._impl.backends.mlflow.loggers.array_collections import (
     MlflowArrayCollectionLogger,
 )
-from artifact_experiment.libs.utils.incremental_path_generator import IncrementalPathGenerator
+from artifact_experiment._utils.incremental_path_generator import IncrementalPathGenerator
 from pytest_mock import MockerFixture
 
 
@@ -67,7 +67,7 @@ def test_log(
     experiment_id: str,
     run_id: str,
     ls_array_collection_names: List[str],
-    ls_array_collections: List[Dict[str, np.ndarray]],
+    ls_array_collections: List[Dict[str, Array]],
 ):
     adapter, logger = array_collection_logger_factory(experiment_id, run_id)
     ls_logged = []
@@ -167,7 +167,7 @@ def test_log_fs_integration(
     experiment_id: str,
     run_id: str,
     ls_array_collection_names: List[str],
-    ls_array_collections: List[Dict[str, np.ndarray]],
+    ls_array_collections: List[Dict[str, Array]],
 ):
     adapter, logger = array_collection_logger_factory(experiment_id, run_id)
     ls_logged = []

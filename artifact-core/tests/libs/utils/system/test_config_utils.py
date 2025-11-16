@@ -3,11 +3,9 @@ from pathlib import Path
 from typing import Any, Dict, Generator, Optional, Tuple
 
 import pytest
-from artifact_core.libs.utils.system.config_utils import (
-    ConfigMerger,
-    ConfigOverrideLocator,
-    DomainToolkitConfigType,
-)
+from artifact_core._bootstrap.libs.config_identifier import DomainToolkit, ToolkitConfigIdentifier
+from artifact_core._bootstrap.libs.config_merger import ConfigMerger
+from artifact_core._bootstrap.libs.override_locator import ConfigOverrideLocator
 from pytest_mock import MockerFixture
 
 
@@ -17,7 +15,9 @@ def temp_dir_with_config(
 ) -> Generator[Tuple[Path, Path, Path, Dict[str, Any]], None, None]:
     config_dirpath = tmp_path / ".artifact-ml"
     config_dirpath.mkdir()
-    config_filepath = config_dirpath / DomainToolkitConfigType.TABLE_COMPARISON.value
+    config_filepath = config_dirpath / ToolkitConfigIdentifier.get_config_filename(
+        domain_toolkit=DomainToolkit.TABLE_COMPARISON
+    )
     config_data = {"test": "value", "nested": {"key": "value"}}
     with open(config_filepath, "w") as f:
         json.dump(config_data, f)
@@ -52,7 +52,7 @@ def test_get_config_override(
     if not config_exists and config_filepath.exists():
         config_filepath.unlink()
     mocker.patch.object(Path, "cwd", return_value=tmp_path)
-    result = ConfigOverrideLocator.get_config_override(DomainToolkitConfigType.TABLE_COMPARISON)
+    result = ConfigOverrideLocator.get_config_override(DomainToolkit.TABLE_COMPARISON)
     if expected_result:
         assert result == config_data
     else:

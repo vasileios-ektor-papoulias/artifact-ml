@@ -2,11 +2,10 @@ from pathlib import Path
 from typing import Callable, Dict, List, Optional, Tuple
 
 import pytest
-from artifact_experiment.libs.tracking.in_memory.adapter import InMemoryRunAdapter
-from artifact_experiment.libs.tracking.in_memory.loggers.array_collections import (
+from artifact_experiment._impl.backends.in_memory.adapter import InMemoryRunAdapter
+from artifact_experiment._impl.backends.in_memory.loggers.array_collections import (
     InMemoryArrayCollectionLogger,
 )
-from numpy import ndarray
 from pytest_mock import MockerFixture
 
 
@@ -97,7 +96,7 @@ def test_log(
     experiment_id: str,
     run_id: str,
     ls_array_collection_names: List[str],
-    ls_array_collections: List[Dict[str, ndarray]],
+    ls_array_collections: List[Dict[str, Array]],
     ls_step: List[int],
 ):
     adapter, logger = array_collection_logger_factory(experiment_id, run_id)

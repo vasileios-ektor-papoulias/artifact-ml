@@ -2,17 +2,15 @@ from typing import Callable, Dict, List, Optional, Tuple
 from uuid import UUID
 
 import pytest
-from artifact_experiment.libs.tracking.in_memory.adapter import (
+from artifact_experiment._impl.backends.in_memory.adapter import (
     InMemoryRunAdapter,
 )
-from artifact_experiment.libs.tracking.in_memory.client import (
+from artifact_experiment._impl.backends.in_memory.client import (
     InMemoryTrackingClient,
 )
-from artifact_experiment.libs.tracking.in_memory.native_run import (
+from artifact_experiment._impl.backends.in_memory.native_run import (
     InMemoryRun,
 )
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 
 @pytest.mark.unit
@@ -146,7 +144,7 @@ def test_log_array(
     ],
     experiment_id: str,
     run_id: str,
-    ls_arrays: List[ndarray],
+    ls_arrays: List[Array],
 ):
     adapter, client = client_factory(experiment_id, run_id)
     for idx, array in enumerate(ls_arrays):
@@ -256,7 +254,7 @@ def test_log_array_collection(
     ],
     experiment_id: str,
     run_id: str,
-    ls_array_collections: List[Dict[str, ndarray]],
+    ls_array_collections: List[Dict[str, Array]],
 ):
     adapter, client = client_factory(experiment_id, run_id)
     for idx, array_collection in enumerate(ls_array_collections):
@@ -344,9 +342,9 @@ def test_upload(
     expected_store_length: int,
 ):
     adapter, client = client_factory(experiment_id, run_id)
-    assert len(adapter.uploaded_files) == 0
+    assert len(adapter.files) == 0
     for file_entry in ls_file_entries:
-        client.upload(**file_entry)
-    assert len(adapter.uploaded_files) == expected_store_length
+        client.log_file(**file_entry)
+    assert len(adapter.files) == expected_store_length
     for i, file_entry in enumerate(ls_file_entries):
-        assert adapter.uploaded_files[i] == file_entry
+        assert adapter.files[i] == file_entry

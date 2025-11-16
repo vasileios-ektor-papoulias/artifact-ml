@@ -1,6 +1,7 @@
 {
     "data": {
         "training_dataset_path": "assets/binary_classification.csv",
+        "val_data_proportion": 0.2,
         "ls_features": ["weight", "height", "age", "bmi"],
         "label_feature": "arthritis_true",
         "ls_categories": ["0", "1"],
@@ -19,17 +20,17 @@
     },
     "training": {
         "device": "cpu",
-        "max_n_epochs": 100,
+        "max_n_epochs": 50,
         "learning_rate": 0.001,
-        "batch_size": 512,
+        "batch_size": 64,
         "drop_last": false,
         "shuffle": true,
-        "checkpoint_period": 5,
-        "batch_loss_period": 1
+        "checkpoint_period": 5
     },
     "validation": {
-        "train_loader_callback_period": 1,
-        "validation_plan_callback_period": 5,
+        "train_diagnostics_period": 1,
+        "loader_validation_period": 5,
+        "artifact_routine_period": 5,
         "classification_threshold": 0.5
     },
     "tracking":{

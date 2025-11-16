@@ -2,8 +2,7 @@ from typing import Dict, List
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.pdf.plotter import TabularPDFPlotter
-from matplotlib.figure import Figure
+from artifact_core._libs.artifacts.table_comparison.pdf.plotter import TabularPDFPlotter
 
 
 @pytest.mark.unit

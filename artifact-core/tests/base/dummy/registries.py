@@ -1,11 +1,9 @@
 from typing import Any, Dict
 
-from artifact_core.base.registry import (
+from artifact_core._base.registry import (
     ArtifactRegistry,
     ArtifactType,
 )
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 from tests.base.dummy.artifact_dependencies import DummyArtifactResources, DummyResourceSpec
 
@@ -56,24 +54,24 @@ class InvalidParamDummyScoreRegistry(
         }
 
 
-class DummyArrayType(ArtifactType):
+class DummyArray(ArtifactType):
     pass
 
 
 class DummyArrayRegistry(
-    ArtifactRegistry[DummyArrayType, DummyArtifactResources, ndarray, DummyResourceSpec]
+    ArtifactRegistry[DummyArray, DummyArtifactResources, Array, DummyResourceSpec]
 ):
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
         return {}
 
 
-class DummyPlotType(ArtifactType):
+class DummyPlot(ArtifactType):
     pass
 
 
 class DummyPlotRegistry(
-    ArtifactRegistry[DummyPlotType, DummyArtifactResources, Figure, DummyResourceSpec]
+    ArtifactRegistry[DummyPlot, DummyArtifactResources, Figure, DummyResourceSpec]
 ):
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
@@ -100,7 +98,7 @@ class DummyArrayCollectionType(ArtifactType):
 
 class DummyArrayCollectionRegistry(
     ArtifactRegistry[
-        DummyArrayCollectionType, DummyArtifactResources, Dict[str, ndarray], DummyResourceSpec
+        DummyArrayCollectionType, DummyArtifactResources, Dict[str, Array], DummyResourceSpec
     ]
 ):
     @classmethod

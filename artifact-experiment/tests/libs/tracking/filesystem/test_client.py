@@ -2,23 +2,21 @@ from typing import Callable, Dict, List, Optional, Tuple
 from uuid import UUID
 
 import pytest
-from artifact_experiment.libs.tracking.filesystem.adapter import FilesystemRunAdapter
-from artifact_experiment.libs.tracking.filesystem.client import FilesystemTrackingClient
-from artifact_experiment.libs.tracking.filesystem.loggers.array_collections import (
+from artifact_experiment._impl.backends.filesystem.adapter import FilesystemRunAdapter
+from artifact_experiment._impl.backends.filesystem.client import FilesystemTrackingClient
+from artifact_experiment._impl.backends.filesystem.loggers.array_collections import (
     FilesystemArrayCollectionLogger,
 )
-from artifact_experiment.libs.tracking.filesystem.loggers.arrays import FilesystemArrayLogger
-from artifact_experiment.libs.tracking.filesystem.loggers.plot_collections import (
+from artifact_experiment._impl.backends.filesystem.loggers.arrays import FilesystemArrayLogger
+from artifact_experiment._impl.backends.filesystem.loggers.plot_collections import (
     FilesystemPlotCollectionLogger,
 )
-from artifact_experiment.libs.tracking.filesystem.loggers.plots import FilesystemPlotLogger
-from artifact_experiment.libs.tracking.filesystem.loggers.score_collections import (
+from artifact_experiment._impl.backends.filesystem.loggers.plots import FilesystemPlotLogger
+from artifact_experiment._impl.backends.filesystem.loggers.score_collections import (
     FilesystemScoreCollectionLogger,
 )
-from artifact_experiment.libs.tracking.filesystem.loggers.scores import FilesystemScoreLogger
-from artifact_experiment.libs.tracking.filesystem.native_run import FilesystemRun
-from matplotlib.figure import Figure
-from numpy import ndarray
+from artifact_experiment._impl.backends.filesystem.loggers.scores import FilesystemScoreLogger
+from artifact_experiment._impl.backends.filesystem.native_run import FilesystemRun
 from pytest_mock import MockerFixture
 
 
@@ -216,7 +214,7 @@ def test_log_array(
     ],
     experiment_id: str,
     run_id: str,
-    ls_arrays: List[ndarray],
+    ls_arrays: List[Array],
 ):
     (
         _,
@@ -397,7 +395,7 @@ def test_log_array_collection(
     ],
     experiment_id: str,
     run_id: str,
-    ls_array_collections: List[Dict[str, ndarray]],
+    ls_array_collections: List[Dict[str, Array]],
 ):
     (
         _,
@@ -532,7 +530,7 @@ def test_upload(
     ) = client_factory(experiment_id, run_id)
     mock_upload = mocker.patch.object(adapter, "upload")
     for file_entry in ls_file_entries:
-        client.upload(**file_entry)
+        client.log_file(**file_entry)
     assert mock_upload.call_count == len(ls_file_entries)
     for entry in ls_file_entries:
         mock_upload.assert_any_call(

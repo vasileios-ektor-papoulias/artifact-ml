@@ -1,11 +1,9 @@
 from typing import Callable, Dict, List, Optional
 
 import pytest
-from artifact_experiment.libs.tracking.in_memory.native_run import (
+from artifact_experiment._impl.backends.in_memory.native_run import (
     InMemoryRun,
 )
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 
 @pytest.mark.unit
@@ -28,7 +26,7 @@ def test_init(
     assert len(native_run.dict_score_collections) == 0
     assert len(native_run.dict_array_collections) == 0
     assert len(native_run.dict_plot_collections) == 0
-    assert len(native_run.uploaded_files) == 0
+    assert len(native_run.files) == 0
 
 
 @pytest.mark.unit
@@ -98,7 +96,7 @@ def test_log_array(
     experiment_id: str,
     run_id: str,
     array_key: str,
-    array: ndarray,
+    array: Array,
 ):
     native_run: InMemoryRun = native_run_factory(experiment_id, run_id)
     arrays_dict = native_run.dict_arrays
@@ -179,7 +177,7 @@ def test_log_array_collection(
     experiment_id: str,
     run_id: str,
     array_collection_key: str,
-    array_collection: Dict[str, ndarray],
+    array_collection: Dict[str, Array],
 ):
     native_run: InMemoryRun = native_run_factory(experiment_id, run_id)
     arrays_dict = native_run.dict_arrays
@@ -249,9 +247,9 @@ def test_upload(
     expected_store_length: int,
 ):
     native_run = native_run_factory(experiment_id, run_id)
-    assert len(native_run.uploaded_files) == 0
+    assert len(native_run.files) == 0
     for file_entry in ls_file_entries:
-        native_run.upload(**file_entry)
-    assert len(native_run.uploaded_files) == expected_store_length
+        native_run.log_file(**file_entry)
+    assert len(native_run.files) == expected_store_length
     for i, file_entry in enumerate(ls_file_entries):
-        assert native_run.uploaded_files[i] == file_entry
+        assert native_run.files[i] == file_entry

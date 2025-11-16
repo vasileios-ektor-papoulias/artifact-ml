@@ -2,17 +2,16 @@ from unittest.mock import ANY
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.projections.tsne import (
+from artifact_core._libs.artifacts.table_comparison.projections.tsne import (
     TSNEHyperparams,
     TSNEProjector,
 )
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.table_comparison.artifacts.base import DatasetComparisonArtifactResources
-from artifact_core.table_comparison.artifacts.plots.tsne import (
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.table_comparison._artifacts.base import DatasetComparisonArtifactResources
+from artifact_core.table_comparison._artifacts.plots.tsne import (
     TSNEJuxtapositionPlot,
     TSNEJuxtapositionPlotHyperparams,
 )
-from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 

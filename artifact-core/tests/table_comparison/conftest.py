@@ -3,7 +3,7 @@ from typing import cast
 
 import pandas as pd
 import pytest
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
 
 
 @pytest.fixture

@@ -2,7 +2,7 @@ from typing import Callable
 from unittest.mock import MagicMock
 
 import pytest
-from artifact_experiment.base.tracking.client import TrackingClient
+from artifact_experiment.base.tracking.backend.client import TrackingClient
 from pytest_mock import MockerFixture
 
 

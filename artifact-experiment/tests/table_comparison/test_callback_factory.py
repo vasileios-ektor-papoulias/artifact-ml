@@ -1,26 +1,24 @@
 import pytest
 from artifact_core.table_comparison import (
     TableComparisonArrayCollectionType,
-    TableComparisonArrayType,
     TableComparisonPlotCollectionType,
-    TableComparisonPlotType,
     TableComparisonScoreCollectionType,
     TableComparisonScoreType,
     TabularDataSpec,
 )
-from artifact_core.table_comparison.registries.array_collections.registry import (
+from artifact_core.table_comparison._registries.array_collections.registry import (
     TableComparisonArrayCollectionRegistry,
 )
-from artifact_core.table_comparison.registries.arrays.registry import TableComparisonArrayRegistry
-from artifact_core.table_comparison.registries.plot_collections.registry import (
+from artifact_core.table_comparison._registries.arrays.registry import TableComparisonArrayRegistry
+from artifact_core.table_comparison._registries.plot_collections.registry import (
     TableComparisonPlotCollectionRegistry,
 )
-from artifact_core.table_comparison.registries.plots.registry import TableComparisonPlotRegistry
-from artifact_core.table_comparison.registries.score_collections.registry import (
+from artifact_core.table_comparison._registries.plots.registry import TableComparisonPlotRegistry
+from artifact_core.table_comparison._registries.score_collections.registry import (
     TableComparisonScoreCollectionRegistry,
 )
-from artifact_core.table_comparison.registries.scores.registry import TableComparisonScoreRegistry
-from artifact_experiment.base.callbacks.artifact import (
+from artifact_core.table_comparison._registries.scores.registry import TableComparisonScoreRegistry
+from artifact_experiment._base.components.callbacks.artifact import (
     ArtifactArrayCallback,
     ArtifactArrayCollectionCallback,
     ArtifactPlotCallback,
@@ -28,7 +26,7 @@ from artifact_experiment.base.callbacks.artifact import (
     ArtifactScoreCallback,
     ArtifactScoreCollectionCallback,
 )
-from artifact_experiment.table_comparison.callback_factory import TableComparisonCallbackFactory
+from artifact_experiment.table_comparison._callback_factory import TableComparisonCallbackFactory
 from pytest_mock import MockerFixture
 
 
@@ -54,7 +52,7 @@ def test_build_score_callback(
 @pytest.mark.unit
 @pytest.mark.parametrize("array_type", [])
 def test_build_array_callback(
-    mocker: MockerFixture, tabular_data_spec: TabularDataSpec, array_type: TableComparisonArrayType
+    mocker: MockerFixture, tabular_data_spec: TabularDataSpec, array_type: TableComparisonArray
 ):
     spy_registry_get = mocker.spy(TableComparisonArrayRegistry, "get")
     callback = TableComparisonCallbackFactory.build_array_callback(
@@ -71,25 +69,25 @@ def test_build_array_callback(
 @pytest.mark.parametrize(
     "plot_type",
     [
-        TableComparisonPlotType.PDF,
-        TableComparisonPlotType.CDF,
-        TableComparisonPlotType.DESCRIPTIVE_STATS_ALIGNMENT,
-        TableComparisonPlotType.MEAN_ALIGNMENT,
-        TableComparisonPlotType.STD_ALIGNMENT,
-        TableComparisonPlotType.VARIANCE_ALIGNMENT,
-        TableComparisonPlotType.MEDIAN_ALIGNMENT,
-        TableComparisonPlotType.FIRST_QUARTILE_ALIGNMENT,
-        TableComparisonPlotType.THIRD_QUARTILE_ALIGNMENT,
-        TableComparisonPlotType.MIN_ALIGNMENT,
-        TableComparisonPlotType.MAX_ALIGNMENT,
-        TableComparisonPlotType.CORRELATION_HEATMAP_JUXTAPOSITION,
-        TableComparisonPlotType.PCA_JUXTAPOSITION,
-        TableComparisonPlotType.TRUNCATED_SVD_JUXTAPOSITION,
-        TableComparisonPlotType.TSNE_JUXTAPOSITION,
+        TableComparisonPlot.PDF,
+        TableComparisonPlot.CDF,
+        TableComparisonPlot.DESCRIPTIVE_STATS_ALIGNMENT,
+        TableComparisonPlot.MEAN_ALIGNMENT,
+        TableComparisonPlot.STD_ALIGNMENT,
+        TableComparisonPlot.VARIANCE_ALIGNMENT,
+        TableComparisonPlot.MEDIAN_ALIGNMENT,
+        TableComparisonPlot.FIRST_QUARTILE_ALIGNMENT,
+        TableComparisonPlot.THIRD_QUARTILE_ALIGNMENT,
+        TableComparisonPlot.MIN_ALIGNMENT,
+        TableComparisonPlot.MAX_ALIGNMENT,
+        TableComparisonPlot.CORRELATION_HEATMAP_JUXTAPOSITION,
+        TableComparisonPlot.PCA_JUXTAPOSITION,
+        TableComparisonPlot.TRUNCATED_SVD_JUXTAPOSITION,
+        TableComparisonPlot.TSNE_JUXTAPOSITION,
     ],
 )
 def test_build_plot_callback(
-    mocker: MockerFixture, tabular_data_spec: TabularDataSpec, plot_type: TableComparisonPlotType
+    mocker: MockerFixture, tabular_data_spec: TabularDataSpec, plot_type: TableComparisonPlot
 ):
     spy_registry_get = mocker.spy(TableComparisonPlotRegistry, "get")
     callback = TableComparisonCallbackFactory.build_plot_callback(

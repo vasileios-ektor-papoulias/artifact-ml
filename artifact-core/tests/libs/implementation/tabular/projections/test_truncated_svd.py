@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.projections.truncated_svd import (
+from artifact_core._libs.artifacts.table_comparison.projections.truncated_svd import (
     TruncatedSVDHyperparams,
     TruncatedSVDProjector,
 )
@@ -30,8 +30,8 @@ def test_project(
 ):
     df, ls_cat_features, ls_cts_features = dataset_dispatcher
     projector = TruncatedSVDProjector.build(
-        ls_cat_features=ls_cat_features,
-        ls_cts_features=ls_cts_features,
+        cat_features=ls_cat_features,
+        cts_features=ls_cts_features,
         projector_config=projector_config,
     )
     mock_projection = "mock_projection"

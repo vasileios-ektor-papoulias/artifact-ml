@@ -2,8 +2,7 @@ from typing import List
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.cdf.plotter import TabularCDFPlotter
-from matplotlib.figure import Figure
+from artifact_core._libs.artifacts.table_comparison.cdf.plotter import TabularCDFPlotter
 
 
 @pytest.mark.unit
@@ -71,7 +70,7 @@ def test_get_cdf_plot(
     df = df_dispatcher
     result = TabularCDFPlotter.get_cdf_plot(
         dataset=df,
-        ls_cts_features=cts_features,
+        cts_features=cts_features,
     )
 
     assert isinstance(result, Figure), "Result should be a Figure"

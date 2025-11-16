@@ -4,7 +4,7 @@ import tempfile
 from typing import Callable, Generator, List
 
 import pytest
-from artifact_experiment.libs.utils.incremental_path_generator import IncrementalPathGenerator
+from artifact_experiment._utils.incremental_path_generator import IncrementalPathGenerator
 
 
 @pytest.fixture

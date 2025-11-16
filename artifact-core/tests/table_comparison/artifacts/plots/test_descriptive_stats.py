@@ -3,19 +3,19 @@ from unittest.mock import ANY
 
 import pandas as pd
 import pytest
-from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
-from artifact_core.libs.implementation.tabular.descriptive_stats.alignment_plotter import (
+from artifact_core._base.primitives import NO_ARTIFACT_HYPERPARAMS
+from artifact_core._libs.artifacts.table_comparison.descriptive_stats.alignment_plotter import (
     DescriptiveStatsAlignmentPlotter,
 )
-from artifact_core.libs.implementation.tabular.descriptive_stats.calculator import (
+from artifact_core._libs.artifacts.table_comparison.descriptive_stats.calculator import (
     DescriptiveStatistic,
 )
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.table_comparison.artifacts.base import (
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.table_comparison._artifacts.base import (
     DatasetComparisonArtifactResources,
     TableComparisonPlot,
 )
-from artifact_core.table_comparison.artifacts.plots.descriptive_stats import (
+from artifact_core.table_comparison._artifacts.plots.descriptive_stats import (
     DescriptiveStatsAlignmentPlot,
     FirstQuartileAlignmentPlot,
     MaxAlignmentPlot,
@@ -26,7 +26,6 @@ from artifact_core.table_comparison.artifacts.plots.descriptive_stats import (
     ThirdQuartileAlignmentPlot,
     VarianceAlignmentPlot,
 )
-from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 

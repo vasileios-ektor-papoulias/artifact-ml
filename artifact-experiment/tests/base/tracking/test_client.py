@@ -2,8 +2,6 @@ from typing import Callable, Dict, List, Optional, Tuple
 from uuid import UUID
 
 import pytest
-from matplotlib.figure import Figure
-from numpy import ndarray
 from pytest_mock import MockerFixture
 
 from tests.base.tracking.dummy.adapter import DummyNativeRun, DummyRunAdapter
@@ -164,7 +162,7 @@ def test_log_array(
     ],
     experiment_id: str,
     run_id: str,
-    ls_arrays: List[ndarray],
+    ls_arrays: List[Array],
 ):
     _, logger, client = client_factory(experiment_id, run_id)
     logger.log = mocker.MagicMock()
@@ -290,7 +288,7 @@ def test_log_array_collection(
     ],
     experiment_id: str,
     run_id: str,
-    ls_array_collections: List[Dict[str, ndarray]],
+    ls_array_collections: List[Dict[str, Array]],
 ):
     _, logger, client = client_factory(experiment_id, run_id)
     logger.log = mocker.MagicMock()
@@ -371,5 +369,5 @@ def test_upload(
 ):
     adapter, _, client = client_factory(experiment_id, run_id)
     adapter.upload = mocker.MagicMock()
-    client.upload(path_source=path_source, dir_target=dir_target)
+    client.log_file(path_source=path_source, dir_target=dir_target)
     adapter.upload.assert_called_once_with(path_source=path_source, dir_target=dir_target)

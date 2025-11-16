@@ -1,11 +1,9 @@
 from typing import Any, Dict
 
-from artifact_core.core.dataset_comparison.registry import (
+from artifact_core._domains.dataset_comparison.registry import (
     ArtifactType,
     DatasetComparisonArtifactRegistry,
 )
-from matplotlib.figure import Figure
-from numpy import ndarray
 
 from tests.core.dataset_comparison.dummy.artifact_dependencies import (
     DummyDataset,
@@ -27,13 +25,13 @@ class DummyDatasetComparisonScoreRegistry(
         return {}
 
 
-class DummyDatasetComparisonArrayType(ArtifactType):
+class DummyDatasetComparisonArray(ArtifactType):
     pass
 
 
 class DummyDatasetComparisonArrayRegistry(
     DatasetComparisonArtifactRegistry[
-        DummyDatasetComparisonArrayType, DummyDataset, ndarray, DummyResourceSpec
+        DummyDatasetComparisonArray, DummyDataset, Array, DummyResourceSpec
     ]
 ):
     @classmethod
@@ -41,13 +39,13 @@ class DummyDatasetComparisonArrayRegistry(
         return {}
 
 
-class DummyDatasetComparisonPlotType(ArtifactType):
+class DummyDatasetComparisonPlot(ArtifactType):
     pass
 
 
 class DummyDatasetComparisonPlotRegistry(
     DatasetComparisonArtifactRegistry[
-        DummyDatasetComparisonPlotType, DummyDataset, Figure, DummyResourceSpec
+        DummyDatasetComparisonPlot, DummyDataset, Figure, DummyResourceSpec
     ]
 ):
     @classmethod
@@ -77,7 +75,7 @@ class DummyDatasetComparisonArrayCollectionRegistry(
     DatasetComparisonArtifactRegistry[
         DummyDatasetComparisonArrayCollectionType,
         DummyDataset,
-        Dict[str, ndarray],
+        Dict[str, Array],
         DummyResourceSpec,
     ]
 ):

@@ -2,11 +2,10 @@ from typing import List, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.descriptive_stats.alignment_plotter import (
+from artifact_core._libs.artifacts.table_comparison.descriptive_stats.alignment_plotter import (
     DescriptiveStatistic,
     DescriptiveStatsAlignmentPlotter,
 )
-from matplotlib.figure import Figure
 
 
 @pytest.mark.unit
@@ -158,7 +157,7 @@ def test_get_stat_comparison_plot(
     result = DescriptiveStatsAlignmentPlotter.get_stat_alignment_plot(
         dataset_real=df_real,
         dataset_synthetic=df_synthetic,
-        ls_cts_features=ls_cts_features,
+        cts_features=ls_cts_features,
         stat=stat,
     )
     assert isinstance(result, Figure), "Result should be a Figure"

@@ -3,12 +3,12 @@ from unittest.mock import ANY
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.js.calculator import JSDistanceCalculator
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.table_comparison.artifacts.base import (
+from artifact_core._libs.artifacts.table_comparison.js.calculator import JSDistanceCalculator
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.table_comparison._artifacts.base import (
     DatasetComparisonArtifactResources,
 )
-from artifact_core.table_comparison.artifacts.score_collections.js import (
+from artifact_core.table_comparison._artifacts.score_collections.js import (
     JSDistanceScores,
     JSDistanceScoresHyperparams,
 )

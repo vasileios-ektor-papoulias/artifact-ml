@@ -2,7 +2,7 @@ from typing import Dict, List, Optional
 
 import numpy as np
 import pytest
-from artifact_core.libs.utils.calculators.score_juxtaposition_calculator import (
+from artifact_core._libs.artifacts.tools.calculators.score_juxtaposition_calculator import (
     ScoreJuxtapositionCalculator,
 )
 
@@ -30,7 +30,7 @@ def test_juxtaposition_array(
     dict_scores_real: Dict[str, float],
     dict_scores_synthetic: Dict[str, float],
     ls_keys: Optional[List[str]],
-    expected: Dict[str, np.ndarray],
+    expected: Dict[str, Array],
 ):
     result = ScoreJuxtapositionCalculator.juxtapose_score_collections(
         dict_scores_real=dict_scores_real,
@@ -51,6 +51,6 @@ def test_juxtaposition_array(
         (-1.0, 1.0, np.array([-1.0, 1.0])),
     ],
 )
-def test_juxtapose_scores(score_real: float, score_synthetic: float, expected: np.ndarray):
+def test_juxtapose_scores(score_real: float, score_synthetic: float, expected: Array):
     result = ScoreJuxtapositionCalculator.juxtapose_scores(score_real, score_synthetic)
     assert np.allclose(result, expected), f"Expected {expected}, got {result}"

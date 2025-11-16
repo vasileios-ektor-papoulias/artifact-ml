@@ -4,7 +4,7 @@ from typing import Dict, List
 
 import pandas as pd
 import pytest
-from artifact_core.libs.implementation.tabular.js.calculator import JSDistanceCalculator
+from artifact_core._libs.artifacts.table_comparison.js.calculator import JSDistanceCalculator
 
 
 @pytest.mark.unit
@@ -187,8 +187,8 @@ def test_compute_mean_js(
             JSDistanceCalculator.compute_mean_js(
                 df_real=df_real,
                 df_synthetic=df_synth,
-                ls_cts_features=ls_cts_features,
-                ls_cat_features=ls_cat_features,
+                cts_features=ls_cts_features,
+                cat_features=ls_cat_features,
                 cat_unique_map=cat_unique_map,
                 n_bins_cts_histogram=n_bins,
                 categorical_only=categorical_only,
@@ -198,8 +198,8 @@ def test_compute_mean_js(
             JSDistanceCalculator.compute_mean_js(
                 df_real=df_real,
                 df_synthetic=df_synth,
-                ls_cts_features=ls_cts_features,
-                ls_cat_features=ls_cat_features,
+                cts_features=ls_cts_features,
+                cat_features=ls_cat_features,
                 cat_unique_map=cat_unique_map,
                 n_bins_cts_histogram=n_bins,
                 categorical_only=categorical_only,
@@ -208,8 +208,8 @@ def test_compute_mean_js(
         mean_js_distance = JSDistanceCalculator.compute_mean_js(
             df_real=df_real,
             df_synthetic=df_synth,
-            ls_cts_features=ls_cts_features,
-            ls_cat_features=ls_cat_features,
+            cts_features=ls_cts_features,
+            cat_features=ls_cat_features,
             cat_unique_map=cat_unique_map,
             n_bins_cts_histogram=n_bins,
             categorical_only=categorical_only,
@@ -357,8 +357,8 @@ def test_compute_dict_js(
             JSDistanceCalculator.compute_dict_js(
                 df_real=df_real,
                 df_synthetic=df_synth,
-                ls_cts_features=ls_cts_features,
-                ls_cat_features=ls_cat_features,
+                cts_features=ls_cts_features,
+                cat_features=ls_cat_features,
                 cat_unique_map=cat_unique_map,
                 n_bins_cts_histogram=n_bins,
                 categorical_only=categorical_only,
@@ -368,8 +368,8 @@ def test_compute_dict_js(
             JSDistanceCalculator.compute_dict_js(
                 df_real=df_real,
                 df_synthetic=df_synth,
-                ls_cts_features=ls_cts_features,
-                ls_cat_features=ls_cat_features,
+                cts_features=ls_cts_features,
+                cat_features=ls_cat_features,
                 cat_unique_map=cat_unique_map,
                 n_bins_cts_histogram=n_bins,
                 categorical_only=categorical_only,
@@ -378,8 +378,8 @@ def test_compute_dict_js(
         dict_js = JSDistanceCalculator.compute_dict_js(
             df_real=df_real,
             df_synthetic=df_synth,
-            ls_cts_features=ls_cts_features,
-            ls_cat_features=ls_cat_features,
+            cts_features=ls_cts_features,
+            cat_features=ls_cat_features,
             cat_unique_map=cat_unique_map,
             n_bins_cts_histogram=n_bins,
             categorical_only=categorical_only,

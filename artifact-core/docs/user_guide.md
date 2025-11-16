@@ -136,9 +136,9 @@ Select the relevant domain-specific registry corresponding to your artifact's mo
 
 ```python
 import pandas as pd
-from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
-from artifact_core.table_comparison.artifacts.base import TableComparisonScore
-from artifact_core.table_comparison.registries.scores.registry import TableComparisonScoreRegistry
+from artifact_core._base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
+from artifact_core.table_comparison._artifacts.base import TableComparisonScore
+from artifact_core.table_comparison._registries.scores.registry import TableComparisonScoreRegistry
 
 @TableComparisonScoreRegistry.register_custom_artifact("CUSTOM_SCORE")
 class CustomScore(TableComparisonScore[NO_ARTIFACT_HYPERPARAMS]):
@@ -155,7 +155,7 @@ If your custom artifact requires configuration parameters create a corresponding
 
 ```python
 from dataclasses import dataclass
-from artifact_core.base.artifact_dependencies import ArtifactHyperparams
+from artifact_core._base.artifact_dependencies import ArtifactHyperparams
 
 @dataclass
 class CustomScoreHyperparams(ArtifactHyperparams):

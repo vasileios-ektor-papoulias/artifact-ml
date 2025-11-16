@@ -1,23 +1,37 @@
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.libs.resource_spec.tabular.spec import TabularDataSpec
-from artifact_core.libs.utils.system.package_importer import PackageImporter
-from artifact_core.table_comparison.config.parsed import (
-    ARTIFACT_CORE_ROOT,
-    CUSTOM_ARTIFACT_PATH,
-    NATIVE_ARTIFACT_PATH,
-)
-from artifact_core.table_comparison.engine.engine import (
+from artifact_core._libs.resource_specs.table_comparison.spec import TabularDataSpec
+from artifact_core.table_comparison._engine.engine import TableComparisonEngine
+from artifact_core.table_comparison._types.array_collections import (
     TableComparisonArrayCollectionType,
-    TableComparisonArrayType,
-    TableComparisonEngine,
-    TableComparisonPlotCollectionType,
-    TableComparisonPlotType,
-    TableComparisonScoreCollectionType,
-    TableComparisonScoreType,
 )
+from artifact_core.table_comparison._types.arrays import TableComparisonArrayType
+from artifact_core.table_comparison._types.plot_collections import (
+    TableComparisonPlotCollectionType,
+)
+from artifact_core.table_comparison._types.plots import TableComparisonPlotType
+from artifact_core.table_comparison._types.score_collections import (
+    TableComparisonScoreCollectionType,
+)
+from artifact_core.table_comparison._types.scores import TableComparisonScoreType
 
-if NATIVE_ARTIFACT_PATH is None:
-    raise ValueError("Null native artifact path: edit the toolkit configuration file.")
-PackageImporter.import_all_from_package_path(path=NATIVE_ARTIFACT_PATH, root=ARTIFACT_CORE_ROOT)
-if CUSTOM_ARTIFACT_PATH is not None:
-    PackageImporter.import_all_from_package_path(path=CUSTOM_ARTIFACT_PATH)
+__all__ = [
+    "TabularDataSpec",
+    "TableComparisonEngine",
+    "TableComparisonArrayCollectionType",
+    "TableComparisonArrayType",
+    "TableComparisonPlotCollectionType",
+    "TableComparisonPlotType",
+    "TableComparisonScoreCollectionType",
+    "TableComparisonScoreType",
+]
+
+
+def _init_toolkit():
+    from artifact_core._bootstrap.primitives.domain_toolkit import DomainToolkit
+    from artifact_core._bootstrap.toolkit_initializer import ToolkitInitializer
+    from artifact_core.table_comparison._config.parsed import CONFIG
+
+    ToolkitInitializer.init_toolkit(domain_toolkit=DomainToolkit.TABLE_COMPARISON, config=CONFIG)
+
+
+_init_toolkit()
+del _init_toolkit

@@ -11,14 +11,14 @@ from pytest_mock import MockerFixture
 
 from tests.base.callback_factory.dummy.callback_factory import DummyCallbackFactory
 from tests.base.dummy_artifact_toolkit import (
+    DummyArray,
     DummyArrayCollectionRegistry,
     DummyArrayCollectionType,
     DummyArrayRegistry,
-    DummyArrayType,
+    DummyPlot,
     DummyPlotCollectionRegistry,
     DummyPlotCollectionType,
     DummyPlotRegistry,
-    DummyPlotType,
     DummyResourceSpec,
     DummyScoreCollectionRegistry,
     DummyScoreCollectionType,
@@ -54,10 +54,10 @@ def test_build_score_callback(
 @pytest.mark.unit
 @pytest.mark.parametrize(
     "array_type",
-    [DummyArrayType.DUMMY_ARRAY_1],
+    [DummyArray.DUMMY_ARRAY_1],
 )
 def test_build_array_callback(
-    mocker: MockerFixture, dummy_resource_spec: DummyResourceSpec, array_type: DummyArrayType
+    mocker: MockerFixture, dummy_resource_spec: DummyResourceSpec, array_type: DummyArray
 ):
     spy_get = mocker.spy(DummyArrayRegistry, "get")
     callback = DummyCallbackFactory.build_array_callback(
@@ -72,10 +72,10 @@ def test_build_array_callback(
 @pytest.mark.unit
 @pytest.mark.parametrize(
     "plot_type",
-    [DummyPlotType.DUMMY_PLOT_1],
+    [DummyPlot.DUMMY_PLOT_1],
 )
 def test_build_plot_callback(
-    mocker: MockerFixture, dummy_resource_spec: DummyResourceSpec, plot_type: DummyPlotType
+    mocker: MockerFixture, dummy_resource_spec: DummyResourceSpec, plot_type: DummyPlot
 ):
     spy_get = mocker.spy(DummyPlotRegistry, "get")
     callback = DummyCallbackFactory.build_plot_callback(

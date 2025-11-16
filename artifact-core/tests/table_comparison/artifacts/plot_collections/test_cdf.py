@@ -2,16 +2,17 @@ from typing import Dict
 from unittest.mock import ANY
 
 import pandas as pd
-from artifact_core.base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
-from artifact_core.libs.implementation.tabular.cdf.overlaid_plotter import TabularOverlaidCDFPlotter
-from artifact_core.libs.resource_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core.table_comparison.artifacts.base import (
+from artifact_core._base.primitives import NO_ARTIFACT_HYPERPARAMS
+from artifact_core._libs.artifacts.table_comparison.cdf.overlaid_plotter import (
+    TabularOverlaidCDFPlotter,
+)
+from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core.table_comparison._artifacts.base import (
     DatasetComparisonArtifactResources,
 )
-from artifact_core.table_comparison.artifacts.plot_collections.cdf import (
+from artifact_core.table_comparison._artifacts.plot_collections.cdf import (
     CDFPlots,
 )
-from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 

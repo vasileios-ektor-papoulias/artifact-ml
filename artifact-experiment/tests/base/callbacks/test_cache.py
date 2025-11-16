@@ -23,9 +23,9 @@ def resources_factory() -> Callable[[float, float], DummyCallbackResources]:
 def callback_factory() -> Callable[[str, str], CacheCallback]:
     def _factory(callback_type: str, callback_key: str) -> CacheCallback:
         if callback_type == "add":
-            return AddCacheCallback(key=callback_key)
+            return AddCacheCallback(base_key=callback_key)
         elif callback_type == "multiply":
-            return MultiplyCacheCallback(key=callback_key)
+            return MultiplyCacheCallback(base_key=callback_key)
         else:
             raise ValueError(f"Unknown callback type: {callback_type}")
 
@@ -140,7 +140,7 @@ def test_handler_execute(
         callback_factory(cb_type, cb_key)
         for cb_type, cb_key in zip(ls_callback_types, ls_callback_keys)
     ]
-    handler = DummyCacheCallbackHandler(ls_callbacks=ls_callbacks)
+    handler = DummyCacheCallbackHandler(callbacks=ls_callbacks)
     assert len(handler.cache) == len(ls_callbacks)
     for key in ls_callback_keys:
         assert key in handler.cache
@@ -173,7 +173,7 @@ def test_handler_clear(
     clear_after_execution: bool,
 ):
     callbacks = [callback_factory("add", f"key_{i}") for i in range(num_callbacks)]
-    handler = DummyCacheCallbackHandler(ls_callbacks=callbacks)
+    handler = DummyCacheCallbackHandler(callbacks=callbacks)
     resources = resources_factory(1.0, 1.0)
     handler.execute(resources=resources)
     assert len(handler.active_cache) == num_callbacks

@@ -12,7 +12,6 @@ setup() {
   echo "Repository root is: $REPO_ROOT" >&2
   FAKE_BIN_DIR="$BATS_TMPDIR/fakebin"
   mkdir -p "$FAKE_BIN_DIR"
-  cp -r "$REPO_ROOT/.github" "$FAKE_BIN_DIR/"
   mkdir -p "$FAKE_BIN_DIR/.github/scripts/version_bump"
 
   SCRIPT="$REPO_ROOT/.github/scripts/version_bump/update_pyproject.sh"
@@ -20,34 +19,66 @@ setup() {
   cp "$SCRIPT" "$FAKE_BIN_DIR/.github/scripts/version_bump/"
   chmod +x "$FAKE_BIN_DIR/.github/scripts/version_bump/update_pyproject.sh"
 
-  cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/version_bump/identify_new_version.sh"
+  # Create a fake poetry command that simulates version bumping
+  cat << "EOF" > "$FAKE_BIN_DIR/poetry"
 #!/bin/bash
-# Fake identify_new_version.sh for testing update_pyproject.sh
-CURRENT_VERSION="$1"
-BUMP_TYPE="$2"
-
-if [[ -z "$CURRENT_VERSION" || -z "$BUMP_TYPE" ]]; then
-    echo "Usage: $0 <current_version> {patch|minor|major}" >&2
+# Fake poetry command for testing
+if [[ "$1" == "version" && "$3" == "--short" ]]; then
+  BUMP_TYPE="$2"
+  
+  # Look for any pyproject.toml or test-pyproject.toml in current directory
+  PYPROJECT_FILE=""
+  if [[ -f "pyproject.toml" ]]; then
+    PYPROJECT_FILE="pyproject.toml"
+  elif [[ -f "test-pyproject.toml" ]]; then
+    PYPROJECT_FILE="test-pyproject.toml"
+  else
+    echo "Error: pyproject.toml not found" >&2
     exit 1
+  fi
+  
+  # Read current version from the file
+  CURRENT_VERSION=$(grep '^version' "$PYPROJECT_FILE" | head -1 | sed 's/.*"\(.*\)".*/\1/')
+  
+  # Parse version components
+  IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+  
+  # Bump according to type
+  case "$BUMP_TYPE" in
+    patch)
+      PATCH=$((PATCH + 1))
+      ;;
+    minor)
+      MINOR=$((MINOR + 1))
+      PATCH=0
+      ;;
+    major)
+      MAJOR=$((MAJOR + 1))
+      MINOR=0
+      PATCH=0
+      ;;
+    *)
+      echo "Error: Unknown bump type: $BUMP_TYPE" >&2
+      exit 1
+      ;;
+  esac
+  
+  NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+  
+  # Update the pyproject.toml file
+  sed -i "s/version = \"$CURRENT_VERSION\"/version = \"$NEW_VERSION\"/" "$PYPROJECT_FILE"
+  
+  # Output just the new version (simulating --short flag)
+  echo "$NEW_VERSION"
+  exit 0
 fi
 
-case "$BUMP_TYPE" in
-  patch)
-    echo "1.2.4"
-    ;;
-  minor)
-    echo "1.3.0"
-    ;;
-  major)
-    echo "2.0.0"
-    ;;
-  *)
-    echo "Error: Unknown bump type: $BUMP_TYPE. Must be one of: patch, minor, major" >&2
-    exit 1
-    ;;
-esac
+echo "Error: Invalid poetry command" >&2
+exit 1
 EOF
-  chmod +x "$FAKE_BIN_DIR/.github/scripts/version_bump/identify_new_version.sh"
+  chmod +x "$FAKE_BIN_DIR/poetry"
+  
+  export PATH="$FAKE_BIN_DIR:$PATH"
 
   cd "$FAKE_BIN_DIR"
 }

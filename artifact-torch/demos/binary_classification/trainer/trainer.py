@@ -1,45 +1,33 @@
 from typing import Any, Optional
 
 import torch
-from artifact_experiment.tracking import TrackingClient
-from artifact_torch.base.components.callbacks.checkpoint import CheckpointCallback
-from artifact_torch.base.components.early_stopping.stopper import EarlyStopper, StopperUpdateData
-from artifact_torch.base.components.model_tracking.tracker import (
-    ModelTracker,
-    ModelTrackingCriterion,
-)
-from artifact_torch.base.components.routines.batch import BatchRoutine
-from artifact_torch.base.components.routines.data_loader import DataLoaderRoutine
-from artifact_torch.base.data.data_loader import DataLoader
-from artifact_torch.base.trainer.custom import CustomTrainer
-from artifact_torch.binary_classification.model import BinaryClassifier
-from artifact_torch.libs.components.callbacks.checkpoint.standard import StandardCheckpointCallback
-from artifact_torch.libs.components.early_stopping.epoch_bound import EpochBoundStopper
+from artifact_torch.binary_classification import BinaryClassifier
+from artifact_torch.nn import Trainer
+from artifact_torch.nn.early_stopping import EarlyStopper, EpochBoundStopper, StopperUpdateData
+from artifact_torch.nn.model_tracking import ModelTracker, ModelTrackingCriterion
 from torch import optim
 
-from demos.binary_classification.components.routines.batch import DemoBatchRoutine
-from demos.binary_classification.components.routines.loader import DemoLoaderRoutine
 from demos.binary_classification.config.constants import (
     CHECKPOINT_PERIOD,
     DEVICE,
     LEARNING_RATE,
     MAX_N_EPOCHS,
 )
-from demos.binary_classification.model.io import MLPClassifierInput, MLPClassifierOutput
+from demos.binary_classification.contracts.workflow import WorkflowInput, WorkflowOutput
 
 
-class MLPClassifierTrainer(
-    CustomTrainer[
-        BinaryClassifier[MLPClassifierInput, MLPClassifierOutput, Any],
-        MLPClassifierInput,
-        MLPClassifierOutput,
-        ModelTrackingCriterion,
+class DemoTrainer(
+    Trainer[
+        BinaryClassifier[Any, Any, Any, Any],
+        WorkflowInput,
+        WorkflowOutput,
         StopperUpdateData,
+        ModelTrackingCriterion,
     ]
 ):
     @staticmethod
     def _get_optimizer(
-        model: BinaryClassifier[MLPClassifierInput, MLPClassifierOutput, Any],
+        model: BinaryClassifier[Any, Any, Any, Any],
     ) -> optim.Optimizer:
         return optim.Adam(params=model.parameters(), lr=LEARNING_RATE)
 
@@ -54,6 +42,10 @@ class MLPClassifierTrainer(
         return DEVICE
 
     @staticmethod
+    def _get_checkpoint_period() -> Optional[int]:
+        return CHECKPOINT_PERIOD
+
+    @staticmethod
     def _get_model_tracker() -> Optional[ModelTracker[ModelTrackingCriterion]]:
         pass
 
@@ -66,31 +58,3 @@ class MLPClassifierTrainer(
 
     def _get_stopper_update_data(self) -> StopperUpdateData:
         return StopperUpdateData(n_epochs_elapsed=self.n_epochs_elapsed)
-
-    @staticmethod
-    def _get_checkpoint_callback(
-        tracking_client: Optional[TrackingClient],
-    ) -> Optional[CheckpointCallback]:
-        if tracking_client is not None:
-            return StandardCheckpointCallback(
-                period=CHECKPOINT_PERIOD, tracking_client=tracking_client
-            )
-
-    @staticmethod
-    def _get_batch_routine(
-        tracking_client: Optional[TrackingClient],
-    ) -> Optional[
-        BatchRoutine[
-            MLPClassifierInput,
-            MLPClassifierOutput,
-            BinaryClassifier[MLPClassifierInput, MLPClassifierOutput, Any],
-        ]
-    ]:
-        return DemoBatchRoutine.build(tracking_client=tracking_client)
-
-    @staticmethod
-    def _get_train_loader_routine(
-        data_loader: DataLoader[MLPClassifierInput],
-        tracking_client: Optional[TrackingClient],
-    ) -> Optional[DataLoaderRoutine[MLPClassifierInput, MLPClassifierOutput]]:
-        return DemoLoaderRoutine.build(data_loader=data_loader, tracking_client=tracking_client)
