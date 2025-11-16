@@ -1,0 +1,93 @@
+name: PUBLISH[TEST_PYPI]
+
+on:
+  workflow_dispatch:
+    inputs:
+      component:
+        description: 'Component to test publish (core, experiment, torch)'
+        required: true
+        type: choice
+        options:
+          - core
+          - experiment
+          - torch
+
+permissions:
+  contents: read
+  id-token: write  # Required for trusted publishing
+
+jobs:
+  determine-component:
+    runs-on: ubuntu-latest
+    outputs:
+      component: ${{ steps.extract.outputs.component }}
+      version: ${{ steps.extract.outputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract component from tag or input
+        id: extract
+        run: |
+          chmod +x .github/scripts/publishing/extract_component_from_tag.sh
+          
+          # Call the script with appropriate parameters
+          RESULT=$(.github/scripts/publishing/extract_component_from_tag.sh \
+            "${{ github.event_name }}" \
+            "${{ github.ref_name }}" \
+            "${{ github.event.inputs.component }}")
+          
+          # Parse JSON output
+          COMPONENT=$(echo "$RESULT" | grep -o '"component":"[^"]*"' | cut -d'"' -f4)
+          VERSION=$(echo "$RESULT" | grep -o '"version":"[^"]*"' | cut -d'"' -f4)
+          
+          echo "component=$COMPONENT" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Detected component: $COMPONENT, version: $VERSION"
+
+  publish:
+    needs: determine-component
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/project/artifact-${{ needs.determine-component.outputs.component }}/
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Configure component directory
+        id: config
+        run: |
+          COMPONENT="${{ needs.determine-component.outputs.component }}"
+          COMPONENT_DIR="artifact-${COMPONENT}"
+          echo "dir=$COMPONENT_DIR" >> $GITHUB_OUTPUT
+          echo "Publishing component: $COMPONENT from directory: $COMPONENT_DIR"
+
+      - name: Build package
+        run: |
+          cd "${{ steps.config.outputs.dir }}"
+          poetry build
+          echo "Package built successfully"
+          ls -lh dist/
+
+      - name: Configure TestPyPI repository
+        run: |
+          cd "${{ steps.config.outputs.dir }}"
+          poetry config repositories.testpypi https://test.pypi.org/legacy/
+
+      - name: Publish to TestPyPI using Trusted Publishing
+        run: |
+          cd "${{ steps.config.outputs.dir }}"
+          poetry publish --repository testpypi
+          echo "Package published to TestPyPI successfully!"
+
