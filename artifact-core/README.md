@@ -6,18 +6,18 @@
   <img src="https://raw.githubusercontent.com/vasileios-ektor-papoulias/artifact-ml/main/artifact-core/assets/artifact_ml_logo.svg" width="400" alt="Artifact-ML Logo">
 </p>
 
+[![PyPI - Version](https://img.shields.io/pypi/v/artifact-core.svg)](https://pypi.org/project/artifact-core/)
 [![Documentation](https://img.shields.io/badge/docs-mkdocs-blue)](https://artifact-ml.readthedocs.io/en/latest/artifact-core)
-![Python](https://img.shields.io/badge/python-3.11+-blue.svg)
+[![Python Versions](https://img.shields.io/pypi/pyversions/artifact-core.svg)](https://pypi.org/project/artifact-core/)
 ![License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-ml)
 
 [![CI](https://img.shields.io/github/actions/workflow/status/vasileios-ektor-papoulias/artifact-ml/ci_push_main.yml?branch=main&label=CI)](https://github.com/vasileios-ektor-papoulias/artifact-ml/actions/workflows/ci_push_main.yml)
 [![Coverage](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/branch/main/graph/badge.svg?flag=core)](https://codecov.io/gh/vasileios-ektor-papoulias/artifact-ml/flags#core)
-[![CodeFactor](https://www.codefactor.io/repository/github/vasileios-ektor-papoulias/artifact-ml/badge)](https://www.codefactor.io/repository/github/vasileios-ektor-papoulias/artifact-ml)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-core&metric=alert_status&branch=main)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-core&branch=main)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-core&metric=sqale_rating&branch=main)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-core&branch=main)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-core&metric=security_rating&branch=main)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-core&branch=main)
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-core&metric=reliability_rating&branch=main)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-core&branch=main)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=vasileios-ektor-papoulias_artifact-core&metric=security_rating&branch=main)](https://sonarcloud.io/summary/new_code?id=vasileios-ektor-papoulias_artifact-core&branch=main)
 
 ---
 
