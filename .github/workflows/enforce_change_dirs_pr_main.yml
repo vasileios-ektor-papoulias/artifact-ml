@@ -163,7 +163,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        directory: [artifact-core, artifact-experiment, artifact-torch]
+        directory: [artifact-core/artifact_core, artifact-experiment/artifact_experiment, artifact-torch/artifact_torch]
     env:
       COMPONENT: root
     steps:
@@ -177,7 +177,6 @@ jobs:
 
       - name: Check changed files
         run: |
-          echo "Enforcing changes outside of directory: ${{ matrix.directory }} for ${{ env.COMPONENT }} component"
-          # Check if all changed files are outside the specified directory
+          echo "Enforcing changes outside directory: ${{ matrix.directory }} for ${{ env.COMPONENT }} component"
           .github/scripts/enforce_path/ensure_changed_files_outside_dirs.sh "${{ github.base_ref }}" "${{ matrix.directory }}"
 
