@@ -1,6 +1,5 @@
 [project]
 name = "artifact-torch"
-packages = [{ include = "artifact-torch" }]
 version = "0.1.3"
 description = "Artifact-ML PyTorch integration: declarative builder toolkit for reusable deep learning workflows."
 authors = [
@@ -15,6 +14,9 @@ Homepage = "https://github.com/vasileios-ektor-papoulias/artifact-ml"
 Repository = "https://github.com/vasileios-ektor-papoulias/artifact-ml"
 Documentation = "https://artifact-ml.readthedocs.io/en/latest/artifact-torch"
 "Bug Tracker" = "https://github.com/vasileios-ektor-papoulias/artifact-ml/issues"
+
+[tool.poetry]
+packages = [{ include = "artifact_torch" }]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

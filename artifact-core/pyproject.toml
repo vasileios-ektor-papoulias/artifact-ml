@@ -1,8 +1,7 @@
 [project]
 name = "artifact-core"
-packages = [{ include = "artifact-core" }]
 version = "0.1.4"
-description = "Artifact-ML foundation: a unified interface for the declarative computation of validation artifacts in ML experiments."
+description = "Artifact-ML foundation: a declarative interface for the computation of validation artifacts in ML experiments."
 authors = [
     {name = "Vasileios Ektor Papoulias",email = "hector.papoulias@gmail.com"}
 ]
@@ -19,6 +18,9 @@ Documentation = "https://artifact-ml.readthedocs.io/en/latest/artifact-core"
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+packages = [{ include = "artifact_core" }]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.14"

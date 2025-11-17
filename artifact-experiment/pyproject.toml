@@ -1,6 +1,5 @@
 [project]
 name = "artifact-experiment"
-packages = [{ include = "artifact-experiment" }]
 version = "0.1.3"
 description = "Artifact-ML experiment orchestration: declarative builder toolkit for reusable validation workflows with integrated tracking."
 authors = [
@@ -19,6 +18,9 @@ Documentation = "https://artifact-ml.readthedocs.io/en/latest/artifact-experimen
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+packages = [{ include = "artifact_experiment" }]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.14"
