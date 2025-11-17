@@ -6,7 +6,7 @@
 
 [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core) constitutes the foundation of [**Artifact-ML**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main).
 
-It provides a unified interface for the declarative computation of diverse validation artifacts in ML experiments.
+It provides a declarative interface for the computation of validation artifacts in ML experiments.
 
 Its objective is to enable reusable validation workflows by providing the tools to trigger artifacts by name---with zero adapter code.
 
