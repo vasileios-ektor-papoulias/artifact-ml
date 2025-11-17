@@ -10,7 +10,7 @@ It provides the tools to build reusable validation workflows with integrated tra
 
 It stands alongside:
 
-- [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core): a unified interface for the declarative computation of diverse validation artifacts in ML experiments.
+- [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core): a declarative interface for the computation of validation artifacts in ML experiments.
 - [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch): PyTorch integration for building reusable deep-learning workflows declaratively.
 
 ## Topics

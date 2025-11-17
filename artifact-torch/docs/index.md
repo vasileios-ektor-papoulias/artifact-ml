@@ -6,13 +6,13 @@
 
 [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch) provides Pytorch integration for [Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/).
 
-It offers the tools to build reusable, end-to-end deep learning workflows declaratively.
+It offers the tools to build reusable deep learning workflows declaratively.
 
 It handles **all aspects of the training loop** aside from model architecture and data pipelines, abstracting away engineering complexity to let researchers focus on architectural innovation.
 
 It stands alongside:
 
-- [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core): a unified interface for the declarative computation of diverse validation artifacts in ML experiments.
+- [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core): a declarative interface for the computation of validation artifacts in ML experiments.
 - [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment): experiment orchestration extension for building reusable validation workflows with integrated tracking.
 
 ## Topics

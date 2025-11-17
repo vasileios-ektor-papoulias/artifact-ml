@@ -89,7 +89,7 @@ All Github Actions workflows follow the naming convention:
   - PRs from `hotfix-core/*` branches to `main` only modify files in the `artifact-core` directory
   - PRs from `hotfix-experiment/*` branches to `main` only modify files in the `artifact-experiment` directory
   - PRs from `hotfix-torch/*` branches to `main` only modify files in the `artifact-torch` directory
-  - PRs from `hotfix-root/*` or `setup-root/*` branches to `main` only modify files outside of the subrepo component directories.
+  - PRs from `hotfix-root/*` or `setup-root/*` branches to `main` only modify files outside the component source code directories (`artifact-core/artifact_core/`, `artifact-experiment/artifact_experiment/`, `artifact-torch/artifact_torch/`).
 - `sonar_pr_main.yml` (workflow name: SONAR_PR_MAIN): runs **SonarCloud analysis** on all components for PRs targeting `main`,
 
 
