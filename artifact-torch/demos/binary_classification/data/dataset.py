@@ -6,7 +6,7 @@ from artifact_torch.nn import Dataset
 
 from demos.binary_classification.contracts.model import MLPClassifierInput
 
-TabularVAEDatasetT = TypeVar("TabularVAEDatasetT", bound="MLPClassifierDataset")
+MLPClassifierDatasetT = TypeVar("MLPClassifierDatasetT", bound="MLPClassifierDataset")
 
 
 class MLPClassifierDataset(Dataset[MLPClassifierInput]):
@@ -16,11 +16,11 @@ class MLPClassifierDataset(Dataset[MLPClassifierInput]):
 
     @classmethod
     def build(
-        cls: Type[TabularVAEDatasetT],
+        cls: Type[MLPClassifierDatasetT],
         df: pd.DataFrame,
         ls_features: List[str],
         label_feature: str,
-    ) -> TabularVAEDatasetT:
+    ) -> MLPClassifierDatasetT:
         cls._validate_data(df=df, ls_features=ls_features, label_feature=label_feature)
         dataset = cls(df=df, ls_features=ls_features, label_feature=label_feature)
         return dataset

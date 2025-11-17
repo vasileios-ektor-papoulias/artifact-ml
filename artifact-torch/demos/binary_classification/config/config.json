@@ -4,8 +4,8 @@
         "val_data_proportion": 0.2,
         "ls_features": ["weight", "height", "age", "bmi"],
         "label_feature": "arthritis_true",
-        "ls_categories": ["0", "1"],
-        "positive_category": "1"
+        "ls_class_names": ["0", "1"],
+        "positive_class_name": "1"
     },
     "architecture": {
         "ls_hidden_sizes": [

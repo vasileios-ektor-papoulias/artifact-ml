@@ -24,8 +24,8 @@ with _config_file.open() as f:
     VAL_DATA_PROPORTION: float = _data_config["val_data_proportion"]
     LS_FEATURES: List[str] = _data_config["ls_features"]
     LABEL_FEATURE: str = _data_config["label_feature"]
-    LS_CATEGORIES: List[str] = _data_config["ls_categories"]
-    POSITIVE_CATEGORY: str = _data_config["positive_category"]
+    LS_CLASS_NAMES: List[str] = _data_config["ls_class_names"]
+    POSITIVE_CLASS_NAME: str = _data_config["positive_class_name"]
 
     # Architecture Config
     LS_HIDDEN_SIZES: List[int] = _architecture_config["ls_hidden_sizes"]
