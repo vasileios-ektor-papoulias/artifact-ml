@@ -15,12 +15,12 @@ Repository = "https://github.com/vasileios-ektor-papoulias/artifact-ml"
 Documentation = "https://artifact-ml.readthedocs.io/en/latest/artifact-torch"
 "Bug Tracker" = "https://github.com/vasileios-ektor-papoulias/artifact-ml/issues"
 
-[tool.poetry]
-packages = [{ include = "artifact_torch" }]
-
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+packages = [{ include = "artifact_torch" }]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.14"
