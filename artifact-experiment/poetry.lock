@@ -89,13 +89,15 @@ test = ["dateparser (==1.*)", "pre-commit", "pytest", "pytest-cov", "pytest-mock
 
 [[package]]
 name = "artifact-core"
-version = "0.1.0"
-description = "A flexible minimal interface for the computation of heterogeneous validation artifacts in thematically related ML experiments."
+version = "0.1.4"
+description = "Artifact-ML foundation: a unified interface for the declarative computation of validation artifacts in ML experiments."
 optional = false
-python-versions = ">=3.11"
+python-versions = "<3.14,>=3.11"
 groups = ["main"]
-files = []
-develop = true
+files = [
+    {file = "artifact_core-0.1.4-py3-none-any.whl", hash = "sha256:7a27adc44cf9c2368562d989ff15c9c42e4957c0ff82d105f4616f6fa9244183"},
+    {file = "artifact_core-0.1.4.tar.gz", hash = "sha256:e3e29e7d0dae584dc136bcdb778d65a2dde9825932023d432164839bfbcc45e3"},
+]
 
 [package.dependencies]
 dython = ">=0.7.9,<0.8.0"
@@ -104,10 +106,6 @@ numpy = ">=2.2.4,<3.0.0"
 pandas = ">=2.2.3,<3.0.0"
 scikit-learn = ">=1.6.1,<2.0.0"
 seaborn = ">=0.13.2,<0.14.0"
-
-[package.source]
-type = "directory"
-url = "../artifact-core"
 
 [[package]]
 name = "asttokens"
@@ -838,14 +836,14 @@ websockets = ["websocket-client (>=1.3.0)"]
 
 [[package]]
 name = "dython"
-version = "0.7.9"
+version = "0.7.10"
 description = "A set of data tools in Python"
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "dython-0.7.9-py3-none-any.whl", hash = "sha256:c8aa397651c2fedacddf293cd8370401f1bbbced88f1295fb7fdb36504c88adf"},
-    {file = "dython-0.7.9.tar.gz", hash = "sha256:105deaded5e51cd9ccfc471584100e15e24d6768446ed413cf6c6fefc421c67e"},
+    {file = "dython-0.7.10-py3-none-any.whl", hash = "sha256:7281b90fd5da44152eab6ca2525f0ff1e031818b2a776b5dc7e018ed2311f4e9"},
+    {file = "dython-0.7.10.tar.gz", hash = "sha256:95d2277ae58e20091e237f61a5efef8f1e2bbdd6773b043ff0da9bb676b5e64d"},
 ]
 
 [package.dependencies]
@@ -1144,7 +1142,7 @@ description = "Lightweight in-process concurrent programming"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
-markers = "python_version < \"3.14\" and (platform_machine == \"aarch64\" or platform_machine == \"ppc64le\" or platform_machine == \"x86_64\" or platform_machine == \"amd64\" or platform_machine == \"AMD64\" or platform_machine == \"win32\" or platform_machine == \"WIN32\")"
+markers = "platform_machine == \"aarch64\" or platform_machine == \"ppc64le\" or platform_machine == \"x86_64\" or platform_machine == \"amd64\" or platform_machine == \"AMD64\" or platform_machine == \"win32\" or platform_machine == \"WIN32\""
 files = [
     {file = "greenlet-3.2.3-cp310-cp310-macosx_11_0_universal2.whl", hash = "sha256:1afd685acd5597349ee6d7a88a8bec83ce13c106ac78c196ee9dde7c04fe87be"},
     {file = "greenlet-3.2.3-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:761917cac215c61e9dc7324b2606107b3b292a8349bdebb31503ab4de3f559ac"},
@@ -4272,5 +4270,5 @@ type = ["pytest-mypy"]
 
 [metadata]
 lock-version = "2.1"
-python-versions = ">=3.11,<4.0"
-content-hash = "9506e7d1717b0431e26480e17f36eea6b8dbca15ceb3dd80dd7a634aa33f8a86"
+python-versions = ">=3.11,<3.14"
+content-hash = "ea2c4589539b338c5688e60c8f08b9dd5c452530967e41047cf1164f55b401bd"

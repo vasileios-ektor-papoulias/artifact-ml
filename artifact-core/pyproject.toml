@@ -1,7 +1,7 @@
 [project]
 name = "artifact-core"
 packages = [{ include = "artifact-core" }]
-version = "0.1.3"
+version = "0.1.4"
 description = "Artifact-ML foundation: a unified interface for the declarative computation of validation artifacts in ML experiments."
 authors = [
     {name = "Vasileios Ektor Papoulias",email = "hector.papoulias@gmail.com"}

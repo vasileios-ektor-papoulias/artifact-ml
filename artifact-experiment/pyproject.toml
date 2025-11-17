@@ -1,7 +1,7 @@
 [project]
 name = "artifact-experiment"
 packages = [{ include = "artifact-experiment" }]
-version = "0.1.2"
+version = "0.1.3"
 description = "Artifact-ML experiment orchestration: declarative builder toolkit for reusable validation workflows with integrated tracking."
 authors = [
     {name = "Vasileios Ektor Papoulias",email = "hector.papoulias@gmail.com"}
@@ -25,9 +25,9 @@ python = ">=3.11,<3.14"
 tqdm = ">=4.67.1,<5.0.0"
 neptune = ">=1.14.0,<2.0.0"
 mlflow = ">=2.22.0,<3.0.0"
-artifact-core = ">=0.1.0,<1.0.0"
 clearml = "^2.0.0"
 ipywidgets = "^8.1.7"
+artifact-core = "^0.1.4"
 
 [tool.poetry.group.dev]
 optional = true
@@ -38,4 +38,3 @@ pytest = "^8.3.5"
 pytest-mock = "^3.14.0"
 ipykernel = "^6.29.5"
 pytest-cov = "^7.0.0"
-artifact-core = { path = "../artifact-core", develop = true }
