@@ -146,6 +146,7 @@ class DataLoaderRoutine(
     @classmethod
     def _process_data_loader(cls, model: ModelTContr, data_loader: DataLoader[ModelInputTContr]):
         model.eval()
+        data_loader.device = model.device
         with torch.no_grad():
             for model_input in tqdm(
                 data_loader,
