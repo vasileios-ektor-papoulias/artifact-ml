@@ -6,7 +6,7 @@ from artifact_torch.binary_classification import (
     BinaryClassificationRoutine,
     BinaryClassifier,
 )
-from artifact_torch.nn import ModelInput, ModelOutput, Trainer
+from artifact_torch.nn import Trainer
 from artifact_torch.nn.routines import DataLoaderRoutine, TrainDiagnosticsRoutine
 
 from demos.binary_classification.components.routines.artifact import DemoBinaryClassificationRoutine
@@ -26,7 +26,7 @@ class DemoBinaryClassificationExperiment(
     BinaryClassificationExperiment[
         BinaryClassifier[
             Any,
-            ModelOutput,
+            WorkflowOutput,
             WorkflowClassificationParams,
             pd.DataFrame,
         ],
@@ -43,12 +43,12 @@ class DemoBinaryClassificationExperiment(
         Trainer[
             BinaryClassifier[
                 Any,
-                ModelOutput,
+                WorkflowOutput,
                 WorkflowClassificationParams,
                 pd.DataFrame,
             ],
-            ModelInput,
-            ModelOutput,
+            WorkflowInput,
+            WorkflowOutput,
             Any,
             Any,
         ]
@@ -63,12 +63,12 @@ class DemoBinaryClassificationExperiment(
             TrainDiagnosticsRoutine[
                 BinaryClassifier[
                     Any,
-                    ModelOutput,
+                    WorkflowOutput,
                     WorkflowClassificationParams,
                     pd.DataFrame,
                 ],
-                ModelInput,
-                ModelOutput,
+                WorkflowInput,
+                WorkflowOutput,
             ]
         ]
     ]:
@@ -82,12 +82,12 @@ class DemoBinaryClassificationExperiment(
             DataLoaderRoutine[
                 BinaryClassifier[
                     Any,
-                    ModelOutput,
+                    WorkflowOutput,
                     WorkflowClassificationParams,
                     pd.DataFrame,
                 ],
-                ModelInput,
-                ModelOutput,
+                WorkflowInput,
+                WorkflowOutput,
             ]
         ]
     ]:

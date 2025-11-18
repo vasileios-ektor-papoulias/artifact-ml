@@ -77,6 +77,6 @@ class BinaryClassificationArtifactResources(
                 "predicted": predicted.get(identifier),
                 "prob_pos": probs.get(identifier),
             }
-            for identifier in sorted(set(true) | set(predicted) | set(probs), key=int)
+            for identifier in set(true) | set(predicted) | set(probs)
         }
         return dict_artifact_resources
