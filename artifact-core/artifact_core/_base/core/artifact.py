@@ -4,9 +4,7 @@ from typing import Generic, TypeVar
 from artifact_core._base.core.hyperparams import ArtifactHyperparams
 from artifact_core._base.core.resource_spec import ResourceSpecProtocol
 from artifact_core._base.core.resources import ArtifactResources
-from artifact_core._base.typing.artifact_result import (
-    ArtifactResult,
-)
+from artifact_core._base.typing.artifact_result import ArtifactResult
 
 ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound=ArtifactResources)
 ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
