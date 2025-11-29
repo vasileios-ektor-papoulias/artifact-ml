@@ -28,11 +28,8 @@ __all__ = [
 def _init_toolkit():
     from artifact_core._bootstrap.primitives.domain_toolkit import DomainToolkit
     from artifact_core._bootstrap.toolkit_initializer import ToolkitInitializer
-    from artifact_core.binary_classification._config.parsed import CONFIG
 
-    ToolkitInitializer.init_toolkit(
-        domain_toolkit=DomainToolkit.BINARY_CLASSIFICATION, config=CONFIG
-    )
+    ToolkitInitializer.init_toolkit(domain_toolkit=DomainToolkit.BINARY_CLASSIFICATION)
 
 
 _init_toolkit()
