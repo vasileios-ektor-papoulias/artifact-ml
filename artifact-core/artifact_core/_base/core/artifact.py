@@ -5,13 +5,7 @@ from artifact_core._base.core.hyperparams import ArtifactHyperparams
 from artifact_core._base.core.resource_spec import ResourceSpecProtocol
 from artifact_core._base.core.resources import ArtifactResources
 from artifact_core._base.typing.artifact_result import (
-    Array,
-    ArrayCollection,
     ArtifactResult,
-    Plot,
-    PlotCollection,
-    Score,
-    ScoreCollection,
 )
 
 ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound=ArtifactResources)
@@ -51,17 +45,3 @@ class Artifact(
         resources = self._validate(resources=resources)
         result = self._compute(resources=resources)
         return result
-
-
-ScoreArtifact = Artifact[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparamsT, Score]
-ArrayArtifact = Artifact[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparamsT, Array]
-PlotArtifact = Artifact[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparamsT, Plot]
-ScoreCollectionArtifact = Artifact[
-    ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparamsT, ScoreCollection
-]
-ArrayCollectionArtifact = Artifact[
-    ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparamsT, ArrayCollection
-]
-PlotCollectionArtifact = Artifact[
-    ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparamsT, PlotCollection
-]

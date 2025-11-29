@@ -3,15 +3,7 @@ from typing import Generic, TypeVar
 
 from artifact_core._base.core.artifact import Artifact
 from artifact_core._base.core.hyperparams import ArtifactHyperparams
-from artifact_core._base.typing.artifact_result import (
-    Array,
-    ArrayCollection,
-    ArtifactResult,
-    Plot,
-    PlotCollection,
-    Score,
-    ScoreCollection,
-)
+from artifact_core._base.typing.artifact_result import ArtifactResult
 from artifact_core._domains.classification.resources import ClassificationArtifactResources
 from artifact_core._libs.resource_specs.classification.protocol import ClassSpecProtocol
 from artifact_core._libs.resources.classification.class_store import ClassStore
@@ -72,31 +64,3 @@ class ClassificationArtifact(
             classification_results=resources.classification_results,
         )
         return resources
-
-
-ClassificationScore = ClassificationArtifact[
-    CategoryStoreT, ClassificationResultsT, ClassSpecProtocolT, ArtifactHyperparamsT, Score
-]
-ClassificationArray = ClassificationArtifact[
-    CategoryStoreT, ClassificationResultsT, ClassSpecProtocolT, ArtifactHyperparamsT, Array
-]
-ClassificationPlot = ClassificationArtifact[
-    CategoryStoreT, ClassificationResultsT, ClassSpecProtocolT, ArtifactHyperparamsT, Plot
-]
-ClassificationScoreCollection = ClassificationArtifact[
-    CategoryStoreT,
-    ClassificationResultsT,
-    ClassSpecProtocolT,
-    ArtifactHyperparamsT,
-    ScoreCollection,
-]
-ClassificationArrayCollection = ClassificationArtifact[
-    CategoryStoreT,
-    ClassificationResultsT,
-    ClassSpecProtocolT,
-    ArtifactHyperparamsT,
-    ArrayCollection,
-]
-ClassificationPlotCollection = ClassificationArtifact[
-    CategoryStoreT, ClassificationResultsT, ClassSpecProtocolT, ArtifactHyperparamsT, PlotCollection
-]
