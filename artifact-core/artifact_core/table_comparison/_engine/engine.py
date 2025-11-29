@@ -46,35 +46,35 @@ class TableComparisonEngine(
     @classmethod
     def _get_score_registry(
         cls,
-    ) -> Type[TableComparisonScoreRegistryBase]:
+    ) -> Type[TableComparisonScoreRegistryBase[TableComparisonScoreType]]:
         return TableComparisonScoreRegistry
 
     @classmethod
     def _get_array_registry(
         cls,
-    ) -> Type[TableComparisonArrayRegistryBase]:
+    ) -> Type[TableComparisonArrayRegistryBase[TableComparisonArrayType]]:
         return TableComparisonArrayRegistry
 
     @classmethod
     def _get_plot_registry(
         cls,
-    ) -> Type[TableComparisonPlotRegistryBase]:
+    ) -> Type[TableComparisonPlotRegistryBase[TableComparisonPlotType]]:
         return TableComparisonPlotRegistry
 
     @classmethod
     def _get_score_collection_registry(
         cls,
-    ) -> Type[TableComparisonScoreCollectionRegistryBase]:
+    ) -> Type[TableComparisonScoreCollectionRegistryBase[TableComparisonScoreCollectionType]]:
         return TableComparisonScoreCollectionRegistry
 
     @classmethod
     def _get_array_collection_registry(
         cls,
-    ) -> Type[TableComparisonArrayCollectionRegistryBase]:
+    ) -> Type[TableComparisonArrayCollectionRegistryBase[TableComparisonArrayCollectionType]]:
         return TableComparisonArrayCollectionRegistry
 
     @classmethod
     def _get_plot_collection_registry(
         cls,
-    ) -> Type[TableComparisonPlotCollectionRegistryBase]:
+    ) -> Type[TableComparisonPlotCollectionRegistryBase[TableComparisonPlotCollectionType]]:
         return TableComparisonPlotCollectionRegistry
