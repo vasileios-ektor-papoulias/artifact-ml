@@ -12,15 +12,7 @@ from artifact_core._base.orchestration.repository import (
 from artifact_core._base.orchestration.repository_reader import ArtifactRepositoryReader
 from artifact_core._base.orchestration.repository_writer import ArtifactRepositoryWriter
 from artifact_core._base.primitives.artifact_type import ArtifactType
-from artifact_core._base.typing.artifact_result import (
-    Array,
-    ArrayCollection,
-    ArtifactResult,
-    Plot,
-    PlotCollection,
-    Score,
-    ScoreCollection,
-)
+from artifact_core._base.typing.artifact_result import ArtifactResult
 
 ArtifactT = TypeVar("ArtifactT", bound=Artifact[Any, Any, Any, Any])
 ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound=ArtifactHyperparams)
@@ -100,17 +92,3 @@ class ArtifactRegistry(
         ].register_artifact_hyperparams(
             artifact_type=artifact_type, repository=cls._artifact_hyperparams_repository
         )
-
-
-ScoreRegistry = ArtifactRegistry[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, Score]
-ArrayRegistry = ArtifactRegistry[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, Array]
-PlotRegistry = ArtifactRegistry[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, Plot]
-ScoreCollectionRegistry = ArtifactRegistry[
-    ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, ScoreCollection
-]
-ArrayCollectionRegistry = ArtifactRegistry[
-    ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, ArrayCollection
-]
-PlotCollectionRegistry = ArtifactRegistry[
-    ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, PlotCollection
-]
