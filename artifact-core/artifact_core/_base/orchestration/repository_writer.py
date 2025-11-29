@@ -6,63 +6,60 @@ from artifact_core._base.core.hyperparams import ArtifactHyperparams
 from artifact_core._base.core.resource_spec import ResourceSpecProtocol
 from artifact_core._base.core.resources import ArtifactResources
 from artifact_core._base.orchestration.key_formatter import ArtifactKeyFormatter
-from artifact_core._base.primitives.artifact_type import ArtifactType
-from artifact_core._base.typing.artifact_result import (
-    ArtifactResult,
+from artifact_core._base.orchestration.repository import (
+    ArtifactHyperparamsRepository,
+    ArtifactRepository,
 )
+from artifact_core._base.primitives.artifact_type import ArtifactType
+from artifact_core._base.typing.artifact_result import ArtifactResult
+
+Registree = Union[Artifact[Any, Any, Any, Any], ArtifactHyperparams]
+RegistreeT = TypeVar("RegistreeT", bound=Registree)
+ArtifactT = TypeVar("ArtifactT", bound=Artifact[Any, Any, Any, Any])
+ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound=ArtifactHyperparams)
 
 ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound=ArtifactResources)
 ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
 ArtifactTypeT = TypeVar("ArtifactTypeT", bound=ArtifactType)
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
-ArtifactCollection = Dict[
-    str,
-    Type[Artifact[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparams, ArtifactResultT]],
-]
-ArtifactHyperparamsCollection = Dict[str, Type[ArtifactHyperparams]]
-Registree = Union[Artifact[Any, Any, Any, Any], ArtifactHyperparams]
-RegistreeT = TypeVar("RegistreeT", bound=Registree)
-ArtifactT = TypeVar("ArtifactT", bound=Artifact[Any, Any, Any, Any])
-ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound=ArtifactHyperparams)
 
-
-class ArtifactRegistryWriter(
+class ArtifactRepositoryWriter(
     Generic[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, ArtifactResultT]
 ):
     @classmethod
     def register_artifact(
         cls,
         artifact_type: Union[ArtifactTypeT, str],
-        registry: ArtifactCollection[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactResultT],
+        repository: ArtifactRepository[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactResultT],
     ) -> Callable[[Type[ArtifactT]], Type[ArtifactT]]:
         key = ArtifactKeyFormatter.get_artifact_key(artifact_type=artifact_type)
         return cls._register(
             key=key,
-            registry=registry,
+            repository=repository,
             warning_message=f"Artifact already registered for artifact_type={key}",
         )
 
     @classmethod
     def register_artifact_hyperparams(
-        cls, artifact_type: Union[ArtifactTypeT, str], registry: ArtifactHyperparamsCollection
+        cls, artifact_type: Union[ArtifactTypeT, str], repository: ArtifactHyperparamsRepository
     ) -> Callable[[Type[ArtifactHyperparamsT]], Type[ArtifactHyperparamsT]]:
         key = ArtifactKeyFormatter.get_artifact_key(artifact_type=artifact_type)
         return cls._register(
             key=key,
-            registry=registry,
+            repository=repository,
             warning_message=f"Hyperparams already registered for artifact_type={key}",
         )
 
     @staticmethod
     def _register(
         key: str,
-        registry: Dict[str, Any],
+        repository: Dict[str, Any],
         warning_message: str,
     ) -> Callable[[Type[RegistreeT]], Type[RegistreeT]]:
         def registration_decorator(item: Type[RegistreeT]) -> Type[RegistreeT]:
-            if key not in registry:
-                registry[key] = item
+            if key not in repository:
+                repository[key] = item
             else:
                 warnings.warn(warning_message, UserWarning, stacklevel=3)
             return item
