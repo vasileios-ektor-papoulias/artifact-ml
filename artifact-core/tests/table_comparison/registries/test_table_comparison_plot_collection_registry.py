@@ -1,7 +1,7 @@
 from typing import Type
 
 import pytest
-from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resource_specs.table_comparison.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison._artifacts.base import (
     TableComparisonPlotCollection,
 )
@@ -14,7 +14,7 @@ from artifact_core.table_comparison._artifacts.plot_collections.correlations imp
 from artifact_core.table_comparison._artifacts.plot_collections.pdf import (
     PDFPlots,
 )
-from artifact_core.table_comparison._registries.plot_collections.plot_collections import (
+from artifact_core.table_comparison._registries.plot_collections import (
     TableComparisonPlotCollectionRegistry,
     TableComparisonPlotCollectionType,
 )

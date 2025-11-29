@@ -3,7 +3,7 @@ from typing import cast
 
 import pandas as pd
 import pytest
-from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resource_specs.table_comparison.protocol import TabularDataSpecProtocol
 
 
 @pytest.fixture
@@ -14,14 +14,14 @@ def resource_spec() -> TabularDataSpecProtocol:
     cat_unique_map = {"cat_1": ["a", "b", "c"], "cat_2": ["A", "B", "C", "D"]}
     cat_unique_count_map = {feat: len(ls_unique) for feat, ls_unique in cat_unique_map.items()}
     spec = SimpleNamespace(
-        ls_features=ls_features,
+        features=ls_features,
         n_features=len(ls_features),
-        ls_cts_features=ls_cts,
+        cts_features=ls_cts,
         n_cts_features=len(ls_cts),
-        dict_cts_dtypes={feat: float for feat in ls_cts},
-        ls_cat_features=ls_cat,
+        cts_dtypes={feat: float for feat in ls_cts},
+        cat_features=ls_cat,
         n_cat_features=len(ls_cat),
-        dict_cat_dtypes={feat: str for feat in ls_cat},
+        cat_dtypes={feat: str for feat in ls_cat},
         cat_unique_map=cat_unique_map,
         cat_unique_count_map=cat_unique_count_map,
     )
