@@ -4,12 +4,12 @@ from unittest.mock import ANY
 import numpy as np
 import pandas as pd
 import pytest
-from artifact_core._base.primitives import NO_ARTIFACT_HYPERPARAMS
+from artifact_core._base.core.hyperparams import NO_ARTIFACT_HYPERPARAMS
 from artifact_core._libs.artifacts.table_comparison.descriptive_stats.calculator import (
     DescriptiveStatistic,
     TableStatsCalculator,
 )
-from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resource_specs.table_comparison.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison._artifacts.array_collections.descriptive_stats import (
     FirstQuartileJuxtapositionArrays,
     MaxJuxtapositionArrays,
@@ -63,7 +63,7 @@ def test_compute(
     patch_compute.assert_called_once_with(
         df_real=ANY,
         df_synthetic=ANY,
-        ls_cts_features=resource_spec.ls_cts_features,
+        cts_features=resource_spec.cts_features,
         stat=statistic,
     )
     _, kwargs = patch_compute.call_args

@@ -4,7 +4,7 @@ from unittest.mock import ANY
 import pandas as pd
 import pytest
 from artifact_core._libs.artifacts.table_comparison.js.calculator import JSDistanceCalculator
-from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resource_specs.table_comparison.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison._artifacts.base import (
     DatasetComparisonArtifactResources,
 )
@@ -41,8 +41,8 @@ def test_compute(
     patch_compute_dict_js.assert_called_once_with(
         df_real=ANY,
         df_synthetic=ANY,
-        ls_cts_features=resource_spec.ls_cts_features,
-        ls_cat_features=resource_spec.ls_cat_features,
+        cts_features=resource_spec.cts_features,
+        cat_features=resource_spec.cat_features,
         cat_unique_map=resource_spec.cat_unique_map,
         n_bins_cts_histogram=hyperparams.n_bins_cts_histogram,
         categorical_only=hyperparams.categorical_only,

@@ -6,7 +6,7 @@ from artifact_core._libs.artifacts.table_comparison.projections.pca import (
     PCAHyperparams,
     PCAProjector,
 )
-from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resource_specs.table_comparison.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison._artifacts.base import (
     DatasetComparisonArtifactResources,
 )
@@ -14,6 +14,7 @@ from artifact_core.table_comparison._artifacts.plots.pca import (
     PCAJuxtapositionPlot,
     PCAJuxtapositionPlotHyperparams,
 )
+from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
@@ -45,8 +46,8 @@ def test_compute(
     )
     result = artifact.compute(resources=resources)
     patch_build.assert_called_once_with(
-        ls_cat_features=resource_spec.ls_cat_features,
-        ls_cts_features=resource_spec.ls_cts_features,
+        cat_features=resource_spec.cat_features,
+        cts_features=resource_spec.cts_features,
         projector_config=ANY,
     )
     _, kwargs = patch_build.call_args

@@ -3,14 +3,14 @@ from unittest.mock import ANY
 
 import pandas as pd
 import pytest
-from artifact_core._base.primitives import NO_ARTIFACT_HYPERPARAMS
+from artifact_core._base.core.hyperparams import NO_ARTIFACT_HYPERPARAMS
 from artifact_core._libs.artifacts.table_comparison.descriptive_stats.alignment_plotter import (
     DescriptiveStatsAlignmentPlotter,
 )
 from artifact_core._libs.artifacts.table_comparison.descriptive_stats.calculator import (
     DescriptiveStatistic,
 )
-from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resource_specs.table_comparison.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison._artifacts.base import (
     DatasetComparisonArtifactResources,
     TableComparisonPlot,
@@ -26,6 +26,7 @@ from artifact_core.table_comparison._artifacts.plots.descriptive_stats import (
     ThirdQuartileAlignmentPlot,
     VarianceAlignmentPlot,
 )
+from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
@@ -51,7 +52,7 @@ def test_descriptive_stats_comparison_plot(
     patch_get_combined_stat_comparison_plot.assert_called_once_with(
         dataset_real=ANY,
         dataset_synthetic=ANY,
-        ls_cts_features=resource_spec.ls_cts_features,
+        cts_features=resource_spec.cts_features,
     )
     _, kwargs = patch_get_combined_stat_comparison_plot.call_args
     pd.testing.assert_frame_equal(kwargs["dataset_real"], df_real)
@@ -95,7 +96,7 @@ def test_stat_comparison_plots(
     mock_get_stat_comparison_plot.assert_called_once_with(
         dataset_real=ANY,
         dataset_synthetic=ANY,
-        ls_cts_features=resource_spec.ls_cts_features,
+        cts_features=resource_spec.cts_features,
         stat=statistic,
     )
     _, kwargs = mock_get_stat_comparison_plot.call_args
