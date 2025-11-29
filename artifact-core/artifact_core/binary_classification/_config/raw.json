@@ -1,6 +1,5 @@
 {
-  "native_artifact_path": "_artifacts",
-  "custom_artifact_path": null,
+  "custom_artifacts_dir": null,
   "scores": {},
   "arrays": {
     "CONFUSION_MATRIX":{
