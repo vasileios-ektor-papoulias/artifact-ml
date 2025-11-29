@@ -1,4 +1,4 @@
 from artifact_core._bootstrap.primitives.domain_toolkit import DomainToolkit
 from artifact_core._bootstrap.toolkit_initializer import ToolkitInitializer
 
-CONFIG = ToolkitInitializer.load_config(domain_toolkit=DomainToolkit.BINARY_CLASSIFICATION)
+CONFIG = ToolkitInitializer.load_toolkit_config(domain_toolkit=DomainToolkit.BINARY_CLASSIFICATION)

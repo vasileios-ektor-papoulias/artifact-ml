@@ -28,9 +28,8 @@ __all__ = [
 def _init_toolkit():
     from artifact_core._bootstrap.primitives.domain_toolkit import DomainToolkit
     from artifact_core._bootstrap.toolkit_initializer import ToolkitInitializer
-    from artifact_core.table_comparison._config.parsed import CONFIG
 
-    ToolkitInitializer.init_toolkit(domain_toolkit=DomainToolkit.TABLE_COMPARISON, config=CONFIG)
+    ToolkitInitializer.init_toolkit(domain_toolkit=DomainToolkit.TABLE_COMPARISON)
 
 
 _init_toolkit()
