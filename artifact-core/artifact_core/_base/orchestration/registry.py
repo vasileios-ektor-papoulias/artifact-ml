@@ -2,9 +2,7 @@ from abc import abstractmethod
 from typing import Any, Callable, Dict, Generic, Mapping, Type, TypeVar, Union
 
 from artifact_core._base.core.artifact import Artifact
-from artifact_core._base.core.hyperparams import (
-    ArtifactHyperparams,
-)
+from artifact_core._base.core.hyperparams import ArtifactHyperparams
 from artifact_core._base.core.resource_spec import ResourceSpecProtocol
 from artifact_core._base.core.resources import ArtifactResources
 from artifact_core._base.orchestration.registry_reader import ArtifactRegistryReader
