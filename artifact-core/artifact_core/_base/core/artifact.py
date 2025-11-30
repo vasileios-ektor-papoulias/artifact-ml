@@ -13,8 +13,7 @@ ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 
 class Artifact(
-    ABC,
-    Generic[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparamsT, ArtifactResultT],
+    ABC, Generic[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparamsT, ArtifactResultT]
 ):
     def __init__(self, resource_spec: ResourceSpecProtocolT, hyperparams: ArtifactHyperparamsT):
         self._resource_spec = resource_spec
