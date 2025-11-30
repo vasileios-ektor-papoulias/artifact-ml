@@ -63,7 +63,7 @@ class ArtifactRegistry(
     ) -> Callable[[Type[ArtifactT]], Type[ArtifactT]]:
         return ArtifactRepositoryWriter[
             ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, ArtifactResultT
-        ].register_artifact(artifact_type=artifact_type, repository=cls._artifact_repository)
+        ].put_artifact(artifact_type=artifact_type, repository=cls._artifact_repository)
 
     @classmethod
     def register_artifact_hyperparams(
@@ -71,7 +71,7 @@ class ArtifactRegistry(
     ) -> Callable[[Type[ArtifactHyperparamsT]], Type[ArtifactHyperparamsT]]:
         return ArtifactRepositoryWriter[
             ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, ArtifactResultT
-        ].register_artifact_hyperparams(
+        ].put_artifact_hyperparams(
             artifact_type=artifact_type, repository=cls._artifact_hyperparams_repository
         )
 
@@ -81,7 +81,7 @@ class ArtifactRegistry(
     ) -> Callable[[Type[ArtifactT]], Type[ArtifactT]]:
         return ArtifactRepositoryWriter[
             ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, ArtifactResultT
-        ].register_artifact(artifact_type=artifact_type, repository=cls._artifact_repository)
+        ].put_artifact(artifact_type=artifact_type, repository=cls._artifact_repository)
 
     @classmethod
     def register_custom_artifact_hyperparams(
@@ -89,6 +89,6 @@ class ArtifactRegistry(
     ) -> Callable[[Type[ArtifactHyperparamsT]], Type[ArtifactHyperparamsT]]:
         return ArtifactRepositoryWriter[
             ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, ArtifactResultT
-        ].register_artifact_hyperparams(
+        ].put_artifact_hyperparams(
             artifact_type=artifact_type, repository=cls._artifact_hyperparams_repository
         )
