@@ -28,40 +28,40 @@ class ArtifactRepositoryWriter(
     Generic[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactTypeT, ArtifactResultT]
 ):
     @classmethod
-    def register_artifact(
+    def put_artifact(
         cls,
         artifact_type: Union[ArtifactTypeT, str],
         repository: ArtifactRepository[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactResultT],
     ) -> Callable[[Type[ArtifactT]], Type[ArtifactT]]:
         key = ArtifactKeyFormatter.get_artifact_key(artifact_type=artifact_type)
-        return cls._register(
+        return cls._put(
             key=key,
             repository=repository,
             warning_message=f"Artifact already registered for artifact_type={key}",
         )
 
     @classmethod
-    def register_artifact_hyperparams(
+    def put_artifact_hyperparams(
         cls, artifact_type: Union[ArtifactTypeT, str], repository: ArtifactHyperparamsRepository
     ) -> Callable[[Type[ArtifactHyperparamsT]], Type[ArtifactHyperparamsT]]:
         key = ArtifactKeyFormatter.get_artifact_key(artifact_type=artifact_type)
-        return cls._register(
+        return cls._put(
             key=key,
             repository=repository,
             warning_message=f"Hyperparams already registered for artifact_type={key}",
         )
 
     @staticmethod
-    def _register(
+    def _put(
         key: str,
         repository: Dict[str, Any],
         warning_message: str,
     ) -> Callable[[Type[RegistreeT]], Type[RegistreeT]]:
-        def registration_decorator(item: Type[RegistreeT]) -> Type[RegistreeT]:
+        def insertion_decorator(item: Type[RegistreeT]) -> Type[RegistreeT]:
             if key not in repository:
                 repository[key] = item
             else:
                 warnings.warn(warning_message, UserWarning, stacklevel=3)
             return item
 
-        return registration_decorator
+        return insertion_decorator
