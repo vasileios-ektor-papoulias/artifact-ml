@@ -19,3 +19,8 @@ class DummyArtifact(
     ):
         self._resource_spec = resource_spec
         self._hyperparams = hyperparams
+
+    def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
+        if not resources.valid:
+            raise ValueError("Invalid Resources")
+        return resources

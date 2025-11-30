@@ -6,3 +6,4 @@ class DummyScoreType(ArtifactType):
     NO_HYPERPARAMS_ARTIFACT = "no_hyperparams_artifact"
     IN_ALTERNATIVE_REGISTRY = "in_alternative_registry"
     NOT_REGISTERED = "not_registered"
+    NEW_SCORE = "new_score"

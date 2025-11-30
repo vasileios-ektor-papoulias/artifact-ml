@@ -38,11 +38,6 @@ class DummyScoreArtifact(DummyArtifact[DummyScoreHyperparams, float]):
         self._resource_spec = resource_spec
         self._hyperparams = hyperparams
 
-    def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
-        if not resources.valid:
-            raise ValueError("Invalid Resources")
-        return resources
-
     def _compute(self, resources: DummyArtifactResources) -> float:
         result = resources.x
         if self._hyperparams.adjust_scale:
