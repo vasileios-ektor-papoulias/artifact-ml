@@ -4,28 +4,27 @@ import pytest
 from artifact_core._base.core.hyperparams import NO_ARTIFACT_HYPERPARAMS, NoArtifactHyperparams
 from artifact_core._base.typing.artifact_result import ArtifactResult, Score
 
-from tests._base.dummy.artifacts import (
-    AlternativeRegistryArtifact,
-    CustomScoreArtifact,
-    CustomScoreHyperparams,
-    DummyArtifact,
-    DummyScoreArtifact,
-    DummyScoreHyperparams,
-    NoHyperparamsArtifact,
+from tests._base.dummy.artifacts.base import DummyArtifact
+from tests._base.dummy.artifacts.scores.alternative import AlternativeRegistryArtifact
+from tests._base.dummy.artifacts.scores.custom import CustomScoreArtifact, CustomScoreHyperparams
+from tests._base.dummy.artifacts.scores.dummy import DummyScoreArtifact, DummyScoreHyperparams
+from tests._base.dummy.artifacts.scores.no_hyperparams import NoHyperparamsArtifact
+from tests._base.dummy.artifacts.scores.no_hyperparams_custom import (
     NoHyperparamsCustomScoreArtifact,
+)
+from tests._base.dummy.artifacts.scores.unregistered import (
     UnregisteredArtifact,
     UnregisteredArtifactHyperparams,
 )
-from tests._base.dummy.registries import (
+from tests._base.dummy.registries.base import DummyArtifactRegistry
+from tests._base.dummy.registries.scores import (
     AlternativeDummyScoreRegistry,
-    ArtifactRegistry,
     DummyScoreRegistry,
-    DummyScoreType,
     InvalidParamDummyScoreRegistry,
     MissingParamDummyScoreRegistry,
 )
 from tests._base.dummy.resource_spec import DummyResourceSpec
-from tests._base.dummy.resources import DummyArtifactResources
+from tests._base.dummy.types.scores import DummyScoreType
 
 
 @pytest.mark.unit
@@ -147,9 +146,7 @@ from tests._base.dummy.resources import DummyArtifactResources
     ],
 )
 def test_get(
-    artifact_registry: Type[
-        ArtifactRegistry[DummyArtifactResources, DummyResourceSpec, DummyScoreType, Score]
-    ],
+    artifact_registry: Type[DummyArtifactRegistry[DummyScoreType, Score]],
     artifact_type: Union[DummyScoreType, str],
     resource_spec: DummyResourceSpec,
     expected_artifact_class: Type[DummyArtifact[Any, ArtifactResult]],

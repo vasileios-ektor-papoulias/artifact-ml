@@ -1,6 +1,6 @@
 import pytest
 
-from tests._base.dummy.artifacts import DummyScoreArtifact, DummyScoreHyperparams
+from tests._base.dummy.artifacts.scores.dummy import DummyScoreArtifact, DummyScoreHyperparams
 from tests._base.dummy.resource_spec import DummyResourceSpec
 from tests._base.dummy.resources import DummyArtifactResources
 
