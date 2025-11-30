@@ -1,4 +1,4 @@
-from typing import Dict, Type, TypeVar
+from typing import Any, Dict, Type, TypeVar
 
 from artifact_core._base.core.artifact import Artifact
 from artifact_core._base.core.hyperparams import ArtifactHyperparams
@@ -15,6 +15,6 @@ ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 ArtifactRepository = Dict[
     str,
-    Type[Artifact[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparams, ArtifactResultT]],
+    Type[Artifact[ArtifactResourcesT, ResourceSpecProtocolT, Any, ArtifactResultT]],
 ]
 ArtifactHyperparamsRepository = Dict[str, Type[ArtifactHyperparams]]
