@@ -1,32 +1,23 @@
 import pytest
 
-from tests._base.dummy.artifacts.scores.custom import CustomScoreArtifact, CustomScoreHyperparams
-from tests._base.dummy.artifacts.scores.dummy import DummyScoreArtifact, DummyScoreHyperparams
-from tests._base.dummy.artifacts.scores.no_hyperparams import NoHyperparamsArtifact
 from tests._base.dummy.engine.engine import DummyArtifactEngine
-from tests._base.dummy.registries.scores import DummyScoreRegistry
 from tests._base.dummy.resource_spec import DummyResourceSpec
 from tests._base.dummy.resources import DummyArtifactResources
 from tests._base.dummy.types.scores import DummyScoreType
 
 
 @pytest.fixture
-def register_artifacts():
-    DummyScoreRegistry.register_artifact_hyperparams(
-        artifact_type=DummyScoreType.DUMMY_SCORE_ARTIFACT
-    )(DummyScoreHyperparams)
-    DummyScoreRegistry.register_artifact(artifact_type=DummyScoreType.DUMMY_SCORE_ARTIFACT)(
-        DummyScoreArtifact
+def ensure_artifact_registration():
+    from tests._base.dummy.artifacts.scores.custom import (
+        CustomScoreArtifact,
+        CustomScoreHyperparams,
     )
-    DummyScoreRegistry.register_artifact(artifact_type=DummyScoreType.NO_HYPERPARAMS_ARTIFACT)(
-        NoHyperparamsArtifact
-    )
-    DummyScoreRegistry.register_custom_artifact_hyperparams(artifact_type="CUSTOM_SCORE_ARTIFACT")(
-        CustomScoreHyperparams
-    )
-    DummyScoreRegistry.register_custom_artifact(artifact_type="CUSTOM_SCORE_ARTIFACT")(
-        CustomScoreArtifact
-    )
+    from tests._base.dummy.artifacts.scores.dummy import DummyScoreArtifact, DummyScoreHyperparams
+    from tests._base.dummy.artifacts.scores.no_hyperparams import NoHyperparamsArtifact
+
+    _ = CustomScoreArtifact, CustomScoreHyperparams
+    _ = DummyScoreArtifact, DummyScoreHyperparams
+    _ = NoHyperparamsArtifact
     yield
 
 
@@ -73,7 +64,7 @@ def register_artifacts():
     ],
 )
 def test_produce_score(
-    register_artifacts,
+    ensure_artifact_registration,
     score_type: DummyScoreType,
     resource_spec: DummyResourceSpec,
     resources: DummyArtifactResources,
@@ -101,7 +92,7 @@ def test_produce_score(
     ],
 )
 def test_produce_score_invalid_resources(
-    register_artifacts,
+    ensure_artifact_registration,
     score_type: DummyScoreType,
     resource_spec: DummyResourceSpec,
     resources: DummyArtifactResources,
