@@ -14,7 +14,7 @@ from artifact_core._base.typing.artifact_result import (
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
-from tests._base.dummy.engine import DummyArtifactEngine
+from tests._base.dummy.engine.engine import DummyArtifactEngine
 from tests._base.dummy.resource_spec import DummyResourceSpec
 from tests._base.dummy.resources import DummyArtifactResources
 
