@@ -13,7 +13,7 @@ from artifact_core.table_comparison._engine.engine import (
 def test_state(
     resource_spec: TabularDataSpecProtocol,
 ):
-    engine = TableComparisonEngine(resource_spec=resource_spec)
+    engine = TableComparisonEngine.build(resource_spec=resource_spec)
     assert engine.resource_spec == resource_spec
     assert engine._score_registry == TableComparisonScoreRegistry
     assert engine._array_registry == TableComparisonArrayRegistry
