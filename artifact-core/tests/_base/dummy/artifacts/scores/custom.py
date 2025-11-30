@@ -15,11 +15,6 @@ class CustomScoreHyperparams(ArtifactHyperparams):
 
 @DummyScoreRegistry.register_custom_artifact(artifact_type="CUSTOM_SCORE_ARTIFACT")
 class CustomScoreArtifact(DummyArtifact[CustomScoreHyperparams, float]):
-    def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
-        if not resources.valid:
-            raise ValueError("Invalid Resources")
-        return resources
-
     def _compute(self, resources: DummyArtifactResources) -> float:
         _ = resources
         assert self._hyperparams is not None

@@ -10,11 +10,6 @@ from tests._base.dummy.types.scores import DummyScoreType
     artifact_type=DummyScoreType.IN_ALTERNATIVE_REGISTRY
 )
 class AlternativeRegistryArtifact(DummyArtifact[NoArtifactHyperparams, float]):
-    def _validate(self, resources: DummyArtifactResources) -> DummyArtifactResources:
-        if not resources.valid:
-            raise ValueError("Invalid Resources")
-        return resources
-
     def _compute(self, resources: DummyArtifactResources) -> float:
         result = resources.x * self._resource_spec.scale
         return result
