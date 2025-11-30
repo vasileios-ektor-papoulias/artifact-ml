@@ -3,14 +3,14 @@ from typing import Type
 from artifact_core._domains.dataset_comparison.engine import DatasetComparisonEngine
 
 from tests._domains.dataset_comparison.dummy.registries import (
-    DummyDatasetComparisonArray,
     DummyDatasetComparisonArrayCollectionRegistry,
     DummyDatasetComparisonArrayCollectionType,
     DummyDatasetComparisonArrayRegistry,
-    DummyDatasetComparisonPlot,
+    DummyDatasetComparisonArrayType,
     DummyDatasetComparisonPlotCollectionRegistry,
     DummyDatasetComparisonPlotCollectionType,
     DummyDatasetComparisonPlotRegistry,
+    DummyDatasetComparisonPlotType,
     DummyDatasetComparisonScoreCollectionRegistry,
     DummyDatasetComparisonScoreCollectionType,
     DummyDatasetComparisonScoreRegistry,
@@ -25,8 +25,8 @@ class DummyDatasetComparisonEngine(
         DummyDataset,
         DummyResourceSpec,
         DummyDatasetComparisonScoreType,
-        DummyDatasetComparisonArray,
-        DummyDatasetComparisonPlot,
+        DummyDatasetComparisonArrayType,
+        DummyDatasetComparisonPlotType,
         DummyDatasetComparisonScoreCollectionType,
         DummyDatasetComparisonArrayCollectionType,
         DummyDatasetComparisonPlotCollectionType,
