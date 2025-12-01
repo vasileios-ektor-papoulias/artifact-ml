@@ -4,7 +4,6 @@ from unittest.mock import MagicMock
 import numpy as np
 import pandas as pd
 import pytest
-from artifact_core._base.typing.artifact_result import Array
 from artifact_core._libs.artifacts.table_comparison.projections.base.plotter import (
     ProjectionPlotter,
 )
