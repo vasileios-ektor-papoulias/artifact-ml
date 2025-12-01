@@ -18,7 +18,8 @@ from tests._domains.dataset_comparison.dummy.types.scores import DummyDatasetCom
 
 @pytest.mark.unit
 @pytest.mark.parametrize(
-    "artifact_registry, artifact_type, resource_spec, expected_artifact_class, expected_hyperparams",
+    "artifact_registry, artifact_type, resource_spec, "
+    + "expected_artifact_class, expected_hyperparams",
     [
         (
             DummyDatasetComparisonScoreRegistry,
@@ -47,4 +48,3 @@ def test_get(
     assert isinstance(artifact, expected_artifact_class)
     assert artifact._resource_spec == resource_spec
     assert artifact._hyperparams == expected_hyperparams
-
