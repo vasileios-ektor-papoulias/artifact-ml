@@ -1,29 +1,40 @@
 from typing import Type
 
-from artifact_core._domains.dataset_comparison.engine import DatasetComparisonEngine
-
-from tests._domains.dataset_comparison.dummy.registries import (
+from tests._domains.dataset_comparison.dummy.engine.base import DummyDatasetComparisonEngineBase
+from tests._domains.dataset_comparison.dummy.registries.array_collections import (
     DummyDatasetComparisonArrayCollectionRegistry,
-    DummyDatasetComparisonArrayCollectionType,
-    DummyDatasetComparisonArrayRegistry,
-    DummyDatasetComparisonArrayType,
-    DummyDatasetComparisonPlotCollectionRegistry,
-    DummyDatasetComparisonPlotCollectionType,
-    DummyDatasetComparisonPlotRegistry,
-    DummyDatasetComparisonPlotType,
-    DummyDatasetComparisonScoreCollectionRegistry,
-    DummyDatasetComparisonScoreCollectionType,
-    DummyDatasetComparisonScoreRegistry,
-    DummyDatasetComparisonScoreType,
 )
-from tests._domains.dataset_comparison.dummy.resource_spec import DummyResourceSpec
-from tests._domains.dataset_comparison.dummy.resources import DummyDataset
+from tests._domains.dataset_comparison.dummy.registries.arrays import (
+    DummyDatasetComparisonArrayRegistry,
+)
+from tests._domains.dataset_comparison.dummy.registries.plot_collections import (
+    DummyDatasetComparisonPlotCollectionRegistry,
+)
+from tests._domains.dataset_comparison.dummy.registries.plots import (
+    DummyDatasetComparisonPlotRegistry,
+)
+from tests._domains.dataset_comparison.dummy.registries.score_collections import (
+    DummyDatasetComparisonScoreCollectionRegistry,
+)
+from tests._domains.dataset_comparison.dummy.registries.scores import (
+    DummyDatasetComparisonScoreRegistry,
+)
+from tests._domains.dataset_comparison.dummy.types.array_collections import (
+    DummyDatasetComparisonArrayCollectionType,
+)
+from tests._domains.dataset_comparison.dummy.types.arrays import DummyDatasetComparisonArrayType
+from tests._domains.dataset_comparison.dummy.types.plot_collections import (
+    DummyDatasetComparisonPlotCollectionType,
+)
+from tests._domains.dataset_comparison.dummy.types.plots import DummyDatasetComparisonPlotType
+from tests._domains.dataset_comparison.dummy.types.score_collections import (
+    DummyDatasetComparisonScoreCollectionType,
+)
+from tests._domains.dataset_comparison.dummy.types.scores import DummyDatasetComparisonScoreType
 
 
 class DummyDatasetComparisonEngine(
-    DatasetComparisonEngine[
-        DummyDataset,
-        DummyResourceSpec,
+    DummyDatasetComparisonEngineBase[
         DummyDatasetComparisonScoreType,
         DummyDatasetComparisonArrayType,
         DummyDatasetComparisonPlotType,
