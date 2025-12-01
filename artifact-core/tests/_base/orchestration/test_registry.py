@@ -33,7 +33,8 @@ from tests._base.dummy.types.scores import DummyScoreType
 
 @pytest.mark.unit
 @pytest.mark.parametrize(
-    "artifact_registry, artifact_type, resource_spec, expected_artifact_class, expected_hyperparams",
+    "artifact_registry, artifact_type, resource_spec, "
+    + "expected_artifact_class, expected_hyperparams",
     [
         (
             DummyScoreRegistry,
