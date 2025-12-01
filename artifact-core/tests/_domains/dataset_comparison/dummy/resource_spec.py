@@ -4,6 +4,5 @@ from artifact_core._domains.dataset_comparison.artifact import ResourceSpecProto
 
 
 @dataclass
-class DummyResourceSpec(ResourceSpecProtocol):
+class DummyDatasetSpec(ResourceSpecProtocol):
     scale: float
-

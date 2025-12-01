@@ -1,31 +1,33 @@
 from dataclasses import dataclass
-from typing import Tuple, TypeVar
+from typing import Tuple
 
 from artifact_core._base.core.hyperparams import ArtifactHyperparams
-from artifact_core._base.typing.artifact_result import ArtifactResult
-from artifact_core._domains.dataset_comparison.artifact import DatasetComparisonArtifact
 
-from tests._domains.dataset_comparison.dummy.resource_spec import DummyResourceSpec
+from tests._domains.dataset_comparison.dummy.artifacts.base import DummyDatasetComparisonArtifact
+from tests._domains.dataset_comparison.dummy.registries.scores import (
+    DummyDatasetComparisonScoreRegistry,
+)
+from tests._domains.dataset_comparison.dummy.resource_spec import DummyDatasetSpec
 from tests._domains.dataset_comparison.dummy.resources import DummyDataset
-
-ArtifactHyperparamsT = TypeVar("ArtifactHyperparamsT", bound=ArtifactHyperparams)
-ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
-
-DummyDatasetComparisonArtifact = DatasetComparisonArtifact[
-    DummyDataset, DummyResourceSpec, ArtifactHyperparamsT, ArtifactResultT
-]
+from tests._domains.dataset_comparison.dummy.types.scores import DummyDatasetComparisonScoreType
 
 
+@DummyDatasetComparisonScoreRegistry.register_artifact_hyperparams(
+    artifact_type=DummyDatasetComparisonScoreType.DUMMY_SCORE
+)
 @dataclass(frozen=True)
 class DummyDatasetComparisonScoreHyperparams(ArtifactHyperparams):
     adjust_scale: bool
 
 
+@DummyDatasetComparisonScoreRegistry.register_artifact(
+    artifact_type=DummyDatasetComparisonScoreType.DUMMY_SCORE
+)
 class DummyDatasetComparisonScore(
     DummyDatasetComparisonArtifact[DummyDatasetComparisonScoreHyperparams, float]
 ):
     def __init__(
-        self, resource_spec: DummyResourceSpec, hyperparams: DummyDatasetComparisonScoreHyperparams
+        self, resource_spec: DummyDatasetSpec, hyperparams: DummyDatasetComparisonScoreHyperparams
     ):
         self._resource_spec = resource_spec
         self._hyperparams = hyperparams
