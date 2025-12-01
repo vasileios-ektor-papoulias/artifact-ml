@@ -1,112 +1,134 @@
-import os
 import sys
 from pathlib import Path
-from typing import Callable, Generator, List, Tuple, Union
-from unittest.mock import MagicMock
+from typing import Callable, Generator, List
 
 import pytest
 from artifact_core._utils.system.module_importer import ModuleImporter
-from pytest_mock import MockerFixture
+from pytest import FixtureRequest
 
 
 @pytest.fixture
-def mock_sys_path() -> Generator[List[str], None, None]:
-    original_path = sys.path.copy()
-    yield sys.path
-    sys.path.clear()
-    sys.path.extend(original_path)
+def patch_sys_path() -> Generator[None, None, None]:
+    original_sys_path = sys.path.copy()
+    original_modules = set(sys.modules.keys())
+    yield
+    sys.path[:] = original_sys_path
+    modules_to_remove = set(sys.modules.keys()) - original_modules
+    for module in modules_to_remove:
+        del sys.modules[module]
 
 
 @pytest.fixture
-def mock_package_structure_factory() -> Callable[[str], List[Tuple[str, str, bool]]]:
-    def _create_structure(prefix: str = "") -> List[Tuple[str, str, bool]]:
-        base_structure = [
-            ("", "module1", False),
-            ("", "module2", False),
-            ("", "subpackage", True),
-            ("", "subpackage.submodule1", False),
-            ("", "subpackage.submodule2", False),
-        ]
-        if prefix:
-            return [(importer, prefix + name, ispkg) for importer, name, ispkg in base_structure]
-        return base_structure
-
-    return _create_structure
+def pkg_simple(tmp_path: Path) -> Path:
+    package_dir = tmp_path / "simple_pkg"
+    package_dir.mkdir()
+    (package_dir / "__init__.py").touch()
+    sub = package_dir / "sub"
+    sub.mkdir()
+    (sub / "__init__.py").touch()
+    return package_dir
 
 
 @pytest.fixture
-def mock_walk_packages(mocker: MockerFixture) -> MagicMock:
-    return mocker.patch("pkgutil.walk_packages")
+def pkg_nested(tmp_path: Path) -> Path:
+    package_dir = tmp_path / "nested_pkg"
+    package_dir.mkdir()
+    (package_dir / "__init__.py").touch()
+    level1 = package_dir / "level1"
+    level1.mkdir()
+    (level1 / "__init__.py").touch()
+    level2 = level1 / "level2"
+    level2.mkdir()
+    (level2 / "__init__.py").touch()
+    level3 = level2 / "level3"
+    level3.mkdir()
+    (level3 / "__init__.py").touch()
+    return package_dir
 
 
 @pytest.fixture
-def mock_import_module(mocker: MockerFixture) -> MagicMock:
-    return mocker.patch("importlib.import_module")
+def pkg_with_modules(tmp_path: Path) -> Path:
+    package_dir = tmp_path / "module_pkg"
+    package_dir.mkdir()
+    (package_dir / "__init__.py").touch()
+    utils = package_dir / "utils"
+    utils.mkdir()
+    (utils / "__init__.py").touch()
+    (utils / "helpers.py").write_text("# helper module\n")
+    (utils / "tools.py").write_text("# tools module\n")
+    core = package_dir / "core"
+    core.mkdir()
+    (core / "__init__.py").touch()
+    (core / "main.py").write_text("# main module\n")
+    return package_dir
 
 
-def _adjust_path_to_os(path: Union[str, Path]) -> str:
-    return os.path.normcase(str(Path(path).resolve()))
+@pytest.fixture
+def pkg_dispatcher(request: FixtureRequest) -> Callable[[str], Path]:
+    def _get_package(scenario_name: str) -> Path:
+        fixture_name = f"pkg_{scenario_name}"
+        return request.getfixturevalue(fixture_name)
+
+    return _get_package
 
 
 @pytest.mark.unit
 @pytest.mark.parametrize(
-    "path, root, expected_package_prefix, expected_parent_in_syspath",
+    "scenario_name, relative_path, expected_modules",
     [
         (
-            "/path/to/artifact_core/table_comparison/artifacts",
-            "/path/to/artifact_core",
-            "artifact_core.table_comparison.artifacts.",
-            "/path/to",
+            "simple",
+            "sub",
+            [],
         ),
         (
-            Path("/path/to/artifact_core/table_comparison/artifacts"),
-            "/path/to/artifact_core",
-            "artifact_core.table_comparison.artifacts.",
-            "/path/to",
+            "nested",
+            "level1",
+            [
+                "nested_pkg.level1.level2",
+                "nested_pkg.level1.level2.level3",
+            ],
         ),
         (
-            Path("/path/to/artifact_core/table_comparison/artifacts"),
-            Path("/path/to/artifact_core"),
-            "artifact_core.table_comparison.artifacts.",
-            "/path/to",
+            "nested",
+            "level1/level2",
+            [
+                "nested_pkg.level1.level2.level3",
+            ],
         ),
         (
-            "/path/to/my_package/subdir/module",
-            "/path/to/my_package",
-            "my_package.subdir.module.",
-            "/path/to",
+            "nested",
+            "level1/level2/level3",
+            [],
+        ),
+        (
+            "with_modules",
+            "utils",
+            [
+                "module_pkg.utils.helpers",
+                "module_pkg.utils.tools",
+            ],
+        ),
+        (
+            "with_modules",
+            "core",
+            [
+                "module_pkg.core.main",
+            ],
         ),
     ],
 )
-def test_import_all_from_package_path(
-    mock_sys_path: List[str],
-    mock_package_structure_factory: Callable[[str], List[Tuple[str, str, bool]]],
-    mock_walk_packages: MagicMock,
-    mock_import_module: MagicMock,
-    path: Union[str, Path],
-    root: Union[str, Path],
-    expected_package_prefix: str,
-    expected_parent_in_syspath: str,
+def test_import_modules(
+    patch_sys_path: Generator[None, None, None],
+    pkg_dispatcher: Callable[[str], Path],
+    scenario_name: str,
+    relative_path: str,
+    expected_modules: List[str],
 ):
-    os_adjusted_path = _adjust_path_to_os(path)
-    os_adjusted_parent = _adjust_path_to_os(expected_parent_in_syspath)
-    prefixed_mock_structure = mock_package_structure_factory(expected_package_prefix)
-    mock_walk_packages.return_value = prefixed_mock_structure
-    ModuleImporter.import_modules(path=path, root=root)
-    assert os_adjusted_parent in map(os.path.normcase, sys.path)
-    actual_call_args = mock_walk_packages.call_args
-    actual_path = os.path.normcase(actual_call_args[0][0][0])
-    actual_prefix = actual_call_args[1]["prefix"]
-    assert actual_path == os_adjusted_path
-    assert actual_prefix == expected_package_prefix
-    assert mock_walk_packages.call_count == 1
-    expected_imports = [
-        expected_package_prefix + "module1",
-        expected_package_prefix + "module2",
-        expected_package_prefix + "subpackage",
-        expected_package_prefix + "subpackage.submodule1",
-        expected_package_prefix + "subpackage.submodule2",
-    ]
-    assert mock_import_module.call_count == len(expected_imports)
-    for expected_import in expected_imports:
-        mock_import_module.assert_any_call(name=expected_import)
+    pkg_root = pkg_dispatcher(scenario_name)
+    path = pkg_root / relative_path
+    ModuleImporter.import_modules(path=str(path), root=str(pkg_root))
+    parent_dir = str(pkg_root.parent)
+    assert parent_dir in sys.path
+    for expected_module in expected_modules:
+        assert expected_module in sys.modules
