@@ -12,37 +12,39 @@ from artifact_core._base.typing.artifact_result import (
     Score,
     ScoreCollection,
 )
+from artifact_core._domains.dataset_comparison.artifact import DatasetComparisonArtifactResources
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
-from tests._domains.dataset_comparison.dummy.artifacts import DummyDatasetComparisonArtifact
-from tests._domains.dataset_comparison.dummy.engine import DummyDatasetComparisonEngine
-from tests._domains.dataset_comparison.dummy.registries import (
+from tests._domains.dataset_comparison.dummy.artifacts.base import DummyDatasetComparisonArtifact
+from tests._domains.dataset_comparison.dummy.engine.engine import DummyDatasetComparisonEngine
+from tests._domains.dataset_comparison.dummy.registries.base import DummyDatasetComparisonRegistry
+from tests._domains.dataset_comparison.dummy.resource_spec import DummyDatasetSpec
+from tests._domains.dataset_comparison.dummy.resources import DummyDataset
+from tests._domains.dataset_comparison.dummy.types.array_collections import (
     DummyDatasetComparisonArrayCollectionType,
-    DummyDatasetComparisonArrayType,
+)
+from tests._domains.dataset_comparison.dummy.types.arrays import DummyDatasetComparisonArrayType
+from tests._domains.dataset_comparison.dummy.types.plot_collections import (
     DummyDatasetComparisonPlotCollectionType,
-    DummyDatasetComparisonPlotType,
-    DummyDatasetComparisonRegistry,
+)
+from tests._domains.dataset_comparison.dummy.types.plots import DummyDatasetComparisonPlotType
+from tests._domains.dataset_comparison.dummy.types.score_collections import (
     DummyDatasetComparisonScoreCollectionType,
-    DummyDatasetComparisonScoreType,
 )
-from tests._domains.dataset_comparison.dummy.resource_spec import DummyResourceSpec
-from tests._domains.dataset_comparison.dummy.resources import (
-    DatasetComparisonArtifactResources,
-    DummyDataset,
-)
+from tests._domains.dataset_comparison.dummy.types.scores import DummyDatasetComparisonScoreType
 
 
 @pytest.fixture
 def engine_factory(
     mocker: MockerFixture,
 ) -> Callable[
-    [str, DummyResourceSpec, ArtifactResult],
+    [str, DummyDatasetSpec, ArtifactResult],
     Tuple[MagicMock, MagicMock, MagicMock, DummyDatasetComparisonEngine],
 ]:
     def _factory(
         modality: str,
-        resource_spec: DummyResourceSpec,
+        resource_spec: DummyDatasetSpec,
         return_value: ArtifactResult,
     ) -> Tuple[MagicMock, MagicMock, MagicMock, DummyDatasetComparisonEngine]:
         artifact = mocker.Mock(name="artifact", spec_set=DummyDatasetComparisonArtifact[Any, Any])
@@ -74,18 +76,18 @@ def engine_factory(
 @pytest.mark.parametrize(
     "artifact_type, resource_spec, dataset_real, dataset_synthetic, expected_result",
     [
-        ("SCORE_TYPE_1", DummyResourceSpec(scale=1.0), DummyDataset(x=1), DummyDataset(x=1), 1),
-        ("SCORE_TYPE_2", DummyResourceSpec(scale=2.0), DummyDataset(x=2), DummyDataset(x=2), 2),
-        ("CUSTOM_SCORE", DummyResourceSpec(scale=3.0), DummyDataset(x=3), DummyDataset(x=3), 3),
+        ("SCORE_TYPE_1", DummyDatasetSpec(scale=1.0), DummyDataset(x=1), DummyDataset(x=1), 1),
+        ("SCORE_TYPE_2", DummyDatasetSpec(scale=2.0), DummyDataset(x=2), DummyDataset(x=2), 2),
+        ("CUSTOM_SCORE", DummyDatasetSpec(scale=3.0), DummyDataset(x=3), DummyDataset(x=3), 3),
     ],
 )
 def test_produce_dataset_comparison_score(
     engine_factory: Callable[
-        [str, DummyResourceSpec, ArtifactResult],
+        [str, DummyDatasetSpec, ArtifactResult],
         Tuple[MagicMock, MagicMock, MagicMock, DummyDatasetComparisonEngine],
     ],
     artifact_type: Union[DummyDatasetComparisonScoreType, str],
-    resource_spec: DummyResourceSpec,
+    resource_spec: DummyDatasetSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: Score,
@@ -111,21 +113,21 @@ def test_produce_dataset_comparison_score(
     [
         (
             "ARRAY_TYPE_1",
-            DummyResourceSpec(scale=1.0),
+            DummyDatasetSpec(scale=1.0),
             DummyDataset(x=1),
             DummyDataset(x=1),
             np.array([1]),
         ),
         (
             "ARRAY_TYPE_2",
-            DummyResourceSpec(scale=2.0),
+            DummyDatasetSpec(scale=2.0),
             DummyDataset(x=2),
             DummyDataset(x=2),
             np.array([2]),
         ),
         (
             "CUSTOM_ARRAY",
-            DummyResourceSpec(scale=3.0),
+            DummyDatasetSpec(scale=3.0),
             DummyDataset(x=3),
             DummyDataset(x=3),
             np.array([3]),
@@ -134,11 +136,11 @@ def test_produce_dataset_comparison_score(
 )
 def test_produce_dataset_comparison_array(
     engine_factory: Callable[
-        [str, DummyResourceSpec, ArtifactResult],
+        [str, DummyDatasetSpec, ArtifactResult],
         Tuple[MagicMock, MagicMock, MagicMock, DummyDatasetComparisonEngine],
     ],
     artifact_type: Union[DummyDatasetComparisonArrayType, str],
-    resource_spec: DummyResourceSpec,
+    resource_spec: DummyDatasetSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: Array,
@@ -164,21 +166,21 @@ def test_produce_dataset_comparison_array(
     [
         (
             "PLOT_TYPE_1",
-            DummyResourceSpec(scale=1.0),
+            DummyDatasetSpec(scale=1.0),
             DummyDataset(x=1),
             DummyDataset(x=1),
             Figure(),
         ),
         (
             "PLOT_TYPE_2",
-            DummyResourceSpec(scale=2.0),
+            DummyDatasetSpec(scale=2.0),
             DummyDataset(x=2),
             DummyDataset(x=2),
             Figure(),
         ),
         (
             "CUSTOM_PLOT",
-            DummyResourceSpec(scale=3.0),
+            DummyDatasetSpec(scale=3.0),
             DummyDataset(x=3),
             DummyDataset(x=3),
             Figure(),
@@ -187,11 +189,11 @@ def test_produce_dataset_comparison_array(
 )
 def test_produce_dataset_comparison_plot(
     engine_factory: Callable[
-        [str, DummyResourceSpec, ArtifactResult],
+        [str, DummyDatasetSpec, ArtifactResult],
         Tuple[MagicMock, MagicMock, MagicMock, DummyDatasetComparisonEngine],
     ],
     artifact_type: Union[DummyDatasetComparisonPlotType, str],
-    resource_spec: DummyResourceSpec,
+    resource_spec: DummyDatasetSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: Plot,
@@ -217,21 +219,21 @@ def test_produce_dataset_comparison_plot(
     [
         (
             "SCORE_COLLECTION_TYPE_1",
-            DummyResourceSpec(scale=1.0),
+            DummyDatasetSpec(scale=1.0),
             DummyDataset(x=1),
             DummyDataset(x=1),
             {"item": 1},
         ),
         (
             "SCORE_COLLECTION_TYPE_2",
-            DummyResourceSpec(scale=2.0),
+            DummyDatasetSpec(scale=2.0),
             DummyDataset(x=2),
             DummyDataset(x=2),
             {"item": 2},
         ),
         (
             "CUSTOM_SCORE_COLLECTION",
-            DummyResourceSpec(scale=3.0),
+            DummyDatasetSpec(scale=3.0),
             DummyDataset(x=3),
             DummyDataset(x=3),
             {"item": 3},
@@ -240,11 +242,11 @@ def test_produce_dataset_comparison_plot(
 )
 def test_produce_dataset_comparison_score_collection(
     engine_factory: Callable[
-        [str, DummyResourceSpec, ArtifactResult],
+        [str, DummyDatasetSpec, ArtifactResult],
         Tuple[MagicMock, MagicMock, MagicMock, DummyDatasetComparisonEngine],
     ],
     artifact_type: Union[DummyDatasetComparisonScoreCollectionType, str],
-    resource_spec: DummyResourceSpec,
+    resource_spec: DummyDatasetSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: ScoreCollection,
@@ -272,21 +274,21 @@ def test_produce_dataset_comparison_score_collection(
     [
         (
             "ARRAY_COLLECTION_TYPE_1",
-            DummyResourceSpec(scale=1.0),
+            DummyDatasetSpec(scale=1.0),
             DummyDataset(x=1),
             DummyDataset(x=1),
             {"item": np.array([1])},
         ),
         (
             "ARRAY_COLLECTION_TYPE_2",
-            DummyResourceSpec(scale=2.0),
+            DummyDatasetSpec(scale=2.0),
             DummyDataset(x=2),
             DummyDataset(x=2),
             {"item": np.array([2])},
         ),
         (
             "CUSTOM_ARRAY_COLLECTION",
-            DummyResourceSpec(scale=3.0),
+            DummyDatasetSpec(scale=3.0),
             DummyDataset(x=3),
             DummyDataset(x=3),
             {"item": np.array([3])},
@@ -295,11 +297,11 @@ def test_produce_dataset_comparison_score_collection(
 )
 def test_produce_dataset_comparison_array_collection(
     engine_factory: Callable[
-        [str, DummyResourceSpec, ArtifactResult],
+        [str, DummyDatasetSpec, ArtifactResult],
         Tuple[MagicMock, MagicMock, MagicMock, DummyDatasetComparisonEngine],
     ],
     artifact_type: Union[DummyDatasetComparisonArrayCollectionType, str],
-    resource_spec: DummyResourceSpec,
+    resource_spec: DummyDatasetSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: ArrayCollection,
@@ -328,21 +330,21 @@ def test_produce_dataset_comparison_array_collection(
     [
         (
             "PLOT_COLLECTION_TYPE_1",
-            DummyResourceSpec(scale=1.0),
+            DummyDatasetSpec(scale=1.0),
             DummyDataset(x=1),
             DummyDataset(x=1),
             {"item": Figure()},
         ),
         (
             "PLOT_COLLECTION_TYPE_2",
-            DummyResourceSpec(scale=2.0),
+            DummyDatasetSpec(scale=2.0),
             DummyDataset(x=2),
             DummyDataset(x=2),
             {"item": Figure()},
         ),
         (
             "CUSTOM_PLOT_COLLECTION",
-            DummyResourceSpec(scale=3.0),
+            DummyDatasetSpec(scale=3.0),
             DummyDataset(x=3),
             DummyDataset(x=3),
             {"item": Figure()},
@@ -351,11 +353,11 @@ def test_produce_dataset_comparison_array_collection(
 )
 def test_produce_dataset_comparison_plot_collection(
     engine_factory: Callable[
-        [str, DummyResourceSpec, ArtifactResult],
+        [str, DummyDatasetSpec, ArtifactResult],
         Tuple[MagicMock, MagicMock, MagicMock, DummyDatasetComparisonEngine],
     ],
     artifact_type: Union[DummyDatasetComparisonPlotCollectionType, str],
-    resource_spec: DummyResourceSpec,
+    resource_spec: DummyDatasetSpec,
     dataset_real: DummyDataset,
     dataset_synthetic: DummyDataset,
     expected_result: PlotCollection,
