@@ -8,7 +8,7 @@ from artifact_core._utils.system.module_importer import ModuleImporter
 
 
 class ToolkitInitializer:
-    _config_override_dir = ConfigOverrideLocator.find()
+    _config_override_dir: Optional[Path] = None
 
     @classmethod
     def init_toolkit(cls, domain_toolkit: DomainToolkit):
@@ -23,6 +23,8 @@ class ToolkitInitializer:
 
     @classmethod
     def load_toolkit_config(cls, domain_toolkit: DomainToolkit) -> ToolkitConfig:
+        if cls._config_override_dir is None:
+            cls._config_override_dir = cls._locate_override()
         return ToolkitConfig.load(
             domain_toolkit=domain_toolkit, config_override_dir=cls._config_override_dir
         )
@@ -33,3 +35,7 @@ class ToolkitInitializer:
     ) -> Optional[Path]:
         if relative_path and user_override_dir:
             return (user_override_dir.parent / relative_path).resolve()
+
+    @staticmethod
+    def _locate_override() -> Optional[Path]:
+        return ConfigOverrideLocator.find()
