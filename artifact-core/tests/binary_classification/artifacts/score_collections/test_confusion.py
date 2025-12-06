@@ -5,9 +5,7 @@ from artifact_core._libs.artifacts.binary_classification.confusion.calculator im
     ConfusionMatrixNormalizationStrategy,
     NormalizedConfusionCalculator,
 )
-from artifact_core._libs.artifacts.binary_classification.confusion.raw import (
-    ConfusionMatrixCell,
-)
+from artifact_core._libs.artifacts.binary_classification.confusion.raw import ConfusionMatrixCell
 from artifact_core._libs.resource_specs.binary_classification.protocol import (
     BinaryClassSpecProtocol,
 )
