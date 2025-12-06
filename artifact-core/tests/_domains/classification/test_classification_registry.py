@@ -46,5 +46,5 @@ def test_get(
 ):
     artifact = artifact_registry.get(artifact_type=artifact_type, resource_spec=resource_spec)
     assert isinstance(artifact, expected_artifact_class)
-    assert artifact._resource_spec == resource_spec
-    assert artifact._hyperparams == expected_hyperparams
+    assert artifact.resource_spec == resource_spec
+    assert artifact.hyperparams == expected_hyperparams
