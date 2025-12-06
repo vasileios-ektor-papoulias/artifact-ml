@@ -7,7 +7,6 @@ from artifact_core._base.typing.artifact_result import ArtifactResult
 from artifact_core._domains.dataset_comparison.artifact import DatasetComparisonArtifactResources
 
 DatasetT = TypeVar("DatasetT")
-
 ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
 ArtifactTypeT = TypeVar("ArtifactTypeT", bound=ArtifactType)
 ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
