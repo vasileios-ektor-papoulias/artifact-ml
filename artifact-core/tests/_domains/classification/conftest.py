@@ -36,9 +36,7 @@ def _make_classification_results(
     pred_store = ClassStore(class_spec=class_spec)
     distn_store = ClassDistributionStore(class_spec=class_spec)
     results = ClassificationResults(
-        class_spec=class_spec,
-        pred_store=pred_store,
-        distn_store=distn_store,
+        class_spec=class_spec, pred_store=pred_store, distn_store=distn_store
     )
     for identifier, class_idx in id_to_predicted_class_idx.items():
         class_name = class_spec.class_names[class_idx]
