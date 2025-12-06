@@ -13,6 +13,10 @@ from artifact_core._domains.classification.engine import ClassificationEngine
 from artifact_core._libs.resource_specs.binary_classification.protocol import (
     BinaryClassSpecProtocol,
 )
+from artifact_core._libs.resources.binary_classification.class_store import BinaryClassStore
+from artifact_core._libs.resources.binary_classification.classification_results import (
+    BinaryClassificationResults,
+)
 from artifact_core._utils.collections.entity_store import IdentifierType
 from artifact_core.binary_classification._resources import BinaryClassificationArtifactResources
 
@@ -26,7 +30,8 @@ PlotCollectionTypeT = TypeVar("PlotCollectionTypeT", bound=ArtifactType)
 
 class BinaryClassificationEngineBase(
     ClassificationEngine[
-        BinaryClassificationArtifactResources,
+        BinaryClassStore,
+        BinaryClassificationResults,
         BinaryClassSpecProtocol,
         ScoreTypeT,
         ArrayTypeT,
@@ -44,7 +49,7 @@ class BinaryClassificationEngineBase(
         PlotCollectionTypeT,
     ],
 ):
-    def produce_classification_score(
+    def produce_binary_classification_score(
         self,
         score_type: Union[ScoreTypeT, str],
         true: Mapping[IdentifierType, str],
@@ -59,7 +64,7 @@ class BinaryClassificationEngineBase(
         )
         return super().produce_score(score_type=score_type, resources=resources)
 
-    def produce_classification_array(
+    def produce_binary_classification_array(
         self,
         array_type: Union[ArrayTypeT, str],
         true: Mapping[IdentifierType, str],
@@ -74,7 +79,7 @@ class BinaryClassificationEngineBase(
         )
         return super().produce_array(array_type=array_type, resources=resources)
 
-    def produce_classification_plot(
+    def produce_binary_classification_plot(
         self,
         plot_type: Union[PlotTypeT, str],
         true: Mapping[IdentifierType, str],
@@ -89,7 +94,7 @@ class BinaryClassificationEngineBase(
         )
         return super().produce_plot(plot_type=plot_type, resources=resources)
 
-    def produce_classification_score_collection(
+    def produce_binary_classification_score_collection(
         self,
         score_collection_type: Union[ScoreCollectionTypeT, str],
         true: Mapping[IdentifierType, str],
@@ -106,7 +111,7 @@ class BinaryClassificationEngineBase(
             score_collection_type=score_collection_type, resources=resources
         )
 
-    def produce_classification_array_collection(
+    def produce_binary_classification_array_collection(
         self,
         array_collection_type: Union[ArrayCollectionTypeT, str],
         true: Mapping[IdentifierType, str],
@@ -123,7 +128,7 @@ class BinaryClassificationEngineBase(
             array_collection_type=array_collection_type, resources=resources
         )
 
-    def produce_classification_plot_collection(
+    def produce_binary_classification_plot_collection(
         self,
         plot_collection_type: Union[PlotCollectionTypeT, str],
         true: Mapping[IdentifierType, str],

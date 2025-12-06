@@ -65,18 +65,9 @@ class BinaryClassificationArtifactResources(
         return artifact_resources
 
     def serialize(self) -> Mapping[str, Any]:
-        true = self.true_class_store.id_to_class_name
-        true = {str(identifier): category for identifier, category in true.items()}
-        predicted = self.classification_results.id_to_predicted_class
-        predicted = {str(identifier): category for identifier, category in predicted.items()}
+        dict_artifact_resources = super().serialize()
         probs = self.classification_results.id_to_prob_pos
         probs = {str(identifier): prob for identifier, prob in probs.items()}
-        dict_artifact_resources = {
-            identifier: {
-                "true": true.get(identifier),
-                "predicted": predicted.get(identifier),
-                "prob_pos": probs.get(identifier),
-            }
-            for identifier in set(true) | set(predicted) | set(probs)
-        }
+        for identifier in dict_artifact_resources:
+            dict_artifact_resources[identifier]["prob_pos"] = probs.get(identifier)
         return dict_artifact_resources

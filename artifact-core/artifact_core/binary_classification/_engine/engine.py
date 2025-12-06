@@ -1,8 +1,6 @@
 from typing import Type
 
-from artifact_core.binary_classification._engine.base import (
-    BinaryClassificationEngineBase,
-)
+from artifact_core.binary_classification._engine.base import BinaryClassificationEngineBase
 from artifact_core.binary_classification._registries.array_collections import (
     BinaryClassificationArrayCollectionRegistry,
 )
