@@ -1,15 +1,12 @@
 from dataclasses import dataclass
 
 from artifact_core._base.core.hyperparams import ArtifactHyperparams
-from artifact_core._libs.resource_specs.classification.spec import ClassSpec
-from artifact_core._libs.resources.classification.class_store import ClassStore
-from artifact_core._libs.resources.classification.classification_results import (
-    ClassificationResults,
-)
 
 from tests._domains.classification.dummy.artifacts.base import DummyClassificationArtifact
-from tests._domains.classification.dummy.registries.scores import (
-    DummyClassificationScoreRegistry,
+from tests._domains.classification.dummy.registries.scores import DummyClassificationScoreRegistry
+from tests._domains.classification.dummy.resources import (
+    DummyClassificationResults,
+    DummyClassStore,
 )
 from tests._domains.classification.dummy.types.scores import DummyClassificationScoreType
 
@@ -28,14 +25,10 @@ class DummyClassificationScoreHyperparams(ArtifactHyperparams):
 class DummyClassificationScore(
     DummyClassificationArtifact[DummyClassificationScoreHyperparams, float]
 ):
-    def __init__(self, resource_spec: ClassSpec, hyperparams: DummyClassificationScoreHyperparams):
-        self._resource_spec = resource_spec
-        self._hyperparams = hyperparams
-
     def _evaluate_classification(
         self,
-        true_class_store: ClassStore,
-        classification_results: ClassificationResults,
+        true_class_store: DummyClassStore,
+        classification_results: DummyClassificationResults,
     ) -> float:
         correct = 0
         total = 0
@@ -45,10 +38,8 @@ class DummyClassificationScore(
             if true_idx == pred_idx:
                 correct += 1
             total += 1
-
         if total == 0:
             return 0.0
-
         accuracy = correct / total
         result = accuracy * self._hyperparams.weight
         return result
