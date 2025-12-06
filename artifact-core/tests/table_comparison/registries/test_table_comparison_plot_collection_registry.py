@@ -26,10 +26,7 @@ from artifact_core.table_comparison._registries.plot_collections import (
     [
         (TableComparisonPlotCollectionType.CDF, CDFPlots),
         (TableComparisonPlotCollectionType.PDF, PDFPlots),
-        (
-            TableComparisonPlotCollectionType.CORRELATION_HEATMAPS,
-            CorrelationHeatmaps,
-        ),
+        (TableComparisonPlotCollectionType.CORRELATION_HEATMAPS, CorrelationHeatmaps),
     ],
 )
 def test_get(

@@ -52,7 +52,6 @@ def test_compute(
     )
 
     result = artifact.compute(resources=resources)
-
     patch_get_combined_correlation_plot.assert_called_once_with(
         categorical_correlation_type=hyperparams.categorical_association_type,
         continuous_correlation_type=hyperparams.continuous_association_type,
@@ -60,7 +59,6 @@ def test_compute(
         dataset_synthetic=ANY,
         cat_features=resource_spec.cat_features,
     )
-
     _, kwargs = patch_get_combined_correlation_plot.call_args
     pd.testing.assert_frame_equal(kwargs["dataset_real"], df_real)
     pd.testing.assert_frame_equal(kwargs["dataset_synthetic"], df_synthetic)

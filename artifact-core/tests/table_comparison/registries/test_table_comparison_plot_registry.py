@@ -42,22 +42,13 @@ from artifact_core.table_comparison._registries.plots import (
     [
         (TableComparisonPlotType.PDF, PDFPlot),
         (TableComparisonPlotType.CDF, CDFPlot),
-        (
-            TableComparisonPlotType.DESCRIPTIVE_STATS_ALIGNMENT,
-            DescriptiveStatsAlignmentPlot,
-        ),
+        (TableComparisonPlotType.DESCRIPTIVE_STATS_ALIGNMENT, DescriptiveStatsAlignmentPlot),
         (TableComparisonPlotType.MEAN_ALIGNMENT, MeanAlignmentPlot),
         (TableComparisonPlotType.STD_ALIGNMENT, STDAlignmentPlot),
         (TableComparisonPlotType.VARIANCE_ALIGNMENT, VarianceAlignmentPlot),
         (TableComparisonPlotType.MEDIAN_ALIGNMENT, MedianAlignmentPlot),
-        (
-            TableComparisonPlotType.FIRST_QUARTILE_ALIGNMENT,
-            FirstQuartileAlignmentPlot,
-        ),
-        (
-            TableComparisonPlotType.THIRD_QUARTILE_ALIGNMENT,
-            ThirdQuartileAlignmentPlot,
-        ),
+        (TableComparisonPlotType.FIRST_QUARTILE_ALIGNMENT, FirstQuartileAlignmentPlot),
+        (TableComparisonPlotType.THIRD_QUARTILE_ALIGNMENT, ThirdQuartileAlignmentPlot),
         (TableComparisonPlotType.MIN_ALIGNMENT, MinAlignmentPlot),
         (TableComparisonPlotType.MAX_ALIGNMENT, MaxAlignmentPlot),
         (
@@ -65,10 +56,7 @@ from artifact_core.table_comparison._registries.plots import (
             CorrelationHeatmapJuxtapositionPlot,
         ),
         (TableComparisonPlotType.PCA_JUXTAPOSITION, PCAJuxtapositionPlot),
-        (
-            TableComparisonPlotType.TRUNCATED_SVD_JUXTAPOSITION,
-            TruncatedSVDJuxtapositionPlot,
-        ),
+        (TableComparisonPlotType.TRUNCATED_SVD_JUXTAPOSITION, TruncatedSVDJuxtapositionPlot),
         (TableComparisonPlotType.TSNE_JUXTAPOSITION, TSNEJuxtapositionPlot),
     ],
 )
