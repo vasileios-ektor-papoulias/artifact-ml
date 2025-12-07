@@ -1,4 +1,4 @@
-from typing import Generic, Mapping, Optional, Sequence, TypeVar
+from typing import Generic, Mapping, Optional, Sequence, Type, TypeVar
 
 from artifact_core._libs.resource_specs.classification.protocol import ClassSpecProtocol
 from artifact_core._utils.collections.entity_store import EntityStore, IdentifierType
@@ -17,6 +17,10 @@ class ClassStore(EntityStore[int], Generic[ClassSpecProtocolTCov]):
         self._class_spec = class_spec
         if id_to_class_idx is not None:
             self.set_multiple_idx(id_to_class_idx=id_to_class_idx)
+
+    @classmethod
+    def build_empty(cls: Type[ClassStoreT], class_spec: ClassSpecProtocol) -> ClassStoreT:
+        return cls(class_spec=class_spec)
 
     def __repr__(self) -> str:
         return (
