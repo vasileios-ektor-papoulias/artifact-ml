@@ -137,9 +137,8 @@ def test_equality(
 
 
 @pytest.mark.unit
-def test_equality_with_non_binaryclassspec():
-    spec = BinaryClassSpec(class_names=["A", "B"], positive_class="A")
-    assert spec.__eq__("not a BinaryClassSpec") == NotImplemented
+def test_equality_with_non_binaryclassspec(binary_class_spec: BinaryClassSpec):
+    assert binary_class_spec.__eq__("not a BinaryClassSpec") == NotImplemented
 
 
 @pytest.mark.unit
@@ -182,19 +181,25 @@ def test_to_dict_from_dict_roundtrip(class_names: List[str], positive_class: str
 
 
 @pytest.mark.unit
-def test_repr():
-    spec = BinaryClassSpec(class_names=["neg", "pos"], positive_class="pos", label_name="target")
-    repr_str = repr(spec)
+def test_repr(
+    binary_class_spec: BinaryClassSpec,
+    label_name: str,
+    positive_class: str,
+    class_names: List[str],
+):
+    repr_str = repr(binary_class_spec)
     assert "BinaryClassSpec" in repr_str
-    assert "target" in repr_str
-    assert "pos" in repr_str
-    assert "neg" in repr_str
+    assert label_name in repr_str
+    assert positive_class in repr_str
+    negative_class = [c for c in class_names if c != positive_class][0]
+    assert negative_class in repr_str
 
 
 @pytest.mark.unit
-def test_inherits_classspec_methods():
-    spec = BinaryClassSpec(class_names=["A", "B"], positive_class="A")
-    assert spec.has_class("A") is True
-    assert spec.has_class("C") is False
-    assert spec.get_class_idx("A") == 0
-    assert spec.get_class_idx("B") == 1
+def test_inherits_classspec_methods(
+    binary_class_spec: BinaryClassSpec, class_names: List[str]
+):
+    assert binary_class_spec.has_class(class_names[0]) is True
+    assert binary_class_spec.has_class("nonexistent") is False
+    assert binary_class_spec.get_class_idx(class_names[0]) == 0
+    assert binary_class_spec.get_class_idx(class_names[1]) == 1
