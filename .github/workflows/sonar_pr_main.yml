@@ -49,6 +49,13 @@ jobs:
           cd "$COMPONENT"
           poetry install --with dev
 
+      - name: Run Tests with Coverage
+        run: |
+          cd "$COMPONENT"
+          # Convert artifact-core → artifact_core for Python package name
+          PACKAGE_NAME="${COMPONENT//-/_}"
+          poetry run pytest --cov="$PACKAGE_NAME" --cov-report=xml:coverage.xml
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5
         with:
