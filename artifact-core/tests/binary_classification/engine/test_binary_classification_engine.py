@@ -184,8 +184,10 @@ def test_produce_score(
         classification_results=classification_results,
     )
 
-    spy_get = mocker.spy(BinaryClassificationScoreRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationScoreRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_score(score_type=artifact_type, resources=resources)
 
@@ -207,8 +209,10 @@ def test_produce_classification_score(
     fake_result = 0.85
     engine = BinaryClassificationEngine.build(resource_spec=resource_spec)
 
-    spy_get = mocker.spy(BinaryClassificationScoreRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationScoreRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_classification_score(
         score_type=artifact_type,
@@ -235,8 +239,10 @@ def test_produce_binary_classification_score(
     fake_result = 0.85
     engine = BinaryClassificationEngine.build(resource_spec=resource_spec)
 
-    spy_get = mocker.spy(BinaryClassificationScoreRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationScoreRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_binary_classification_score(
         score_type=artifact_type,
@@ -272,8 +278,10 @@ def test_produce_array(
         classification_results=classification_results,
     )
 
-    spy_get = mocker.spy(BinaryClassificationArrayRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationArrayRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_array(array_type=artifact_type, resources=resources)
 
@@ -295,8 +303,10 @@ def test_produce_classification_array(
     fake_result = np.array([[1, 0], [0, 1]])
     engine = BinaryClassificationEngine.build(resource_spec=resource_spec)
 
-    spy_get = mocker.spy(BinaryClassificationArrayRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationArrayRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_classification_array(
         array_type=artifact_type,
@@ -323,8 +333,10 @@ def test_produce_binary_classification_array(
     fake_result = np.array([[1, 0], [0, 1]])
     engine = BinaryClassificationEngine.build(resource_spec=resource_spec)
 
-    spy_get = mocker.spy(BinaryClassificationArrayRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationArrayRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_binary_classification_array(
         array_type=artifact_type,
@@ -367,8 +379,10 @@ def test_produce_plot(
         classification_results=classification_results,
     )
 
-    spy_get = mocker.spy(BinaryClassificationPlotRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationPlotRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_plot(plot_type=artifact_type, resources=resources)
 
@@ -390,8 +404,10 @@ def test_produce_classification_plot(
     fake_result = Figure()
     engine = BinaryClassificationEngine.build(resource_spec=resource_spec)
 
-    spy_get = mocker.spy(BinaryClassificationPlotRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationPlotRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_classification_plot(
         plot_type=artifact_type,
@@ -418,8 +434,10 @@ def test_produce_binary_classification_plot(
     fake_result = Figure()
     engine = BinaryClassificationEngine.build(resource_spec=resource_spec)
 
-    spy_get = mocker.spy(BinaryClassificationPlotRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationPlotRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_binary_classification_plot(
         plot_type=artifact_type,
@@ -487,8 +505,10 @@ def test_produce_score_collection(
         classification_results=classification_results,
     )
 
-    spy_get = mocker.spy(BinaryClassificationScoreCollectionRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationScoreCollectionRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_score_collection(
         score_collection_type=artifact_type, resources=resources
@@ -512,8 +532,10 @@ def test_produce_classification_score_collection(
     fake_result: Any = {"tp": 0.5, "tn": 0.3}
     engine = BinaryClassificationEngine.build(resource_spec=resource_spec)
 
-    spy_get = mocker.spy(BinaryClassificationScoreCollectionRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationScoreCollectionRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_classification_score_collection(
         score_collection_type=artifact_type,
@@ -540,8 +562,10 @@ def test_produce_binary_classification_score_collection(
     fake_result: Any = {"tp": 0.5, "tn": 0.3}
     engine = BinaryClassificationEngine.build(resource_spec=resource_spec)
 
-    spy_get = mocker.spy(BinaryClassificationScoreCollectionRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationScoreCollectionRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_binary_classification_score_collection(
         score_collection_type=artifact_type,
@@ -580,8 +604,10 @@ def test_produce_array_collection(
         classification_results=classification_results,
     )
 
-    spy_get = mocker.spy(BinaryClassificationArrayCollectionRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationArrayCollectionRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_array_collection(
         array_collection_type=artifact_type, resources=resources
@@ -606,8 +632,10 @@ def test_produce_classification_array_collection(
     fake_result: Any = {"all": np.array([[1, 0], [0, 1]])}
     engine = BinaryClassificationEngine.build(resource_spec=resource_spec)
 
-    spy_get = mocker.spy(BinaryClassificationArrayCollectionRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationArrayCollectionRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_classification_array_collection(
         array_collection_type=artifact_type,
@@ -635,8 +663,10 @@ def test_produce_binary_classification_array_collection(
     fake_result: Any = {"all": np.array([[1, 0], [0, 1]])}
     engine = BinaryClassificationEngine.build(resource_spec=resource_spec)
 
-    spy_get = mocker.spy(BinaryClassificationArrayCollectionRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationArrayCollectionRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_binary_classification_array_collection(
         array_collection_type=artifact_type,
@@ -681,8 +711,10 @@ def test_produce_plot_collection(
         classification_results=classification_results,
     )
 
-    spy_get = mocker.spy(BinaryClassificationPlotCollectionRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationPlotCollectionRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_plot_collection(plot_collection_type=artifact_type, resources=resources)
 
@@ -704,8 +736,10 @@ def test_produce_classification_plot_collection(
     fake_result: Any = {"all": Figure()}
     engine = BinaryClassificationEngine.build(resource_spec=resource_spec)
 
-    spy_get = mocker.spy(BinaryClassificationPlotCollectionRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationPlotCollectionRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_classification_plot_collection(
         plot_collection_type=artifact_type,
@@ -732,8 +766,10 @@ def test_produce_binary_classification_plot_collection(
     fake_result: Any = {"all": Figure()}
     engine = BinaryClassificationEngine.build(resource_spec=resource_spec)
 
-    spy_get = mocker.spy(BinaryClassificationPlotCollectionRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=BinaryClassificationPlotCollectionRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
 
     result = engine.produce_binary_classification_plot_collection(
         plot_collection_type=artifact_type,

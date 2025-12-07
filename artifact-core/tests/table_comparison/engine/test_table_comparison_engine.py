@@ -139,8 +139,10 @@ def test_produce_score(
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
-    spy_get = mocker.spy(TableComparisonScoreRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=TableComparisonScoreRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
     result = engine.produce_score(score_type=artifact_type, resources=resources)
     spy_get.assert_called_once_with(artifact_type=artifact_type, resource_spec=resource_spec)
     spy_compute.assert_called_once_with(resources=resources)
@@ -159,8 +161,10 @@ def test_produce_dataset_comparison_score(
     fake_result: Any,
 ):
     engine = TableComparisonEngine.build(resource_spec=resource_spec)
-    spy_get = mocker.spy(TableComparisonScoreRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=TableComparisonScoreRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
     result = engine.produce_dataset_comparison_score(
         score_type=artifact_type,
         dataset_real=df_real,
@@ -191,8 +195,10 @@ def test_produce_array(
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
-    spy_get = mocker.spy(TableComparisonArrayRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=TableComparisonArrayRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
     result = engine.produce_array(array_type=artifact_type, resources=resources)
     spy_get.assert_called_once_with(artifact_type=artifact_type, resource_spec=resource_spec)
     spy_compute.assert_called_once_with(resources=resources)
@@ -211,8 +217,10 @@ def test_produce_dataset_comparison_array(
     fake_result: Any,
 ):
     engine = TableComparisonEngine.build(resource_spec=resource_spec)
-    spy_get = mocker.spy(TableComparisonArrayRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=TableComparisonArrayRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
     result = engine.produce_dataset_comparison_array(
         array_type=artifact_type,
         dataset_real=df_real,
@@ -243,8 +251,10 @@ def test_produce_plot(
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
-    spy_get = mocker.spy(TableComparisonPlotRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_figure)
+    spy_get = mocker.spy(obj=TableComparisonPlotRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_figure
+    )
     result = engine.produce_plot(plot_type=artifact_type, resources=resources)
     spy_get.assert_called_once_with(artifact_type=artifact_type, resource_spec=resource_spec)
     spy_compute.assert_called_once_with(resources=resources)
@@ -263,8 +273,10 @@ def test_produce_dataset_comparison_plot(
     artifact_class: Type[TableComparisonArtifact[Any, Any]],
 ):
     engine = TableComparisonEngine.build(resource_spec=resource_spec)
-    spy_get = mocker.spy(TableComparisonPlotRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_figure)
+    spy_get = mocker.spy(obj=TableComparisonPlotRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_figure
+    )
     result = engine.produce_dataset_comparison_plot(
         plot_type=artifact_type,
         dataset_real=df_real,
@@ -291,8 +303,10 @@ def test_produce_score_collection(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
 
-    spy_get = mocker.spy(TableComparisonScoreCollectionRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=TableComparisonScoreCollectionRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
     result = engine.produce_score_collection(
         score_collection_type=artifact_type, resources=resources
     )
@@ -314,8 +328,10 @@ def test_produce_dataset_comparison_score_collection(
 ):
     engine = TableComparisonEngine.build(resource_spec=resource_spec)
 
-    spy_get = mocker.spy(TableComparisonScoreCollectionRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_result)
+    spy_get = mocker.spy(obj=TableComparisonScoreCollectionRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_result
+    )
     result = engine.produce_dataset_comparison_score_collection(
         score_collection_type=artifact_type,
         dataset_real=df_real,
@@ -347,8 +363,10 @@ def test_produce_array_collection(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
 
-    spy_get = mocker.spy(TableComparisonArrayCollectionRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_array_collection)
+    spy_get = mocker.spy(obj=TableComparisonArrayCollectionRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_array_collection
+    )
     result = engine.produce_array_collection(
         array_collection_type=artifact_type, resources=resources
     )
@@ -371,8 +389,10 @@ def test_produce_dataset_comparison_array_collection(
 ):
     engine = TableComparisonEngine.build(resource_spec=resource_spec)
 
-    spy_get = mocker.spy(TableComparisonArrayCollectionRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_array_collection)
+    spy_get = mocker.spy(obj=TableComparisonArrayCollectionRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_array_collection
+    )
 
     result = engine.produce_dataset_comparison_array_collection(
         array_collection_type=artifact_type,
@@ -406,8 +426,10 @@ def test_produce_plot_collection(
     resources = DatasetComparisonArtifactResources(
         dataset_real=df_real, dataset_synthetic=df_synthetic
     )
-    spy_get = mocker.spy(TableComparisonPlotCollectionRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_plot_collection)
+    spy_get = mocker.spy(obj=TableComparisonPlotCollectionRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_plot_collection
+    )
     result = engine.produce_plot_collection(plot_collection_type=artifact_type, resources=resources)
     spy_get.assert_called_once_with(artifact_type=artifact_type, resource_spec=resource_spec)
     spy_compute.assert_called_once_with(resources=resources)
@@ -426,8 +448,10 @@ def test_produce_dataset_comparison_plot_collection(
     artifact_class: Type[TableComparisonArtifact[Any, Any]],
 ):
     engine = TableComparisonEngine.build(resource_spec=resource_spec)
-    spy_get = mocker.spy(TableComparisonPlotCollectionRegistry, "get")
-    spy_compute = mocker.patch.object(artifact_class, "compute", return_value=fake_plot_collection)
+    spy_get = mocker.spy(obj=TableComparisonPlotCollectionRegistry, name="get")
+    spy_compute = mocker.patch.object(
+        target=artifact_class, attribute="compute", return_value=fake_plot_collection
+    )
     result = engine.produce_dataset_comparison_plot_collection(
         plot_collection_type=artifact_type,
         dataset_real=df_real,
