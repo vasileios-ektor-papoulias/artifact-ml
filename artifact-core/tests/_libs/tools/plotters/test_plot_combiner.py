@@ -3,23 +3,7 @@ from typing import Callable, Optional
 import matplotlib.pyplot as plt
 import pytest
 from artifact_core._base.typing.artifact_result import PlotCollection
-from artifact_core._libs.tools.plotters.plot_combiner import (
-    PlotCombinationConfig,
-    PlotCombiner,
-)
-
-
-@pytest.fixture
-def set_agg_backend():
-    import matplotlib
-
-    matplotlib.use("Agg")
-
-
-@pytest.fixture
-def close_all_figs_after_test():
-    yield
-    plt.close("all")
+from artifact_core._libs.tools.plotters.plot_combiner import PlotCombinationConfig, PlotCombiner
 
 
 @pytest.fixture
