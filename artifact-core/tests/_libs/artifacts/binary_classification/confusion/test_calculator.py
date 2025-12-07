@@ -1,4 +1,4 @@
-from typing import Dict, Hashable, List
+from typing import List
 
 import numpy as np
 import pytest
@@ -15,48 +15,52 @@ from artifact_core._libs.artifacts.binary_classification.confusion.raw import (
 )
 from pytest_mock import MockerFixture
 
+from tests._libs.artifacts.binary_classification.conftest import BinaryDataTuple
+
 
 @pytest.mark.unit
 @pytest.mark.parametrize(
-    "true, predicted, normalization, expected_matrix",
+    "binary_data_dispatcher, normalization, expected_matrix",
     [
         (
-            {0: True, 1: False},
-            {0: True, 1: False},
+            "binary_data_perfect_small",
             ConfusionMatrixNormalizationStrategy.NONE,
             [[1.0, 0.0], [0.0, 1.0]],
         ),
         (
-            {0: True, 1: False},
-            {0: True, 1: False},
+            "binary_data_perfect_small",
             ConfusionMatrixNormalizationStrategy.TRUE,
             [[1.0, 0.0], [0.0, 1.0]],
         ),
         (
-            {0: True, 1: False},
-            {0: True, 1: False},
+            "binary_data_perfect_small",
             ConfusionMatrixNormalizationStrategy.ALL,
             [[0.5, 0.0], [0.0, 0.5]],
         ),
         (
-            {0: True, 1: True, 2: False, 3: False},
-            {0: True, 1: False, 2: True, 3: False},
+            "binary_data_mixed_equal",
             ConfusionMatrixNormalizationStrategy.ALL,
             [[0.25, 0.25], [0.25, 0.25]],
         ),
+        (
+            "binary_data_perfect",
+            ConfusionMatrixNormalizationStrategy.TRUE,
+            [[1.0, 0.0], [0.0, 1.0]],
+        ),
     ],
+    indirect=["binary_data_dispatcher"],
 )
 def test_compute_normalized_confusion_matrix(
     mocker: MockerFixture,
-    true: Dict[Hashable, bool],
-    predicted: Dict[Hashable, bool],
+    binary_data_dispatcher: BinaryDataTuple,
     normalization: ConfusionMatrixNormalizationStrategy,
     expected_matrix: List[List[float]],
 ):
+    id_to_is_pos, id_to_pred_pos, _ = binary_data_dispatcher
     spy_raw = mocker.spy(obj=RawConfusionCalculator, name="_compute_confusion_matrix")
     spy_normalizer = mocker.spy(obj=ConfusionMatrixNormalizer, name="normalize_cm")
     result = NormalizedConfusionCalculator.compute_normalized_confusion_matrix(
-        true=true, predicted=predicted, normalization=normalization
+        true=id_to_is_pos, predicted=id_to_pred_pos, normalization=normalization
     )
     np.testing.assert_array_almost_equal(result, expected_matrix)
     spy_raw.assert_called_once()
@@ -66,38 +70,28 @@ def test_compute_normalized_confusion_matrix(
 
 @pytest.mark.unit
 @pytest.mark.parametrize(
-    "true, predicted, normalization_types, expected_count",
+    "binary_data_dispatcher, normalization_types, expected_count",
     [
+        ("binary_data_perfect_small", [ConfusionMatrixNormalizationStrategy.TRUE], 1),
         (
-            {0: True, 1: False},
-            {0: True, 1: False},
-            [ConfusionMatrixNormalizationStrategy.TRUE],
-            1,
-        ),
-        (
-            {0: True, 1: False, 2: True},
-            {0: True, 1: False, 2: False},
+            "binary_data_mixed_equal",
             [ConfusionMatrixNormalizationStrategy.TRUE, ConfusionMatrixNormalizationStrategy.PRED],
             2,
         ),
-        (
-            {0: True, 1: False},
-            {0: True, 1: False},
-            list(ConfusionMatrixNormalizationStrategy),
-            4,
-        ),
+        ("binary_data_perfect_small", list(ConfusionMatrixNormalizationStrategy), 4),
     ],
+    indirect=["binary_data_dispatcher"],
 )
 def test_compute_confusion_matrix_multiple_normalizations(
     mocker: MockerFixture,
-    true: Dict[Hashable, bool],
-    predicted: Dict[Hashable, bool],
+    binary_data_dispatcher: BinaryDataTuple,
     normalization_types: List[ConfusionMatrixNormalizationStrategy],
     expected_count: int,
 ):
+    id_to_is_pos, id_to_pred_pos, _ = binary_data_dispatcher
     spy_normalizer = mocker.spy(obj=ConfusionMatrixNormalizer, name="normalize_cm")
     result = NormalizedConfusionCalculator.compute_confusion_matrix_multiple_normalizations(
-        true=true, predicted=predicted, normalization_types=normalization_types
+        true=id_to_is_pos, predicted=id_to_pred_pos, normalization_types=normalization_types
     )
     assert len(result) == expected_count
     assert set(result.keys()) == set(normalization_types)
@@ -106,49 +100,55 @@ def test_compute_confusion_matrix_multiple_normalizations(
 
 @pytest.mark.unit
 @pytest.mark.parametrize(
-    "true, predicted, cell, normalization, expected",
+    "binary_data_dispatcher, cell, normalization, expected",
     [
         (
-            {0: True, 1: False},
-            {0: True, 1: False},
+            "binary_data_perfect_small",
             ConfusionMatrixCell.TRUE_POSITIVE,
             ConfusionMatrixNormalizationStrategy.TRUE,
             1.0,
         ),
         (
-            {0: True, 1: False},
-            {0: True, 1: False},
+            "binary_data_perfect_small",
             ConfusionMatrixCell.TRUE_NEGATIVE,
             ConfusionMatrixNormalizationStrategy.TRUE,
             1.0,
         ),
         (
-            {0: True, 1: False},
-            {0: True, 1: False},
+            "binary_data_perfect_small",
             ConfusionMatrixCell.TRUE_POSITIVE,
             ConfusionMatrixNormalizationStrategy.ALL,
             0.5,
         ),
         (
-            {0: True, 1: True, 2: False, 3: False},
-            {0: True, 1: False, 2: True, 3: False},
+            "binary_data_mixed_equal",
             ConfusionMatrixCell.FALSE_POSITIVE,
             ConfusionMatrixNormalizationStrategy.ALL,
             0.25,
         ),
+        (
+            "binary_data_mixed_equal",
+            ConfusionMatrixCell.TRUE_POSITIVE,
+            ConfusionMatrixNormalizationStrategy.ALL,
+            0.25,
+        ),
     ],
+    indirect=["binary_data_dispatcher"],
 )
 def test_compute_normalized_confusion_count(
     mocker: MockerFixture,
-    true: Dict[Hashable, bool],
-    predicted: Dict[Hashable, bool],
+    binary_data_dispatcher: BinaryDataTuple,
     cell: ConfusionMatrixCell,
     normalization: ConfusionMatrixNormalizationStrategy,
     expected: float,
 ):
+    id_to_is_pos, id_to_pred_pos, _ = binary_data_dispatcher
     spy_normalizer = mocker.spy(obj=ConfusionMatrixNormalizer, name="normalize_cm")
     result = NormalizedConfusionCalculator.compute_normalized_confusion_count(
-        confusion_matrix_cell=cell, true=true, predicted=predicted, normalization=normalization
+        confusion_matrix_cell=cell,
+        true=id_to_is_pos,
+        predicted=id_to_pred_pos,
+        normalization=normalization,
     )
     assert result == pytest.approx(expected=expected)
     spy_normalizer.assert_called_once()
@@ -156,32 +156,24 @@ def test_compute_normalized_confusion_count(
 
 @pytest.mark.unit
 @pytest.mark.parametrize(
-    "true, predicted, normalization, expected_total",
+    "binary_data_dispatcher, normalization, expected_total",
     [
-        (
-            {0: True, 1: False},
-            {0: True, 1: False},
-            ConfusionMatrixNormalizationStrategy.ALL,
-            1.0,
-        ),
-        (
-            {0: True, 1: True, 2: False, 3: False},
-            {0: True, 1: False, 2: True, 3: False},
-            ConfusionMatrixNormalizationStrategy.ALL,
-            1.0,
-        ),
+        ("binary_data_perfect_small", ConfusionMatrixNormalizationStrategy.ALL, 1.0),
+        ("binary_data_mixed_equal", ConfusionMatrixNormalizationStrategy.ALL, 1.0),
+        ("binary_data_perfect", ConfusionMatrixNormalizationStrategy.ALL, 1.0),
     ],
+    indirect=["binary_data_dispatcher"],
 )
 def test_compute_dict_normalized_confusion_counts(
     mocker: MockerFixture,
-    true: Dict[Hashable, bool],
-    predicted: Dict[Hashable, bool],
+    binary_data_dispatcher: BinaryDataTuple,
     normalization: ConfusionMatrixNormalizationStrategy,
     expected_total: float,
 ):
+    id_to_is_pos, id_to_pred_pos, _ = binary_data_dispatcher
     spy_normalizer = mocker.spy(obj=ConfusionMatrixNormalizer, name="normalize_cm")
     result = NormalizedConfusionCalculator.compute_dict_normalized_confusion_counts(
-        true=true, predicted=predicted, normalization=normalization
+        true=id_to_is_pos, predicted=id_to_pred_pos, normalization=normalization
     )
     assert set(result.keys()) == set(ConfusionMatrixCell)
     assert sum(result.values()) == pytest.approx(expected=expected_total)
