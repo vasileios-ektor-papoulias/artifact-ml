@@ -76,11 +76,11 @@ class RawConfusionCalculator:
             raise ValueError(f"Unsupported confusion matrix cell: {confusion_matrix_cell}")
 
     @staticmethod
-    def _get_counts_from_matrix(arr_cm: Array) -> Tuple[int, int, int, int]:
-        tp = int(arr_cm[0, 0])
-        fn = int(arr_cm[0, 1])
-        fp = int(arr_cm[1, 0])
-        tn = int(arr_cm[1, 1])
+    def _get_counts_from_matrix(arr_cm: Array) -> Tuple[float, float, float, float]:
+        tp = float(arr_cm[0, 0])
+        fn = float(arr_cm[0, 1])
+        fp = float(arr_cm[1, 0])
+        tn = float(arr_cm[1, 1])
         return tp, fp, tn, fn
 
     @classmethod
