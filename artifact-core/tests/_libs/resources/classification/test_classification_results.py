@@ -4,12 +4,10 @@ import numpy as np
 import pytest
 from artifact_core._libs.resource_specs.classification.spec import ClassSpec
 from artifact_core._libs.resources.classification.class_store import ClassStore
-from artifact_core._libs.resources.classification.classification_results import (  # noqa: E501
+from artifact_core._libs.resources.classification.classification_results import (
     ClassificationResults,
 )
-from artifact_core._libs.resources.classification.distribution_store import (
-    ClassDistributionStore,
-)
+from artifact_core._libs.resources.classification.distribution_store import ClassDistributionStore
 from artifact_core._utils.collections.entity_store import IdentifierType
 
 
@@ -46,9 +44,7 @@ def test_init(class_names: List[str], label_name: str):
     spec = ClassSpec(class_names=class_names, label_name=label_name)
     pred_store = ClassStore(class_spec=spec)
     distn_store = ClassDistributionStore(class_spec=spec)
-    results = ClassificationResults(
-        class_spec=spec, pred_store=pred_store, distn_store=distn_store
-    )
+    results = ClassificationResults(class_spec=spec, pred_store=pred_store, distn_store=distn_store)
     assert results.n_items == 0
     assert results.label_name == label_name
     assert list(results.class_names) == class_names
@@ -221,9 +217,7 @@ def test_id_to_logits_and_probs(
     logits: List[float],
 ):
     arr_logits = np.array(logits)
-    classification_results.set_single(
-        identifier=identifier, predicted_class="A", logits=arr_logits
-    )
+    classification_results.set_single(identifier=identifier, predicted_class="A", logits=arr_logits)
 
     id_to_logits = classification_results.id_to_logits
     assert identifier in id_to_logits
@@ -264,9 +258,7 @@ def test_pred_store_and_distn_store(class_names: List[str], label_name: str):
     spec = ClassSpec(class_names=class_names, label_name=label_name)
     pred_store = ClassStore(class_spec=spec)
     distn_store = ClassDistributionStore(class_spec=spec)
-    results = ClassificationResults(
-        class_spec=spec, pred_store=pred_store, distn_store=distn_store
-    )
+    results = ClassificationResults(class_spec=spec, pred_store=pred_store, distn_store=distn_store)
     assert results.pred_store is not None
     assert results.distn_store is not None
     assert results.pred_store == pred_store
