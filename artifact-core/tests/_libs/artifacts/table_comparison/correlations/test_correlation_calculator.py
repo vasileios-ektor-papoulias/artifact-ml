@@ -3,14 +3,16 @@ from typing import List, Optional, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core._libs.artifacts.table_comparison.correlations.calculator import (
+from artifact_core._libs.artifacts.table_comparison.correlations.calculator import (  # noqa: E501
     CategoricalAssociationType,
     ContinuousAssociationType,
     CorrelationCalculator,
 )
 from artifact_core._libs.tools.calculators.vector_distance_calculator import (
+    VectorDistanceCalculator,
     VectorDistanceMetric,
 )
+from pytest_mock import MockerFixture
 
 
 @pytest.mark.unit
@@ -48,9 +50,7 @@ def test_compute_df_correlations(
     )
 
     assert result.shape == expected_shape
-    assert (result.values >= 0).all() and (result.values <= 1).all(), (
-        "Correlation values must be between 0 and 1"
-    )
+    assert (result.values >= 0).all() and (result.values <= 1).all()
 
 
 @pytest.mark.unit
@@ -92,14 +92,13 @@ def test_compute_df_correlation_difference(
     )
 
     assert result.shape == expected_shape
-    assert (result.values >= 0).all() and (result.values <= 1).all(), (
-        "Difference values must be between 0 and 1"
-    )
+    assert (result.values >= 0).all() and (result.values <= 1).all()
 
 
 @pytest.mark.unit
 @pytest.mark.parametrize(
-    "df_real, df_synthetic, cat_features, cat_corr, cont_corr, distance_metric, expected_distance",
+    "df_real, df_synthetic, cat_features, cat_corr, cont_corr, "
+    "distance_metric, expected_distance",
     [
         (
             pd.DataFrame({"x": [1, 2, 3]}),
@@ -122,6 +121,7 @@ def test_compute_df_correlation_difference(
     ],
 )
 def test_compute_correlation_distance(
+    mocker: MockerFixture,
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
     cat_features: List[str],
@@ -130,6 +130,8 @@ def test_compute_correlation_distance(
     distance_metric: VectorDistanceMetric,
     expected_distance: Optional[float],
 ):
+    spy = mocker.spy(obj=VectorDistanceCalculator, name="compute")
+
     result = CorrelationCalculator.compute_correlation_distance(
         categorical_correlation_type=cat_corr,
         continuous_correlation_type=cont_corr,
@@ -138,9 +140,11 @@ def test_compute_correlation_distance(
         dataset_synthetic=df_synthetic,
         cat_features=cat_features,
     )
+
+    spy.assert_called_once()
+    assert spy.call_args.kwargs["metric"] == distance_metric
+
     if expected_distance is not None:
-        assert isclose(result, expected_distance, rel_tol=1e-7), (
-            f"Expected distance {expected_distance}, got {result}"
-        )
+        assert isclose(result, expected_distance, rel_tol=1e-7)
     else:
-        assert result > 0, f"Expected positive distance, got {result}"
+        assert result > 0
