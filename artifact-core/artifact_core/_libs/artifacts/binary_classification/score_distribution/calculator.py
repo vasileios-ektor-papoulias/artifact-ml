@@ -56,9 +56,9 @@ class ScoreStatsCalculator:
         )
         dict_result: Dict[DescriptiveStatistic, Dict[BinarySampleSplit, float]] = {}
         for stat in stats:
-            sr_stats_by_split = df[stat.name].astype(float)
+            sr_stats_by_split = df.loc[stat.name].astype(float)
             dict_stat_by_split = {
-                split: float(sr_stats_by_split.loc[split.name]) for split in splits
+                split: float(sr_stats_by_split.at[split.name]) for split in splits
             }
             dict_result[stat] = dict_stat_by_split
         return dict_result

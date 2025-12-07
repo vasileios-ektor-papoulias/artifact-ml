@@ -1,14 +1,15 @@
 import pandas as pd
-from artifact_core._base.primitives import NO_ARTIFACT_HYPERPARAMS, NoArtifactHyperparams
-from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
-from artifact_core._libs.resources_validation.tabular.table_validator import TableValidator
+from artifact_core._base.core.hyperparams import NO_ARTIFACT_HYPERPARAMS, NoArtifactHyperparams
+from artifact_core._base.typing.artifact_result import Score
+from artifact_core._libs.resource_specs.table_comparison.protocol import TabularDataSpecProtocol
+from artifact_core._libs.validation.table_comparison.table_validator import TableValidator
 from artifact_core.table_comparison._artifacts.base import (
     TableComparisonArtifact,
 )
 from pytest_mock import MockerFixture
 
 
-class DummyTableComparisonArtifact(TableComparisonArtifact[float, NoArtifactHyperparams]):
+class DummyTableComparisonArtifact(TableComparisonArtifact[NoArtifactHyperparams, Score]):
     def _compare_datasets(
         self, dataset_real: pd.DataFrame, dataset_synthetic: pd.DataFrame
     ) -> float:
@@ -34,20 +35,20 @@ def test_resource_validation(
     )
     expected_features = [
         feature
-        for feature in resource_spec.ls_features
-        if feature in resource_spec.ls_cat_features or feature in resource_spec.ls_cts_features
+        for feature in resource_spec.features
+        if feature in resource_spec.cat_features or feature in resource_spec.cts_features
     ]
     assert patch_validate.call_count == 2
     first_call_args = patch_validate.call_args_list[0][1]
     pd.testing.assert_frame_equal(first_call_args["df"], df_real)
     assert first_call_args["ls_features"] == expected_features
-    assert first_call_args["ls_cat_features"] == resource_spec.ls_cat_features
-    assert first_call_args["ls_cts_features"] == resource_spec.ls_cts_features
+    assert first_call_args["ls_cat_features"] == resource_spec.cat_features
+    assert first_call_args["ls_cts_features"] == resource_spec.cts_features
     second_call_args = patch_validate.call_args_list[1][1]
     pd.testing.assert_frame_equal(second_call_args["df"], df_synthetic)
     assert second_call_args["ls_features"] == expected_features
-    assert second_call_args["ls_cat_features"] == resource_spec.ls_cat_features
-    assert second_call_args["ls_cts_features"] == resource_spec.ls_cts_features
+    assert second_call_args["ls_cat_features"] == resource_spec.cat_features
+    assert second_call_args["ls_cts_features"] == resource_spec.cts_features
     assert real_validated is not None
     assert synthetic_validated is not None
     assert isinstance(real_validated, pd.DataFrame)

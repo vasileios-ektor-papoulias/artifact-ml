@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, Generic, Iterable, Mapping, Optional, Sequence, TypeVar
+from typing import Dict, Generic, Iterable, Mapping, Optional, Sequence, Type, TypeVar
 
 from artifact_core._base.typing.artifact_result import Array
 from artifact_core._libs.resource_specs.classification.protocol import ClassSpecProtocol
@@ -7,11 +7,10 @@ from artifact_core._libs.resources.classification.class_store import ClassStore
 from artifact_core._libs.resources.classification.distribution_store import ClassDistributionStore
 from artifact_core._utils.collections.entity_store import IdentifierType
 
-ClassSpecProtocolTCov = TypeVar("ClassSpecProtocolTCov", bound=ClassSpecProtocol, covariant=True)
-ClassStoreTCov = TypeVar("ClassStoreTCov", bound=ClassStore, covariant=True)
-ClassDistributionStoreTCov = TypeVar(
-    "ClassDistributionStoreTCov", bound=ClassDistributionStore, covariant=True
-)
+ClassSpecProtocolT = TypeVar("ClassSpecProtocolT", bound=ClassSpecProtocol)
+ClassStoreT = TypeVar("ClassStoreT", bound=ClassStore)
+ClassDistributionStoreT = TypeVar("ClassDistributionStoreT", bound=ClassDistributionStore)
+ClassificationResultsT = TypeVar("ClassificationResultsT", bound="ClassificationResults")
 
 
 class DistributionInferenceType(Enum):
@@ -19,20 +18,26 @@ class DistributionInferenceType(Enum):
     CONCENTRATED = "CONCENTRATED"
 
 
-class ClassificationResults(
-    Generic[ClassSpecProtocolTCov, ClassStoreTCov, ClassDistributionStoreTCov]
-):
+class ClassificationResults(Generic[ClassSpecProtocolT, ClassStoreT, ClassDistributionStoreT]):
     _distn_inference_type = DistributionInferenceType.CONCENTRATED
 
     def __init__(
         self,
-        class_spec: ClassSpecProtocolTCov,
-        pred_store: ClassStoreTCov,
-        distn_store: ClassDistributionStoreTCov,
+        class_spec: ClassSpecProtocolT,
+        pred_store: ClassStoreT,
+        distn_store: ClassDistributionStoreT,
     ):
         self._class_spec = class_spec
         self._pred_store = pred_store
         self._distn_store = distn_store
+
+    @classmethod
+    def build_empty(
+        cls: Type[ClassificationResultsT], class_spec: ClassSpecProtocolT
+    ) -> ClassificationResultsT:
+        pred_store = ClassStore.build_empty(class_spec=class_spec)
+        distn_store = ClassDistributionStore.build_empty(class_spec=class_spec)
+        return cls(class_spec=class_spec, pred_store=pred_store, distn_store=distn_store)
 
     def __len__(self) -> int:
         return self.n_items
@@ -44,15 +49,15 @@ class ClassificationResults(
         )
 
     @property
-    def class_spec(self) -> ClassSpecProtocolTCov:
+    def class_spec(self) -> ClassSpecProtocolT:
         return self._class_spec
 
     @property
-    def pred_store(self) -> ClassStoreTCov:
+    def pred_store(self) -> ClassStoreT:
         return self._pred_store
 
     @property
-    def distn_store(self) -> ClassDistributionStoreTCov:
+    def distn_store(self) -> ClassDistributionStoreT:
         return self._distn_store
 
     @property
@@ -118,7 +123,10 @@ class ClassificationResults(
     ) -> None:
         for identifier in id_to_class.keys():
             class_name = id_to_class[identifier]
-            logits = id_to_logits.get(identifier, None) if id_to_logits is not None else None
+            if id_to_logits is not None:
+                logits = id_to_logits.get(identifier, None)
+            else:
+                logits = None
             self._set_single(identifier=identifier, class_name=class_name, logits=logits)
 
     def _set_single(
@@ -154,9 +162,10 @@ class ClassificationResults(
         class_name: str,
         distribution_inference_type: DistributionInferenceType,
     ) -> None:
-        if self._distn_inference_type is DistributionInferenceType.NAN:
+        infer_type = self._distn_inference_type
+        if infer_type is DistributionInferenceType.NAN:
             self._distn_store.set_nan(identifier=identifier)
-        elif self._distn_inference_type is DistributionInferenceType.CONCENTRATED:
+        elif infer_type is DistributionInferenceType.CONCENTRATED:
             self._distn_store.set_concentrated(identifier=identifier, class_name=class_name)
         else:
             raise ValueError(

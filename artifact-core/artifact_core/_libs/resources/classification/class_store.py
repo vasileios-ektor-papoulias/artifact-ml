@@ -1,22 +1,26 @@
-from typing import Generic, Mapping, Optional, Sequence, TypeVar
+from typing import Generic, Mapping, Optional, Sequence, Type, TypeVar
 
 from artifact_core._libs.resource_specs.classification.protocol import ClassSpecProtocol
 from artifact_core._utils.collections.entity_store import EntityStore, IdentifierType
 
-ClassSpecProtocolTCov = TypeVar("ClassSpecProtocolTCov", bound=ClassSpecProtocol, covariant=True)
+ClassSpecProtocolT = TypeVar("ClassSpecProtocolT", bound=ClassSpecProtocol)
 ClassStoreT = TypeVar("ClassStoreT", bound="ClassStore")
 
 
-class ClassStore(EntityStore[int], Generic[ClassSpecProtocolTCov]):
+class ClassStore(EntityStore[int], Generic[ClassSpecProtocolT]):
     def __init__(
         self,
-        class_spec: ClassSpecProtocolTCov,
+        class_spec: ClassSpecProtocolT,
         id_to_class_idx: Optional[Mapping[IdentifierType, int]] = None,
     ):
         super().__init__(initial=None)
         self._class_spec = class_spec
         if id_to_class_idx is not None:
             self.set_multiple_idx(id_to_class_idx=id_to_class_idx)
+
+    @classmethod
+    def build_empty(cls: Type[ClassStoreT], class_spec: ClassSpecProtocolT) -> ClassStoreT:
+        return cls(class_spec=class_spec)
 
     def __repr__(self) -> str:
         return (
@@ -25,7 +29,7 @@ class ClassStore(EntityStore[int], Generic[ClassSpecProtocolTCov]):
         )
 
     @property
-    def class_spec(self) -> ClassSpecProtocolTCov:
+    def class_spec(self) -> ClassSpecProtocolT:
         return self._class_spec
 
     @property

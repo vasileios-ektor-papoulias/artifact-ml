@@ -7,10 +7,10 @@ from artifact_core._libs.artifacts.table_comparison.correlations.calculator impo
     ContinuousAssociationType,
     CorrelationCalculator,
 )
-from artifact_core._libs.artifacts.tools.calculators.vector_distance_calculator import (
+from artifact_core._libs.resource_specs.table_comparison.protocol import TabularDataSpecProtocol
+from artifact_core._libs.tools.calculators.vector_distance_calculator import (
     VectorDistanceMetric,
 )
-from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison._artifacts.base import DatasetComparisonArtifactResources
 from artifact_core.table_comparison._artifacts.scores.correlation import (
     CorrelationDistanceScore,
@@ -52,7 +52,7 @@ def test_compute(
         distance_metric=hyperparams.vector_distance_metric,
         dataset_real=ANY,
         dataset_synthetic=ANY,
-        ls_cat_features=resource_spec.ls_cat_features,
+        cat_features=resource_spec.cat_features,
     )
     _, kwargs = patch_compute_correlation_distance.call_args
     pd.testing.assert_frame_equal(kwargs["dataset_real"], df_real)

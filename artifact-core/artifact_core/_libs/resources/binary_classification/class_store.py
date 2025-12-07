@@ -20,9 +20,7 @@ class BinaryClassStore(ClassStore[BinaryClassSpecProtocol]):
         id_to_class_idx: Optional[Mapping[IdentifierType, int]] = None,
     ) -> BinaryClassStoreT:
         class_spec = BinaryClassSpec(
-            class_names=class_names,
-            positive_class=positive_class,
-            label_name=label_name,
+            class_names=class_names, positive_class=positive_class, label_name=label_name
         )
         store = cls.from_class_indices_and_spec(
             class_spec=class_spec, id_to_class_idx=id_to_class_idx
@@ -47,9 +45,7 @@ class BinaryClassStore(ClassStore[BinaryClassSpecProtocol]):
         id_to_class: Optional[Mapping[IdentifierType, str]] = None,
     ) -> BinaryClassStoreT:
         class_spec = BinaryClassSpec(
-            class_names=class_names,
-            positive_class=positive_class,
-            label_name=label_name,
+            class_names=class_names, positive_class=positive_class, label_name=label_name
         )
         store = cls.from_class_names_and_spec(class_spec=class_spec, id_to_class=id_to_class)
         return store

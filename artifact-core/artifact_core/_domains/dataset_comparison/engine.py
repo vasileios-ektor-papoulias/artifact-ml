@@ -13,14 +13,14 @@ from artifact_core._base.typing.artifact_result import (
 )
 from artifact_core._domains.dataset_comparison.artifact import DatasetComparisonArtifactResources
 
+DatasetT = TypeVar("DatasetT")
+ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
 ScoreTypeT = TypeVar("ScoreTypeT", bound=ArtifactType)
 ArrayTypeT = TypeVar("ArrayTypeT", bound=ArtifactType)
 PlotTypeT = TypeVar("PlotTypeT", bound=ArtifactType)
 ScoreCollectionTypeT = TypeVar("ScoreCollectionTypeT", bound=ArtifactType)
 ArrayCollectionTypeT = TypeVar("ArrayCollectionTypeT", bound=ArtifactType)
 PlotCollectionTypeT = TypeVar("PlotCollectionTypeT", bound=ArtifactType)
-ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
-DatasetT = TypeVar("DatasetT")
 
 
 class DatasetComparisonEngine(

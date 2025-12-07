@@ -21,6 +21,7 @@ ArrayCollectionTypeT = TypeVar("ArrayCollectionTypeT", bound=ArtifactType)
 PlotCollectionTypeT = TypeVar("PlotCollectionTypeT", bound=ArtifactType)
 ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound=ArtifactResources)
 ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
+ArtifactEngineT = TypeVar("ArtifactEngineT", bound="ArtifactEngine")
 
 
 class ArtifactEngine(
@@ -36,14 +37,53 @@ class ArtifactEngine(
         PlotCollectionTypeT,
     ],
 ):
-    def __init__(self, resource_spec: ResourceSpecProtocolT):
+    def __init__(
+        self,
+        resource_spec: ResourceSpecProtocolT,
+        score_registry: Type[
+            ArtifactRegistry[ArtifactResourcesT, ResourceSpecProtocolT, ScoreTypeT, Score]
+        ],
+        array_registry: Type[
+            ArtifactRegistry[ArtifactResourcesT, ResourceSpecProtocolT, ArrayTypeT, Array]
+        ],
+        plot_registry: Type[
+            ArtifactRegistry[ArtifactResourcesT, ResourceSpecProtocolT, PlotTypeT, Plot]
+        ],
+        score_collection_registry: Type[
+            ArtifactRegistry[
+                ArtifactResourcesT, ResourceSpecProtocolT, ScoreCollectionTypeT, ScoreCollection
+            ]
+        ],
+        array_collection_registry: Type[
+            ArtifactRegistry[
+                ArtifactResourcesT, ResourceSpecProtocolT, ArrayCollectionTypeT, ArrayCollection
+            ]
+        ],
+        plot_collection_registry: Type[
+            ArtifactRegistry[
+                ArtifactResourcesT, ResourceSpecProtocolT, PlotCollectionTypeT, PlotCollection
+            ]
+        ],
+    ):
         self._resource_spec = resource_spec
-        self._score_registry = self._get_score_registry()
-        self._array_registry = self._get_array_registry()
-        self._plot_registry = self._get_plot_registry()
-        self._score_collection_registry = self._get_score_collection_registry()
-        self._array_collection_registry = self._get_array_collection_registry()
-        self._plot_collection_registry = self._get_plot_collection_registry()
+        self._score_registry = score_registry
+        self._array_registry = array_registry
+        self._plot_registry = plot_registry
+        self._score_collection_registry = score_collection_registry
+        self._array_collection_registry = array_collection_registry
+        self._plot_collection_registry = plot_collection_registry
+
+    @classmethod
+    def build(cls: Type[ArtifactEngineT], resource_spec: ResourceSpecProtocolT) -> ArtifactEngineT:
+        return cls(
+            resource_spec=resource_spec,
+            score_registry=cls._get_score_registry(),
+            array_registry=cls._get_array_registry(),
+            plot_registry=cls._get_plot_registry(),
+            score_collection_registry=cls._get_score_collection_registry(),
+            array_collection_registry=cls._get_array_collection_registry(),
+            plot_collection_registry=cls._get_plot_collection_registry(),
+        )
 
     @property
     def resource_spec(self) -> ResourceSpecProtocolT:
