@@ -57,7 +57,7 @@ jobs:
           poetry run pytest --cov="$PACKAGE_NAME" --cov-report=xml:coverage.xml
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v5
+        uses: SonarSource/sonarqube-scan-action@v6
         with:
           projectBaseDir: ${{ env.COMPONENT }}
         env:
