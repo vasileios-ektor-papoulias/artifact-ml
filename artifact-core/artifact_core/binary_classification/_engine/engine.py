@@ -1,8 +1,6 @@
 from typing import Type
 
-from artifact_core.binary_classification._engine.base import (
-    BinaryClassificationEngineBase,
-)
+from artifact_core.binary_classification._engine.base import BinaryClassificationEngineBase
 from artifact_core.binary_classification._registries.array_collections import (
     BinaryClassificationArrayCollectionRegistry,
 )
@@ -50,35 +48,41 @@ class BinaryClassificationEngine(
     @classmethod
     def _get_score_registry(
         cls,
-    ) -> Type[BinaryClassificationScoreRegistryBase]:
+    ) -> Type[BinaryClassificationScoreRegistryBase[BinaryClassificationScoreType]]:
         return BinaryClassificationScoreRegistry
 
     @classmethod
     def _get_array_registry(
         cls,
-    ) -> Type[BinaryClassificationArrayRegistryBase]:
+    ) -> Type[BinaryClassificationArrayRegistryBase[BinaryClassificationArrayType]]:
         return BinaryClassificationArrayRegistry
 
     @classmethod
     def _get_plot_registry(
         cls,
-    ) -> Type[BinaryClassificationPlotRegistryBase]:
+    ) -> Type[BinaryClassificationPlotRegistryBase[BinaryClassificationPlotType]]:
         return BinaryClassificationPlotRegistry
 
     @classmethod
     def _get_score_collection_registry(
         cls,
-    ) -> Type[BinaryClassificationScoreCollectionRegistryBase]:
+    ) -> Type[
+        BinaryClassificationScoreCollectionRegistryBase[BinaryClassificationScoreCollectionType]
+    ]:
         return BinaryClassificationScoreCollectionRegistry
 
     @classmethod
     def _get_array_collection_registry(
         cls,
-    ) -> Type[BinaryClassificationArrayCollectionRegistryBase]:
+    ) -> Type[
+        BinaryClassificationArrayCollectionRegistryBase[BinaryClassificationArrayCollectionType]
+    ]:
         return BinaryClassificationArrayCollectionRegistry
 
     @classmethod
     def _get_plot_collection_registry(
         cls,
-    ) -> Type[BinaryClassificationPlotCollectionRegistryBase]:
+    ) -> Type[
+        BinaryClassificationPlotCollectionRegistryBase[BinaryClassificationPlotCollectionType]
+    ]:
         return BinaryClassificationPlotCollectionRegistry

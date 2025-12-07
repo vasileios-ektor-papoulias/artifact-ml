@@ -1,18 +1,19 @@
-from typing import Dict
 from unittest.mock import ANY
 
 import pandas as pd
-from artifact_core._base.primitives import NO_ARTIFACT_HYPERPARAMS
+from artifact_core._base.core.hyperparams import NO_ARTIFACT_HYPERPARAMS
+from artifact_core._base.typing.artifact_result import PlotCollection
 from artifact_core._libs.artifacts.table_comparison.cdf.overlaid_plotter import (
     TabularOverlaidCDFPlotter,
 )
-from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resource_specs.table_comparison.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison._artifacts.base import (
     DatasetComparisonArtifactResources,
 )
 from artifact_core.table_comparison._artifacts.plot_collections.cdf import (
     CDFPlots,
 )
+from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
@@ -22,7 +23,7 @@ def test_compute(
     df_real: pd.DataFrame,
     df_synthetic: pd.DataFrame,
 ):
-    fake_plots: Dict[str, Figure] = {
+    fake_plots: PlotCollection = {
         "cts_1": Figure(),
         "cts_2": Figure(),
     }
@@ -39,7 +40,7 @@ def test_compute(
     patch_get_overlaid_plot_collection.assert_called_once_with(
         dataset_real=ANY,
         dataset_synthetic=ANY,
-        ls_cts_features=resource_spec.ls_cts_features,
+        cts_features=resource_spec.cts_features,
     )
     _, kwargs = patch_get_overlaid_plot_collection.call_args
     pd.testing.assert_frame_equal(kwargs["dataset_real"], df_real)

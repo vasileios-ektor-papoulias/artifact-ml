@@ -4,15 +4,7 @@ from typing import Generic, TypeVar
 from artifact_core._base.core.hyperparams import ArtifactHyperparams
 from artifact_core._base.core.resource_spec import ResourceSpecProtocol
 from artifact_core._base.core.resources import ArtifactResources
-from artifact_core._base.typing.artifact_result import (
-    Array,
-    ArrayCollection,
-    ArtifactResult,
-    Plot,
-    PlotCollection,
-    Score,
-    ScoreCollection,
-)
+from artifact_core._base.typing.artifact_result import ArtifactResult
 
 ArtifactResourcesT = TypeVar("ArtifactResourcesT", bound=ArtifactResources)
 ResourceSpecProtocolT = TypeVar("ResourceSpecProtocolT", bound=ResourceSpecProtocol)
@@ -21,14 +13,9 @@ ArtifactResultT = TypeVar("ArtifactResultT", bound=ArtifactResult)
 
 
 class Artifact(
-    ABC,
-    Generic[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparamsT, ArtifactResultT],
+    ABC, Generic[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparamsT, ArtifactResultT]
 ):
-    def __init__(
-        self,
-        resource_spec: ResourceSpecProtocolT,
-        hyperparams: ArtifactHyperparamsT,
-    ):
+    def __init__(self, resource_spec: ResourceSpecProtocolT, hyperparams: ArtifactHyperparamsT):
         self._resource_spec = resource_spec
         self._hyperparams = hyperparams
 
@@ -55,17 +42,3 @@ class Artifact(
         resources = self._validate(resources=resources)
         result = self._compute(resources=resources)
         return result
-
-
-ScoreArtifact = Artifact[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparamsT, Score]
-ArrayArtifact = Artifact[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparamsT, Array]
-PlotArtifact = Artifact[ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparamsT, Plot]
-ScoreCollectionArtifact = Artifact[
-    ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparamsT, ScoreCollection
-]
-ArrayCollectionArtifact = Artifact[
-    ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparamsT, ArrayCollection
-]
-PlotCollectionArtifact = Artifact[
-    ArtifactResourcesT, ResourceSpecProtocolT, ArtifactHyperparamsT, PlotCollection
-]

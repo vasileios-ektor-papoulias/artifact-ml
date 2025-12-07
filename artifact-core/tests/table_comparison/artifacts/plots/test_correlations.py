@@ -9,7 +9,7 @@ from artifact_core._libs.artifacts.table_comparison.correlations.calculator impo
 from artifact_core._libs.artifacts.table_comparison.correlations.heatmap_plotter import (
     CorrelationHeatmapPlotter,
 )
-from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resource_specs.table_comparison.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison._artifacts.base import (
     DatasetComparisonArtifactResources,
 )
@@ -17,6 +17,7 @@ from artifact_core.table_comparison._artifacts.plots.correlations import (
     CorrelationHeatmapJuxtapositionPlot,
     CorrelationHeatmapJuxtapositionPlotHyperparams,
 )
+from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
@@ -51,15 +52,13 @@ def test_compute(
     )
 
     result = artifact.compute(resources=resources)
-
     patch_get_combined_correlation_plot.assert_called_once_with(
         categorical_correlation_type=hyperparams.categorical_association_type,
         continuous_correlation_type=hyperparams.continuous_association_type,
         dataset_real=ANY,
         dataset_synthetic=ANY,
-        ls_cat_features=resource_spec.ls_cat_features,
+        cat_features=resource_spec.cat_features,
     )
-
     _, kwargs = patch_get_combined_correlation_plot.call_args
     pd.testing.assert_frame_equal(kwargs["dataset_real"], df_real)
     pd.testing.assert_frame_equal(kwargs["dataset_synthetic"], df_synthetic)

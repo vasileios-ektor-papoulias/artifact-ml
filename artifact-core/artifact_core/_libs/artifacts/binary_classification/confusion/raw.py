@@ -17,18 +17,14 @@ class ConfusionMatrixCell(Enum):
 class RawConfusionCalculator:
     @classmethod
     def compute_confusion_matrix(
-        cls,
-        true: Mapping[Hashable, bool],
-        predicted: Mapping[Hashable, bool],
+        cls, true: Mapping[Hashable, bool], predicted: Mapping[Hashable, bool]
     ) -> Array:
         arr_cm = cls._compute_confusion_matrix(true=true, predicted=predicted)
         return arr_cm
 
     @classmethod
     def compute_dict_confusion_counts(
-        cls,
-        true: Mapping[Hashable, bool],
-        predicted: Mapping[Hashable, bool],
+        cls, true: Mapping[Hashable, bool], predicted: Mapping[Hashable, bool]
     ) -> Dict[ConfusionMatrixCell, float]:
         arr_cm = cls._compute_confusion_matrix(true=true, predicted=predicted)
         tp, fp, tn, fn = cls._get_counts_from_matrix(arr_cm=arr_cm)
@@ -76,18 +72,16 @@ class RawConfusionCalculator:
             raise ValueError(f"Unsupported confusion matrix cell: {confusion_matrix_cell}")
 
     @staticmethod
-    def _get_counts_from_matrix(arr_cm: Array) -> Tuple[int, int, int, int]:
-        tp = int(arr_cm[0, 0])
-        fn = int(arr_cm[0, 1])
-        fp = int(arr_cm[1, 0])
-        tn = int(arr_cm[1, 1])
+    def _get_counts_from_matrix(arr_cm: Array) -> Tuple[float, float, float, float]:
+        tp = float(arr_cm[0, 0])
+        fn = float(arr_cm[0, 1])
+        fp = float(arr_cm[1, 0])
+        tn = float(arr_cm[1, 1])
         return tp, fp, tn, fn
 
     @classmethod
     def _compute_confusion_matrix(
-        cls,
-        true: Mapping[Hashable, bool],
-        predicted: Mapping[Hashable, bool],
+        cls, true: Mapping[Hashable, bool], predicted: Mapping[Hashable, bool]
     ) -> Array:
         _, y_true, y_pred = MapAligner.align(left=true, right=predicted)
         arr_cm = confusion_matrix(y_true=y_true, y_pred=y_pred, labels=[True, False])

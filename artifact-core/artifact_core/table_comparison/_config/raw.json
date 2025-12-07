@@ -1,6 +1,5 @@
 {
-  "native_artifact_path": "_artifacts",
-  "custom_artifact_path": null,
+  "custom_artifacts_dir": null,
   "scores": {
     "MEAN_JS_DISTANCE": {
       "n_bins_cts_histogram": 100,

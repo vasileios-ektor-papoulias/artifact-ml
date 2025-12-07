@@ -1,4 +1,4 @@
-from typing import Dict, Generic, Mapping, Optional, Sequence, TypeVar, Union
+from typing import Dict, Generic, Mapping, Optional, Sequence, Type, TypeVar, Union
 
 import numpy as np
 
@@ -10,13 +10,14 @@ from artifact_core._utils.collections.entity_store import EntityStore, Identifie
 ClassDistribution = Union[Sequence[float], Array]
 
 
-ClassSpecProtocolTCov = TypeVar("ClassSpecProtocolTCov", bound=ClassSpecProtocol, covariant=True)
+ClassSpecProtocolT = TypeVar("ClassSpecProtocolT", bound=ClassSpecProtocol)
+ClassDistributionStoreT = TypeVar("ClassDistributionStoreT", bound="ClassDistributionStore")
 
 
-class ClassDistributionStore(EntityStore[Array], Generic[ClassSpecProtocolTCov]):
+class ClassDistributionStore(EntityStore[Array], Generic[ClassSpecProtocolT]):
     def __init__(
         self,
-        class_spec: ClassSpecProtocolTCov,
+        class_spec: ClassSpecProtocolT,
         id_to_logits: Optional[Mapping[IdentifierType, Array]] = None,
     ):
         self._class_spec = class_spec
@@ -24,14 +25,21 @@ class ClassDistributionStore(EntityStore[Array], Generic[ClassSpecProtocolTCov])
         if id_to_logits is not None:
             self.set_logits_multiple(id_to_logits=id_to_logits)
 
+    @classmethod
+    def build_empty(
+        cls: Type[ClassDistributionStoreT], class_spec: ClassSpecProtocolT
+    ) -> ClassDistributionStoreT:
+        return cls(class_spec=class_spec)
+
     def __repr__(self) -> str:
         return (
-            f"ClassDistributionStore(label_name={self._class_spec.label_name!r}, "
+            f"ClassDistributionStore("
+            f"label_name={self._class_spec.label_name!r}, "
             f"n_items={self.n_items}, n_classes={self._class_spec.n_classes})"
         )
 
     @property
-    def class_spec(self) -> ClassSpecProtocolTCov:
+    def class_spec(self) -> ClassSpecProtocolT:
         return self._class_spec
 
     @property
@@ -73,7 +81,8 @@ class ClassDistributionStore(EntityStore[Array], Generic[ClassSpecProtocolTCov])
         return arr_logits.copy()
 
     def get_probs(self, identifier: IdentifierType) -> Array:
-        return SoftmaxCalculator.compute_probs(self.get_logits(identifier=identifier))
+        logits = self.get_logits(identifier=identifier)
+        return SoftmaxCalculator.compute_probs(logits)
 
     def get_logit(self, class_name: str, identifier: IdentifierType) -> float:
         logits = self.get_logits(identifier=identifier)

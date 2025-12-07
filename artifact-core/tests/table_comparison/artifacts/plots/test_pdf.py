@@ -1,13 +1,14 @@
 from unittest.mock import ANY
 
 import pandas as pd
-from artifact_core._base.primitives import NO_ARTIFACT_HYPERPARAMS
+from artifact_core._base.core.hyperparams import NO_ARTIFACT_HYPERPARAMS
 from artifact_core._libs.artifacts.table_comparison.pdf.overlaid_plotter import (
     TabularOverlaidPDFPlotter,
 )
-from artifact_core._libs.resources_spec.tabular.protocol import TabularDataSpecProtocol
+from artifact_core._libs.resource_specs.table_comparison.protocol import TabularDataSpecProtocol
 from artifact_core.table_comparison._artifacts.base import DatasetComparisonArtifactResources
 from artifact_core.table_comparison._artifacts.plots.pdf import PDFPlot
+from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
@@ -35,9 +36,9 @@ def test_compute(
     patch_get.assert_called_once_with(
         dataset_real=ANY,
         dataset_synthetic=ANY,
-        ls_features_order=resource_spec.ls_features,
-        ls_cts_features=resource_spec.ls_cts_features,
-        ls_cat_features=resource_spec.ls_cat_features,
+        features_order=resource_spec.features,
+        cts_features=resource_spec.cts_features,
+        cat_features=resource_spec.cat_features,
         cat_unique_map=resource_spec.cat_unique_map,
     )
     _, kwargs = patch_get.call_args
