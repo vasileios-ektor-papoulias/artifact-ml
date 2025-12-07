@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, Generic, Iterable, Mapping, Optional, Sequence, TypeVar
+from typing import Dict, Generic, Iterable, Mapping, Optional, Sequence, Type, TypeVar
 
 from artifact_core._base.typing.artifact_result import Array
 from artifact_core._libs.resource_specs.classification.protocol import ClassSpecProtocol
@@ -12,6 +12,7 @@ ClassStoreTCov = TypeVar("ClassStoreTCov", bound=ClassStore, covariant=True)
 ClassDistributionStoreTCov = TypeVar(
     "ClassDistributionStoreTCov", bound=ClassDistributionStore, covariant=True
 )
+ClassificationResultsT = TypeVar("ClassificationResultsT", bound="ClassificationResults")
 
 
 class DistributionInferenceType(Enum):
@@ -33,6 +34,14 @@ class ClassificationResults(
         self._class_spec = class_spec
         self._pred_store = pred_store
         self._distn_store = distn_store
+
+    @classmethod
+    def build_empty(
+        cls: Type[ClassificationResultsT], class_spec: ClassSpecProtocol
+    ) -> ClassificationResultsT:
+        pred_store = ClassStore.build_empty(class_spec=class_spec)
+        distn_store = ClassDistributionStore.build_empty(class_spec=class_spec)
+        return cls(class_spec=class_spec, pred_store=pred_store, distn_store=distn_store)
 
     def __len__(self) -> int:
         return self.n_items
@@ -118,7 +127,10 @@ class ClassificationResults(
     ) -> None:
         for identifier in id_to_class.keys():
             class_name = id_to_class[identifier]
-            logits = id_to_logits.get(identifier, None) if id_to_logits is not None else None
+            if id_to_logits is not None:
+                logits = id_to_logits.get(identifier, None)
+            else:
+                logits = None
             self._set_single(identifier=identifier, class_name=class_name, logits=logits)
 
     def _set_single(
@@ -154,9 +166,10 @@ class ClassificationResults(
         class_name: str,
         distribution_inference_type: DistributionInferenceType,
     ) -> None:
-        if self._distn_inference_type is DistributionInferenceType.NAN:
+        infer_type = self._distn_inference_type
+        if infer_type is DistributionInferenceType.NAN:
             self._distn_store.set_nan(identifier=identifier)
-        elif self._distn_inference_type is DistributionInferenceType.CONCENTRATED:
+        elif infer_type is DistributionInferenceType.CONCENTRATED:
             self._distn_store.set_concentrated(identifier=identifier, class_name=class_name)
         else:
             raise ValueError(
