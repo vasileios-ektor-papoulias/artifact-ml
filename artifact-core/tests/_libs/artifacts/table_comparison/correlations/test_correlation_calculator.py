@@ -3,7 +3,7 @@ from typing import List, Optional, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core._libs.artifacts.table_comparison.correlations.calculator import (  # noqa: E501
+from artifact_core._libs.artifacts.table_comparison.correlations.calculator import (
     CategoricalAssociationType,
     ContinuousAssociationType,
     CorrelationCalculator,
@@ -97,8 +97,7 @@ def test_compute_df_correlation_difference(
 
 @pytest.mark.unit
 @pytest.mark.parametrize(
-    "df_real, df_synthetic, cat_features, cat_corr, cont_corr, "
-    "distance_metric, expected_distance",
+    "df_real, df_synthetic, cat_features, cat_corr, cont_corr, distance_metric, expected_distance",
     [
         (
             pd.DataFrame({"x": [1, 2, 3]}),

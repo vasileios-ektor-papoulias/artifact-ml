@@ -2,15 +2,11 @@ from typing import Dict, List, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core._libs.artifacts.table_comparison.pdf.overlaid_plotter import (  # noqa: E501
+from artifact_core._libs.artifacts.table_comparison.pdf.overlaid_plotter import (
     TabularOverlaidPDFPlotter,
 )
-from artifact_core._libs.tools.plotters.overlaid_pdf_plotter import (  # noqa: E501
-    OverlaidPDFPlotter,
-)
-from artifact_core._libs.tools.plotters.overlaid_pmf_plotter import (  # noqa: E501
-    OverlaidPMFPlotter,
-)
+from artifact_core._libs.tools.plotters.overlaid_pdf_plotter import OverlaidPDFPlotter
+from artifact_core._libs.tools.plotters.overlaid_pmf_plotter import OverlaidPMFPlotter
 from artifact_core._libs.tools.plotters.plot_combiner import PlotCombiner
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture

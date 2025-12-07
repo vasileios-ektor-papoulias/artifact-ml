@@ -2,12 +2,10 @@ from typing import List, Tuple
 
 import pandas as pd
 import pytest
-from artifact_core._libs.artifacts.table_comparison.cdf.overlaid_plotter import (  # noqa: E501
+from artifact_core._libs.artifacts.table_comparison.cdf.overlaid_plotter import (
     TabularOverlaidCDFPlotter,
 )
-from artifact_core._libs.tools.plotters.overlaid_cdf_plotter import (  # noqa: E501
-    OverlaidCDFPlotter,
-)
+from artifact_core._libs.tools.plotters.overlaid_cdf_plotter import OverlaidCDFPlotter
 from artifact_core._libs.tools.plotters.plot_combiner import PlotCombiner
 from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
