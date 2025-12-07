@@ -15,6 +15,7 @@ from artifact_core._libs.resource_specs.binary_classification.spec import Binary
         (["neg", "pos"], "neg", "target", "target", "neg", "pos"),
         (["A", "B"], "A", "class", "class", "A", "B"),
         (["A", "B"], "B", "class", "class", "B", "A"),
+        (["healthy", "diseased"], "diseased", "diagnosis", "diagnosis", "diseased", "healthy"),
     ],
 )
 def test_init(
@@ -196,9 +197,7 @@ def test_repr(
 
 
 @pytest.mark.unit
-def test_inherits_classspec_methods(
-    binary_class_spec: BinaryClassSpec, class_names: List[str]
-):
+def test_inherits_classspec_methods(binary_class_spec: BinaryClassSpec, class_names: List[str]):
     assert binary_class_spec.has_class(class_names[0]) is True
     assert binary_class_spec.has_class("nonexistent") is False
     assert binary_class_spec.get_class_idx(class_names[0]) == 0
