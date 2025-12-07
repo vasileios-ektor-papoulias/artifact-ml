@@ -7,11 +7,9 @@ from artifact_core._libs.resources.classification.class_store import ClassStore
 from artifact_core._libs.resources.classification.distribution_store import ClassDistributionStore
 from artifact_core._utils.collections.entity_store import IdentifierType
 
-ClassSpecProtocolTCov = TypeVar("ClassSpecProtocolTCov", bound=ClassSpecProtocol, covariant=True)
-ClassStoreTCov = TypeVar("ClassStoreTCov", bound=ClassStore, covariant=True)
-ClassDistributionStoreTCov = TypeVar(
-    "ClassDistributionStoreTCov", bound=ClassDistributionStore, covariant=True
-)
+ClassSpecProtocolT = TypeVar("ClassSpecProtocolT", bound=ClassSpecProtocol)
+ClassStoreT = TypeVar("ClassStoreT", bound=ClassStore)
+ClassDistributionStoreT = TypeVar("ClassDistributionStoreT", bound=ClassDistributionStore)
 ClassificationResultsT = TypeVar("ClassificationResultsT", bound="ClassificationResults")
 
 
@@ -20,16 +18,14 @@ class DistributionInferenceType(Enum):
     CONCENTRATED = "CONCENTRATED"
 
 
-class ClassificationResults(
-    Generic[ClassSpecProtocolTCov, ClassStoreTCov, ClassDistributionStoreTCov]
-):
+class ClassificationResults(Generic[ClassSpecProtocolT, ClassStoreT, ClassDistributionStoreT]):
     _distn_inference_type = DistributionInferenceType.CONCENTRATED
 
     def __init__(
         self,
-        class_spec: ClassSpecProtocolTCov,
-        pred_store: ClassStoreTCov,
-        distn_store: ClassDistributionStoreTCov,
+        class_spec: ClassSpecProtocolT,
+        pred_store: ClassStoreT,
+        distn_store: ClassDistributionStoreT,
     ):
         self._class_spec = class_spec
         self._pred_store = pred_store
@@ -37,7 +33,7 @@ class ClassificationResults(
 
     @classmethod
     def build_empty(
-        cls: Type[ClassificationResultsT], class_spec: ClassSpecProtocol
+        cls: Type[ClassificationResultsT], class_spec: ClassSpecProtocolT
     ) -> ClassificationResultsT:
         pred_store = ClassStore.build_empty(class_spec=class_spec)
         distn_store = ClassDistributionStore.build_empty(class_spec=class_spec)
@@ -53,15 +49,15 @@ class ClassificationResults(
         )
 
     @property
-    def class_spec(self) -> ClassSpecProtocolTCov:
+    def class_spec(self) -> ClassSpecProtocolT:
         return self._class_spec
 
     @property
-    def pred_store(self) -> ClassStoreTCov:
+    def pred_store(self) -> ClassStoreT:
         return self._pred_store
 
     @property
-    def distn_store(self) -> ClassDistributionStoreTCov:
+    def distn_store(self) -> ClassDistributionStoreT:
         return self._distn_store
 
     @property

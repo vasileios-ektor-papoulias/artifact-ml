@@ -10,14 +10,14 @@ from artifact_core._utils.collections.entity_store import EntityStore, Identifie
 ClassDistribution = Union[Sequence[float], Array]
 
 
-ClassSpecProtocolTCov = TypeVar("ClassSpecProtocolTCov", bound=ClassSpecProtocol, covariant=True)
+ClassSpecProtocolT = TypeVar("ClassSpecProtocolT", bound=ClassSpecProtocol)
 ClassDistributionStoreT = TypeVar("ClassDistributionStoreT", bound="ClassDistributionStore")
 
 
-class ClassDistributionStore(EntityStore[Array], Generic[ClassSpecProtocolTCov]):
+class ClassDistributionStore(EntityStore[Array], Generic[ClassSpecProtocolT]):
     def __init__(
         self,
-        class_spec: ClassSpecProtocolTCov,
+        class_spec: ClassSpecProtocolT,
         id_to_logits: Optional[Mapping[IdentifierType, Array]] = None,
     ):
         self._class_spec = class_spec
@@ -27,7 +27,7 @@ class ClassDistributionStore(EntityStore[Array], Generic[ClassSpecProtocolTCov])
 
     @classmethod
     def build_empty(
-        cls: Type[ClassDistributionStoreT], class_spec: ClassSpecProtocol
+        cls: Type[ClassDistributionStoreT], class_spec: ClassSpecProtocolT
     ) -> ClassDistributionStoreT:
         return cls(class_spec=class_spec)
 
@@ -39,7 +39,7 @@ class ClassDistributionStore(EntityStore[Array], Generic[ClassSpecProtocolTCov])
         )
 
     @property
-    def class_spec(self) -> ClassSpecProtocolTCov:
+    def class_spec(self) -> ClassSpecProtocolT:
         return self._class_spec
 
     @property
