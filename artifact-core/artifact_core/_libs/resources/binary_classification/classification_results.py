@@ -27,6 +27,14 @@ class BinaryClassificationResults(
     _label_name = "label"
 
     @classmethod
+    def build_empty(
+        cls: Type[BinaryClassificationResultsT], class_spec: BinaryClassSpecProtocol
+    ) -> BinaryClassificationResultsT:
+        pred_store = BinaryClassStore.build_empty(class_spec=class_spec)
+        distn_store = BinaryDistributionStore.build_empty(class_spec=class_spec)
+        return cls(class_spec=class_spec, pred_store=pred_store, distn_store=distn_store)
+
+    @classmethod
     def build(
         cls: Type[BinaryClassificationResultsT],
         class_names: Sequence[str],
@@ -35,14 +43,10 @@ class BinaryClassificationResults(
         id_to_prob_pos: Optional[Mapping[IdentifierType, float]] = None,
     ) -> BinaryClassificationResultsT:
         class_spec = BinaryClassSpec(
-            class_names=class_names,
-            positive_class=positive_class,
-            label_name=cls._label_name,
+            class_names=class_names, positive_class=positive_class, label_name=cls._label_name
         )
         classification_results = cls.from_spec(
-            class_spec=class_spec,
-            id_to_class=id_to_class,
-            id_to_prob_pos=id_to_prob_pos,
+            class_spec=class_spec, id_to_class=id_to_class, id_to_prob_pos=id_to_prob_pos
         )
         return classification_results
 
@@ -56,9 +60,7 @@ class BinaryClassificationResults(
         pred_store = BinaryClassStore.from_class_names_and_spec(class_spec=class_spec)
         distn_store = BinaryDistributionStore.from_spec(class_spec=class_spec)
         classification_results = cls(
-            class_spec=class_spec,
-            pred_store=pred_store,
-            distn_store=distn_store,
+            class_spec=class_spec, pred_store=pred_store, distn_store=distn_store
         )
         if id_to_class is not None:
             classification_results.set_multiple_binary(
