@@ -19,6 +19,11 @@ class FeatureSpec(Serializable):
     def dtype(self) -> TabularDataDType:
         return self._dtype
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, FeatureSpec):
+            return NotImplemented
+        return self._dtype == other._dtype
+
     @classmethod
     def from_dict(cls: Type[FeatureSpecT], data: Dict[str, Any]) -> FeatureSpecT:
         dtype_name = cls._get_from_data(key=cls._dtype_key, data=data)
