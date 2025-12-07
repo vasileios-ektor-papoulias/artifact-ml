@@ -98,11 +98,7 @@ class ConfusionMatrixPlotter:
         return im
 
     @staticmethod
-    def _decorate_axes(
-        ax: Axes,
-        title: Optional[str],
-        tick_labels: Tuple[str, str],
-    ) -> None:
+    def _decorate_axes(ax: Axes, title: Optional[str], tick_labels: Tuple[str, str]) -> None:
         ax.set_title(title or "")
         ax.set_xlabel("Predicted label")
         ax.set_ylabel("True label")
@@ -119,11 +115,7 @@ class ConfusionMatrixPlotter:
 
     @staticmethod
     def _annotate_cells(
-        ax: Axes,
-        cm: Array,
-        raw_cm: Array,
-        normalized: bool,
-        value_fmt: str,
+        ax: Axes, cm: Array, raw_cm: Array, normalized: bool, value_fmt: str
     ) -> None:
         thresh = cm.max() / 2.0 if cm.size else 0.0
         for i in range(2):
