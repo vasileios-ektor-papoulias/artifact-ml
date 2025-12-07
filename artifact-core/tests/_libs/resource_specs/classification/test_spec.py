@@ -94,9 +94,8 @@ def test_equality(
 
 
 @pytest.mark.unit
-def test_equality_with_non_classspec():
-    spec = ClassSpec(class_names=["A", "B"])
-    assert spec.__eq__("not a ClassSpec") == NotImplemented
+def test_equality_with_non_classspec(class_spec: ClassSpec):
+    assert class_spec.__eq__("not a ClassSpec") == NotImplemented
 
 
 @pytest.mark.unit
@@ -131,9 +130,8 @@ def test_to_dict_from_dict_roundtrip(class_names: List[str], label_name: str):
 
 
 @pytest.mark.unit
-def test_repr():
-    spec = ClassSpec(class_names=["A", "B", "C"], label_name="target")
-    repr_str = repr(spec)
+def test_repr(class_spec: ClassSpec, label_name: str, class_names: List[str]):
+    repr_str = repr(class_spec)
     assert "ClassSpec" in repr_str
-    assert "target" in repr_str
-    assert "3" in repr_str
+    assert label_name in repr_str
+    assert str(len(class_names)) in repr_str
