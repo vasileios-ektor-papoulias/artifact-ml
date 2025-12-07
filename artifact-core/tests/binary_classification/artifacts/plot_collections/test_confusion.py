@@ -1,8 +1,6 @@
 from typing import Dict
 
 import pytest
-from matplotlib.figure import Figure
-
 from artifact_core._libs.artifacts.binary_classification.confusion.calculator import (
     ConfusionMatrixNormalizationStrategy,
 )
@@ -21,6 +19,7 @@ from artifact_core.binary_classification._artifacts.plot_collections.confusion i
     ConfusionMatrixPlotCollectionHyperparams,
 )
 from artifact_core.binary_classification._resources import BinaryClassificationArtifactResources
+from matplotlib.figure import Figure
 from pytest_mock import MockerFixture
 
 
@@ -64,4 +63,3 @@ def test_compute(
     )
     expected = {plot_type.value: plot for plot_type, plot in fake_plots.items()}
     assert result == expected
-
