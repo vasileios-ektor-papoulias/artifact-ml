@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple, Type, Union, cast
 
 import numpy as np
 import pytest
@@ -44,10 +44,12 @@ def test_ls_categories_returns_copy(
     ],
 )
 def test_init_validation_raises(
-    invalid_categories, expected_error: type, expected_match: str
+    invalid_categories: Union[Tuple[str, ...], List[Union[str, int]]],
+    expected_error: Type[Exception],
+    expected_match: str,
 ):
     with pytest.raises(expected_error, match=expected_match):
-        CategoricalFeatureSpec(dtype=str, ls_categories=invalid_categories)
+        CategoricalFeatureSpec(dtype=str, ls_categories=cast(List[str], invalid_categories))
 
 
 @pytest.mark.unit
@@ -130,4 +132,3 @@ def test_equality(spec_a_args: tuple, spec_b_args: tuple, expected: bool):
 def test_equality_with_non_categorical_spec(categorical_feature_spec: CategoricalFeatureSpec):
     assert categorical_feature_spec.__eq__("not a spec") is NotImplemented
     assert categorical_feature_spec.__eq__(42) is NotImplemented
-

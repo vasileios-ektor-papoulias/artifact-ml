@@ -26,4 +26,3 @@ def binary_class_spec(
     return BinaryClassSpec(
         class_names=class_names, positive_class=positive_class, label_name=label_name
     )
-

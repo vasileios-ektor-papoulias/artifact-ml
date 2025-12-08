@@ -17,4 +17,3 @@ def label_name() -> str:
 @pytest.fixture
 def class_spec(class_names: List[str], label_name: str) -> ClassSpec:
     return ClassSpec(class_names=class_names, label_name=label_name)
-

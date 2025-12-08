@@ -14,4 +14,3 @@ class DummyClassificationScoreRegistry(
         return {
             "DUMMY_SCORE": {"weight": 1.0},
         }
-

@@ -14,4 +14,3 @@ class DummyDatasetComparisonPlotCollectionRegistry(
     @classmethod
     def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
         return {}
-
