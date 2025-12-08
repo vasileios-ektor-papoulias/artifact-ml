@@ -17,8 +17,8 @@ from matplotlib.figure import Figure
     ],
 )
 def test_plot_pdf_returns_figure(
-    set_agg_backend,
-    close_all_figs_after_test,
+    set_agg_backend: None,
+    close_all_figs_after_test: None,
     data: List[float],
     feature_name: Optional[str],
 ):
@@ -37,8 +37,8 @@ def test_plot_pdf_returns_figure(
     ],
 )
 def test_plot_pdf_title(
-    set_agg_backend,
-    close_all_figs_after_test,
+    set_agg_backend: None,
+    close_all_figs_after_test: None,
     feature_name: Optional[str],
     expected_title: str,
 ):
@@ -49,7 +49,7 @@ def test_plot_pdf_title(
 
 
 @pytest.mark.unit
-def test_plot_pdf_with_custom_config(set_agg_backend, close_all_figs_after_test):
+def test_plot_pdf_with_custom_config(set_agg_backend: None, close_all_figs_after_test: None):
     sr_data = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0])
     config = PDFConfig(
         plot_color="red",
@@ -61,7 +61,7 @@ def test_plot_pdf_with_custom_config(set_agg_backend, close_all_figs_after_test)
 
 
 @pytest.mark.unit
-def test_plot_pdf_with_nan_values(set_agg_backend, close_all_figs_after_test):
+def test_plot_pdf_with_nan_values(set_agg_backend: None, close_all_figs_after_test: None):
     sr_data = pd.Series([1.0, 2.0, float("nan"), 4.0, 5.0])
     result = PDFPlotter.plot_pdf(sr_data=sr_data, feature_name="with_nan")
     assert isinstance(result, Figure)

@@ -56,4 +56,3 @@ def classification_results(resource_spec: BinaryClassSpecProtocol) -> BinaryClas
         id_to_prob_pos=id_to_prob_pos,
     )
     return results
-

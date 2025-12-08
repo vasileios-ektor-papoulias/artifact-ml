@@ -8,4 +8,3 @@ def test_public_api_exports():
     expected_exports = ["Serializable"]
     for name in expected_exports:
         assert hasattr(module, name), f"{name} not exported"
-

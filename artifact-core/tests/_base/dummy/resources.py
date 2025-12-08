@@ -7,4 +7,3 @@ from artifact_core._base.core.resources import ArtifactResources
 class DummyArtifactResources(ArtifactResources):
     valid: bool
     x: float
-

@@ -72,9 +72,7 @@ def test_from_spec(
     binary_spec: BinaryClassSpec,
     id_to_prob_pos: Mapping[IdentifierType, float],
 ):
-    store = BinaryDistributionStore.from_spec(
-        class_spec=binary_spec, id_to_prob_pos=id_to_prob_pos
-    )
+    store = BinaryDistributionStore.from_spec(class_spec=binary_spec, id_to_prob_pos=id_to_prob_pos)
     assert store.n_items == len(id_to_prob_pos)
     assert store.class_spec == binary_spec
 

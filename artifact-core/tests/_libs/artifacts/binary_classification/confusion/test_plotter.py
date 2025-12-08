@@ -27,8 +27,8 @@ from tests._libs.artifacts.binary_classification.conftest import BinaryDataTuple
 )
 def test_plot(
     mocker: MockerFixture,
-    set_agg_backend,
-    close_all_figs_after_test,
+    set_agg_backend: None,
+    close_all_figs_after_test: None,
     binary_data_dispatcher: BinaryDataTuple,
     normalization: ConfusionMatrixNormalizationStrategy,
 ):
@@ -61,8 +61,8 @@ def test_plot(
 )
 def test_plot_multiple(
     mocker: MockerFixture,
-    set_agg_backend,
-    close_all_figs_after_test,
+    set_agg_backend: None,
+    close_all_figs_after_test: None,
     binary_data_dispatcher: BinaryDataTuple,
     normalization_types: List[ConfusionMatrixNormalizationStrategy],
 ):
@@ -86,7 +86,7 @@ def test_plot_multiple(
     indirect=True,
 )
 def test_plot_with_custom_config(
-    set_agg_backend, close_all_figs_after_test, binary_data_dispatcher: BinaryDataTuple
+    set_agg_backend: None, close_all_figs_after_test: None, binary_data_dispatcher: BinaryDataTuple
 ):
     id_to_is_pos, id_to_pred_pos, _ = binary_data_dispatcher
     config = ConfusionMatrixPlotConfig(

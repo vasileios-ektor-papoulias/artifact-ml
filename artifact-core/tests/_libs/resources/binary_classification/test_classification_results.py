@@ -97,9 +97,7 @@ def test_from_spec_without_probs(
     id_to_class: Mapping[IdentifierType, str],
     expected_probs: Mapping[IdentifierType, float],
 ):
-    results = BinaryClassificationResults.from_spec(
-        class_spec=binary_spec, id_to_class=id_to_class
-    )
+    results = BinaryClassificationResults.from_spec(class_spec=binary_spec, id_to_class=id_to_class)
     assert results.n_items == len(id_to_class)
     for identifier, expected_prob in expected_probs.items():
         actual = results.get_prob_pos(identifier=identifier)
@@ -341,9 +339,7 @@ def test_set_single_binary(
             identifier=0, predicted_class=class_name, prob_pos=prob_pos
         )
     else:
-        binary_classification_results.set_single_binary(
-            identifier=0, predicted_class=class_name
-        )
+        binary_classification_results.set_single_binary(identifier=0, predicted_class=class_name)
     assert binary_classification_results.get_predicted_class(identifier=0) == class_name
     actual_prob = binary_classification_results.get_prob_pos(identifier=0)
     assert actual_prob == pytest.approx(expected=expected_prob)
