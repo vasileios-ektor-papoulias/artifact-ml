@@ -10,4 +10,3 @@ def test_public_api_exports():
     assert set(module.__all__) == set(expected_all)
     for name in expected_all:
         assert hasattr(module, name), f"{name} not exported"
-

@@ -15,9 +15,7 @@ class DummySerializable(Serializable):
         return {"name": self.name, "value": self.value}
 
     @classmethod
-    def from_dict(
-        cls: Type[DummySerializableT], data: Dict[str, Any]
-    ) -> DummySerializableT:
+    def from_dict(cls: Type[DummySerializableT], data: Dict[str, Any]) -> DummySerializableT:
         name = cls._get_from_data("name", data)
         value = cls._get_from_data("value", data)
         return cls(name=name, value=value)
@@ -41,9 +39,7 @@ def dummy_instance() -> DummySerializable:
         ("serialize", '{"name": "test", "value": 42}'),
     ],
 )
-def test_serialization_methods(
-    dummy_instance: DummySerializable, method: str, expected: Any
-):
+def test_serialization_methods(dummy_instance: DummySerializable, method: str, expected: Any):
     result = getattr(dummy_instance, method)()
     assert result == expected
 
@@ -56,9 +52,7 @@ def test_serialization_methods(
         (DummySerializable.deserialize, '{"name": "test", "value": 42}'),
     ],
 )
-def test_factory_methods(
-    factory: Callable[..., DummySerializable], input_data: Any
-):
+def test_factory_methods(factory: Callable[..., DummySerializable], input_data: Any):
     result = factory(input_data)
     assert result == DummySerializable(name="test", value=42)
 
@@ -115,9 +109,7 @@ def test_get_from_data(data: Dict[str, Any], key: str, expected: Any):
         ({}, "missing"),
     ],
 )
-def test_get_from_data_raises_on_missing_or_none(
-    data: Dict[str, Any], key: str
-):
+def test_get_from_data_raises_on_missing_or_none(data: Dict[str, Any], key: str):
     with pytest.raises(KeyError, match=f"required key: '{key}'"):
         Serializable._get_from_data(key, data)
 
@@ -131,8 +123,6 @@ def test_get_from_data_raises_on_missing_or_none(
         ({}, "name"),
     ],
 )
-def test_from_dict_raises_on_missing_key(
-    data: Dict[str, Any], missing_key: str
-):
+def test_from_dict_raises_on_missing_key(data: Dict[str, Any], missing_key: str):
     with pytest.raises(KeyError, match=f"required key: '{missing_key}'"):
         DummySerializable.from_dict(data)

@@ -111,4 +111,3 @@ def test_equality_with_non_feature_spec(feature_spec: FeatureSpec):
     assert feature_spec.__eq__("not a spec") is NotImplemented
     assert feature_spec.__eq__(42) is NotImplemented
     assert feature_spec.__eq__(None) is NotImplemented
-

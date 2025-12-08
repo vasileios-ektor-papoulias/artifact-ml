@@ -26,10 +26,7 @@ class CategoricalFeatureSpec(FeatureSpec):
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, CategoricalFeatureSpec):
             return NotImplemented
-        return (
-            super().__eq__(other)
-            and self._ls_categories == other._ls_categories
-        )
+        return super().__eq__(other) and self._ls_categories == other._ls_categories
 
     @classmethod
     def from_dict(

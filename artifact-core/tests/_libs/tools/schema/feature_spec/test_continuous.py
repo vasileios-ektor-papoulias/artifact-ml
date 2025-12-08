@@ -58,4 +58,3 @@ def test_serialization_roundtrip(dtype: type):
     serialized = spec.serialize()
     restored = ContinuousFeatureSpec.deserialize(json_str=serialized)
     assert restored.dtype is dtype
-

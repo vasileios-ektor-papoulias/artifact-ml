@@ -19,4 +19,3 @@ from artifact_core._libs.tools.calculators.safe_div_calculator import SafeDivCal
 def test_compute(num: float, denom: float, expected: float):
     result = SafeDivCalculator.compute(num=num, denom=denom)
     assert result == pytest.approx(expected=expected)
-
