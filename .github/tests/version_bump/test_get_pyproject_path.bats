@@ -13,7 +13,8 @@ setup() {
   FAKE_BIN_DIR="$BATS_TMPDIR/fakebin"
   mkdir -p "$FAKE_BIN_DIR"
   cp -r "$REPO_ROOT/.github" "$FAKE_BIN_DIR/"
-  mkdir -p "$FAKE_BIN_DIR/subrepo"
+  mkdir -p "$FAKE_BIN_DIR/artifact-core"
+  mkdir -p "$FAKE_BIN_DIR/artifact-experiment"
 
   SCRIPT="$REPO_ROOT/.github/scripts/version_bump/get_pyproject_path.sh"
   echo "Using script path to copy: $SCRIPT" >&2
@@ -32,9 +33,14 @@ version = "1.0.0"
 description = "Root project"' > "$FAKE_BIN_DIR/pyproject.toml"
 
   echo '[tool.poetry]
-name = "subrepo-project"
+name = "artifact-core"
 version = "0.1.0"
-description = "Subrepo project"' > "$FAKE_BIN_DIR/subrepo/pyproject.toml"
+description = "Artifact Core project"' > "$FAKE_BIN_DIR/artifact-core/pyproject.toml"
+
+  echo '[tool.poetry]
+name = "artifact-experiment"
+version = "0.1.0"
+description = "Artifact Experiment project"' > "$FAKE_BIN_DIR/artifact-experiment/pyproject.toml"
 
   cd "$FAKE_BIN_DIR"
 }
@@ -45,9 +51,21 @@ teardown() {
 }
 
 @test "returns component pyproject.toml path when component exists" {
-  run ".github/scripts/version_bump/get_pyproject_path.sh" "subrepo"
+  run ".github/scripts/version_bump/get_pyproject_path.sh" "core"
   [ "$status" -eq 0 ]
-  [ "$output" = "subrepo/pyproject.toml" ]
+  [ "$output" = "artifact-core/pyproject.toml" ]
+}
+
+@test "returns experiment pyproject.toml path when experiment component" {
+  run ".github/scripts/version_bump/get_pyproject_path.sh" "experiment"
+  [ "$status" -eq 0 ]
+  [ "$output" = "artifact-experiment/pyproject.toml" ]
+}
+
+@test "returns root pyproject.toml path when component is root" {
+  run ".github/scripts/version_bump/get_pyproject_path.sh" "root"
+  [ "$status" -eq 0 ]
+  [ "$output" = "pyproject.toml" ]
 }
 
 @test "returns root pyproject.toml path when no component is provided" {
@@ -57,7 +75,7 @@ teardown() {
 }
 
 @test "exits with error when component pyproject.toml doesn't exist" {
-  run ".github/scripts/version_bump/get_pyproject_path.sh" "nonexistent"
+  run ".github/scripts/version_bump/get_pyproject_path.sh" "torch"
   [ "$status" -ne 0 ]
   combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
   echo "DEBUG: combined=[$combined]" >&2
@@ -66,7 +84,8 @@ teardown() {
 
 @test "exits with error when no pyproject.toml exists" {
   rm "$FAKE_BIN_DIR/pyproject.toml"
-  rm "$FAKE_BIN_DIR/subrepo/pyproject.toml"
+  rm "$FAKE_BIN_DIR/artifact-core/pyproject.toml"
+  rm "$FAKE_BIN_DIR/artifact-experiment/pyproject.toml"
   run ".github/scripts/version_bump/get_pyproject_path.sh"
   [ "$status" -ne 0 ]
   combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
