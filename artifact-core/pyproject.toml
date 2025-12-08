@@ -1,6 +1,6 @@
 [project]
 name = "artifact-core"
-version = "0.1.5"
+version = "0.2.0"
 description = "Artifact-ML foundation: a declarative interface for the computation of validation artifacts in ML experiments."
 authors = [
     {name = "Vasileios Ektor Papoulias",email = "hector.papoulias@gmail.com"}
