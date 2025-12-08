@@ -227,12 +227,12 @@ This approach aligns with GitHub Actions' standard execution context, where work
 - `get_component_name.sh`:
   - **Given:** the current commit context (expected to be a GitHub **merge commit**).
   - **Does:** parses the **commit subject** (e.g., `Merge pull request #123 from user/branch` or ``Merge pull request #123 from user:branch`), extracts the `branch` portion, then runs `extract_branch_info.sh` to validate branch naming and access the component name (`dev|hotfix|setup`).
-  - **Outcome:** prints the **component name** (e.g., `artifact-core`) to stdout; exits `1` if the commit isn’t a merge or the branch naming is invalid.
+  - **Outcome:** prints the **component name** (e.g., `core`) to stdout; exits `1` if the commit isn't a merge or the branch naming is invalid.
 
 - `get_pyproject_path.sh`:
-  - **Given:** a **component name** (e.g., `artifact-core`).
-  - **Does:** resolves the expected `pyproject.toml` location for that component (e.g., `artifact-core/pyproject.toml`); verifies the file exists.
-  - **Outcome:** prints the absolute or repo-relative path to `pyproject.toml` to stdout; exits `1` with an error if it cannot find the required file.
+  - **Given:** a **component name** (e.g., `core`, `experiment`, `torch`, or `root`).
+  - **Does:** maps the component name to its artifact directory (e.g., `core` → `artifact-core`), resolves the expected `pyproject.toml` location, and verifies the file exists. For `root` or no component, uses the repository root `pyproject.toml`.
+  - **Outcome:** prints the repo-relative path to `pyproject.toml` to stdout (e.g., `artifact-core/pyproject.toml`); exits `1` with an error if it cannot find the required file.
 
 - `update_pyproject.sh`:
   - **Given:** `<pyproject_path>` and `<bump_type>` (`patch|minor|major`).
