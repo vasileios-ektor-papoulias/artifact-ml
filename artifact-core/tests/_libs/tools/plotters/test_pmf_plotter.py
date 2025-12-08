@@ -17,8 +17,8 @@ from matplotlib.figure import Figure
     ],
 )
 def test_plot_pmf_returns_figure(
-    set_agg_backend,
-    close_all_figs_after_test,
+    set_agg_backend: None,
+    close_all_figs_after_test: None,
     data: List[str],
     feature_name: Optional[str],
     unique_categories: Optional[Sequence[str]],
@@ -40,8 +40,8 @@ def test_plot_pmf_returns_figure(
     ],
 )
 def test_plot_pmf_title(
-    set_agg_backend,
-    close_all_figs_after_test,
+    set_agg_backend: None,
+    close_all_figs_after_test: None,
     feature_name: Optional[str],
     expected_title: str,
 ):
@@ -52,7 +52,7 @@ def test_plot_pmf_title(
 
 
 @pytest.mark.unit
-def test_plot_pmf_with_custom_config(set_agg_backend, close_all_figs_after_test):
+def test_plot_pmf_with_custom_config(set_agg_backend: None, close_all_figs_after_test: None):
     sr_data = pd.Series(["A", "B", "A", "C", "B"])
     config = PMFConfig(plot_color="blue", alpha=0.5, rotation="horizontal")
     result = PMFPlotter.plot_pmf(sr_data=sr_data, config=config)
@@ -60,7 +60,7 @@ def test_plot_pmf_with_custom_config(set_agg_backend, close_all_figs_after_test)
 
 
 @pytest.mark.unit
-def test_plot_pmf_preserves_category_order(set_agg_backend, close_all_figs_after_test):
+def test_plot_pmf_preserves_category_order(set_agg_backend: None, close_all_figs_after_test: None):
     sr_data = pd.Series(["C", "A", "B", "A", "C"])
     unique_categories = ["A", "B", "C"]
     result = PMFPlotter.plot_pmf(

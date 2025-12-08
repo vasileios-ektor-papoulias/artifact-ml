@@ -20,8 +20,8 @@ from matplotlib.figure import Figure
     ],
 )
 def test_plot_overlaid_pmf_returns_figure(
-    set_agg_backend,
-    close_all_figs_after_test,
+    set_agg_backend: None,
+    close_all_figs_after_test: None,
     data_a: List[str],
     data_b: List[str],
     feature_name: Optional[str],
@@ -48,8 +48,8 @@ def test_plot_overlaid_pmf_returns_figure(
     ],
 )
 def test_plot_overlaid_pmf_title(
-    set_agg_backend,
-    close_all_figs_after_test,
+    set_agg_backend: None,
+    close_all_figs_after_test: None,
     feature_name: Optional[str],
     expected_title: str,
 ):
@@ -63,7 +63,9 @@ def test_plot_overlaid_pmf_title(
 
 
 @pytest.mark.unit
-def test_plot_overlaid_pmf_with_custom_config(set_agg_backend, close_all_figs_after_test):
+def test_plot_overlaid_pmf_with_custom_config(
+    set_agg_backend: None, close_all_figs_after_test: None
+):
     sr_data_a = pd.Series(["A", "B", "A", "C"])
     sr_data_b = pd.Series(["B", "C", "C", "A"])
     config = OverlaidPMFConfig(
@@ -80,7 +82,7 @@ def test_plot_overlaid_pmf_with_custom_config(set_agg_backend, close_all_figs_af
 
 
 @pytest.mark.unit
-def test_plot_overlaid_pmf_has_legend(set_agg_backend, close_all_figs_after_test):
+def test_plot_overlaid_pmf_has_legend(set_agg_backend: None, close_all_figs_after_test: None):
     sr_data_a = pd.Series(["A", "B", "A", "C"])
     sr_data_b = pd.Series(["B", "C", "C", "A"])
     result = OverlaidPMFPlotter.plot_overlaid_pmf(sr_data_a=sr_data_a, sr_data_b=sr_data_b)
@@ -90,7 +92,9 @@ def test_plot_overlaid_pmf_has_legend(set_agg_backend, close_all_figs_after_test
 
 
 @pytest.mark.unit
-def test_plot_overlaid_pmf_has_two_bar_groups(set_agg_backend, close_all_figs_after_test):
+def test_plot_overlaid_pmf_has_two_bar_groups(
+    set_agg_backend: None, close_all_figs_after_test: None
+):
     sr_data_a = pd.Series(["A", "B", "C"])
     sr_data_b = pd.Series(["A", "B", "C"])
     result = OverlaidPMFPlotter.plot_overlaid_pmf(

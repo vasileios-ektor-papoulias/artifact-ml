@@ -19,8 +19,8 @@ from matplotlib.figure import Figure
     ],
 )
 def test_plot_overlaid_pdf_returns_figure(
-    set_agg_backend,
-    close_all_figs_after_test,
+    set_agg_backend: None,
+    close_all_figs_after_test: None,
     data_a: List[float],
     data_b: List[float],
     feature_name: Optional[str],
@@ -43,8 +43,8 @@ def test_plot_overlaid_pdf_returns_figure(
     ],
 )
 def test_plot_overlaid_pdf_title(
-    set_agg_backend,
-    close_all_figs_after_test,
+    set_agg_backend: None,
+    close_all_figs_after_test: None,
     feature_name: Optional[str],
     expected_title: str,
 ):
@@ -58,7 +58,9 @@ def test_plot_overlaid_pdf_title(
 
 
 @pytest.mark.unit
-def test_plot_overlaid_pdf_with_custom_config(set_agg_backend, close_all_figs_after_test):
+def test_plot_overlaid_pdf_with_custom_config(
+    set_agg_backend: None, close_all_figs_after_test: None
+):
     sr_data_a = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0])
     sr_data_b = pd.Series([2.0, 3.0, 4.0, 5.0, 6.0])
     config = OverlaidPDFConfig(
@@ -74,7 +76,7 @@ def test_plot_overlaid_pdf_with_custom_config(set_agg_backend, close_all_figs_af
 
 
 @pytest.mark.unit
-def test_plot_overlaid_pdf_has_legend(set_agg_backend, close_all_figs_after_test):
+def test_plot_overlaid_pdf_has_legend(set_agg_backend: None, close_all_figs_after_test: None):
     sr_data_a = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0])
     sr_data_b = pd.Series([2.0, 3.0, 4.0, 5.0, 6.0])
     result = OverlaidPDFPlotter.plot_overlaid_pdf(sr_data_a=sr_data_a, sr_data_b=sr_data_b)
