@@ -66,23 +66,23 @@ All Github Actions workflows follow the naming convention:
 
 ##### dev-core
 - `enforce_source_branch_naming_pr_dev_core.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_CORE]): ensures that branches being PR'd to `dev-core` follow the naming convention: `feature-core/<descriptive_name>`, `fix-core/<descriptive_name>`,
-- `enforce_change_dirs_dev_core.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_CORE]): ensures PRs to `dev-core` only modify files in their corresponding directories,
-- `sonar_pr_dev_core.yml` (workflow name: SONAR_PR_CORE): runs **SonarCloud analysis** for PRs targeting `dev-core` that touch files under `artifact-core/**`;
+- `enforce_change_dirs_pr_dev_core.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_CORE]): ensures PRs to `dev-core` only modify files in their corresponding directories,
+- `sonar_pr_dev_core.yml` (workflow name: SONAR_PR[DEV_CORE]): runs **tests with coverage** and **SonarCloud analysis** for PRs targeting `dev-core` that touch files under `artifact-core/**`;
 
 ##### dev-experiment
 - `enforce_source_branch_naming_pr_dev_experiment.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_EXPERIMENT]): ensures that branches being PR'd to `dev-experiment` follow the naming convention: `feature-experiment/<descriptive_name>`, `fix-experiment/<descriptive_name>`,
-- `enforce_change_dirs_dev_experiment.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_EXPERIMENT]): ensures PRs to `dev-experiment` only modify files in their corresponding directories,
-- `sonar_pr_dev_experiment.yml` (workflow name: SONAR_PR_EXPERIMENT): runs **SonarCloud analysis** for PRs targeting `dev-experiment` that touch files under `artifact-experiment/**`,
+- `enforce_change_dirs_pr_dev_experiment.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_EXPERIMENT]): ensures PRs to `dev-experiment` only modify files in their corresponding directories,
+- `sonar_pr_dev_experiment.yml` (workflow name: SONAR_PR[DEV_EXPERIMENT]): runs **tests with coverage** and **SonarCloud analysis** for PRs targeting `dev-experiment` that touch files under `artifact-experiment/**`,
 
 ##### dev-torch
 - `enforce_source_branch_naming_pr_dev_torch.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_TORCH]): ensures that branches being PR'd to `dev-torch` follow the naming convention: `feature-torch/<descriptive_name>`, `fix-torch/<descriptive_name>`,
-- `enforce_change_dirs_dev_torch.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_TORCH]): ensures PRs to `dev-torch` only modify files in their corresponding directories,
-- `sonar_pr_dev_torch.yml` (workflow name: SONAR_PR_TORCH): runs **SonarCloud analysis** for PRs targeting `dev-torch` that touch files under `artifact-torch/**`,
+- `enforce_change_dirs_pr_dev_torch.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_TORCH]): ensures PRs to `dev-torch` only modify files in their corresponding directories,
+- `sonar_pr_dev_torch.yml` (workflow name: SONAR_PR[DEV_TORCH]): runs **tests with coverage** and **SonarCloud analysis** for PRs targeting `dev-torch` that touch files under `artifact-torch/**`,
 
 ##### main
 - `lint_title_pr_main.yml` (workflow name: LINT_TITLE_PR[MAIN]): ensures PR titles to `main` follow the appropriate semantic versioning prefix convention (see *Versioning and PRs to `main`*),
-- `enforce_source_branch_naming_pr_main.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING): ensures that branches being PR'd to `main` follow the naming convention: `dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`
-- `enforce_change_dirs_main.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[MAIN]) - Ensures:
+- `enforce_source_branch_naming_pr_main.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING_PR[MAIN]): ensures that branches being PR'd to `main` follow the naming convention: `dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`
+- `enforce_change_dirs_pr_main.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[MAIN]) - Ensures:
   - PRs from `dev-core` to `main` only modify files in the `artifact-core` directory
   - PRs from `dev-experiment` to `main` only modify files in the `artifact-experiment` directory
   - PRs from `dev-torch` to `main`only modify files in the `artifact-torch` directory
@@ -90,7 +90,7 @@ All Github Actions workflows follow the naming convention:
   - PRs from `hotfix-experiment/*` branches to `main` only modify files in the `artifact-experiment` directory
   - PRs from `hotfix-torch/*` branches to `main` only modify files in the `artifact-torch` directory
   - PRs from `hotfix-root/*` or `setup-root/*` branches to `main` only modify files outside the component source code directories (`artifact-core/artifact_core/`, `artifact-experiment/artifact_experiment/`, `artifact-torch/artifact_torch/`).
-- `sonar_pr_main.yml` (workflow name: SONAR_PR_MAIN): runs **SonarCloud analysis** on all components for PRs targeting `main`,
+- `sonar_pr_main.yml` (workflow name: SONAR_PR[MAIN]): runs **tests with coverage** and **SonarCloud analysis** on all components for PRs targeting `main`,
 
 
 

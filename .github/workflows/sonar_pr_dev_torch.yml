@@ -1,4 +1,4 @@
-name: SONAR[PR_DEV_TORCH]
+name: SONAR_PR[DEV_TORCH]
 
 on:
   pull_request:
