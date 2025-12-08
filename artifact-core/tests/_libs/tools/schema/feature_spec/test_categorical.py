@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple, Type, Union, cast
 
 import numpy as np
 import pytest
@@ -43,9 +43,13 @@ def test_ls_categories_returns_copy(
         (["A", "B", "A"], ValueError, "duplicates"),
     ],
 )
-def test_init_validation_raises(invalid_categories, expected_error: type, expected_match: str):
+def test_init_validation_raises(
+    invalid_categories: Union[Tuple[str, ...], List[Union[str, int]]],
+    expected_error: Type[Exception],
+    expected_match: str,
+):
     with pytest.raises(expected_error, match=expected_match):
-        CategoricalFeatureSpec(dtype=str, ls_categories=invalid_categories)
+        CategoricalFeatureSpec(dtype=str, ls_categories=cast(List[str], invalid_categories))
 
 
 @pytest.mark.unit
