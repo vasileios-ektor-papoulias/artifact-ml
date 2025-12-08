@@ -23,6 +23,59 @@ Tests are organized in `.github/tests`. Their directory structure mirrors that o
   <img src="../assets/github_actions_logo.png" width="500" alt="Github Actions Logo">
 </p>
 
+### Branch Protection Rulesets
+
+#### `main-protection` Ruleset
+
+**Target branch pattern:** `main`
+
+| Rule | Setting |
+|------|---------|
+| Restrict deletions | ✅ Enabled |
+| Require pull request before merging | ✅ Enabled |
+| Required approvals | 0 (configurable) |
+| Require status checks to pass | ✅ Enabled |
+| Block force pushes | ✅ Enabled |
+
+**Required status checks:**
+
+| Check Name | Source Workflow |
+|------------|-----------------|
+| `ci_component (artifact-core, artifact_core, core, ...)` | `CI_PUSH[MAIN]` |
+| `ci_component (artifact-experiment, artifact_experiment, experiment, ...)` | `CI_PUSH[MAIN]` |
+| `ci_component (artifact-torch, artifact_torch, torch, ...)` | `CI_PUSH[MAIN]` |
+| `sonar (artifact-core)` | `SONAR_PR[MAIN]` |
+| `sonar (artifact-experiment)` | `SONAR_PR[MAIN]` |
+| `sonar (artifact-torch)` | `SONAR_PR[MAIN]` |
+| `lint-pr-title` | `LINT_TITLE_PR[MAIN]` |
+| `check-branch-naming` | `ENFORCE_SOURCE_BRANCH_NAMING_PR[MAIN]` |
+
+#### `dev-branches-protection` Ruleset
+
+**Target branch pattern:** `dev-*` (covers `dev-core`, `dev-experiment`, `dev-torch`)
+
+| Rule | Setting |
+|------|---------|
+| Restrict deletions | ✅ Enabled |
+| Require pull request before merging | ✅ Enabled |
+| Required approvals | 0 (configurable) |
+| Require status checks to pass | ✅ Enabled |
+| Block force pushes | ✅ Enabled |
+| Bypass list | Repository admins (allows force push for rebasing) |
+
+**Required status checks:**
+
+| Check Name | Source Workflow |
+|------------|-----------------|
+| `ci_component` | `CI_PUSH[DEV_*]` |
+| `sonar` | `SONAR_PR[DEV_*]` |
+| `check-branch-naming` | `ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_*]` |
+| `enforce-change-dirs-to-dev-core` | `ENFORCE_CHANGE_DIRS_PR[DEV_CORE]` |
+| `enforce-change-dirs-to-dev-experiment` | `ENFORCE_CHANGE_DIRS_PR[DEV_EXPERIMENT]` |
+| `enforce-change-dirs-to-dev-torch` | `ENFORCE_CHANGE_DIRS_PR[DEV_TORCH]` |
+
+**Note:** The `ci_component` and `sonar` checks share the same job name across component-specific workflows. GitHub resolves the correct check based on which workflow runs for the target branch.
+
 ### Workflow Name Convention
 
 All Github Actions workflows follow the naming convention:
