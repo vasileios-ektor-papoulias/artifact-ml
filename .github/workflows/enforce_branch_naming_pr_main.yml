@@ -1,10 +1,10 @@
-name: ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_EXPERIMENT]
+name: ENFORCE_BRANCH_NAMING_PR[MAIN]
 
 on:
   pull_request:
     types: [opened, synchronize, reopened, edited]
     branches:
-      - dev-experiment
+      - main
 
 jobs:
   enforce-branch-naming:
@@ -12,8 +12,8 @@ jobs:
     permissions:
       contents: read
     env:
-      ALLOWED_COMPONENTS: "experiment"
-      ALLOWED_BRANCH_TYPES: "feature fix"
+      ALLOWED_COMPONENTS: "root core experiment torch"
+      ALLOWED_BRANCH_TYPES: "dev hotfix setup"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

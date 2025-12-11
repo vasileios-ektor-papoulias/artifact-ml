@@ -62,23 +62,23 @@ All Github Actions workflows follow the naming convention:
 
 ##### dev-core
 - `ci_pr_dev_core.yml` (workflow name: CI_PR[DEV_CORE]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-core` (pre-merge gating),
-- `enforce_source_branch_naming_pr_dev_core.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_CORE]): ensures that branches being PR'd to `dev-core` follow the naming convention: `feature-core/<descriptive_name>`, `fix-core/<descriptive_name>`,
+- `enforce_branch_naming_pr_dev_core.yml` (workflow name: ENFORCE_BRANCH_NAMING_PR[DEV_CORE]): ensures that branches being PR'd to `dev-core` follow the naming convention: `feature-core/<descriptive_name>`, `fix-core/<descriptive_name>`,
 - `enforce_change_dirs_pr_dev_core.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_CORE]): ensures PRs to `dev-core` only modify files in their corresponding directories,
 
 ##### dev-experiment
 - `ci_pr_dev_experiment.yml` (workflow name: CI_PR[DEV_EXPERIMENT]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-experiment` (pre-merge gating),
-- `enforce_source_branch_naming_pr_dev_experiment.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_EXPERIMENT]): ensures that branches being PR'd to `dev-experiment` follow the naming convention: `feature-experiment/<descriptive_name>`, `fix-experiment/<descriptive_name>`,
+- `enforce_branch_naming_pr_dev_experiment.yml` (workflow name: ENFORCE_BRANCH_NAMING_PR[DEV_EXPERIMENT]): ensures that branches being PR'd to `dev-experiment` follow the naming convention: `feature-experiment/<descriptive_name>`, `fix-experiment/<descriptive_name>`,
 - `enforce_change_dirs_pr_dev_experiment.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_EXPERIMENT]): ensures PRs to `dev-experiment` only modify files in their corresponding directories,
 
 ##### dev-torch
 - `ci_pr_dev_torch.yml` (workflow name: CI_PR[DEV_TORCH]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-torch` (pre-merge gating),
-- `enforce_source_branch_naming_pr_dev_torch.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_TORCH]): ensures that branches being PR'd to `dev-torch` follow the naming convention: `feature-torch/<descriptive_name>`, `fix-torch/<descriptive_name>`,
+- `enforce_branch_naming_pr_dev_torch.yml` (workflow name: ENFORCE_BRANCH_NAMING_PR[DEV_TORCH]): ensures that branches being PR'd to `dev-torch` follow the naming convention: `feature-torch/<descriptive_name>`, `fix-torch/<descriptive_name>`,
 - `enforce_change_dirs_pr_dev_torch.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_TORCH]): ensures PRs to `dev-torch` only modify files in their corresponding directories,
 
 ##### main
 - `ci_pr_main.yml` (workflow name: CI_PR[MAIN]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for all components for PRs targeting `main` (pre-merge gating),
 - `lint_title_pr_main.yml` (workflow name: LINT_TITLE_PR[MAIN]): ensures PR titles to `main` follow the appropriate semantic versioning prefix convention (see *Versioning and PRs to `main`*),
-- `enforce_source_branch_naming_pr_main.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING_PR[MAIN]): ensures that branches being PR'd to `main` follow the naming convention: `dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`
+- `enforce_branch_naming_pr_main.yml` (workflow name: ENFORCE_BRANCH_NAMING_PR[MAIN]): ensures that branches being PR'd to `main` follow the naming convention: `dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`
 - `enforce_change_dirs_pr_main.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[MAIN]) - Ensures:
   - PRs from `dev-core` to `main` only modify files in the `artifact-core` directory
   - PRs from `dev-experiment` to `main` only modify files in the `artifact-experiment` directory
@@ -107,14 +107,16 @@ All Github Actions workflows follow the naming convention:
 
 | Check Name | Source Workflow |
 |------------|-----------------|
-| `ci-component (artifact-core, artifact_core, core, ...)` | `CI_PR[MAIN]` |
-| `ci-component (artifact-experiment, artifact_experiment, experiment, ...)` | `CI_PR[MAIN]` |
-| `ci-component (artifact-torch, artifact_torch, torch, ...)` | `CI_PR[MAIN]` |
+| `ci-component (artifact-core, artifact_core, core)` | `CI_PR[MAIN]` |
+| `ci-component (artifact-experiment, artifact_experiment, experiment)` | `CI_PR[MAIN]` |
+| `ci-component (artifact-torch, artifact_torch, torch)` | `CI_PR[MAIN]` |
 | `lint-pr-title` | `LINT_TITLE_PR[MAIN]` |
-| `enforce-branch-naming` | `ENFORCE_SOURCE_BRANCH_NAMING_PR[MAIN]` |
+| `enforce-branch-naming` | `ENFORCE_BRANCH_NAMING_PR[MAIN]` |
 | `enforce-change-dirs` | `ENFORCE_CHANGE_DIRS_PR[MAIN]` |
 
 **Note:** SonarCloud and Codecov are integrated into the `ci-component` job—no separate status checks needed.
+
+**Note:** For matrix jobs, use the job name with matrix values (e.g., `ci-component (artifact-core, artifact_core, core)`), NOT the workflow name prefix. Use GitHub's autocomplete when adding required checks.
 
 ### `dev-branches-protection` Ruleset
 
@@ -133,11 +135,13 @@ All Github Actions workflows follow the naming convention:
 
 | Check Name | Source Workflow |
 |------------|-----------------|
-| `ci-component` | `CI_PR[DEV_*]` |
-| `enforce-branch-naming` | `ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_*]` |
+| `ci-component` | `CI_PR[DEV_CORE]`, `CI_PR[DEV_EXPERIMENT]`, `CI_PR[DEV_TORCH]` |
+| `enforce-branch-naming` | `ENFORCE_BRANCH_NAMING_PR[DEV_*]` |
 | `enforce-change-dirs` | `ENFORCE_CHANGE_DIRS_PR[DEV_*]` |
 
 **Note:** SonarCloud and Codecov are integrated into the `ci-component` job—no separate status checks needed.
+
+**Note:** For `dev-*` branches, each component has its own CI workflow. The ruleset pattern `dev-*` covers all three. Since dev workflows don't use a matrix, the check name is simply `ci-component`.
 
 
 ## CICD Scripts
