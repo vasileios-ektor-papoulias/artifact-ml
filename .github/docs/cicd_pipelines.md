@@ -66,17 +66,17 @@ All Github Actions workflows follow the naming convention:
 #### PR Triggers
 
 ##### dev-core
-- `ci_pr_dev_core.yml` (workflow name: CI_PR[DEV_CORE]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-core` (pre-merge gating),
+- `ci_pr_dev_core.yml` (workflow name: CI_PR[DEV_CORE]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-core` (pre-merge gating). **Skips CI if `artifact-core/` has no changes** (uses `check_component_changed.sh`),
 - `enforce_branch_naming_pr_dev_core.yml` (workflow name: ENFORCE_BRANCH_NAMING_PR[DEV_CORE]): ensures that branches being PR'd to `dev-core` follow the naming convention: `feature-core/<descriptive_name>`, `fix-core/<descriptive_name>`,
 - `enforce_change_dirs_pr_dev_core.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_CORE]): ensures PRs to `dev-core` only modify files in their corresponding directories,
 
 ##### dev-experiment
-- `ci_pr_dev_experiment.yml` (workflow name: CI_PR[DEV_EXPERIMENT]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-experiment` (pre-merge gating),
+- `ci_pr_dev_experiment.yml` (workflow name: CI_PR[DEV_EXPERIMENT]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-experiment` (pre-merge gating). **Skips CI if `artifact-experiment/` has no changes** (uses `check_component_changed.sh`),
 - `enforce_branch_naming_pr_dev_experiment.yml` (workflow name: ENFORCE_BRANCH_NAMING_PR[DEV_EXPERIMENT]): ensures that branches being PR'd to `dev-experiment` follow the naming convention: `feature-experiment/<descriptive_name>`, `fix-experiment/<descriptive_name>`,
 - `enforce_change_dirs_pr_dev_experiment.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_EXPERIMENT]): ensures PRs to `dev-experiment` only modify files in their corresponding directories,
 
 ##### dev-torch
-- `ci_pr_dev_torch.yml` (workflow name: CI_PR[DEV_TORCH]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-torch` (pre-merge gating),
+- `ci_pr_dev_torch.yml` (workflow name: CI_PR[DEV_TORCH]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-torch` (pre-merge gating). **Skips CI if `artifact-torch/` has no changes** (uses `check_component_changed.sh`),
 - `enforce_branch_naming_pr_dev_torch.yml` (workflow name: ENFORCE_BRANCH_NAMING_PR[DEV_TORCH]): ensures that branches being PR'd to `dev-torch` follow the naming convention: `feature-torch/<descriptive_name>`, `fix-torch/<descriptive_name>`,
 - `enforce_change_dirs_pr_dev_torch.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_TORCH]): ensures PRs to `dev-torch` only modify files in their corresponding directories,
 
@@ -278,7 +278,7 @@ This approach aligns with GitHub Actions' standard execution context, where work
   - **Given:** `<component_dir>` (e.g., `artifact-core`) and optional `[base_ref]` (default: `HEAD~1`).
   - **Does:** checks if any files in the component directory changed between the base ref and HEAD using `git diff`.
   - **Outcome:** prints `true` if changes exist, `false` otherwise; exits `0` on success, `1` on missing arguments.
-  - **Usage:** used by `CI_PUSH[MAIN]` and `CI_PR[MAIN]` to skip CI/SonarCloud/Codecov for components that have no changes (prevents "0% coverage on new code" errors).
+  - **Usage:** used by all CI workflows (`CI_PUSH[MAIN]`, `CI_PR[MAIN]`, `CI_PR[DEV_*]`) to skip CI/SonarCloud/Codecov for components that have no changes (prevents "0% coverage on new code" errors).
 
 - `enforce_change_dirs_main.sh`:
   - **Given:** `<head_ref>` (source branch) and `<base_ref>` (target branch, should be `main`).
@@ -331,7 +331,7 @@ This approach aligns with GitHub Actions' standard execution context, where work
 - `job.sh`:
   - **Given:** CI context on a PR merge (or equivalent), with all helper scripts available.
   - **Does:** extracts **bump type** from the merge **description** (`get_bump_type.sh`), extracts **component name** from the merge **subject** (`get_component_name.sh`), derives/locates the component's `pyproject.toml` (`get_pyproject_path.sh`), and invokes `bump_component_version.sh` to perform the version bump and push a version tag.
-  - **Outcome:** performs an end-to-end automated version bump; outputs `component=<name>` to stdout (for triggering publish workflow), or `component=` if skipped (no-bump or root). Exits `0` on success, `1` on failure.
+  - **Outcome:** performs an end-to-end automated version bump; outputs `component=<name>` and `version=<version>` to stdout (for triggering publish workflow and logging), or empty values if skipped (no-bump or root). Exits `0` on success, `1` on failure.
 
 
 ## CICD Script Functional Tests
