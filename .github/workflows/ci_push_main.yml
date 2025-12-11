@@ -11,10 +11,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint-message:
+  validate-and-extract:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    outputs:
+      component: ${{ steps.extract-component.outputs.component }}
+      bump_type: ${{ steps.extract-bump-type.outputs.bump_type }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,23 +29,29 @@ jobs:
           chmod +x .github/scripts/linting/*.sh
           .github/scripts/linting/lint_merge_commit_message.sh
 
-  lint-description:
-    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
       - name: Lint merge commit description
         run: |
           chmod +x .github/scripts/linting/*.sh
           .github/scripts/linting/lint_merge_commit_description.sh
 
+      - name: Extract Component Name
+        id: extract-component
+        run: |
+          chmod +x .github/scripts/version_bump/get_component_name.sh
+          COMPONENT=$(.github/scripts/version_bump/get_component_name.sh)
+          echo "Extracted component: '$COMPONENT'"
+          echo "component=$COMPONENT" >> $GITHUB_OUTPUT
+
+      - name: Extract Bump Type
+        id: extract-bump-type
+        run: |
+          chmod +x .github/scripts/version_bump/get_bump_type.sh
+          BUMP_TYPE=$(.github/scripts/version_bump/get_bump_type.sh)
+          echo "Extracted bump type: '$BUMP_TYPE'"
+          echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
+
   ci-component:
-    needs: [lint-message, lint-description]
+    needs: validate-and-extract
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     permissions:
       contents: read
@@ -124,10 +133,10 @@ jobs:
           poetry build
 
   bump-version:
-    needs: ci-component
+    needs: [validate-and-extract, ci-component]
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    if: ${{ needs.validate-and-extract.outputs.component != '' && needs.validate-and-extract.outputs.component != 'root' && needs.validate-and-extract.outputs.bump_type != 'no-bump' }}
     permissions:
       contents: write
     steps:
@@ -149,21 +158,21 @@ jobs:
           virtualenvs-create: true
           virtualenvs-in-project: false
 
-      - name: Run Version Bump Job
-        id: bump
+      - name: Run Version Bump
         run: |
           chmod +x .github/scripts/version_bump/*.sh
-          OUTPUT=$(.github/scripts/version_bump/job.sh)
-          COMPONENT=$(echo "$OUTPUT" | grep "^component=" | cut -d= -f2)
-          echo "Captured component: '$COMPONENT'"
-          echo "component=$COMPONENT" >> $GITHUB_OUTPUT
+          .github/scripts/version_bump/job.sh "${{ needs.validate-and-extract.outputs.component }}" "${{ needs.validate-and-extract.outputs.bump_type }}"
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
 
+  publish:
+    needs: [validate-and-extract, bump-version]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
       - name: Trigger Publish Workflow
-        if: steps.bump.outputs.component != '' && steps.bump.outputs.component != 'root'
         run: |
-          echo "Triggering publish workflow for component: ${{ steps.bump.outputs.component }}"
-          gh workflow run publish.yml -f component=${{ steps.bump.outputs.component }}
+          echo "Triggering publish workflow for component: ${{ needs.validate-and-extract.outputs.component }}"
+          gh workflow run publish.yml -f component=${{ needs.validate-and-extract.outputs.component }}
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
