@@ -1,11 +1,6 @@
 name: PUBLISH[PYPI]
 
 on:
-  push:
-    tags:
-      - 'core-v*'
-      - 'experiment-v*'
-      - 'torch-v*'
   workflow_dispatch:
     inputs:
       component:

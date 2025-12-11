@@ -52,31 +52,31 @@ All Github Actions workflows follow the naming convention:
   1. **`lint-message`**: validates the merge commit message format—asserts that the message is of the form "Merge pull request #<`PR_number`> from <`username`>/<`branch-name`>" where `<branch_name>` is an appropriate source branch (`dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`).
   2. **`lint-description`**: validates the merge commit description—asserts that it follows the semantic versioning prefix convention (see *Versioning and PRs to `main`*).
   3. **`ci-component`** (needs: lint-message, lint-description): runs CI checks for each component. **Skips CI for components that have no changes** (uses `check_component_changed.sh`).
-  4. **`bump-version`** (needs: ci-component): parses the commit description and message to identify the relevant component and bump type, updates the relevant `pyproject.toml`, and pushes a git tag. The tag push then **automatically triggers** `PUBLISH[PYPI]`.
+  4. **`bump-version`** (needs: ci-component): parses the commit description and message to identify the relevant component and bump type, updates the relevant `pyproject.toml`, pushes a git tag, and **explicitly triggers** `PUBLISH[PYPI]` via `gh workflow run`.
   
   **If linting fails, CI and bump are skipped**—this prevents broken releases from malformed commit messages.
 
 - `bump_component_push_main.yml` (workflow name: BUMP_COMPONENT_PUSH[MAIN]): **manual-only fallback** for version bumping—can be triggered via workflow dispatch if the automatic bump in `CI_PUSH[MAIN]` needs to be re-run or if manual intervention is required.
 
-#### Tag Triggers
+#### Publish Workflows (workflow_dispatch only)
 
-- `publish.yml` (workflow name: PUBLISH[PYPI]): publishes packages to PyPI when version tags are pushed (format: `artifact-<component>-v<version>`) or when manually triggered via workflow dispatch---extracts component and version information, builds the package using Poetry, publishes to PyPI using Trusted Publishing (OIDC), and creates a GitHub Release with the built artifacts (tag triggers only). **Note:** This workflow is automatically triggered when `CI_PUSH[MAIN]` pushes a version tag after bumping.
-- `publish_test.yml` (workflow name: PUBLISH[TEST_PYPI]): publishes packages to TestPyPI when manually triggered via workflow dispatch---extracts component information, builds the package using Poetry, and publishes to TestPyPI using Trusted Publishing (OIDC) for testing purposes before production release.
+- `publish.yml` (workflow name: PUBLISH[PYPI]): publishes packages to PyPI via `workflow_dispatch` only—triggered explicitly by `CI_PUSH[MAIN]` after bump-version completes (via `gh workflow run`), or manually via the Actions UI. Extracts component information from the input, builds the package using Poetry, publishes to PyPI using Trusted Publishing (OIDC), and creates a GitHub Release with the built artifacts.
+- `publish_test.yml` (workflow name: PUBLISH[TEST_PYPI]): publishes packages to TestPyPI when manually triggered via workflow dispatch—extracts component information, builds the package using Poetry, and publishes to TestPyPI using Trusted Publishing (OIDC) for testing purposes before production release.
 
 #### PR Triggers
 
 ##### dev-core
-- `ci_pr_dev_core.yml` (workflow name: CI_PR[DEV_CORE]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-core` (pre-merge gating),
+- `ci_pr_dev_core.yml` (workflow name: CI_PR[DEV_CORE]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-core` (pre-merge gating). **Skips CI if `artifact-core/` has no changes** (uses `check_component_changed.sh`),
 - `enforce_branch_naming_pr_dev_core.yml` (workflow name: ENFORCE_BRANCH_NAMING_PR[DEV_CORE]): ensures that branches being PR'd to `dev-core` follow the naming convention: `feature-core/<descriptive_name>`, `fix-core/<descriptive_name>`,
 - `enforce_change_dirs_pr_dev_core.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_CORE]): ensures PRs to `dev-core` only modify files in their corresponding directories,
 
 ##### dev-experiment
-- `ci_pr_dev_experiment.yml` (workflow name: CI_PR[DEV_EXPERIMENT]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-experiment` (pre-merge gating),
+- `ci_pr_dev_experiment.yml` (workflow name: CI_PR[DEV_EXPERIMENT]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-experiment` (pre-merge gating). **Skips CI if `artifact-experiment/` has no changes** (uses `check_component_changed.sh`),
 - `enforce_branch_naming_pr_dev_experiment.yml` (workflow name: ENFORCE_BRANCH_NAMING_PR[DEV_EXPERIMENT]): ensures that branches being PR'd to `dev-experiment` follow the naming convention: `feature-experiment/<descriptive_name>`, `fix-experiment/<descriptive_name>`,
 - `enforce_change_dirs_pr_dev_experiment.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_EXPERIMENT]): ensures PRs to `dev-experiment` only modify files in their corresponding directories,
 
 ##### dev-torch
-- `ci_pr_dev_torch.yml` (workflow name: CI_PR[DEV_TORCH]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-torch` (pre-merge gating),
+- `ci_pr_dev_torch.yml` (workflow name: CI_PR[DEV_TORCH]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-torch` (pre-merge gating). **Skips CI if `artifact-torch/` has no changes** (uses `check_component_changed.sh`),
 - `enforce_branch_naming_pr_dev_torch.yml` (workflow name: ENFORCE_BRANCH_NAMING_PR[DEV_TORCH]): ensures that branches being PR'd to `dev-torch` follow the naming convention: `feature-torch/<descriptive_name>`, `fix-torch/<descriptive_name>`,
 - `enforce_change_dirs_pr_dev_torch.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_TORCH]): ensures PRs to `dev-torch` only modify files in their corresponding directories,
 
@@ -247,12 +247,11 @@ This approach aligns with GitHub Actions' standard execution context, where work
 #### Publishing Scripts (`.github/scripts/publishing/`)
 
 - `extract_component_from_tag.sh`:
-  - **Given:** `<event_name>` (`push` | `workflow_dispatch`), `<ref_name_or_tag>` (Git tag or ref name), and `<manual_component_input>` (component name for manual triggers).
-  - **Does:** extracts the component name and version from a Git tag (e.g., `core-v1.0.0`) for tag-based triggers, or uses the manual component input for workflow dispatch triggers. Validates tag format for push events (must match `<component>-v<major>.<minor>.<patch>`).
-  - **Outcome:** prints JSON object with `component` and `version` fields to stdout (e.g., `{"component":"core","version":"1.0.0"}` for tags, or `{"component":"core","version":"manual"}` for manual triggers); exits `1` with `::error::` prefixed diagnostics if validation fails or required parameters are missing.
+  - **Given:** `<event_name>` (`workflow_dispatch`), `<ref_name_or_tag>` (unused for workflow_dispatch), and `<manual_component_input>` (component name).
+  - **Does:** extracts the component name from workflow_dispatch input. (Tag parsing code is retained for backward compatibility but not used since `PUBLISH[PYPI]` only uses workflow_dispatch.)
+  - **Outcome:** prints JSON object with `component` and `version` fields to stdout (e.g., `{"component":"core","version":"manual"}`); exits `1` with `::error::` prefixed diagnostics if validation fails or required parameters are missing.
   - **Examples:**
-    - Tag push: `extract_component_from_tag.sh "push" "core-v1.0.0" ""` → `{"component":"core","version":"1.0.0"}`
-    - Manual trigger: `extract_component_from_tag.sh "workflow_dispatch" "" "experiment"` → `{"component":"experiment","version":"manual"}`
+    - `extract_component_from_tag.sh "workflow_dispatch" "" "experiment"` → `{"component":"experiment","version":"manual"}`
 
 #### Path Enforcement Scripts (`.github/scripts/enforce_path/`)
 
@@ -279,7 +278,7 @@ This approach aligns with GitHub Actions' standard execution context, where work
   - **Given:** `<component_dir>` (e.g., `artifact-core`) and optional `[base_ref]` (default: `HEAD~1`).
   - **Does:** checks if any files in the component directory changed between the base ref and HEAD using `git diff`.
   - **Outcome:** prints `true` if changes exist, `false` otherwise; exits `0` on success, `1` on missing arguments.
-  - **Usage:** used by `CI_PUSH[MAIN]` and `CI_PR[MAIN]` to skip CI/SonarCloud/Codecov for components that have no changes (prevents "0% coverage on new code" errors).
+  - **Usage:** used by all CI workflows (`CI_PUSH[MAIN]`, `CI_PR[MAIN]`, `CI_PR[DEV_*]`) to skip CI/SonarCloud/Codecov for components that have no changes (prevents "0% coverage on new code" errors).
 
 - `enforce_change_dirs_main.sh`:
   - **Given:** `<head_ref>` (source branch) and `<base_ref>` (target branch, should be `main`).
@@ -331,8 +330,8 @@ This approach aligns with GitHub Actions' standard execution context, where work
 
 - `job.sh`:
   - **Given:** CI context on a PR merge (or equivalent), with all helper scripts available.
-  - **Does:** extracts **bump type** from the merge **description** (`get_bump_type.sh`), extracts **component name** from the merge **subject** (`get_component_name.sh`), derives/locates the component’s `pyproject.toml` (`get_pyproject_path.sh`), and invokes `bump_component_version.sh` to perform the version bump and push a version tag.
-  - **Outcome:** performs an end-to-end automated version bump for the component implicated by the PR; exits `0` on success and `1` with actionable errors if inputs or validations fail.
+  - **Does:** extracts **bump type** from the merge **description** (`get_bump_type.sh`), extracts **component name** from the merge **subject** (`get_component_name.sh`), derives/locates the component's `pyproject.toml` (`get_pyproject_path.sh`), and invokes `bump_component_version.sh` to perform the version bump and push a version tag.
+  - **Outcome:** performs an end-to-end automated version bump; outputs `component=<name>` and `version=<version>` to stdout (for triggering publish workflow and logging), or empty values if skipped (no-bump or root). Exits `0` on success, `1` on failure.
 
 
 ## CICD Script Functional Tests
