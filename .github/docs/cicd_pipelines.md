@@ -48,10 +48,15 @@ All Github Actions workflows follow the naming convention:
 **Note:** These workflows are excluded from `main` and `dev-*` branches. They also **skip execution if an open PR exists** for the branch (to avoid duplicate CI runs with `CI_PR[DEV_*]`).
  
 ##### Branch: main
-- `ci_push_main.yml` (workflow name: CI_PUSH[MAIN]): runs CI checks when changes are pushed to `main` (post-merge verification). **Skips CI for components that have no changes** (uses `check_component_changed.sh` to detect). **After CI passes, automatically runs the `bump-version` job** which parses the commit description and message to identify the relevant component and bump type, updates the relevant `pyproject.toml`, and pushes the change along with a git tag. The tag push then **automatically triggers** the `PUBLISH[PYPI]` workflow.
-- `lint_message_push_main.yml` (workflow name: LINT_MESSAGE_PUSH[MAIN]): validates the message carried by a merge commit pushed to `main`---asserts that the message is of the form "Merge pull request #<`PR_number`> from <`username`>/<`branch-name`>" (or "...<`username`>:<`branch-name`>") where `<branch_name>` is one of the appropriate source branches i.e. `dev-<component_name>`, `hotfix-<component_name>`/`<descriptive_name>`, or `setup-<component_name>/<descriptive_name>`,
-- `lint_description_push_main.yml` (workflow name: LINT_DESCRIPTION_PUSH[MAIN]): validates the description carried by a merge commit pushed to `main`---asserts that the description is a valid PR title according to the appropriate semantic versioning prefix convention (see *Versioning and PRs to `main`*),
-- `bump_component_push_main.yml` (workflow name: BUMP_COMPONENT_PUSH[MAIN]): **manual-only fallback** for version bumping---can be triggered via workflow dispatch if the automatic bump in `CI_PUSH[MAIN]` needs to be re-run or if manual intervention is required.
+- `ci_push_main.yml` (workflow name: CI_PUSH[MAIN]): unified post-merge workflow with the following job chain:
+  1. **`lint-message`**: validates the merge commit message format—asserts that the message is of the form "Merge pull request #<`PR_number`> from <`username`>/<`branch-name`>" where `<branch_name>` is an appropriate source branch (`dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`).
+  2. **`lint-description`**: validates the merge commit description—asserts that it follows the semantic versioning prefix convention (see *Versioning and PRs to `main`*).
+  3. **`ci-component`** (needs: lint-message, lint-description): runs CI checks for each component. **Skips CI for components that have no changes** (uses `check_component_changed.sh`).
+  4. **`bump-version`** (needs: ci-component): parses the commit description and message to identify the relevant component and bump type, updates the relevant `pyproject.toml`, and pushes a git tag. The tag push then **automatically triggers** `PUBLISH[PYPI]`.
+  
+  **If linting fails, CI and bump are skipped**—this prevents broken releases from malformed commit messages.
+
+- `bump_component_push_main.yml` (workflow name: BUMP_COMPONENT_PUSH[MAIN]): **manual-only fallback** for version bumping—can be triggered via workflow dispatch if the automatic bump in `CI_PUSH[MAIN]` needs to be re-run or if manual intervention is required.
 
 #### Tag Triggers
 
