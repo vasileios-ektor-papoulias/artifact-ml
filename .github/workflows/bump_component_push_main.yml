@@ -1,27 +1,19 @@
 name: BUMP_COMPONENT_PUSH[MAIN]
 
 on:
-  workflow_run:
-    workflows: ["CI_PUSH[MAIN]"]
-    types:
-      - completed
-    branches:
-      - main
-  workflow_dispatch:
+  workflow_dispatch:  # Manual trigger only (automatic bump is handled by CI_PUSH[MAIN])
 
 permissions:
   contents: write
-  pull-requests: read
 
 jobs:
   bump-component-version:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}
           fetch-depth: 2  # Need at least 2 commits to get the merge commit
 
       - name: Set up Python
@@ -44,4 +36,4 @@ jobs:
           # Run the version bump job script
           .github/scripts/version_bump/job.sh
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}

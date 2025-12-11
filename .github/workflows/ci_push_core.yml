@@ -11,47 +11,83 @@ on:
       - 'artifact-core/**'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   COMPONENT: artifact-core
 
 jobs:
-  ci_component:
+  ci-component:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
+      - name: Check for open PR
+        id: pr_check
+        run: |
+          PR=$(gh pr list --repo "${{ github.repository }}" --head "${{ github.ref_name }}" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
+          if [[ -n "$PR" ]]; then
+            echo "has_pr=true" >> $GITHUB_OUTPUT
+            echo "::notice::Skipping CI_PUSH - PR #$PR exists for this branch. CI_PR workflow will handle CI."
+          else
+            echo "has_pr=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
       - name: Checkout code
+        if: steps.pr_check.outputs.has_pr != 'true'
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
+        if: steps.pr_check.outputs.has_pr != 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: Install Poetry
+        if: steps.pr_check.outputs.has_pr != 'true'
         uses: snok/install-poetry@v1
         with:
           version: latest
           virtualenvs-create: true
           virtualenvs-in-project: false
 
+      - name: Cache Poetry dependencies
+        if: steps.pr_check.outputs.has_pr != 'true'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pypoetry
+            ~/.local/share/pypoetry
+          key: ${{ runner.os }}-poetry-${{ env.COMPONENT }}-${{ hashFiles(format('{0}/poetry.lock', env.COMPONENT)) }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-${{ env.COMPONENT }}-
+
       - name: Install Dependencies
+        if: steps.pr_check.outputs.has_pr != 'true'
         run: |
           cd ${{ env.COMPONENT }}
           poetry install --with dev
 
       - name: Run Linting with Ruff
+        if: steps.pr_check.outputs.has_pr != 'true'
         run: |
           cd ${{ env.COMPONENT }}
           poetry run ruff check .
 
       - name: Run Unit Tests with Pytest
+        if: steps.pr_check.outputs.has_pr != 'true'
         run: |
           cd ${{ env.COMPONENT }}
           poetry run pytest
 
       - name: Build Package
+        if: steps.pr_check.outputs.has_pr != 'true'
         run: |
           cd ${{ env.COMPONENT }}
           poetry build

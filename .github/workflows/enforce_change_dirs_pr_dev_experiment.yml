@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  enforce-change-dirs-to-dev-experiment:
+  enforce-change-dirs:
     if: ${{ github.base_ref == 'dev-experiment' && github.head_ref != 'main' }}
     runs-on: ubuntu-latest
     env:

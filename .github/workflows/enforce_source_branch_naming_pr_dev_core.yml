@@ -7,7 +7,7 @@ on:
       - dev-core
 
 jobs:
-  check-branch-naming:
+  enforce-branch-naming:
     runs-on: ubuntu-latest
     permissions:
       contents: read
