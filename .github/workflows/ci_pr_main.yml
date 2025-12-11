@@ -38,12 +38,28 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
+      - name: Check if component changed
+        id: changes
+        run: |
+          chmod +x .github/scripts/ci/check_component_changed.sh
+          # For PRs, compare against the base branch
+          git fetch origin ${{ github.base_ref }} --depth=1
+          RESULT=$(.github/scripts/ci/check_component_changed.sh "${{ matrix.component }}" "origin/${{ github.base_ref }}")
+          echo "has_changes=$RESULT" >> $GITHUB_OUTPUT
+          if [ "$RESULT" = "true" ]; then
+            echo "✅ Component ${{ matrix.component }} has changes"
+          else
+            echo "⏭️ Component ${{ matrix.component }} has NO changes - skipping CI"
+          fi
+
       - name: Set up Python
+        if: steps.changes.outputs.has_changes == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: Install Poetry
+        if: steps.changes.outputs.has_changes == 'true'
         uses: snok/install-poetry@v1
         with:
           version: latest
@@ -51,6 +67,7 @@ jobs:
           virtualenvs-in-project: false
 
       - name: Cache Poetry dependencies
+        if: steps.changes.outputs.has_changes == 'true'
         uses: actions/cache@v4
         with:
           path: |
@@ -61,16 +78,19 @@ jobs:
             ${{ runner.os }}-poetry-${{ matrix.component }}-
 
       - name: Install Dependencies
+        if: steps.changes.outputs.has_changes == 'true'
         run: |
           cd ${{ matrix.component }}
           poetry install --with dev
 
       - name: Run Linting with Ruff
+        if: steps.changes.outputs.has_changes == 'true'
         run: |
           cd ${{ matrix.component }}
           poetry run ruff check .
 
       - name: Run Unit Tests with Pytest
+        if: steps.changes.outputs.has_changes == 'true'
         run: |
           cd ${{ matrix.component }}
           poetry run pytest \
@@ -79,6 +99,7 @@ jobs:
             --cov-report=xml:coverage.xml
       
       - name: Upload coverage to Codecov
+        if: steps.changes.outputs.has_changes == 'true'
         uses: codecov/codecov-action@v4
         with:
           files: ${{ matrix.component }}/coverage.xml
@@ -87,6 +108,7 @@ jobs:
           fail_ci_if_error: true
       
       - name: SonarCloud Scan
+        if: steps.changes.outputs.has_changes == 'true'
         uses: SonarSource/sonarqube-scan-action@v6
         with:
           projectBaseDir: ${{ matrix.component }}
@@ -95,6 +117,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Build Package
+        if: steps.changes.outputs.has_changes == 'true'
         run: |
           cd ${{ matrix.component }}
           poetry build
