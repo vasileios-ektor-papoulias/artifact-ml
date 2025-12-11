@@ -26,15 +26,12 @@ jobs:
           - component: artifact-core
             module: artifact_core
             flag: core
-            project_key: vasileios-ektor-papoulias_artifact-core
           - component: artifact-experiment
             module: artifact_experiment
             flag: experiment
-            project_key: vasileios-ektor-papoulias_artifact-experiment
           - component: artifact-torch
             module: artifact_torch
             flag: torch
-            project_key: vasileios-ektor-papoulias_artifact-torch
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

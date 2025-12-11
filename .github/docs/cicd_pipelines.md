@@ -107,16 +107,16 @@ All Github Actions workflows follow the naming convention:
 
 | Check Name | Source Workflow |
 |------------|-----------------|
-| `CI_PR[MAIN] / ci-component (artifact-core, artifact_core, core, vasileios-ektor-papoulias_artifact-core)` | `CI_PR[MAIN]` |
-| `CI_PR[MAIN] / ci-component (artifact-experiment, artifact_experiment, experiment, vasileios-ektor-papoulias_artifact-experiment)` | `CI_PR[MAIN]` |
-| `CI_PR[MAIN] / ci-component (artifact-torch, artifact_torch, torch, vasileios-ektor-papoulias_artifact-torch)` | `CI_PR[MAIN]` |
+| `CI_PR[MAIN] / ci-component (artifact-core, artifact_core, core)` | `CI_PR[MAIN]` |
+| `CI_PR[MAIN] / ci-component (artifact-experiment, artifact_experiment, experiment)` | `CI_PR[MAIN]` |
+| `CI_PR[MAIN] / ci-component (artifact-torch, artifact_torch, torch)` | `CI_PR[MAIN]` |
 | `lint-pr-title` | `LINT_TITLE_PR[MAIN]` |
 | `enforce-branch-naming` | `ENFORCE_BRANCH_NAMING_PR[MAIN]` |
 | `enforce-change-dirs` | `ENFORCE_CHANGE_DIRS_PR[MAIN]` |
 
 **Note:** SonarCloud and Codecov are integrated into the `ci-component` job—no separate status checks needed.
 
-**Note:** Matrix job check names include the workflow name prefix (`CI_PR[MAIN] /`) and all matrix values. Use GitHub's autocomplete when adding required checks to ensure exact match.
+**Note:** Matrix job check names include the workflow name prefix (`CI_PR[MAIN] /`) and matrix values. Use GitHub's autocomplete when adding required checks to ensure exact match.
 
 ### `dev-branches-protection` Ruleset
 
