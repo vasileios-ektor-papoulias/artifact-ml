@@ -1,6 +1,6 @@
 [project]
 name = "artifact-experiment"
-version = "0.1.5"
+version = "0.1.6"
 description = "Artifact-ML experiment orchestration: declarative builder toolkit for reusable validation workflows with integrated tracking."
 authors = [
     {name = "Vasileios Ektor Papoulias",email = "hector.papoulias@gmail.com"}
