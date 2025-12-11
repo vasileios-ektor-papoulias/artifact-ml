@@ -42,7 +42,7 @@ set -euo pipefail
 #   - Expects pyproject.toml to contain a parseable version field the helper can update.
 #
 # Examples:
-#   # Bump core’s version (minor) and push a tag for it
+#   # Bump core's version (minor) and push a tag for it
 #   .github/scripts/version_bump/bump_component_version.sh minor core artifact-core/pyproject.toml
 #     --> Generated tag name: core-v1.3.0
 #
