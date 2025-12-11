@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  enforce-change-dirs-to-dev-torch:
+  enforce-change-dirs:
     if: ${{ github.base_ref == 'dev-torch' && github.head_ref != 'main' }}
     runs-on: ubuntu-latest
     env:

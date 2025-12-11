@@ -23,9 +23,75 @@ Tests are organized in `.github/tests`. Their directory structure mirrors that o
   <img src="../assets/github_actions_logo.png" width="500" alt="Github Actions Logo">
 </p>
 
-### Branch Protection Rulesets
 
-#### `main-protection` Ruleset
+### Workflow Name Convention
+
+All Github Actions workflows follow the naming convention:
+
+<p align="center">
+  <strong><code>AREA_TRIGGER[SCOPE]</code></strong>
+</p>
+
+- **AREA** – high level operation spec (e.g. `CI`, `ENFORCE`, `LINT`, `PUBLISH`).
+- **TRIGGER** – event that triggers the workflow (`PUSH`, `PR`, `SCHEDULE`).
+- **SCOPE** – relevant component or branch (`CORE`, `EXPERIMENT`, `TORCH`).
+
+### GitHub Actions Workflow Registry
+
+#### Push Triggers
+
+##### Feature Branch CI (path-filtered)
+- `ci_push_core.yml` (workflow name: CI_PUSH[CORE]): runs CI checks when changes are pushed to feature branches involving files in `artifact-core/**`,
+- `ci_push_experiment.yml` (workflow name: CI_PUSH[EXPERIMENT]): runs CI checks when changes are pushed to feature branches involving files in `artifact-experiment/**`,
+- `ci_push_torch.yml` (workflow name: CI_PUSH[TORCH]): runs CI checks when changes are pushed to feature branches involving files in `artifact-torch/**`,
+
+**Note:** These workflows are excluded from `main` and `dev-*` branches. They also **skip execution if an open PR exists** for the branch (to avoid duplicate CI runs with `CI_PR[DEV_*]`).
+ 
+##### Branch: main
+- `ci_push_main.yml` (workflow name: CI_PUSH[MAIN]): runs CI checks when changes are pushed to `main` (post-merge verification). **After CI passes, automatically runs the `bump-version` job** which parses the commit description and message to identify the relevant component and bump type, updates the relevant `pyproject.toml`, and pushes the change along with a git tag. The tag push then **automatically triggers** the `PUBLISH[PYPI]` workflow.
+- `lint_message_push_main.yml` (workflow name: LINT_MESSAGE_PUSH[MAIN]): validates the message carried by a merge commit pushed to `main`---asserts that the message is of the form "Merge pull request #<`PR_number`> from <`username`>/<`branch-name`>" (or "...<`username`>:<`branch-name`>") where `<branch_name>` is one of the appropriate source branches i.e. `dev-<component_name>`, `hotfix-<component_name>`/`<descriptive_name>`, or `setup-<component_name>/<descriptive_name>`,
+- `lint_description_push_main.yml` (workflow name: LINT_DESCRIPTION_PUSH[MAIN]): validates the description carried by a merge commit pushed to `main`---asserts that the description is a valid PR title according to the appropriate semantic versioning prefix convention (see *Versioning and PRs to `main`*),
+- `bump_component_push_main.yml` (workflow name: BUMP_COMPONENT_PUSH[MAIN]): **manual-only fallback** for version bumping---can be triggered via workflow dispatch if the automatic bump in `CI_PUSH[MAIN]` needs to be re-run or if manual intervention is required.
+
+#### Tag Triggers
+
+- `publish.yml` (workflow name: PUBLISH[PYPI]): publishes packages to PyPI when version tags are pushed (format: `artifact-<component>-v<version>`) or when manually triggered via workflow dispatch---extracts component and version information, builds the package using Poetry, publishes to PyPI using Trusted Publishing (OIDC), and creates a GitHub Release with the built artifacts (tag triggers only). **Note:** This workflow is automatically triggered when `CI_PUSH[MAIN]` pushes a version tag after bumping.
+- `publish_test.yml` (workflow name: PUBLISH[TEST_PYPI]): publishes packages to TestPyPI when manually triggered via workflow dispatch---extracts component information, builds the package using Poetry, and publishes to TestPyPI using Trusted Publishing (OIDC) for testing purposes before production release.
+
+#### PR Triggers
+
+##### dev-core
+- `ci_pr_dev_core.yml` (workflow name: CI_PR[DEV_CORE]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-core` (pre-merge gating),
+- `enforce_source_branch_naming_pr_dev_core.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_CORE]): ensures that branches being PR'd to `dev-core` follow the naming convention: `feature-core/<descriptive_name>`, `fix-core/<descriptive_name>`,
+- `enforce_change_dirs_pr_dev_core.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_CORE]): ensures PRs to `dev-core` only modify files in their corresponding directories,
+
+##### dev-experiment
+- `ci_pr_dev_experiment.yml` (workflow name: CI_PR[DEV_EXPERIMENT]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-experiment` (pre-merge gating),
+- `enforce_source_branch_naming_pr_dev_experiment.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_EXPERIMENT]): ensures that branches being PR'd to `dev-experiment` follow the naming convention: `feature-experiment/<descriptive_name>`, `fix-experiment/<descriptive_name>`,
+- `enforce_change_dirs_pr_dev_experiment.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_EXPERIMENT]): ensures PRs to `dev-experiment` only modify files in their corresponding directories,
+
+##### dev-torch
+- `ci_pr_dev_torch.yml` (workflow name: CI_PR[DEV_TORCH]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-torch` (pre-merge gating),
+- `enforce_source_branch_naming_pr_dev_torch.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_TORCH]): ensures that branches being PR'd to `dev-torch` follow the naming convention: `feature-torch/<descriptive_name>`, `fix-torch/<descriptive_name>`,
+- `enforce_change_dirs_pr_dev_torch.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_TORCH]): ensures PRs to `dev-torch` only modify files in their corresponding directories,
+
+##### main
+- `ci_pr_main.yml` (workflow name: CI_PR[MAIN]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for all components for PRs targeting `main` (pre-merge gating),
+- `lint_title_pr_main.yml` (workflow name: LINT_TITLE_PR[MAIN]): ensures PR titles to `main` follow the appropriate semantic versioning prefix convention (see *Versioning and PRs to `main`*),
+- `enforce_source_branch_naming_pr_main.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING_PR[MAIN]): ensures that branches being PR'd to `main` follow the naming convention: `dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`
+- `enforce_change_dirs_pr_main.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[MAIN]) - Ensures:
+  - PRs from `dev-core` to `main` only modify files in the `artifact-core` directory
+  - PRs from `dev-experiment` to `main` only modify files in the `artifact-experiment` directory
+  - PRs from `dev-torch` to `main`only modify files in the `artifact-torch` directory
+  - PRs from `hotfix-core/*` branches to `main` only modify files in the `artifact-core` directory
+  - PRs from `hotfix-experiment/*` branches to `main` only modify files in the `artifact-experiment` directory
+  - PRs from `hotfix-torch/*` branches to `main` only modify files in the `artifact-torch` directory
+  - PRs from `hotfix-root/*` or `setup-root/*` branches to `main` only modify files outside the component source code directories (`artifact-core/artifact_core/`, `artifact-experiment/artifact_experiment/`, `artifact-torch/artifact_torch/`).
+
+
+## Branch Protection Rulesets
+
+### `main-protection` Ruleset
 
 **Target branch pattern:** `main`
 
@@ -41,16 +107,16 @@ Tests are organized in `.github/tests`. Their directory structure mirrors that o
 
 | Check Name | Source Workflow |
 |------------|-----------------|
-| `ci_component (artifact-core, artifact_core, core, ...)` | `CI_PUSH[MAIN]` |
-| `ci_component (artifact-experiment, artifact_experiment, experiment, ...)` | `CI_PUSH[MAIN]` |
-| `ci_component (artifact-torch, artifact_torch, torch, ...)` | `CI_PUSH[MAIN]` |
-| `sonar (artifact-core)` | `SONAR_PR[MAIN]` |
-| `sonar (artifact-experiment)` | `SONAR_PR[MAIN]` |
-| `sonar (artifact-torch)` | `SONAR_PR[MAIN]` |
+| `ci-component (artifact-core, artifact_core, core, ...)` | `CI_PR[MAIN]` |
+| `ci-component (artifact-experiment, artifact_experiment, experiment, ...)` | `CI_PR[MAIN]` |
+| `ci-component (artifact-torch, artifact_torch, torch, ...)` | `CI_PR[MAIN]` |
 | `lint-pr-title` | `LINT_TITLE_PR[MAIN]` |
-| `check-branch-naming` | `ENFORCE_SOURCE_BRANCH_NAMING_PR[MAIN]` |
+| `enforce-branch-naming` | `ENFORCE_SOURCE_BRANCH_NAMING_PR[MAIN]` |
+| `enforce-change-dirs` | `ENFORCE_CHANGE_DIRS_PR[MAIN]` |
 
-#### `dev-branches-protection` Ruleset
+**Note:** SonarCloud and Codecov are integrated into the `ci-component` job—no separate status checks needed.
+
+### `dev-branches-protection` Ruleset
 
 **Target branch pattern:** `dev-*` (covers `dev-core`, `dev-experiment`, `dev-torch`)
 
@@ -67,88 +133,11 @@ Tests are organized in `.github/tests`. Their directory structure mirrors that o
 
 | Check Name | Source Workflow |
 |------------|-----------------|
-| `ci_component` | `CI_PUSH[DEV_*]` |
-| `sonar` | `SONAR_PR[DEV_*]` |
-| `check-branch-naming` | `ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_*]` |
-| `enforce-change-dirs-to-dev-core` | `ENFORCE_CHANGE_DIRS_PR[DEV_CORE]` |
-| `enforce-change-dirs-to-dev-experiment` | `ENFORCE_CHANGE_DIRS_PR[DEV_EXPERIMENT]` |
-| `enforce-change-dirs-to-dev-torch` | `ENFORCE_CHANGE_DIRS_PR[DEV_TORCH]` |
+| `ci-component` | `CI_PR[DEV_*]` |
+| `enforce-branch-naming` | `ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_*]` |
+| `enforce-change-dirs` | `ENFORCE_CHANGE_DIRS_PR[DEV_*]` |
 
-**Note:** The `ci_component` and `sonar` checks share the same job name across component-specific workflows. GitHub resolves the correct check based on which workflow runs for the target branch.
-
-### Workflow Name Convention
-
-All Github Actions workflows follow the naming convention:
-
-<p align="center">
-  <strong><code>AREA_TRIGGER[SCOPE]</code></strong>
-</p>
-
-- **AREA** – high level operation spec (e.g. `CI`, `SONAR`, `RELEASE`).
-- **TRIGGER** – event that triggers the workflow (`PUSH`, `PR`, `SCHEDULE`).
-- **SCOPE** – relevant component or branch (`CORE`, `EXPERIMENT`, `TORCH`).
-
-### GitHub Actions Workflow Registry
-
-#### Push Triggers
-
-##### Component: core
-- `ci_push_core.yml` (workflow name: CI_PUSH[CORE]): runs CI checks when changes are pushed to branches other than `main` and `dev-core` involving files in the `core` component directories,
-- `ci_push_dev_core.yml` (workflow name: CI_PUSH[DEV_CORE]): runs CI checks when changes are pushed to `dev-core` (always merges of `feature`/ `fix` branches through pull request),
-
-##### Component: experiment
-- `ci_push_experiment.yml` (workflow name: CI_PUSH[EXPERIMENT]): runs CI checks when changes are pushed to branches other than `main` and `dev-experiment` involving files in the `experiment` component directories,
-- `ci_push_dev_experiment.yml` (workflow name: CI_PUSH[DEV_EXPERIMENT]): runs CI checks when changes are pushed to `dev-experiment` (always merges of `feature`/ `fix` branches through pull request),
-
-##### Component: torch
-- `ci_push_torch.yml` (workflow name: CI_PUSH[TORCH]): runs CI checks when changes are pushed to branches other than `main` and `dev-torch` involving files in the `torch` component directories,
- - `ci_push_dev_torch.yml` (workflow name: CI_PUSH[DEV_TORCH]): runs CI checks when changes are pushed to `dev-torch` (always merges of `feature`/ `fix` branches through pull request),
- 
-##### Branch: main
-- `ci_push_main.yml` (workflow name: CI_PUSH[MAIN]): runs CI checks when changes are pushed to `main` (always merges of `dev`/ `hotfix`/ `setup` branches through pull request). **After CI passes, automatically runs the version bump job** which parses the commit description and message to identify the relevant component and bump type, updates the relevant `pyproject.toml`, and pushes the change along with a git tag. The tag push then **automatically triggers** the `PUBLISH[PYPI]` workflow.
-- `lint_message_push_main.yml` (workflow name: LINT_MESSAGE_PUSH[MAIN]): validates the message carried by a merge commit pushed to `main`---asserts that the message is of the form "Merge pull request #<`PR_number`> from <`username`>/<`branch-name`>" (or "...<`username`>:<`branch-name`>") where `<branch_name>` is one of the appropriate source branches i.e. `dev-<component_name>`, `hotfix-<component_name>`/`<descriptive_name>`, or `setup-<component_name>/<descriptive_name>`,
-- `lint_description_push_main.yml` (workflow name: LINT_DESCRIPTION_PUSH[MAIN]): validates the description carried by a merge commit pushed to `main`---asserts that the description is a valid PR title according to the appropriate semantic versioning prefix convention (see *Versioning and PRs to `main`*),
-- `bump_component_push_main.yml` (workflow name: BUMP_COMPONENT_PUSH[MAIN]): **manual-only fallback** for version bumping---can be triggered via workflow dispatch if the automatic bump in `CI_PUSH[MAIN]` needs to be re-run or if manual intervention is required.
-
-#### Tag Triggers
-
-- `publish.yml` (workflow name: PUBLISH[PYPI]): publishes packages to PyPI when version tags are pushed (format: `artifact-<component>-v<version>`) or when manually triggered via workflow dispatch---extracts component and version information, builds the package using Poetry, publishes to PyPI using Trusted Publishing (OIDC), and creates a GitHub Release with the built artifacts (tag triggers only). **Note:** This workflow is automatically triggered when `CI_PUSH[MAIN]` pushes a version tag after bumping.
-- `publish_test.yml` (workflow name: PUBLISH[TEST_PYPI]): publishes packages to TestPyPI when manually triggered via workflow dispatch---extracts component information, builds the package using Poetry, and publishes to TestPyPI using Trusted Publishing (OIDC) for testing purposes before production release.
-
-#### PR Triggers
-
-##### dev-core
-- `enforce_source_branch_naming_pr_dev_core.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_CORE]): ensures that branches being PR'd to `dev-core` follow the naming convention: `feature-core/<descriptive_name>`, `fix-core/<descriptive_name>`,
-- `enforce_change_dirs_pr_dev_core.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_CORE]): ensures PRs to `dev-core` only modify files in their corresponding directories,
-- `sonar_pr_dev_core.yml` (workflow name: SONAR_PR[DEV_CORE]): runs **tests with coverage** and **SonarCloud analysis** for PRs targeting `dev-core` that touch files under `artifact-core/**`;
-
-##### dev-experiment
-- `enforce_source_branch_naming_pr_dev_experiment.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_EXPERIMENT]): ensures that branches being PR'd to `dev-experiment` follow the naming convention: `feature-experiment/<descriptive_name>`, `fix-experiment/<descriptive_name>`,
-- `enforce_change_dirs_pr_dev_experiment.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_EXPERIMENT]): ensures PRs to `dev-experiment` only modify files in their corresponding directories,
-- `sonar_pr_dev_experiment.yml` (workflow name: SONAR_PR[DEV_EXPERIMENT]): runs **tests with coverage** and **SonarCloud analysis** for PRs targeting `dev-experiment` that touch files under `artifact-experiment/**`,
-
-##### dev-torch
-- `enforce_source_branch_naming_pr_dev_torch.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING_PR[DEV_TORCH]): ensures that branches being PR'd to `dev-torch` follow the naming convention: `feature-torch/<descriptive_name>`, `fix-torch/<descriptive_name>`,
-- `enforce_change_dirs_pr_dev_torch.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_TORCH]): ensures PRs to `dev-torch` only modify files in their corresponding directories,
-- `sonar_pr_dev_torch.yml` (workflow name: SONAR_PR[DEV_TORCH]): runs **tests with coverage** and **SonarCloud analysis** for PRs targeting `dev-torch` that touch files under `artifact-torch/**`,
-
-##### main
-- `lint_title_pr_main.yml` (workflow name: LINT_TITLE_PR[MAIN]): ensures PR titles to `main` follow the appropriate semantic versioning prefix convention (see *Versioning and PRs to `main`*),
-- `enforce_source_branch_naming_pr_main.yml` (workflow name: ENFORCE_SOURCE_BRANCH_NAMING_PR[MAIN]): ensures that branches being PR'd to `main` follow the naming convention: `dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`
-- `enforce_change_dirs_pr_main.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[MAIN]) - Ensures:
-  - PRs from `dev-core` to `main` only modify files in the `artifact-core` directory
-  - PRs from `dev-experiment` to `main` only modify files in the `artifact-experiment` directory
-  - PRs from `dev-torch` to `main`only modify files in the `artifact-torch` directory
-  - PRs from `hotfix-core/*` branches to `main` only modify files in the `artifact-core` directory
-  - PRs from `hotfix-experiment/*` branches to `main` only modify files in the `artifact-experiment` directory
-  - PRs from `hotfix-torch/*` branches to `main` only modify files in the `artifact-torch` directory
-  - PRs from `hotfix-root/*` or `setup-root/*` branches to `main` only modify files outside the component source code directories (`artifact-core/artifact_core/`, `artifact-experiment/artifact_experiment/`, `artifact-torch/artifact_torch/`).
-- `sonar_pr_main.yml` (workflow name: SONAR_PR[MAIN]): runs **tests with coverage** and **SonarCloud analysis** on all components for PRs targeting `main`,
-
-
-
-
-
+**Note:** SonarCloud and Codecov are integrated into the `ci-component` job—no separate status checks needed.
 
 
 ## CICD Scripts
@@ -268,6 +257,23 @@ This approach aligns with GitHub Actions' standard execution context, where work
   - **Does:** fetches `origin/<base_ref>`, computes `merge-base(origin/<base_ref>, HEAD)`, diffs `MB..HEAD`; then checks that **no** changed path starts with any forbidden `<dir>/` (regex-escaped, trailing slash normalized).
   - **Outcome:** exits `0` if all changes are **outside** the listed directories; otherwise exits `1` and prints the paths that violate the rule.
 
+#### CI Scripts (`.github/scripts/ci/`)
+
+- `check_open_pr.sh`:
+  - **Given:** `<branch_name>` (e.g., `feature-core/my-feature`).
+  - **Does:** queries the GitHub API via `gh pr list` to check if there is an open pull request with the given branch as its head.
+  - **Outcome:** prints `true` to stdout if an open PR exists, `false` otherwise; exits `0` on success, `1` on missing arguments or if `GH_TOKEN` is not set.
+  - **Environment:** requires `GH_TOKEN` environment variable for API access.
+  - **Usage:** used by `CI_PUSH[CORE/EXPERIMENT/TORCH]` workflows to skip CI when a PR is open (to avoid duplicate runs with `CI_PR[DEV_*]`).
+
+- `enforce_change_dirs_main.sh`:
+  - **Given:** `<head_ref>` (source branch) and `<base_ref>` (target branch, should be `main`).
+  - **Does:** routes to the appropriate directory enforcement check based on the source branch pattern:
+    - `dev-<component>` → changes must be in `artifact-<component>/`
+    - `hotfix-<component>/*` → changes must be in `artifact-<component>/`
+    - `*-root/*` (setup-root, hotfix-root) → changes must be **outside** component source directories
+  - **Outcome:** exits `0` if directory check passes, `1` if check fails or branch pattern is unrecognized.
+  - **Usage:** used by `ENFORCE_CHANGE_DIRS_PR[MAIN]` workflow to enforce directory restrictions on PRs to main.
 
 #### Version Bump Scripts (`.github/scripts/version_bump/`)
 

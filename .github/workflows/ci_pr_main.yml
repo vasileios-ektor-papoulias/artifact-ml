@@ -1,7 +1,7 @@
-name: CI_PUSH[MAIN]
+name: CI_PR[MAIN]
 
 on:
-  push:
+  pull_request:
     branches:
       - 'main'
   workflow_dispatch:
@@ -12,13 +12,12 @@ concurrency:
 
 jobs:
   ci-component:
-    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
       pull-requests: write  # Required for Codecov/SonarCloud PR comments
       id-token: write  # Required for Codecov OIDC
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -102,39 +101,3 @@ jobs:
         run: |
           cd ${{ matrix.component }}
           poetry build
-
-  bump-version:
-    needs: ci-component
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.PAT_TOKEN }}
-          fetch-depth: 2
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: latest
-          virtualenvs-create: true
-          virtualenvs-in-project: false
-
-      - name: Run Version Bump Job
-        run: |
-          # Ensure all scripts are executable
-          chmod +x .github/scripts/version_bump/*.sh
-          
-          # Run the version bump job script
-          .github/scripts/version_bump/job.sh
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
