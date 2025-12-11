@@ -179,11 +179,20 @@ jobs:
           virtualenvs-in-project: false
 
       - name: Run Version Bump Job
+        id: bump
         run: |
-          # Ensure all scripts are executable
           chmod +x .github/scripts/version_bump/*.sh
-          
-          # Run the version bump job script
-          .github/scripts/version_bump/job.sh
+          OUTPUT=$(.github/scripts/version_bump/job.sh)
+          COMPONENT=$(echo "$OUTPUT" | grep "^component=" | cut -d= -f2)
+          echo "Captured component: '$COMPONENT'"
+          echo "component=$COMPONENT" >> $GITHUB_OUTPUT
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+      - name: Trigger Publish Workflow
+        if: steps.bump.outputs.component != '' && steps.bump.outputs.component != 'root'
+        run: |
+          echo "Triggering publish workflow for component: ${{ steps.bump.outputs.component }}"
+          gh workflow run publish.yml -f component=${{ steps.bump.outputs.component }}
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN }}

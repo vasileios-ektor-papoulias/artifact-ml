@@ -52,16 +52,16 @@ All Github Actions workflows follow the naming convention:
   1. **`lint-message`**: validates the merge commit message format—asserts that the message is of the form "Merge pull request #<`PR_number`> from <`username`>/<`branch-name`>" where `<branch_name>` is an appropriate source branch (`dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`).
   2. **`lint-description`**: validates the merge commit description—asserts that it follows the semantic versioning prefix convention (see *Versioning and PRs to `main`*).
   3. **`ci-component`** (needs: lint-message, lint-description): runs CI checks for each component. **Skips CI for components that have no changes** (uses `check_component_changed.sh`).
-  4. **`bump-version`** (needs: ci-component): parses the commit description and message to identify the relevant component and bump type, updates the relevant `pyproject.toml`, and pushes a git tag. The tag push then **automatically triggers** `PUBLISH[PYPI]`.
+  4. **`bump-version`** (needs: ci-component): parses the commit description and message to identify the relevant component and bump type, updates the relevant `pyproject.toml`, pushes a git tag, and **explicitly triggers** `PUBLISH[PYPI]` via `gh workflow run`.
   
   **If linting fails, CI and bump are skipped**—this prevents broken releases from malformed commit messages.
 
 - `bump_component_push_main.yml` (workflow name: BUMP_COMPONENT_PUSH[MAIN]): **manual-only fallback** for version bumping—can be triggered via workflow dispatch if the automatic bump in `CI_PUSH[MAIN]` needs to be re-run or if manual intervention is required.
 
-#### Tag Triggers
+#### Publish Workflows (workflow_dispatch only)
 
-- `publish.yml` (workflow name: PUBLISH[PYPI]): publishes packages to PyPI when version tags are pushed (format: `artifact-<component>-v<version>`) or when manually triggered via workflow dispatch---extracts component and version information, builds the package using Poetry, publishes to PyPI using Trusted Publishing (OIDC), and creates a GitHub Release with the built artifacts (tag triggers only). **Note:** This workflow is automatically triggered when `CI_PUSH[MAIN]` pushes a version tag after bumping.
-- `publish_test.yml` (workflow name: PUBLISH[TEST_PYPI]): publishes packages to TestPyPI when manually triggered via workflow dispatch---extracts component information, builds the package using Poetry, and publishes to TestPyPI using Trusted Publishing (OIDC) for testing purposes before production release.
+- `publish.yml` (workflow name: PUBLISH[PYPI]): publishes packages to PyPI via `workflow_dispatch` only—triggered explicitly by `CI_PUSH[MAIN]` after bump-version completes (via `gh workflow run`), or manually via the Actions UI. Extracts component information from the input, builds the package using Poetry, publishes to PyPI using Trusted Publishing (OIDC), and creates a GitHub Release with the built artifacts.
+- `publish_test.yml` (workflow name: PUBLISH[TEST_PYPI]): publishes packages to TestPyPI when manually triggered via workflow dispatch—extracts component information, builds the package using Poetry, and publishes to TestPyPI using Trusted Publishing (OIDC) for testing purposes before production release.
 
 #### PR Triggers
 
@@ -247,12 +247,11 @@ This approach aligns with GitHub Actions' standard execution context, where work
 #### Publishing Scripts (`.github/scripts/publishing/`)
 
 - `extract_component_from_tag.sh`:
-  - **Given:** `<event_name>` (`push` | `workflow_dispatch`), `<ref_name_or_tag>` (Git tag or ref name), and `<manual_component_input>` (component name for manual triggers).
-  - **Does:** extracts the component name and version from a Git tag (e.g., `core-v1.0.0`) for tag-based triggers, or uses the manual component input for workflow dispatch triggers. Validates tag format for push events (must match `<component>-v<major>.<minor>.<patch>`).
-  - **Outcome:** prints JSON object with `component` and `version` fields to stdout (e.g., `{"component":"core","version":"1.0.0"}` for tags, or `{"component":"core","version":"manual"}` for manual triggers); exits `1` with `::error::` prefixed diagnostics if validation fails or required parameters are missing.
+  - **Given:** `<event_name>` (`workflow_dispatch`), `<ref_name_or_tag>` (unused for workflow_dispatch), and `<manual_component_input>` (component name).
+  - **Does:** extracts the component name from workflow_dispatch input. (Tag parsing code is retained for backward compatibility but not used since `PUBLISH[PYPI]` only uses workflow_dispatch.)
+  - **Outcome:** prints JSON object with `component` and `version` fields to stdout (e.g., `{"component":"core","version":"manual"}`); exits `1` with `::error::` prefixed diagnostics if validation fails or required parameters are missing.
   - **Examples:**
-    - Tag push: `extract_component_from_tag.sh "push" "core-v1.0.0" ""` → `{"component":"core","version":"1.0.0"}`
-    - Manual trigger: `extract_component_from_tag.sh "workflow_dispatch" "" "experiment"` → `{"component":"experiment","version":"manual"}`
+    - `extract_component_from_tag.sh "workflow_dispatch" "" "experiment"` → `{"component":"experiment","version":"manual"}`
 
 #### Path Enforcement Scripts (`.github/scripts/enforce_path/`)
 
@@ -331,8 +330,8 @@ This approach aligns with GitHub Actions' standard execution context, where work
 
 - `job.sh`:
   - **Given:** CI context on a PR merge (or equivalent), with all helper scripts available.
-  - **Does:** extracts **bump type** from the merge **description** (`get_bump_type.sh`), extracts **component name** from the merge **subject** (`get_component_name.sh`), derives/locates the component’s `pyproject.toml` (`get_pyproject_path.sh`), and invokes `bump_component_version.sh` to perform the version bump and push a version tag.
-  - **Outcome:** performs an end-to-end automated version bump for the component implicated by the PR; exits `0` on success and `1` with actionable errors if inputs or validations fail.
+  - **Does:** extracts **bump type** from the merge **description** (`get_bump_type.sh`), extracts **component name** from the merge **subject** (`get_component_name.sh`), derives/locates the component's `pyproject.toml` (`get_pyproject_path.sh`), and invokes `bump_component_version.sh` to perform the version bump and push a version tag.
+  - **Outcome:** performs an end-to-end automated version bump; outputs `component=<name>` to stdout (for triggering publish workflow), or `component=` if skipped (no-bump or root). Exits `0` on success, `1` on failure.
 
 
 ## CICD Script Functional Tests

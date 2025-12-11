@@ -16,7 +16,8 @@ set -euo pipefail
 #     • pyproject.toml path (from repo layout and component)
 #
 # Stdout on success:
-#   (none) — this script logs progress to STDERR; no structured STDOUT output.
+#   component=<name> — outputs the component name for downstream steps (e.g., triggering publish).
+#   component= — (empty) if skipped due to no-bump or root component.
 #
 # Stderr on failure:
 #   ::error::-style diagnostics from this script or its delegates explaining
@@ -62,31 +63,34 @@ set -euo pipefail
 
 
 BUMP_TYPE=$(.github/scripts/version_bump/get_bump_type.sh)
-echo "Using bump type: $BUMP_TYPE"
+echo "Using bump type: $BUMP_TYPE" >&2
 
 if [ "$BUMP_TYPE" = "no-bump" ]; then
-  echo "Bump type is 'no-bump', skipping version bump"
-  echo "This PR is marked as not requiring a version bump"
+  echo "Bump type is 'no-bump', skipping version bump" >&2
+  echo "This PR is marked as not requiring a version bump" >&2
+  echo "component="
   exit 0
 fi
 
 COMPONENT_NAME=$(.github/scripts/version_bump/get_component_name.sh)
 if [[ -z "$COMPONENT_NAME" ]]; then
-    echo "No component name found, will use root pyproject.toml if it exists"
+    echo "No component name found, will use root pyproject.toml if it exists" >&2
 fi
 
 if [ "$COMPONENT_NAME" = "root" ]; then
-  echo "Component is 'root', skipping version bump"
-  echo "Root component changes should not trigger version bumps"
+  echo "Component is 'root', skipping version bump" >&2
+  echo "Root component changes should not trigger version bumps" >&2
+  echo "component="
   exit 0
 fi
 
 PYPROJECT_PATH=$(.github/scripts/version_bump/get_pyproject_path.sh "$COMPONENT_NAME") || {
-  echo "Error: Failed to find a valid pyproject.toml file for component '$COMPONENT_NAME'"
-  echo "Version bump cannot proceed without a valid pyproject.toml file"
+  echo "Error: Failed to find a valid pyproject.toml file for component '$COMPONENT_NAME'" >&2
+  echo "Version bump cannot proceed without a valid pyproject.toml file" >&2
   exit 1
 }
-echo "Using pyproject.toml at: $PYPROJECT_PATH"
+echo "Using pyproject.toml at: $PYPROJECT_PATH" >&2
 
 .github/scripts/version_bump/bump_component_version.sh "$BUMP_TYPE" "$COMPONENT_NAME" "$PYPROJECT_PATH"
-echo "Successfully completed version bump job"
+echo "Successfully completed version bump job" >&2
+echo "component=$COMPONENT_NAME"
