@@ -46,6 +46,7 @@ EOF
   cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/version_bump/bump_component_version.sh"
 #!/bin/bash
 echo "Fake bump_component_version.sh called with: $@" >&2
+echo "1.2.3"
 exit 0
 EOF
   chmod +x "$FAKE_BIN_DIR/.github/scripts/version_bump/bump_component_version.sh"
@@ -68,9 +69,8 @@ EOF
   chmod +x "$FAKE_BIN_DIR/.github/scripts/version_bump/get_bump_type.sh"
   run ".github/scripts/version_bump/job.sh"
   [ "$status" -eq 0 ]
-  # Check stdout contains empty component output
   [[ "$output" == *"component="* ]]
-  # Check stderr contains skip message
+  [[ "$output" == *"version="* ]]
   [[ "$stderr" == *"Bump type is 'no-bump', skipping version bump"* ]] || [[ "$output" == *"Bump type is 'no-bump', skipping version bump"* ]]
 }
 
@@ -91,8 +91,8 @@ EOF
   chmod +x "$FAKE_BIN_DIR/.github/scripts/version_bump/get_component_name.sh"
   run ".github/scripts/version_bump/job.sh"
   [ "$status" -eq 0 ]
-  # Check stdout contains empty component output
   [[ "$output" == *"component="* ]]
+  [[ "$output" == *"version="* ]]
   # Check stderr contains skip message
   [[ "$stderr" == *"Component is 'root', skipping version bump"* ]] || [[ "$output" == *"Component is 'root', skipping version bump"* ]]
 }
@@ -100,9 +100,8 @@ EOF
 @test "successfully runs the version bump job" {
   run ".github/scripts/version_bump/job.sh"
   [ "$status" -eq 0 ]
-  # Check stdout contains component output
   [[ "$output" == *"component=subrepo"* ]]
-  # Check the job ran correctly (stderr or combined output)
+  [[ "$output" == *"version=1.2.3"* ]]
   combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
   echo "DEBUG: combined=[$combined]" >&2
   [[ "$combined" == *"Fake bump_component_version.sh called with: patch subrepo subrepo/pyproject.toml"* ]]
@@ -126,9 +125,8 @@ EOF
   chmod +x "$FAKE_BIN_DIR/.github/scripts/version_bump/get_pyproject_path.sh"
   run ".github/scripts/version_bump/job.sh"
   [ "$status" -eq 0 ]
-  # Check stdout contains component output (empty component name)
   [[ "$output" == *"component="* ]]
-  # Check the job ran correctly
+  [[ "$output" == *"version=1.2.3"* ]]
   combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
   echo "DEBUG: combined=[$combined]" >&2
   [[ "$combined" == *"No component name found"* ]]

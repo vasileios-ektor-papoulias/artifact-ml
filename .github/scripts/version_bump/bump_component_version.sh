@@ -14,8 +14,10 @@ set -euo pipefail
 #   <pyproject_path>   Path to the component’s pyproject.toml (repo-relative)
 #
 # Stdout on success:
-#   - The generated tag name line, e.g.:
-#       "Generated tag name: <tag>"
+#   - The new version string (e.g., "1.2.3") for downstream capture.
+#
+# Stderr on success:
+#   - The generated tag name line, e.g.: "Generated tag name: <tag>"
 #   - Any informational output emitted by the helper scripts.
 #
 # Stderr on failure:
@@ -57,6 +59,9 @@ PYPROJECT_PATH="${3:-}"
 NEW_VERSION=$(.github/scripts/version_bump/update_pyproject.sh "$3" "$1")
 
 TAG_NAME=$(.github/scripts/version_bump/get_component_tag.sh "$NEW_VERSION" "$COMPONENT_NAME")
-echo "Generated tag name: $TAG_NAME"
+echo "Generated tag name: $TAG_NAME" >&2
 
 .github/scripts/version_bump/push_version_update.sh "$TAG_NAME" "$PYPROJECT_PATH"
+
+# Output version for downstream steps
+echo "$NEW_VERSION"

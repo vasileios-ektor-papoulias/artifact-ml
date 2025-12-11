@@ -17,7 +17,8 @@ set -euo pipefail
 #
 # Stdout on success:
 #   component=<name> — outputs the component name for downstream steps (e.g., triggering publish).
-#   component= — (empty) if skipped due to no-bump or root component.
+#   version=<version> — outputs the new version (e.g., 1.2.3).
+#   If skipped (no-bump or root), outputs component= and version= (empty values).
 #
 # Stderr on failure:
 #   ::error::-style diagnostics from this script or its delegates explaining
@@ -69,6 +70,7 @@ if [ "$BUMP_TYPE" = "no-bump" ]; then
   echo "Bump type is 'no-bump', skipping version bump" >&2
   echo "This PR is marked as not requiring a version bump" >&2
   echo "component="
+  echo "version="
   exit 0
 fi
 
@@ -81,6 +83,7 @@ if [ "$COMPONENT_NAME" = "root" ]; then
   echo "Component is 'root', skipping version bump" >&2
   echo "Root component changes should not trigger version bumps" >&2
   echo "component="
+  echo "version="
   exit 0
 fi
 
@@ -91,6 +94,8 @@ PYPROJECT_PATH=$(.github/scripts/version_bump/get_pyproject_path.sh "$COMPONENT_
 }
 echo "Using pyproject.toml at: $PYPROJECT_PATH" >&2
 
-.github/scripts/version_bump/bump_component_version.sh "$BUMP_TYPE" "$COMPONENT_NAME" "$PYPROJECT_PATH"
+# bump_component_version.sh outputs the new version to stdout
+NEW_VERSION=$(.github/scripts/version_bump/bump_component_version.sh "$BUMP_TYPE" "$COMPONENT_NAME" "$PYPROJECT_PATH")
 echo "Successfully completed version bump job" >&2
 echo "component=$COMPONENT_NAME"
+echo "version=$NEW_VERSION"

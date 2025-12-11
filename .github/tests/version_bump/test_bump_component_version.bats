@@ -60,19 +60,23 @@ teardown() {
 @test "successfully bumps version with component name" {
   run ".github/scripts/version_bump/bump_component_version.sh" "patch" "subrepo" "subrepo/pyproject.toml"
   [ "$status" -eq 0 ]
+  [[ "$output" == *"1.2.3"* ]]
   combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
   echo "DEBUG: combined=[$combined]" >&2
   [[ "$combined" == *"Fake update_pyproject.sh called with: subrepo/pyproject.toml patch"* ]]
   [[ "$combined" == *"Fake get_component_tag.sh called with: 1.2.3 subrepo"* ]]
   [[ "$combined" == *"Fake push_version_update.sh called with: subrepo-v1.2.3 subrepo/pyproject.toml"* ]]
+  [[ "$combined" == *"Generated tag name: subrepo-v1.2.3"* ]]
 }
 
 @test "successfully bumps version without component name" {
   run ".github/scripts/version_bump/bump_component_version.sh" "minor" "" "pyproject.toml"
   [ "$status" -eq 0 ]
+  [[ "$output" == *"1.2.3"* ]]
   combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
   echo "DEBUG: combined=[$combined]" >&2
   [[ "$combined" == *"Fake update_pyproject.sh called with: pyproject.toml minor"* ]]
   [[ "$combined" == *"Fake get_component_tag.sh called with: 1.2.3 "* ]]
   [[ "$combined" == *"Fake push_version_update.sh called with: v1.2.3 pyproject.toml"* ]]
+  [[ "$combined" == *"Generated tag name: v1.2.3"* ]]
 }
