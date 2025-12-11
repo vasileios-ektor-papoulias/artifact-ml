@@ -58,7 +58,7 @@ jobs:
       pull-requests: write  # Required for Codecov/SonarCloud PR comments
       id-token: write  # Required for Codecov OIDC
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -135,7 +135,7 @@ jobs:
   bump-version:
     needs: [validate-and-extract, ci-component]
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
     if: ${{ needs.validate-and-extract.outputs.component != '' && needs.validate-and-extract.outputs.component != 'root' && needs.validate-and-extract.outputs.bump_type != 'no-bump' }}
     permissions:
       contents: write
@@ -168,8 +168,11 @@ jobs:
   publish:
     needs: [validate-and-extract, bump-version]
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 60
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Trigger Publish Workflow
         run: |
           echo "Triggering publish workflow for component: ${{ needs.validate-and-extract.outputs.component }}"
