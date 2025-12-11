@@ -19,22 +19,6 @@ setup() {
   cp "$SCRIPT" "$FAKE_BIN_DIR/.github/scripts/version_bump/"
   chmod +x "$FAKE_BIN_DIR/.github/scripts/version_bump/job.sh"
 
-  cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/version_bump/get_bump_type.sh"
-#!/bin/bash
-echo "Fake get_bump_type.sh called" >&2
-echo "patch"
-exit 0
-EOF
-  chmod +x "$FAKE_BIN_DIR/.github/scripts/version_bump/get_bump_type.sh"
-
-  cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/version_bump/get_component_name.sh"
-#!/bin/bash
-echo "Fake get_component_name.sh called" >&2
-echo "subrepo"
-exit 0
-EOF
-  chmod +x "$FAKE_BIN_DIR/.github/scripts/version_bump/get_component_name.sh"
-
   cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/version_bump/get_pyproject_path.sh"
 #!/bin/bash
 echo "Fake get_pyproject_path.sh called with: $@" >&2
@@ -59,15 +43,29 @@ teardown() {
   rm -rf "$BATS_TMPDIR/fakebin" || echo "Warning: Failed to remove fake bin" >&2
 }
 
-@test "skips version bump when bump type is no-bump" {
-  cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/version_bump/get_bump_type.sh"
-#!/bin/bash
-echo "Fake get_bump_type.sh called (returning no-bump)" >&2
-echo "no-bump"
-exit 0
-EOF
-  chmod +x "$FAKE_BIN_DIR/.github/scripts/version_bump/get_bump_type.sh"
+@test "exits with error when component name is missing" {
   run ".github/scripts/version_bump/job.sh"
+  [ "$status" -ne 0 ]
+  combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
+  [[ "$combined" == *"Component name is required as the first argument"* ]]
+}
+
+@test "exits with error when bump type is missing" {
+  run ".github/scripts/version_bump/job.sh" "core"
+  [ "$status" -ne 0 ]
+  combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
+  [[ "$combined" == *"Bump type is required as the second argument"* ]]
+}
+
+@test "exits with error when bump type is invalid" {
+  run ".github/scripts/version_bump/job.sh" "core" "invalid"
+  [ "$status" -ne 0 ]
+  combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
+  [[ "$combined" == *"Invalid bump type 'invalid'"* ]]
+}
+
+@test "skips version bump when bump type is no-bump" {
+  run ".github/scripts/version_bump/job.sh" "core" "no-bump"
   [ "$status" -eq 0 ]
   [[ "$output" == *"component="* ]]
   [[ "$output" == *"version="* ]]
@@ -75,21 +73,7 @@ EOF
 }
 
 @test "skips version bump when component is root" {
-  cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/version_bump/get_bump_type.sh"
-#!/bin/bash
-echo "Fake get_bump_type.sh called" >&2
-echo "patch"
-exit 0
-EOF
-  chmod +x "$FAKE_BIN_DIR/.github/scripts/version_bump/get_bump_type.sh"
-  cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/version_bump/get_component_name.sh"
-#!/bin/bash
-echo "Fake get_component_name.sh called (returning root)" >&2
-echo "root"
-exit 0
-EOF
-  chmod +x "$FAKE_BIN_DIR/.github/scripts/version_bump/get_component_name.sh"
-  run ".github/scripts/version_bump/job.sh"
+  run ".github/scripts/version_bump/job.sh" "root" "patch"
   [ "$status" -eq 0 ]
   [[ "$output" == *"component="* ]]
   [[ "$output" == *"version="* ]]
@@ -98,7 +82,7 @@ EOF
 }
 
 @test "successfully runs the version bump job" {
-  run ".github/scripts/version_bump/job.sh"
+  run ".github/scripts/version_bump/job.sh" "subrepo" "patch"
   [ "$status" -eq 0 ]
   [[ "$output" == *"component=subrepo"* ]]
   [[ "$output" == *"version=1.2.3"* ]]
@@ -109,13 +93,6 @@ EOF
 }
 
 @test "handles empty component name correctly when root pyproject.toml exists" {
-  cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/version_bump/get_component_name.sh"
-#!/bin/bash
-echo "Fake get_component_name.sh called (returning empty)" >&2
-echo ""
-exit 0
-EOF
-  chmod +x "$FAKE_BIN_DIR/.github/scripts/version_bump/get_component_name.sh"
   cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/version_bump/get_pyproject_path.sh"
 #!/bin/bash
 echo "Fake get_pyproject_path.sh called with empty component" >&2
@@ -123,31 +100,23 @@ echo "pyproject.toml"
 exit 0
 EOF
   chmod +x "$FAKE_BIN_DIR/.github/scripts/version_bump/get_pyproject_path.sh"
-  run ".github/scripts/version_bump/job.sh"
+  run ".github/scripts/version_bump/job.sh" "" "patch"
   [ "$status" -eq 0 ]
   [[ "$output" == *"component="* ]]
   [[ "$output" == *"version=1.2.3"* ]]
   combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
   echo "DEBUG: combined=[$combined]" >&2
-  [[ "$combined" == *"No component name found"* ]]
   [[ "$combined" == *"Fake bump_component_version.sh called with: patch  pyproject.toml"* ]]
 }
 
 @test "exits with error when pyproject.toml doesn't exist for component" {
-  cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/version_bump/get_component_name.sh"
-#!/bin/bash
-echo "Fake get_component_name.sh called (returning nonexistent)" >&2
-echo "nonexistent"
-exit 0
-EOF
-  chmod +x "$FAKE_BIN_DIR/.github/scripts/version_bump/get_component_name.sh"
   cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/version_bump/get_pyproject_path.sh"
 #!/bin/bash
 echo "Error: Component pyproject.toml not found at nonexistent/pyproject.toml" >&2
 exit 1
 EOF
   chmod +x "$FAKE_BIN_DIR/.github/scripts/version_bump/get_pyproject_path.sh"
-  run ".github/scripts/version_bump/job.sh"
+  run ".github/scripts/version_bump/job.sh" "nonexistent" "patch"
   [ "$status" -ne 0 ]
   combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
   echo "DEBUG: combined=[$combined]" >&2
