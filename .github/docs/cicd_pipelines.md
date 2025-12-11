@@ -243,10 +243,10 @@ This approach aligns with GitHub Actions' standard execution context, where work
 
 - `extract_component_from_tag.sh`:
   - **Given:** `<event_name>` (`push` | `workflow_dispatch`), `<ref_name_or_tag>` (Git tag or ref name), and `<manual_component_input>` (component name for manual triggers).
-  - **Does:** extracts the component name and version from a Git tag (e.g., `artifact-core-v1.0.0`) for tag-based triggers, or uses the manual component input for workflow dispatch triggers. Validates tag format for push events (must match `artifact-<component>-v<major>.<minor>.<patch>`).
+  - **Does:** extracts the component name and version from a Git tag (e.g., `core-v1.0.0`) for tag-based triggers, or uses the manual component input for workflow dispatch triggers. Validates tag format for push events (must match `<component>-v<major>.<minor>.<patch>`).
   - **Outcome:** prints JSON object with `component` and `version` fields to stdout (e.g., `{"component":"core","version":"1.0.0"}` for tags, or `{"component":"core","version":"manual"}` for manual triggers); exits `1` with `::error::` prefixed diagnostics if validation fails or required parameters are missing.
   - **Examples:**
-    - Tag push: `extract_component_from_tag.sh "push" "artifact-core-v1.0.0" ""` → `{"component":"core","version":"1.0.0"}`
+    - Tag push: `extract_component_from_tag.sh "push" "core-v1.0.0" ""` → `{"component":"core","version":"1.0.0"}`
     - Manual trigger: `extract_component_from_tag.sh "workflow_dispatch" "" "experiment"` → `{"component":"experiment","version":"manual"}`
 
 #### Path Enforcement Scripts (`.github/scripts/enforce_path/`)
@@ -304,8 +304,8 @@ This approach aligns with GitHub Actions' standard execution context, where work
   - **Note:** Requires Poetry to be installed and available in PATH.
 
 - `get_component_tag.sh`:
-  - **Given:** `<component_name>` and `<version>` (e.g., `artifact-core` and `1.3.0`).
-  - **Does:** formats a tag string according to your convention (e.g., `artifact-core-v1.3.0`).
+  - **Given:** `<version>` and optional `<component_name>` (e.g., `1.3.0` and `core`).
+  - **Does:** formats a tag string: `v<version>` if no component, or `<component>-v<version>` (e.g., `core-v1.3.0`).
   - **Outcome:** prints the **tag name** to stdout; exits `1` if inputs are empty or malformed.
 
 - `push_version_update.sh`:

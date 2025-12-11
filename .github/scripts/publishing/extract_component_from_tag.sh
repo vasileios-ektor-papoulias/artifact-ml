@@ -9,7 +9,7 @@ set -euo pipefail
 #
 # Accepts:
 #   <event_name>        GitHub event name (workflow_dispatch or push)
-#   [tag_or_component]  Git tag name (e.g., artifact-core-v1.0.0) or manual component
+#   [tag_or_component]  Git tag name (e.g., core-v1.0.0) or manual component
 #   [manual_component]  Component name when manually triggered (core, experiment, torch)
 #
 # Stdout on success:
@@ -25,14 +25,14 @@ set -euo pipefail
 # Behaviour:
 #   - For workflow_dispatch: uses manual component input
 #   - For tag-based (push): parses tag to extract component and version
-#     Tag format: artifact-<component>-v<version>
-#     Example: artifact-core-v1.0.0 → component=core, version=1.0.0
+#     Tag format: <component>-v<version>
+#     Example: core-v1.0.0 → component=core, version=1.0.0
 #
 # Examples:
 #   .github/scripts/publishing/extract_component_from_tag.sh workflow_dispatch "" core
 #     --> {"component":"core","version":"manual"}
 #
-#   .github/scripts/publishing/extract_component_from_tag.sh push artifact-core-v1.0.0 ""
+#   .github/scripts/publishing/extract_component_from_tag.sh push core-v1.0.0 ""
 #     --> {"component":"core","version":"1.0.0"}
 
 EVENT_NAME="${1:-}"
@@ -65,17 +65,17 @@ else
   TAG="$TAG_OR_COMPONENT"
   
   # Validate tag format first
-  if ! [[ "$TAG" =~ ^artifact-[a-z]+-v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  if ! [[ "$TAG" =~ ^[a-z]+-v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     echo "::error::Invalid tag format: $TAG" >&2
-    echo "::error::Expected format: artifact-<component>-v<version>" >&2
-    echo "::error::Example: artifact-core-v1.0.0" >&2
+    echo "::error::Expected format: <component>-v<version>" >&2
+    echo "::error::Example: core-v1.0.0" >&2
     exit 1
   fi
   
-  # Extract component: artifact-core-v1.0.0 -> core
-  COMPONENT=$(echo "$TAG" | sed 's/artifact-\([^-]*\)-.*/\1/')
+  # Extract component: core-v1.0.0 -> core
+  COMPONENT=$(echo "$TAG" | sed 's/\([^-]*\)-.*/\1/')
   
-  # Extract version: artifact-core-v1.0.0 -> 1.0.0
+  # Extract version: core-v1.0.0 -> 1.0.0
   VERSION=$(echo "$TAG" | sed 's/.*-v\(.*\)/\1/')
   
   echo "Tag-based trigger detected: tag=$TAG, component=$COMPONENT, version=$VERSION" >&2

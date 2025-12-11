@@ -3,9 +3,9 @@ name: PUBLISH[PYPI]
 on:
   push:
     tags:
-      - 'artifact-core-v*'
-      - 'artifact-experiment-v*'
-      - 'artifact-torch-v*'
+      - 'core-v*'
+      - 'experiment-v*'
+      - 'torch-v*'
   workflow_dispatch:
     inputs:
       component:
