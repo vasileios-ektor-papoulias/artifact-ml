@@ -49,14 +49,11 @@ All Github Actions workflows follow the naming convention:
  
 ##### Branch: main
 - `ci_push_main.yml` (workflow name: CI_PUSH[MAIN]): unified post-merge workflow with the following job chain:
-  1. **`lint-message`**: validates the merge commit message format—asserts that the message is of the form "Merge pull request #<`PR_number`> from <`username`>/<`branch-name`>" where `<branch_name>` is an appropriate source branch (`dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`).
-  2. **`lint-description`**: validates the merge commit description—asserts that it follows the semantic versioning prefix convention (see *Versioning and PRs to `main`*).
-  3. **`ci-component`** (needs: lint-message, lint-description): runs CI checks (lint, test, Codecov, build) for **all components**.
-  4. **`bump-version`** (needs: ci-component): parses the commit description and message to identify the relevant component and bump type, updates the relevant `pyproject.toml`, pushes a git tag, and **explicitly triggers** `PUBLISH[PYPI]` via `gh workflow run`.
-  
-  **If linting fails, CI and bump are skipped**—this prevents broken releases from malformed commit messages.
-
-- `bump_component_push_main.yml` (workflow name: BUMP_COMPONENT_PUSH[MAIN]): **manual-only fallback** for version bumping—can be triggered via workflow dispatch if the automatic bump in `CI_PUSH[MAIN]` needs to be re-run or if manual intervention is required.
+  1. **`validate-and-extract`**: single job with 4 steps: (a) lints merge commit message, (b) lints merge commit description, (c) extracts component name via `get_component_name.sh`, (d) extracts bump type via `get_bump_type.sh`. Outputs `component` and `bump_type`.
+  2. **`ci-component`** (needs: validate-and-extract): runs CI checks (lint, test, Codecov, build) for **all components**.
+  3. **`bump-version`** (needs: ci-component, validate-and-extract): calls `job.sh` directly with the extracted component and bump type to update `pyproject.toml` and push version tag. Skipped if component is root or bump type is no-bump.
+  4. **`publish`** (needs: bump-version, validate-and-extract): triggers `PUBLISH[PYPI]` via `gh workflow run` with the component name after bump completes successfully.
+- `bump_component_push_main.yml` (workflow name: BUMP_COMPONENT_PUSH[MAIN]): performs version bumping via `workflow_dispatch` only—accepts `component` and `bump_type` as inputs, updates the relevant `pyproject.toml`, and pushes a git tag. Can be triggered automatically by `CI_PUSH[MAIN]` or manually via the Actions UI.
 
 #### Publish Workflows (workflow_dispatch only)
 
@@ -294,13 +291,15 @@ This approach aligns with GitHub Actions' standard execution context, where work
 
 - `get_bump_type.sh`:
   - **Given:** the current commit context (typically the PR merge commit).
-  - **Does:** reads the **commit description/body** of the current commit, passes it to `detect_bump_pattern.sh`, and validates that it starts with `patch:` / `minor:` / `major:` / `no-bump:` (or their scoped counterparts e.g. `patch(scope):`).
+  - **Does:** reads the **commit description/body** of the current commit, delegates to `lint_commit_description.sh` to validate and extract the semantic version prefix.
   - **Outcome:** prints the resolved bump type (`patch` | `minor` | `major` | `no-bump`) to stdout; exits `1` if the description is empty or lacks a valid prefix.
+  - **Usage:** `get_bump_type.sh` (reads HEAD commit description)
 
 - `get_component_name.sh`:
   - **Given:** the current commit context (expected to be a GitHub **merge commit**).
-  - **Does:** parses the **commit subject** (e.g., `Merge pull request #123 from user/branch` or ``Merge pull request #123 from user:branch`), extracts the `branch` portion, then runs `extract_branch_info.sh` to validate branch naming and access the component name (`dev|hotfix|setup`).
-  - **Outcome:** prints the **component name** (e.g., `core`) to stdout; exits `1` if the commit isn't a merge or the branch naming is invalid.
+  - **Does:** verifies HEAD is a merge commit (`check_is_merge_commit.sh`), parses the **commit subject** (e.g., `Merge pull request #123 from user/dev-core`), extracts and validates the branch name via `lint_commit_message.sh`, and returns the component name.
+  - **Outcome:** prints the **component name** (e.g., `core`) to stdout, or empty string if not a merge commit or no component found; exits `0` always (consumers check for empty stdout).
+  - **Usage:** `get_component_name.sh` (reads HEAD commit message)
 
 - `get_pyproject_path.sh`:
   - **Given:** a **component name** (e.g., `core`, `experiment`, `torch`, or `root`).
@@ -329,9 +328,11 @@ This approach aligns with GitHub Actions' standard execution context, where work
   - **Outcome:** prints the **new version** and **tag** to stdout (or logs), exits `0` on success; exits `1` if any step fails (resolve, update, tag, or push).
 
 - `job.sh`:
-  - **Given:** CI context on a PR merge (or equivalent), with all helper scripts available.
-  - **Does:** extracts **bump type** from the merge **description** (`get_bump_type.sh`), extracts **component name** from the merge **subject** (`get_component_name.sh`), derives/locates the component's `pyproject.toml` (`get_pyproject_path.sh`), and invokes `bump_component_version.sh` to perform the version bump and push a version tag.
-  - **Outcome:** performs an end-to-end automated version bump; outputs `component=<name>` and `version=<version>` to stdout (for triggering publish workflow and logging), or empty values if skipped (no-bump or root). Exits `0` on success, `1` on failure.
+  - **Given:** `<component_name>` and `<bump_type>` as CLI arguments.
+  - **Does:** validates arguments, skips if `bump_type` is `no-bump` or `component` is `root`, derives/locates the component's `pyproject.toml` (`get_pyproject_path.sh`), and invokes `bump_component_version.sh` to perform the version bump and push a version tag.
+  - **Outcome:** performs an end-to-end automated version bump; outputs `component=<name>` and `version=<version>` to stdout for logging purposes (workflows do not parse these). Exits `0` on success, `1` on failure (missing arguments, invalid bump type, missing pyproject.toml).
+  - **Usage:** `job.sh <component_name> <bump_type>` (e.g., `job.sh core minor`)
+  - **Note:** The component and bump type are passed as explicit arguments (not extracted internally), enabling the workflow to control the flow with separate extraction jobs.
 
 
 ## CICD Script Functional Tests
