@@ -51,7 +51,7 @@ All Github Actions workflows follow the naming convention:
 - `ci_push_main.yml` (workflow name: CI_PUSH[MAIN]): unified post-merge workflow with the following job chain:
   1. **`lint-message`**: validates the merge commit message format—asserts that the message is of the form "Merge pull request #<`PR_number`> from <`username`>/<`branch-name`>" where `<branch_name>` is an appropriate source branch (`dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`).
   2. **`lint-description`**: validates the merge commit description—asserts that it follows the semantic versioning prefix convention (see *Versioning and PRs to `main`*).
-  3. **`ci-component`** (needs: lint-message, lint-description): runs CI checks for each component. **Skips CI for components that have no changes** (uses `check_component_changed.sh`).
+  3. **`ci-component`** (needs: lint-message, lint-description): runs CI checks (lint, test, Codecov, build) for **all components**.
   4. **`bump-version`** (needs: ci-component): parses the commit description and message to identify the relevant component and bump type, updates the relevant `pyproject.toml`, pushes a git tag, and **explicitly triggers** `PUBLISH[PYPI]` via `gh workflow run`.
   
   **If linting fails, CI and bump are skipped**—this prevents broken releases from malformed commit messages.
@@ -278,7 +278,7 @@ This approach aligns with GitHub Actions' standard execution context, where work
   - **Given:** `<component_dir>` (e.g., `artifact-core`) and optional `[base_ref]` (default: `HEAD~1`).
   - **Does:** checks if any files in the component directory changed between the base ref and HEAD using `git diff`.
   - **Outcome:** prints `true` if changes exist, `false` otherwise; exits `0` on success, `1` on missing arguments.
-  - **Usage:** used by all CI workflows (`CI_PUSH[MAIN]`, `CI_PR[MAIN]`, `CI_PR[DEV_*]`) to skip CI/SonarCloud/Codecov for components that have no changes (prevents "0% coverage on new code" errors).
+  - **Usage:** used by PR CI workflows (`CI_PR[MAIN]`, `CI_PR[DEV_*]`) to skip CI/SonarCloud/Codecov for components that have no changes (prevents "0% coverage on new code" errors).
 
 - `enforce_change_dirs_main.sh`:
   - **Given:** `<head_ref>` (source branch) and `<base_ref>` (target branch, should be `main`).
