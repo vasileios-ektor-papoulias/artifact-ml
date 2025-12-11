@@ -48,7 +48,7 @@ All Github Actions workflows follow the naming convention:
 **Note:** These workflows are excluded from `main` and `dev-*` branches. They also **skip execution if an open PR exists** for the branch (to avoid duplicate CI runs with `CI_PR[DEV_*]`).
  
 ##### Branch: main
-- `ci_push_main.yml` (workflow name: CI_PUSH[MAIN]): runs CI checks when changes are pushed to `main` (post-merge verification). **After CI passes, automatically runs the `bump-version` job** which parses the commit description and message to identify the relevant component and bump type, updates the relevant `pyproject.toml`, and pushes the change along with a git tag. The tag push then **automatically triggers** the `PUBLISH[PYPI]` workflow.
+- `ci_push_main.yml` (workflow name: CI_PUSH[MAIN]): runs CI checks when changes are pushed to `main` (post-merge verification). **Skips CI for components that have no changes** (uses `check_component_changed.sh` to detect). **After CI passes, automatically runs the `bump-version` job** which parses the commit description and message to identify the relevant component and bump type, updates the relevant `pyproject.toml`, and pushes the change along with a git tag. The tag push then **automatically triggers** the `PUBLISH[PYPI]` workflow.
 - `lint_message_push_main.yml` (workflow name: LINT_MESSAGE_PUSH[MAIN]): validates the message carried by a merge commit pushed to `main`---asserts that the message is of the form "Merge pull request #<`PR_number`> from <`username`>/<`branch-name`>" (or "...<`username`>:<`branch-name`>") where `<branch_name>` is one of the appropriate source branches i.e. `dev-<component_name>`, `hotfix-<component_name>`/`<descriptive_name>`, or `setup-<component_name>/<descriptive_name>`,
 - `lint_description_push_main.yml` (workflow name: LINT_DESCRIPTION_PUSH[MAIN]): validates the description carried by a merge commit pushed to `main`---asserts that the description is a valid PR title according to the appropriate semantic versioning prefix convention (see *Versioning and PRs to `main`*),
 - `bump_component_push_main.yml` (workflow name: BUMP_COMPONENT_PUSH[MAIN]): **manual-only fallback** for version bumping---can be triggered via workflow dispatch if the automatic bump in `CI_PUSH[MAIN]` needs to be re-run or if manual intervention is required.
@@ -76,7 +76,7 @@ All Github Actions workflows follow the naming convention:
 - `enforce_change_dirs_pr_dev_torch.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_TORCH]): ensures PRs to `dev-torch` only modify files in their corresponding directories,
 
 ##### main
-- `ci_pr_main.yml` (workflow name: CI_PR[MAIN]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for all components for PRs targeting `main` (pre-merge gating),
+- `ci_pr_main.yml` (workflow name: CI_PR[MAIN]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `main` (pre-merge gating). **Skips CI for components that have no changes** (uses `check_component_changed.sh` to detect),
 - `lint_title_pr_main.yml` (workflow name: LINT_TITLE_PR[MAIN]): ensures PR titles to `main` follow the appropriate semantic versioning prefix convention (see *Versioning and PRs to `main`*),
 - `enforce_branch_naming_pr_main.yml` (workflow name: ENFORCE_BRANCH_NAMING_PR[MAIN]): ensures that branches being PR'd to `main` follow the naming convention: `dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`
 - `enforce_change_dirs_pr_main.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[MAIN]) - Ensures:
@@ -269,6 +269,12 @@ This approach aligns with GitHub Actions' standard execution context, where work
   - **Outcome:** prints `true` to stdout if an open PR exists, `false` otherwise; exits `0` on success, `1` on missing arguments or if `GH_TOKEN` is not set.
   - **Environment:** requires `GH_TOKEN` environment variable for API access.
   - **Usage:** used by `CI_PUSH[CORE/EXPERIMENT/TORCH]` workflows to skip CI when a PR is open (to avoid duplicate runs with `CI_PR[DEV_*]`).
+
+- `check_component_changed.sh`:
+  - **Given:** `<component_dir>` (e.g., `artifact-core`) and optional `[base_ref]` (default: `HEAD~1`).
+  - **Does:** checks if any files in the component directory changed between the base ref and HEAD using `git diff`.
+  - **Outcome:** prints `true` if changes exist, `false` otherwise; exits `0` on success, `1` on missing arguments.
+  - **Usage:** used by `CI_PUSH[MAIN]` and `CI_PR[MAIN]` to skip CI/SonarCloud/Codecov for components that have no changes (prevents "0% coverage on new code" errors).
 
 - `enforce_change_dirs_main.sh`:
   - **Given:** `<head_ref>` (source branch) and `<base_ref>` (target branch, should be `main`).
