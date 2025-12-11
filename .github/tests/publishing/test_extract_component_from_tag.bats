@@ -23,7 +23,7 @@ setup() {
 }
 
 @test "extracts component and version from tag (core)" {
-  run "$SCRIPT" "push" "artifact-core-v1.2.3" ""
+  run "$SCRIPT" "push" "core-v1.2.3" ""
   [ "$status" -eq 0 ]
   final_line="$(get_final_line "$output")"
   echo "DEBUG: final_line=[$final_line]" >&2
@@ -32,7 +32,7 @@ setup() {
 }
 
 @test "extracts component and version from tag (experiment)" {
-  run "$SCRIPT" "push" "artifact-experiment-v0.5.1" ""
+  run "$SCRIPT" "push" "experiment-v0.5.1" ""
   [ "$status" -eq 0 ]
   final_line="$(get_final_line "$output")"
   echo "DEBUG: final_line=[$final_line]" >&2
@@ -41,7 +41,7 @@ setup() {
 }
 
 @test "extracts component and version from tag (torch)" {
-  run "$SCRIPT" "push" "artifact-torch-v2.0.0" ""
+  run "$SCRIPT" "push" "torch-v2.0.0" ""
   [ "$status" -eq 0 ]
   final_line="$(get_final_line "$output")"
   echo "DEBUG: final_line=[$final_line]" >&2
