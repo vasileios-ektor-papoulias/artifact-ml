@@ -107,14 +107,16 @@ All Github Actions workflows follow the naming convention:
 
 | Check Name | Source Workflow |
 |------------|-----------------|
-| `ci-component (artifact-core, artifact_core, core, ...)` | `CI_PR[MAIN]` |
-| `ci-component (artifact-experiment, artifact_experiment, experiment, ...)` | `CI_PR[MAIN]` |
-| `ci-component (artifact-torch, artifact_torch, torch, ...)` | `CI_PR[MAIN]` |
+| `CI_PR[MAIN] / ci-component (artifact-core, artifact_core, core, vasileios-ektor-papoulias_artifact-core)` | `CI_PR[MAIN]` |
+| `CI_PR[MAIN] / ci-component (artifact-experiment, artifact_experiment, experiment, vasileios-ektor-papoulias_artifact-experiment)` | `CI_PR[MAIN]` |
+| `CI_PR[MAIN] / ci-component (artifact-torch, artifact_torch, torch, vasileios-ektor-papoulias_artifact-torch)` | `CI_PR[MAIN]` |
 | `lint-pr-title` | `LINT_TITLE_PR[MAIN]` |
 | `enforce-branch-naming` | `ENFORCE_BRANCH_NAMING_PR[MAIN]` |
 | `enforce-change-dirs` | `ENFORCE_CHANGE_DIRS_PR[MAIN]` |
 
 **Note:** SonarCloud and Codecov are integrated into the `ci-component` job—no separate status checks needed.
+
+**Note:** Matrix job check names include the workflow name prefix (`CI_PR[MAIN] /`) and all matrix values. Use GitHub's autocomplete when adding required checks to ensure exact match.
 
 ### `dev-branches-protection` Ruleset
 
@@ -133,11 +135,15 @@ All Github Actions workflows follow the naming convention:
 
 | Check Name | Source Workflow |
 |------------|-----------------|
-| `ci-component` | `CI_PR[DEV_*]` |
+| `CI_PR[DEV_CORE] / ci-component` | `CI_PR[DEV_CORE]` |
+| `CI_PR[DEV_EXPERIMENT] / ci-component` | `CI_PR[DEV_EXPERIMENT]` |
+| `CI_PR[DEV_TORCH] / ci-component` | `CI_PR[DEV_TORCH]` |
 | `enforce-branch-naming` | `ENFORCE_BRANCH_NAMING_PR[DEV_*]` |
 | `enforce-change-dirs` | `ENFORCE_CHANGE_DIRS_PR[DEV_*]` |
 
 **Note:** SonarCloud and Codecov are integrated into the `ci-component` job—no separate status checks needed.
+
+**Note:** For `dev-*` branches, each component has its own CI workflow. The ruleset pattern `dev-*` covers all three, and GitHub matches the appropriate check based on which workflow runs.
 
 
 ## CICD Scripts
