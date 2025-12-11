@@ -11,7 +11,38 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  lint-message:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Lint merge commit message
+        run: |
+          chmod +x .github/scripts/linting/*.sh
+          .github/scripts/linting/lint_merge_commit_message.sh
+
+  lint-description:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Lint merge commit description
+        run: |
+          chmod +x .github/scripts/linting/*.sh
+          .github/scripts/linting/lint_merge_commit_description.sh
+
   ci-component:
+    needs: [lint-message, lint-description]
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     permissions:
       contents: read
