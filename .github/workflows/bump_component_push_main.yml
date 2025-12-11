@@ -1,7 +1,26 @@
 name: BUMP_COMPONENT_PUSH[MAIN]
 
 on:
-  workflow_dispatch:  # Manual trigger only (automatic bump is handled by CI_PUSH[MAIN])
+  workflow_dispatch:
+    inputs:
+      component:
+        description: 'Component name (core, experiment, torch, or root)'
+        required: true
+        type: choice
+        options:
+          - core
+          - experiment
+          - torch
+          - root
+      bump_type:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - no-bump
 
 permissions:
   contents: write
@@ -14,7 +33,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.PAT_TOKEN }}
-          fetch-depth: 2  # Need at least 2 commits to get the merge commit
+          fetch-depth: 2
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -33,7 +52,7 @@ jobs:
           # Ensure all scripts are executable
           chmod +x .github/scripts/version_bump/*.sh
           
-          # Run the version bump job script
-          .github/scripts/version_bump/job.sh
+          # Run the version bump job script with inputs
+          .github/scripts/version_bump/job.sh "${{ inputs.component }}" "${{ inputs.bump_type }}"
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
