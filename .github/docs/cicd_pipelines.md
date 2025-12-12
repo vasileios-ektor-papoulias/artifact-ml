@@ -41,11 +41,11 @@ All Github Actions workflows follow the naming convention:
 #### Push Triggers
 
 ##### Feature Branch CI (path-filtered)
-- `ci_push_core.yml` (workflow name: CI_PUSH[CORE]): runs CI checks when changes are pushed to feature branches involving files in `artifact-core/**`,
-- `ci_push_experiment.yml` (workflow name: CI_PUSH[EXPERIMENT]): runs CI checks when changes are pushed to feature branches involving files in `artifact-experiment/**`,
-- `ci_push_torch.yml` (workflow name: CI_PUSH[TORCH]): runs CI checks when changes are pushed to feature branches involving files in `artifact-torch/**`,
+- `ci_push_core.yml` (workflow name: CI_PUSH[CORE]): runs CI checks when changes to `artifact-core/**` are pushed to any branch except `main`.
+- `ci_push_experiment.yml` (workflow name: CI_PUSH[EXPERIMENT]): runs CI checks when changes to `artifact-experiment/**` are pushed to any branch except `main`.
+- `ci_push_torch.yml` (workflow name: CI_PUSH[TORCH]): runs CI checks when changes to `artifact-torch/**` are pushed to any branch except `main`.
 
-**Note:** These workflows are excluded from `main` and `dev-*` branches. They also **skip execution if an open PR exists** for the branch (to avoid duplicate CI runs with `CI_PR[DEV_*]`).
+**Note:** These workflows **skip execution if an open PR exists** for the branch (to avoid duplicate CI runs). For example, `CI_PUSH[CORE]` on `dev-core` skips if a `dev-core → main` PR is open (since `CI_PR[MAIN]` will handle testing).
  
 ##### Branch: main
 - `ci_push_main.yml` (workflow name: CI_PUSH[MAIN]): unified post-merge workflow with the following job chain:
