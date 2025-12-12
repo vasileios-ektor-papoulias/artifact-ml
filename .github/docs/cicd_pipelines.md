@@ -51,14 +51,17 @@ All Github Actions workflows follow the naming convention:
 - `ci_push_main.yml` (workflow name: CI_PUSH[MAIN]): unified post-merge workflow with the following job chain:
   1. **`validate-and-extract`**: single job with 4 steps: (a) lints merge commit message, (b) lints merge commit description, (c) extracts component name via `get_component_name.sh`, (d) extracts bump type via `get_bump_type.sh`. Outputs `component` and `bump_type`.
   2. **`ci-component`** (needs: validate-and-extract): runs CI checks (lint, test, Codecov, build) for **all components**.
-  3. **`bump-version`** (needs: ci-component, validate-and-extract): calls `job.sh` directly with the extracted component and bump type to update `pyproject.toml` and push version tag. Skipped if component is root or bump type is no-bump.
-  4. **`publish`** (needs: bump-version, validate-and-extract): triggers `PUBLISH[PYPI]` via `gh workflow run` with the component name after bump completes successfully.
-- `bump_component_push_main.yml` (workflow name: BUMP_COMPONENT_PUSH[MAIN]): performs version bumping via `workflow_dispatch` only—accepts `component` and `bump_type` as inputs, updates the relevant `pyproject.toml`, and pushes a git tag. Can be triggered automatically by `CI_PUSH[MAIN]` or manually via the Actions UI.
+  3. **`bump-version`** (needs: ci-component, validate-and-extract): calls `job.sh` directly with the extracted component and bump type to update `pyproject.toml` and push version tag (format: `<component>-v<version>`, e.g., `core-v1.2.3`). Skipped if component is root or bump type is no-bump.
+  4. **`publish`** (needs: bump-version, validate-and-extract): triggers `PUBLISH[PYPI]` via `gh workflow run` with the component name after bump completes successfully. The publish workflow reads the current version from the component's `pyproject.toml` and creates a GitHub Release for the version tag that was pushed by bump-version.
 
-#### Publish Workflows (workflow_dispatch only)
+#### Manual Workflows (workflow_dispatch only)
 
-- `publish.yml` (workflow name: PUBLISH[PYPI]): publishes packages to PyPI via `workflow_dispatch` only—triggered explicitly by `CI_PUSH[MAIN]` after bump-version completes (via `gh workflow run`), or manually via the Actions UI. Extracts component information from the input, builds the package using Poetry, publishes to PyPI using Trusted Publishing (OIDC), and creates a GitHub Release with the built artifacts.
-- `publish_test.yml` (workflow name: PUBLISH[TEST_PYPI]): publishes packages to TestPyPI when manually triggered via workflow dispatch—extracts component information, builds the package using Poetry, and publishes to TestPyPI using Trusted Publishing (OIDC) for testing purposes before production release.
+##### Version Bumping
+- `bump_component.yml` (workflow name: BUMP_COMPONENT): manual fallback workflow for version bumping via `workflow_dispatch` only—accepts `component` and `bump_type` as inputs, updates the relevant `pyproject.toml`, and pushes a git tag (format: `<component>-v<version>`, e.g., `core-v1.2.3`). **Note:** Version bumping normally happens automatically via `CI_PUSH[MAIN]` after PR merge. This workflow is provided as a fallback should the need arise (e.g., CI_PUSH[MAIN] bump-version job failure requiring manual intervention, or testing version bump logic in isolation).
+
+##### Publishing
+- `publish.yml` (workflow name: PUBLISH[PYPI]): publishes packages to PyPI via `workflow_dispatch` only—triggered explicitly by `CI_PUSH[MAIN]` after bump-version completes (via `gh workflow run`), or manually via the Actions UI. Consists of two jobs: (1) **`get-version`**: extracts the current version from the component's `pyproject.toml` using `get_version_from_pyproject.sh`; (2) **`publish`**: builds the package using Poetry, publishes to PyPI using Trusted Publishing (OIDC), and creates a GitHub Release for the existing version tag (format: `<component>-v<version>`, e.g., `core-v1.2.3`) that was created by the bump-version job, attaching the built artifacts and auto-generated release notes.
+- `publish_test.yml` (workflow name: PUBLISH[TEST_PYPI]): publishes packages to TestPyPI when manually triggered via workflow dispatch. Single job that builds the package using Poetry and publishes to TestPyPI using Trusted Publishing (OIDC) for testing purposes before production release.
 
 #### PR Triggers
 
@@ -250,26 +253,16 @@ This approach aligns with GitHub Actions' standard execution context, where work
   - **Examples:**
     - `extract_component_from_tag.sh "workflow_dispatch" "" "experiment"` → `{"component":"experiment","version":"manual"}`
 
+- `get_version_from_pyproject.sh`:
+  - **Given:** `<component>` (component name: `core`, `experiment`, or `torch`).
+  - **Does:** validates the component name, locates the component's `pyproject.toml` file (e.g., `artifact-core/pyproject.toml`), and extracts the version field using regex pattern matching.
+  - **Outcome:** prints the version string to stdout (e.g., `1.2.3`); exits `1` with `::error::` prefixed diagnostics if the component is invalid, `pyproject.toml` is missing, or the version field cannot be extracted or has invalid format.
+  - **Usage:** used by `PUBLISH[PYPI]` and `PUBLISH[TEST_PYPI]` workflows to read the current version from the component's `pyproject.toml` after version bump.
+  - **Examples:**
+    - `get_version_from_pyproject.sh "core"` → `1.2.3`
+    - `get_version_from_pyproject.sh "experiment"` → `0.5.1`
+
 #### Path Enforcement Scripts (`.github/scripts/enforce_path/`)
-
-- `ensure_changed_files_in_dir.sh`:
-  - **Given:** `<component_dir>` (repo-root prefix, e.g., `artifact-core`) and `<base_ref>` (e.g., `main`).
-  - **Does:** fetches `origin/<base_ref>`, computes `merge-base(origin/<base_ref>, HEAD)`, and diffs `MB..HEAD`; then verifies every changed path **starts with** `<component_dir>/`.
-  - **Outcome:** exits `0` if all changed files are under `<component_dir>/`; otherwise exits `1` and lists the offending paths.
-
-- `ensure_changed_files_outside_dirs.sh`:
-  - **Given:** `<base_ref>` and one or more `<dir>` prefixes (repo-root, e.g., `docs`, `packages/app`).
-  - **Does:** fetches `origin/<base_ref>`, computes `merge-base(origin/<base_ref>, HEAD)`, diffs `MB..HEAD`; then checks that **no** changed path starts with any forbidden `<dir>/` (regex-escaped, trailing slash normalized).
-  - **Outcome:** exits `0` if all changes are **outside** the listed directories; otherwise exits `1` and prints the paths that violate the rule.
-
-#### CI Scripts (`.github/scripts/ci/`)
-
-- `check_open_pr.sh`:
-  - **Given:** `<branch_name>` (e.g., `feature-core/my-feature`).
-  - **Does:** queries the GitHub API via `gh pr list` to check if there is an open pull request with the given branch as its head.
-  - **Outcome:** prints `true` to stdout if an open PR exists, `false` otherwise; exits `0` on success, `1` on missing arguments or if `GH_TOKEN` is not set.
-  - **Environment:** requires `GH_TOKEN` environment variable for API access.
-  - **Usage:** used by `CI_PUSH[CORE/EXPERIMENT/TORCH]` workflows to skip CI when a PR is open (to avoid duplicate runs with `CI_PR[DEV_*]`).
 
 - `check_component_changed.sh`:
   - **Given:** `<component_dir>` (e.g., `artifact-core`) and optional `[base_ref]` (default: `HEAD~1`).
@@ -285,6 +278,25 @@ This approach aligns with GitHub Actions' standard execution context, where work
     - `*-root/*` (setup-root, hotfix-root) → changes must be **outside** component source directories
   - **Outcome:** exits `0` if directory check passes, `1` if check fails or branch pattern is unrecognized.
   - **Usage:** used by `ENFORCE_CHANGE_DIRS_PR[MAIN]` workflow to enforce directory restrictions on PRs to main.
+
+- `ensure_changed_files_in_dir.sh`:
+  - **Given:** `<component_dir>` (repo-root prefix, e.g., `artifact-core`) and `<base_ref>` (e.g., `main`).
+  - **Does:** fetches `origin/<base_ref>`, computes `merge-base(origin/<base_ref>, HEAD)`, and diffs `MB..HEAD`; then verifies every changed path **starts with** `<component_dir>/`.
+  - **Outcome:** exits `0` if all changed files are under `<component_dir>/`; otherwise exits `1` and lists the offending paths.
+
+- `ensure_changed_files_outside_dirs.sh`:
+  - **Given:** `<base_ref>` and one or more `<dir>` prefixes (repo-root, e.g., `docs`, `packages/app`).
+  - **Does:** fetches `origin/<base_ref>`, computes `merge-base(origin/<base_ref>, HEAD)`, diffs `MB..HEAD`; then checks that **no** changed path starts with any forbidden `<dir>/` (regex-escaped, trailing slash normalized).
+  - **Outcome:** exits `0` if all changes are **outside** the listed directories; otherwise exits `1` and prints the paths that violate the rule.
+
+#### GitHub API Scripts (`.github/scripts/github/`)
+
+- `check_open_pr.sh`:
+  - **Given:** `<branch_name>` (e.g., `feature-core/my-feature`).
+  - **Does:** queries the GitHub API via `gh pr list` to check if there is an open pull request with the given branch as its head.
+  - **Outcome:** prints `true` to stdout if an open PR exists, `false` otherwise; exits `0` on success, `1` on missing arguments or if `GH_TOKEN` is not set.
+  - **Environment:** requires `GH_TOKEN` environment variable for API access.
+  - **Usage:** used by `CI_PUSH[CORE/EXPERIMENT/TORCH]` workflows to skip CI when a PR is open (to avoid duplicate runs with `CI_PR[DEV_*]`).
 
 #### Version Bump Scripts (`.github/scripts/version_bump/`)
 
