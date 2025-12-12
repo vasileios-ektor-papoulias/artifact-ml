@@ -9,15 +9,14 @@ setup() {
     TEST_DIR="$(cd "$(dirname "$BATS_TEST_FILENAME")" && pwd)"
     # Navigate to repo root
     REPO_ROOT="$(cd "$TEST_DIR/../../.." && pwd)"
-    SCRIPT_PATH="$REPO_ROOT/.github/scripts/ci/enforce_change_dirs_main.sh"
+    SCRIPT_PATH="$REPO_ROOT/.github/scripts/enforce_path/enforce_change_dirs_main.sh"
     
     # Create a temporary directory for mocks
     MOCK_ROOT="$(mktemp -d)"
     mkdir -p "$MOCK_ROOT/.github/scripts/enforce_path"
-    mkdir -p "$MOCK_ROOT/.github/scripts/ci"
     
     # Copy the actual script to mock root
-    cp "$SCRIPT_PATH" "$MOCK_ROOT/.github/scripts/ci/"
+    cp "$SCRIPT_PATH" "$MOCK_ROOT/.github/scripts/enforce_path/"
     
     # Create mock enforce_path scripts that succeed by default
     create_passing_mocks
@@ -54,7 +53,7 @@ EOF
 
 # Helper to run the script with mocked REPO_ROOT
 run_script() {
-    REPO_ROOT="$MOCK_ROOT" bash "$MOCK_ROOT/.github/scripts/ci/enforce_change_dirs_main.sh" "$@"
+    REPO_ROOT="$MOCK_ROOT" bash "$MOCK_ROOT/.github/scripts/enforce_path/enforce_change_dirs_main.sh" "$@"
 }
 
 @test "enforce_change_dirs_main.sh: fails when head_ref not provided" {

@@ -5,7 +5,7 @@
 setup() {
     # Get the directory of the test file
     TEST_DIR="$(cd "$(dirname "$BATS_TEST_FILENAME")" && pwd)"
-    SCRIPT_PATH="$TEST_DIR/../../scripts/ci/check_component_changed.sh"
+    SCRIPT_PATH="$TEST_DIR/../../scripts/enforce_path/check_component_changed.sh"
     
     # Create a temporary git repo for testing
     TEST_REPO=$(mktemp -d)
