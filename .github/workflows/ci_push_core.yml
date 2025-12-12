@@ -45,8 +45,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'poetry'
-          cache-dependency-path: '${{ env.COMPONENT }}/poetry.lock'
 
       - name: Install Poetry
         if: steps.pr_check.outputs.has_pr != 'true'
@@ -54,7 +52,16 @@ jobs:
         with:
           version: latest
           virtualenvs-create: true
-          virtualenvs-in-project: false
+          virtualenvs-in-project: true
+
+      - name: Cache virtual environment
+        if: steps.pr_check.outputs.has_pr != 'true'
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.COMPONENT }}/.venv
+          key: ${{ runner.os }}-venv-${{ env.COMPONENT }}-${{ hashFiles(format('{0}/poetry.lock', env.COMPONENT)) }}
+          restore-keys: |
+            ${{ runner.os }}-venv-${{ env.COMPONENT }}-
 
       - name: Install Dependencies
         if: steps.pr_check.outputs.has_pr != 'true'
