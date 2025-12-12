@@ -13,44 +13,34 @@ on:
           - torch
 
 permissions:
-  contents: read
+  contents: write
   id-token: write  # Required for trusted publishing
 
 jobs:
-  determine-component:
+  get-version:
     runs-on: ubuntu-latest
     outputs:
-      component: ${{ steps.extract.outputs.component }}
       version: ${{ steps.extract.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Extract component from tag or input
+      - name: Extract version from pyproject.toml
         id: extract
         run: |
-          chmod +x .github/scripts/publishing/extract_component_from_tag.sh
-          
-          # Call the script with appropriate parameters
-          RESULT=$(.github/scripts/publishing/extract_component_from_tag.sh \
-            "${{ github.event_name }}" \
-            "${{ github.ref_name }}" \
-            "${{ github.event.inputs.component }}")
-          
-          # Parse JSON output
-          COMPONENT=$(echo "$RESULT" | grep -o '"component":"[^"]*"' | cut -d'"' -f4)
-          VERSION=$(echo "$RESULT" | grep -o '"version":"[^"]*"' | cut -d'"' -f4)
-          
-          echo "component=$COMPONENT" >> $GITHUB_OUTPUT
+          chmod +x .github/scripts/publishing/get_version_from_pyproject.sh
+          VERSION=$(.github/scripts/publishing/get_version_from_pyproject.sh "${{ inputs.component }}")
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Detected component: $COMPONENT, version: $VERSION"
+          echo "Extracted version: $VERSION"
 
   publish:
-    needs: determine-component
+    needs: get-version
+    name: Publish artifact-${{ inputs.component }} v${{ needs.get-version.outputs.version }}
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     environment:
       name: pypi
-      url: https://pypi.org/project/artifact-${{ needs.determine-component.outputs.component }}/
+      url: https://pypi.org/project/artifact-${{ inputs.component }}/
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -70,10 +60,9 @@ jobs:
       - name: Configure component directory
         id: config
         run: |
-          COMPONENT="${{ needs.determine-component.outputs.component }}"
+          COMPONENT="${{ inputs.component }}"
           COMPONENT_DIR="artifact-${COMPONENT}"
           echo "dir=$COMPONENT_DIR" >> $GITHUB_OUTPUT
-          echo "Publishing component: $COMPONENT from directory: $COMPONENT_DIR"
 
       - name: Build package
         run: |
@@ -88,12 +77,11 @@ jobs:
           packages-dir: ${{ steps.config.outputs.dir }}/dist/
 
       - name: Create GitHub Release
-        if: github.event_name != 'workflow_dispatch'
         uses: softprops/action-gh-release@v1
         with:
           files: ${{ steps.config.outputs.dir }}/dist/*
-          tag_name: ${{ github.ref_name }}
-          name: ${{ steps.config.outputs.dir }} ${{ needs.determine-component.outputs.version }}
+          tag_name: ${{ inputs.component }}-v${{ needs.get-version.outputs.version }}
+          name: artifact-${{ inputs.component }} v${{ needs.get-version.outputs.version }}
           draft: false
           prerelease: false
           generate_release_notes: true

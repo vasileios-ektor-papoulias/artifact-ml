@@ -1,4 +1,4 @@
-name: BUMP_COMPONENT_PUSH[MAIN]
+name: BUMP_COMPONENT
 
 on:
   workflow_dispatch:

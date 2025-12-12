@@ -7,9 +7,9 @@
 setup() {
     # Get the directory containing this test file
     TEST_DIR="$(cd "$(dirname "$BATS_TEST_FILENAME")" && pwd)"
-    # Navigate to repo root (assuming tests are in .github/tests/ci/)
+    # Navigate to repo root (assuming tests are in .github/tests/github/)
     REPO_ROOT="$(cd "$TEST_DIR/../../.." && pwd)"
-    SCRIPT_PATH="$REPO_ROOT/.github/scripts/ci/check_open_pr.sh"
+    SCRIPT_PATH="$REPO_ROOT/.github/scripts/github/check_open_pr.sh"
     
     # Create a temporary directory for mocks
     MOCK_DIR="$(mktemp -d)"

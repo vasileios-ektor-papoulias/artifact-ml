@@ -92,21 +92,12 @@ teardown() {
   [[ "$combined" == *"Successfully completed version bump job"* ]]
 }
 
-@test "handles empty component name correctly when root pyproject.toml exists" {
-  cat << "EOF" > "$FAKE_BIN_DIR/.github/scripts/version_bump/get_pyproject_path.sh"
-#!/bin/bash
-echo "Fake get_pyproject_path.sh called with empty component" >&2
-echo "pyproject.toml"
-exit 0
-EOF
-  chmod +x "$FAKE_BIN_DIR/.github/scripts/version_bump/get_pyproject_path.sh"
+@test "exits with error when empty component name is provided" {
   run ".github/scripts/version_bump/job.sh" "" "patch"
-  [ "$status" -eq 0 ]
-  [[ "$output" == *"component="* ]]
-  [[ "$output" == *"version=1.2.3"* ]]
+  [ "$status" -eq 1 ]
   combined="$(printf "%s%s" "$output" "$stderr" | tr -d '\r\n')"
   echo "DEBUG: combined=[$combined]" >&2
-  [[ "$combined" == *"Fake bump_component_version.sh called with: patch  pyproject.toml"* ]]
+  [[ "$combined" == *"Component name is required"* ]]
 }
 
 @test "exits with error when pyproject.toml doesn't exist for component" {
