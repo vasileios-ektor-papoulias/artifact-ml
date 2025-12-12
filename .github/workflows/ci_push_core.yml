@@ -4,9 +4,6 @@ on:
   push:
     branches-ignore:
       - 'main'
-      - 'dev-core'
-      - 'dev-experiment'
-      - 'dev-torch'
     paths:
       - 'artifact-core/**'
   workflow_dispatch:
