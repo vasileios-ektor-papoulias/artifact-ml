@@ -17,8 +17,7 @@ jobs:
 
       - name: Ensure scripts are executable
         run: |
-          chmod +x .github/scripts/ci/*.sh
           chmod +x .github/scripts/enforce_path/*.sh
 
       - name: Enforce directory changes
-        run: .github/scripts/ci/enforce_change_dirs_main.sh "${{ github.head_ref }}" "${{ github.base_ref }}"
+        run: .github/scripts/enforce_path/enforce_change_dirs_main.sh "${{ github.head_ref }}" "${{ github.base_ref }}"
