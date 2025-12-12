@@ -41,10 +41,10 @@ jobs:
       - name: Check if component changed
         id: changes
         run: |
-          chmod +x .github/scripts/ci/check_component_changed.sh
+          chmod +x .github/scripts/enforce_path/check_component_changed.sh
           # For PRs, compare against the base branch
           git fetch origin ${{ github.base_ref }} --depth=1
-          RESULT=$(.github/scripts/ci/check_component_changed.sh "${{ matrix.component }}" "origin/${{ github.base_ref }}")
+          RESULT=$(.github/scripts/enforce_path/check_component_changed.sh "${{ matrix.component }}" "origin/${{ github.base_ref }}")
           echo "has_changes=$RESULT" >> $GITHUB_OUTPUT
           if [ "$RESULT" = "true" ]; then
             echo "✅ Component ${{ matrix.component }} has changes"
