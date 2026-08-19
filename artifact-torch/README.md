@@ -40,8 +40,6 @@ Install the latest release from [PyPI](https://pypi.org/project/artifact-torch/)
 pip install artifact-torch
 ```
 
-This pulls in [`artifact-core`](https://pypi.org/project/artifact-core/) and [`artifact-experiment`](https://pypi.org/project/artifact-experiment/) automatically.
-
 To install from source (e.g. for development, or to run the bundled demos), consult the [getting started guide](https://artifact-ml.readthedocs.io/en/latest/artifact-torch/getting_started/).
 
 ## 📚 Documentation
