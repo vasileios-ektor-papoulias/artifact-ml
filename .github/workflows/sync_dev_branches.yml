@@ -16,8 +16,10 @@ on:
   # Runs after CI_PUSH[MAIN] completes rather than on push to main directly:
   # the version-bump commit lands with [skip ci] *during* CI_PUSH[MAIN], so a
   # plain push trigger would sync the dev branches one commit short of main.
+  # The workflows filter is glob-matched, so the literal square brackets in the
+  # workflow name must be escaped (unescaped, [MAIN] is a character class).
   workflow_run:
-    workflows: ["CI_PUSH[MAIN]"]
+    workflows: ['CI_PUSH\[MAIN\]']
     types: [completed]
 
 concurrency:
