@@ -28,19 +28,21 @@ The interface that connects the framework to external systems for validation com
 ```mermaid
 graph TB
     subgraph "User Specification Layer"
-        VP[ValidationPlan]
+        AP[ArtifactPlan]
     end
     
     subgraph "Execution Orchestration Layer"  
-        AF[Artifact Factories]
+        ACF[ArtifactCallbackFactory]
         CB[Callbacks]
-        CBH[Callback Handlers]
+        CBH[CallbackHandlers]
     end
     
     subgraph "Backend Integration Layer"
-        RA[Run Adapters]
-        AL[Artifact Loggers]
-        TC[Tracking Clients]
+        TC[TrackingClient]
+        TQ[TrackingQueue]
+        BLW[BackendLoggingWorker]
+        AL["BackendLoggers<br/>(ArtifactLoggers)"]
+        RA[RunAdapter]
     end
     
     subgraph "External Dependencies"
@@ -48,15 +50,16 @@ graph TB
         EB["Experiment Backends<br/>MLflow, ClearML, Neptune"]
     end
     
-    VP --> AF
-    VP --> CBH
+    AP --> ACF
+    AP --> CBH
     CBH --> CB
-    CBH --> TC
-    CB --> TC
-    TC --> AL
-    TC --> RA
+    ACF --> AC
+    CB -->|write results| TQ
+    TC -->|owns| TQ
+    TC -->|owns| BLW
+    BLW -->|consumes| TQ
+    BLW -->|holds| AL
     AL --> RA
-    AF --> AC
     RA --> EB
 ```
 
