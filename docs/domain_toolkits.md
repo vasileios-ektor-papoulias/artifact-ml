@@ -33,7 +33,7 @@ import pandas as pd
 from artifact_core.binary_classification import (
     BinaryClassificationEngine,
     BinaryClassificationPlotType,
-    BinaryFeatureSpec
+    BinaryClassSpec
 )
 
 true: Dict[str, str] = df_classification_results["true"].to_dict()
@@ -42,15 +42,15 @@ predicted: Dict[str, str] = df_classification_results["predicted"].to_dict()
 
 probs_pos: Dict[str, float] = df_classification_results["predicted_prob"].to_dict()
 
-class_spec = BinaryFeatureSpec(
-    ls_categories=["0", "1"],
-    positive_category="1",
-    feature_name="class"
+class_spec = BinaryClassSpec(
+    class_names=["0", "1"],
+    positive_class="1",
+    label_name="class"
 )
 
-engine = BinaryClassificationEngine(resource_spec=class_spec)
+engine = BinaryClassificationEngine.build(resource_spec=class_spec)
 
-score_pdf_plot = engine.produce_classification_plot(
+score_pdf_plot = engine.produce_binary_classification_plot(
     plot_type=BinaryClassificationPlotType.SCORE_PDF,
     true=true,
     predicted=predicted,
