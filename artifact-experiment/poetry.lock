@@ -89,14 +89,14 @@ test = ["dateparser (==1.*)", "pre-commit", "pytest", "pytest-cov", "pytest-mock
 
 [[package]]
 name = "artifact-core"
-version = "0.1.4"
-description = "Artifact-ML foundation: a unified interface for the declarative computation of validation artifacts in ML experiments."
+version = "0.2.0"
+description = "Artifact-ML foundation: a declarative interface for the computation of validation artifacts in ML experiments."
 optional = false
 python-versions = "<3.14,>=3.11"
 groups = ["main"]
 files = [
-    {file = "artifact_core-0.1.4-py3-none-any.whl", hash = "sha256:7a27adc44cf9c2368562d989ff15c9c42e4957c0ff82d105f4616f6fa9244183"},
-    {file = "artifact_core-0.1.4.tar.gz", hash = "sha256:e3e29e7d0dae584dc136bcdb778d65a2dde9825932023d432164839bfbcc45e3"},
+    {file = "artifact_core-0.2.0-py3-none-any.whl", hash = "sha256:f517aacb508080baaed4895f1a28cedb20fcccfff7cfdd386963d856f6ef24f4"},
+    {file = "artifact_core-0.2.0.tar.gz", hash = "sha256:22ad97f4152f2c56fd15eff8b7cc116628a18096d8954c043be4f94b81677443"},
 ]
 
 [package.dependencies]
@@ -4271,4 +4271,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.14"
-content-hash = "ea2c4589539b338c5688e60c8f08b9dd5c452530967e41047cf1164f55b401bd"
+content-hash = "0329628f45b28553a91af06434da38e977243ce28f4bb9fb4ed68bb52f12e986"
