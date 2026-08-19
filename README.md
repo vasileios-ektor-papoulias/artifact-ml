@@ -49,8 +49,6 @@ pip install artifact-experiment
 pip install artifact-torch
 ```
 
-Each package pulls in the ones it builds on: `artifact-experiment` depends on `artifact-core`, and `artifact-torch` depends on both.
-
 To install from source (e.g. for development), consult our [getting started guide](https://artifact-ml.readthedocs.io/en/latest/getting_started/).
 
 ## 📚 Documentation

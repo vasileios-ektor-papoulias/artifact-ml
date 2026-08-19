@@ -32,8 +32,6 @@ pip install artifact-torch
 
 For details consult the [package's docs](https://artifact-ml.readthedocs.io/en/latest/artifact-torch).
 
-Each package pulls in the ones it builds on: `artifact-experiment` depends on `artifact-core`, and `artifact-torch` depends on both.
-
 ## Installing from Source (Development)
 
 To work on Artifact-ML itself—or to run the bundled demos—clone the [monorepo](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) by running:
