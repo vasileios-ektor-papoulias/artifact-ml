@@ -11,11 +11,10 @@ We demonstrate the steps required to create a complete validation toolkit from s
 First, you define enumerations for each type of artifact your engine will support:
 
 ```python
-from enum import Enum
-from artifact_core._base.artifact_dependencies import ArtifactType
+from artifact_core.spi.orchestration import ArtifactType
 
 class CustomScoreType(ArtifactType):
-    CUSTOM_SCORE = "accuracy_score"
+    CUSTOM_SCORE = "custom_score"
     
 class CustomArrayType(ArtifactType):
     pass
@@ -41,8 +40,8 @@ The resource specification defines the structural properties of your validation 
 
 ```python
 from dataclasses import dataclass
-from typing import List, Dict, Optional
-from artifact_core._base.artifact_dependencies import ResourceSpecProtocol
+
+from artifact_core.spi.resources import ResourceSpecProtocol
 
 @dataclass
 class CustomResourceSpec(ResourceSpecProtocol):
@@ -55,29 +54,30 @@ Resources are the data objects that artifacts will operate on:
 
 ```python
 from dataclasses import dataclass
+
 import numpy as np
-import pandas as pd
-from typing import Dict, List, Optional, Union
 
-from artifact_core._base.artifact_dependencies import ArtifactResources
+from artifact_core.spi.resources import ArtifactResources
 
-@dataclass
+@dataclass(frozen=True)
 class CustomResources(ArtifactResources):
     resource_attribute: np.ndarray
 ```
 
 ## 4. Create Registries
 
-Registries manage the organization and retrieval of artifacts:
+Registries manage the organization and retrieval of artifacts.
+
+Each registry is generic over the resources, the resource specification, the artifact type enum, and the result type---i.e. `ArtifactRegistry[ArtifactResources, ResourceSpecProtocol, ArtifactType, Result]`.
+
+Registries read artifact configurations (keyed by enum member *name*) from configuration files:
 
 ```python
 import json
-from matplotlib.figure import Figure
-import numpy as np
 import os
-from typing import Dict, Type, Optional, List
+from typing import Any, Dict, Mapping
 
-from artifact_core._base.registry import ArtifactRegistry
+from artifact_core.spi.orchestration import ArtifactRegistry
 
 # Helper function to load configurations
 def load_config_section(config_path: str, section: str) -> Dict[str, Dict[str, Any]]:
@@ -91,9 +91,9 @@ def load_config_section(config_path: str, section: str) -> Dict[str, Dict[str, A
 CONFIG_PATH = 'path/to/custom_engine/config/raw.json'
 
 # Create artifact registries
-class CustomScoreRegistry(ArtifactRegistry[CustomScoreType, CustomResources, float, CustomResourceSpec]):
+class CustomScoreRegistry(ArtifactRegistry[CustomResources, CustomResourceSpec, CustomScoreType, float]):
     @classmethod
-    def _get_artifact_configurations(cls) -> Dict[str, Dict[str, Any]]:
+    def _get_artifact_configurations(cls) -> Mapping[str, Mapping[str, Any]]:
         return load_config_section(
             config_path=CONFIG_PATH,
             section='scores'
@@ -104,16 +104,15 @@ class CustomScoreRegistry(ArtifactRegistry[CustomScoreType, CustomResources, flo
 
 ## 5. Implement Artifacts
 
-Create concrete artifact implementations:
+Create concrete artifact implementations.
+
+Artifacts are generic over the resources, the resource specification, the hyperparameters, and the result type---i.e. `Artifact[ArtifactResources, ResourceSpecProtocol, ArtifactHyperparams, Result]`:
 
 ```python
-from typing import Any, Optional, Union
-
-from artifact_core._base.artifact import Artifact
-from artifact_core._base.artifact_dependencies import NoArtifactHyperparams
+from artifact_core.spi.artifact import NO_ARTIFACT_HYPERPARAMS, Artifact
 
 @CustomScoreRegistry.register_artifact(CustomScoreType.CUSTOM_SCORE)
-class CustomScore(Artifact[CustomResources, float, NoArtifactHyperparams, CustomResourceSpec]):
+class CustomScore(Artifact[CustomResources, CustomResourceSpec, NO_ARTIFACT_HYPERPARAMS, float]):
     def _validate(self, resources: CustomResources) -> CustomResources:
         if not hasattr(resources, "resource_attribute"):
             raise ValueError("Resources must contain resource_attribute")
@@ -128,9 +127,11 @@ class CustomScore(Artifact[CustomResources, float, NoArtifactHyperparams, Custom
 Finally, create the engine that orchestrates the computation of artifacts:
 
 ```python
-from typing import Type, Dict, Union
+from typing import Type
 
-from artifact_core._base.engine import ArtifactEngine
+import numpy as np
+
+from artifact_core.spi.orchestration import ArtifactEngine
 
 class CustomArtifactEngine(ArtifactEngine[
     CustomResources,
@@ -156,4 +157,12 @@ class CustomArtifactEngine(ArtifactEngine[
     ) -> float:
         resources = CustomResources(resource_attribute=resource_attribute)
         return self.produce_score(score_type=score_type, resources=resources)
+```
+
+Engines are instantiated via the `build()` classmethod, which wires in the appropriate registries automatically:
+
+```python
+spec = CustomResourceSpec(validation_resource_structural_property=1.0)
+
+engine = CustomArtifactEngine.build(resource_spec=spec)
 ```
