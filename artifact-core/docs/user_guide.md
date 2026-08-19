@@ -25,11 +25,11 @@ df_synthetic = pd.read_csv("synthetic_data.csv")
 
 data_spec = TabularDataSpec.from_df(
     df=df_real, 
-    cat_features=categorical_features, 
-    cont_features=continuous_features
+    cts_features=continuous_features, 
+    cat_features=categorical_features
 )
 
-engine = TableComparisonEngine(resource_spec=data_spec)
+engine = TableComparisonEngine.build(resource_spec=data_spec)
 
 pca_plot = engine.produce_dataset_comparison_plot(
     plot_type=TableComparisonPlotType.PCA_JUXTAPOSITION,
@@ -112,14 +112,14 @@ Custom artifacts integrate seamlessly with the existing framework infrastructure
 
 ### Creation
 
-**1. Configure Custom Artifact Path**
+**1. Configure Custom Artifacts Directory**
 
-Update the relevant domain toolkit configuration file (see the relevant section above) to point to your custom artifacts directory. Note that the required path is to be specified relative to the parent of the .artifact-ml folder hosting the relevant config file---typically your project root. The setup is clarified in the artifact-core demo.
+Update the relevant domain toolkit configuration file (see the relevant section above) setting the `custom_artifacts_dir` key to point to your custom artifacts directory. Note that the required path is to be specified relative to the parent of the .artifact-ml folder hosting the relevant config file---typically your project root. The setup is clarified in the artifact-core demo.
 
 ```json
 {
-  "custom_artifact_path": "/path/to/your/custom_artifacts",
-  "score_collections": {
+  "custom_artifacts_dir": "path/to/your/custom_artifacts",
+  "scores": {
     "CUSTOM_SCORE": {
       "param1": value1,
       "param2": value2
@@ -136,9 +136,8 @@ Select the relevant domain-specific registry corresponding to your artifact's mo
 
 ```python
 import pandas as pd
-from artifact_core._base.artifact_dependencies import NO_ARTIFACT_HYPERPARAMS
-from artifact_core.table_comparison._artifacts.base import TableComparisonScore
-from artifact_core.table_comparison._registries.scores.registry import TableComparisonScoreRegistry
+from artifact_core._base.core.hyperparams import NO_ARTIFACT_HYPERPARAMS
+from artifact_core.table_comparison.spi import TableComparisonScore, TableComparisonScoreRegistry
 
 @TableComparisonScoreRegistry.register_custom_artifact("CUSTOM_SCORE")
 class CustomScore(TableComparisonScore[NO_ARTIFACT_HYPERPARAMS]):
@@ -155,15 +154,13 @@ If your custom artifact requires configuration parameters create a corresponding
 
 ```python
 from dataclasses import dataclass
-from artifact_core._base.artifact_dependencies import ArtifactHyperparams
 
-@dataclass
-class CustomScoreHyperparams(ArtifactHyperparams):
-    threshold: float
-    use_weights: bool
+import pandas as pd
+from artifact_core.spi.artifact import ArtifactHyperparams
+from artifact_core.table_comparison.spi import TableComparisonScore, TableComparisonScoreRegistry
 
 @TableComparisonScoreRegistry.register_custom_artifact_hyperparams("CUSTOM_SCORE")
-@dataclass
+@dataclass(frozen=True)
 class CustomScoreHyperparams(ArtifactHyperparams):
     threshold: float
     use_weights: bool

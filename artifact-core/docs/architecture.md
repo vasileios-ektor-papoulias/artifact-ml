@@ -33,7 +33,7 @@ graph TB
         AREG[ArtifactRegistry]
         AT[ArtifactType]
         AR[ArtifactResources]
-        ARS[ArtifactResourceSpec]
+        ARS[ResourceSpecProtocol]
         AH[ArtifactHyperparams]
     end
     

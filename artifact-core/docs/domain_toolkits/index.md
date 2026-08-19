@@ -33,11 +33,11 @@ df_synthetic = pd.read_csv("synthetic_data.csv")
 
 data_spec = TabularDataSpec.from_df(
     df=df_real, 
-    cat_features=categorical_features, 
-    cont_features=continuous_features
+    cts_features=continuous_features, 
+    cat_features=categorical_features
 )
 
-engine = TableComparisonEngine(resource_spec=data_spec)
+engine = TableComparisonEngine.build(resource_spec=data_spec)
 
 pca_plot = engine.produce_dataset_comparison_plot(
     plot_type=TableComparisonPlotType.PCA_JUXTAPOSITION,

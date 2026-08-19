@@ -13,10 +13,10 @@
 - **ArtifactEngine**: Unified interface for executing validation artifacts declaratively. It delegates artifact instantiation to registries and provides a streamlined entry point for execution.
 
 ```python
-engine = TableComparisonEngine(resource_spec=spec)
+engine = TableComparisonEngine.build(resource_spec=spec)
 
 pca_plot = engine.produce_dataset_comparison_plot(
-    plot_type=TableComparisonPlotType.PCA_PROJECTION_PLOT,
+    plot_type=TableComparisonPlotType.PCA_JUXTAPOSITION,
     dataset_real=df_real,
     dataset_synthetic=df_synthetic,
 )
@@ -24,7 +24,7 @@ pca_plot = engine.produce_dataset_comparison_plot(
 
 ### Framework Infrastructure Layer
 
-- **Artifact**: Abstract computational unit defining the `compute()` method contract.
+- **Artifact**: Abstract computational unit defining the `compute()` method contract. It is generic over its resources, resource specification, hyperparameters, and result type: `Artifact[ArtifactResources, ResourceSpecProtocol, ArtifactHyperparams, Result]`.
   Artifacts are heterogeneous (multi-modal) and categorized by their return type (modality):
 
     - **Scores** – Single numerical metrics.
@@ -37,13 +37,13 @@ pca_plot = engine.produce_dataset_comparison_plot(
 
 - **ArtifactHyperparams**: Configuration objects that parameterize artifact behavior.
 
-- **ArtifactResourceSpec**: Schema definitions that describe the structural and semantic properties of validation resources (e.g., feature types and data formats for tabular data).
+- **ResourceSpecProtocol**: Protocol for schema definitions that describe the structural and semantic properties of validation resources (e.g., feature types and data formats for tabular data). Concrete resource specifications (e.g. `TabularDataSpec`) implement this protocol.
 
 - **ArtifactResources**: data containers providing the inputs required for artifact computation.  
 
 - **ArtifactType**: Enumeration system that assigns unique identifiers to artifact implementations.
 
-- **ArtifactRegistry**: The management layer that organizes, registers, and instantiates artifacts by type. Each registry groups artifacts sharing compatible resource types, return modalities, and resource specifications.
+- **ArtifactRegistry**: The management layer that organizes, registers, and instantiates artifacts by type (`ArtifactRegistry[ArtifactResources, ResourceSpecProtocol, ArtifactType, Result]`). Each registry groups artifacts sharing compatible resource types, return modalities, and resource specifications.
 
 
 ### External Dependencies
@@ -88,14 +88,13 @@ Artifact retrieval requires:
 
 They maintain access to all relevant registries, delegate artifact initialization and provide unified execution interfaces for each artifact modality.
 
-Engine initialization requires:
+Engines are constructed via the `build()` classmethod, which requires:
 
 - A `ResourceSpec` instance describing the available validation resources.
 
-Once initialized, an engine exposes functions such as `compute_score()` (one for each modality).
+Once built, an engine exposes `produce_*` methods (one for each modality)---e.g. `produce_dataset_comparison_score()` and `produce_dataset_comparison_plot()` for table comparison, or `produce_binary_classification_score()` and `produce_binary_classification_plot()` for binary classification.
 
 When called with an `ArtifactType` enum and corresponding resources, the engine:
 
-- Retrieves the appropriate artifact from the relevant `ArtifactRegistry`.
-- Injects the provided `ArtifactResources` into the artifact instance.
-- Executes the artifact’s validation workflow and returns the result.
+- Retrieves the appropriate artifact instance from the relevant `ArtifactRegistry` (which builds it with the engine's resource specification and the configured hyperparameters).
+- Executes the artifact’s validation workflow by calling `artifact.compute(resources=...)` with the provided `ArtifactResources`, and returns the result.

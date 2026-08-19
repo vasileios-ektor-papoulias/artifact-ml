@@ -21,7 +21,7 @@ First, we present a schematic imperative implementation of the workflow.
 
 Even though its high-level intent applies to any tabular synthesis experiment, the script is tightly coupled to a specific model.
 
-Consequently, it is verbose and riddled with impertive glue code.
+Consequently, it is verbose and riddled with imperative glue code.
 
 ```python
 from typing import List, Dict, Tuple, Optional, Any
@@ -72,7 +72,7 @@ for epoch in range(config.num_epochs):
     
     # Periodic validation
     if epoch % config.validation_frequency == 0:
-        model.eval()s
+        model.eval()
         print(f"Running validation at epoch {epoch}...")    
 
         # Compute average loss
@@ -273,6 +273,8 @@ The end result is **reusable** by any compatible model.
 
 Every line of code **declares intent**, resulting in a compact and expressive implementation with significantly less code overhead.
 
+All names and signatures below are real, but the snippets are schematic: type annotations and hooks left at their defaults are elided for readability. For a faithful end-to-end implementation consult the [artifact-torch user guide](https://artifact-ml.readthedocs.io/en/latest/artifact-torch/user_guide/) and the [demo projects](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch/demos).
+
 **Model Implementation** - Isolated architecture design:
 
 ```python
@@ -283,44 +285,46 @@ class MyModel(
     ): # Type contracts: IO profile and generation hyperparams
     def forward(
         self,
-        batch: ModelInput
+        model_input: ModelInput
         ) -> ModelOutput: ...
-    
+
     def generate(
         self,
-        generation_params: GenerationParams
+        params: GenerationParams
         ) -> pd.DataFrame: ...
 ```
 
-**Validation Plan** - Declarative specification of desired validation artifacts:
+**Artifact Plan** - Declarative specification of desired validation artifacts:
 
 ```python
-class MyValidationPlan(TableComparisonPlan):
+# Artifacts are selected by name --- no computation code, no adapter code.
+
+class MyArtifactPlan(TableComparisonPlan):
     @staticmethod
-    def _get_score_types() -> List[ScoreType]:
+    def _get_score_types():
         return [
-          ScoreType.MEAN_JS_DISTANCE,
-          ScoreType.CORRELATION_DISTANCE,
+          TableComparisonScoreType.MEAN_JS_DISTANCE,
+          TableComparisonScoreType.CORRELATION_DISTANCE,
           ]
-    
+
     @staticmethod
-    def _get_plot_types() -> List[PlotType]:
+    def _get_plot_types():
         return [
-          PlotType.PDF
+          TableComparisonPlotType.PDF
           ]
-    
+
     @staticmethod
-    def _get_array_collection_types() -> List[ArrayCollectionType]:
+    def _get_array_collection_types():
         return [
-          ArrayCollectionType.MEAN_JUXTAPOSITION
+          TableComparisonArrayCollectionType.MEAN_JUXTAPOSITION
           ]
 ```
 
 **Artifact Validation Routine** - Reusable validation plan executor (built declaratively):
 
 ```python
-# Works with any tabular synthesizer fulfilling the
-# generation hyperparams contract (contravariant).
+# Reusable: works with any tabular synthesizer that accepts
+# the generation hyperparams declared below (GenerationParams).
 
 class MyArtifactRoutine(
     TableComparisonRoutine[
@@ -329,122 +333,155 @@ class MyArtifactRoutine(
     ):
 
     @classmethod
-    def _get_period(cls) -> int:
+    def _get_period(cls, data_split):
+        # How often to validate.
         return config.validation_frequency
-    
-    @staticmethod
-    def _get_generation_params() -> GenerationParams:
+
+    @classmethod
+    def _get_generation_params(cls):
+        # How to generate synthetic data for validation.
         return GenerationParams(
-            num_samples=config.num_samples,
+            n_records=config.n_samples,
             temperature=config.temperature
             )
 
-    @staticmethod
-    def _get_validation_plan() -> TableComparisonPlan:
-        return MyValidationPlan()
+    @classmethod
+    def _get_artifact_plan(cls, data_split):
+        # Which artifacts to compute.
+        return MyArtifactPlan
 ```
 
 **Data Loader Routine** - Reusable callback executor (built declaratively):
 
 ```python
-# Works with any neural network fulfilling the IO contract.
-# The input contract is contravariant.
-# The output contract is covariant.
+# Reusable: works with any neural network
+# whose inputs and outputs match the IO contract.
 
-class MyDataLoaderRoutine(
-    DataLoaderRoutine[
+class MyModelIOPlan(
+    ModelIOPlan[
         ModelInput, ModelOutput
         ] # Expected IO profile.
     ):
-    @staticmethod
-    def _get_score_callbacks() -> List[
-        DataLoaderScoreCallback[ModelInput, ModelOutput]
-        ]:
+    @classmethod
+    def _get_score_callbacks(cls, context):
+        # Which callbacks to run.
+        # The framework supplies the context: it wires results to tracking.
         return [
-            TrainLossCallback(period=config.validation_frequency)
+            LossCallback(
+                period=config.validation_frequency,
+                writer=context.score_writer
+                )
             ]
+
+
+class MyDataLoaderRoutine(
+    DataLoaderRoutine[
+        Model[ModelInput, ModelOutput], ModelInput, ModelOutput
+        ] # Expected model type and IO profile.
+    ):
+    @classmethod
+    def _get_model_io_plan(cls, data_split):
+        # Which callback plan to execute.
+        return MyModelIOPlan
 ```
 
 **Trainer Configuration** - Reusable training loop (built declaratively):
 
 ```python
-# Works with any tabular synthesizer fulfilling the IO contract.
-# The input contract is contravariant.
-# The output contract is covariant.
+# Reusable: works with any tabular synthesizer
+# whose inputs and outputs match the IO contract.
 
 class MyTrainer(
-    CustomTrainer[
+    Trainer[
         TableSynthesizer[ModelInput, ModelOutput, Any], # Expected model type.
         ModelInput, # Expected forward pass input.
         ModelOutput, # Expected forward pass output.
-        ModelTrackingCriterion, # See artifact-torch docs.
-        StopperUpdateData # See artifact-torch docs.
+        StopperUpdateData, # See artifact-torch docs.
+        ModelTrackingCriterion # See artifact-torch docs.
     ]
 ):
-    def _get_optimizer(self) -> torch.optim.Optimizer:
+    @staticmethod
+    def _get_optimizer(model):
         return torch.optim.Adam(
-            self.model.parameters(),
+            model.parameters(),
             lr=config.lr
             )
-    
-    def _get_scheduler(self) -> torch.optim.lr_scheduler.LRScheduler:
+
+    @staticmethod
+    def _get_scheduler(optimizer):
         return torch.optim.lr_scheduler.StepLR(
-            self.optimizer,
+            optimizer,
             step_size=config.step_size
             )
-    
-    def _get_early_stopper(self) -> EarlyStopper:
-        return EpochBoundStopper(
-            n_epochs=config.num_epochs
-            )
-    
+
     @staticmethod
-    def _get_train_loader_routine(
-        data_loader: DataLoader[ModelInputT], 
-        tracking_client: Optional[TrackingClient], 
-    ) -> Optional[
-        DataLoaderRoutine[ModelInputT, ModelOutputT]
-        ]:
-        return MyDataLoaderRoutine.build(
-            data_loader=data_loader, # Artifact-ML type-aware wrapper
-            tracking_client=tracking_client
+    def _get_early_stopper():
+        return EpochBoundStopper(
+            max_n_epochs=config.num_epochs
             )
+
+    # Remaining hooks: device placement, checkpoint period,
+    # model tracking, stopper update data.
+```
+
+**Experiment Orchestration** - Declarative pairing of the trainer with the validation routines:
+
+```python
+# Declarative pairing: compatibility is verified through the type contracts.
+
+class MyExperiment(
+    TabularSynthesisExperiment[
+        MyModel, ModelInput, ModelOutput, GenerationParams
+        ]
+    ):
+    @classmethod
+    def _get_trainer(cls):
+        return MyTrainer
+
+    @classmethod
+    def _get_loader_routine(cls):
+        return MyDataLoaderRoutine
+
+    @classmethod
+    def _get_artifact_routine(cls):
+        return MyArtifactRoutine
+
+    # Remaining hook: train diagnostics routine (unused here).
 ```
 
 **Experiment Execution** - Complete training, validation, and experiment tracking in just a few lines:
 
 ```python
-tracking_client = TrackingClient(
-    **config
+tracking_client = MlflowTrackingClient.build(
+    experiment_id=config.experiment_name
     ) # Artifact-ML entity for experiment tracking
 
 model = MyModel(**config)
 
-data_spec = DataSpec(
-    **config
+data_spec = TabularDataSpec.from_df(
+    df=real_data,
+    cts_features=config.cts_features,
+    cat_features=config.cat_features
     ) # Artifact-ML entity: static dataset info (e.g. column names)
 
-dataset = Dataset(
-    real_data
-    )  # Artifact-ML type-aware wrapper
+data_loaders = {
+    DataSplit.TRAIN: DataLoader(
+        dataset=Dataset(real_data),
+        batch_size=config.batch_size
+        ) # Artifact-ML type-aware wrappers
+    }
 
-data_loader = DataLoader(
-    dataset=dataset,
-    batch_size=config.batch_size
-    ) # Artifact-ML type-aware wrapper
+artifact_routine_data = {
+    DataSplit.TRAIN: TableComparisonRoutineData(df_real=real_data)
+    }
 
-artifact_routine = MyArtifactRoutine.build(
-        data=real_data,
-        data_spec=data_spec,
-        tracking_client=tracking_client
-        )
-
-trainer = MyTrainer.build(
+experiment = MyExperiment.build(
     model=model,
-    train_data_loader=data_loader,
-    artifact_routine=artifact_routine,
+    data_loaders=data_loaders,
+    artifact_routine_data=artifact_routine_data,
+    artifact_routine_data_spec=data_spec,
     tracking_client=tracking_client
 )
 
-results = trainer.train()  
+experiment.run()
 ```

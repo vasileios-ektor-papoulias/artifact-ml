@@ -23,11 +23,11 @@ df_synthetic = pd.read_csv("synthetic_data.csv")
 
 data_spec = TabularDataSpec.from_df(
     df=df_real, 
-    cat_features=categorical_features, 
-    cont_features=continuous_features
+    cts_features=continuous_features, 
+    cat_features=categorical_features
 )
 
-engine = TableComparisonEngine(resource_spec=data_spec)
+engine = TableComparisonEngine.build(resource_spec=data_spec)
 
 dict_js_distance_per_feature = engine.produce_dataset_comparison_score_collection(
     score_collection_type=TableComparisonScoreCollectionType.JS_DISTANCE,
@@ -92,7 +92,7 @@ pdf_plot
 - `THIRD_QUARTILE_ALIGNMENT`: Alignment of third quartiles between real and synthetic data.
 - `MIN_ALIGNMENT`: Alignment of minimum values between real and synthetic data.
 - `MAX_ALIGNMENT`: Alignment of maximum values between real and synthetic data.
-- `CORRELATION_HEATMAPS_JUXTAPOSITION`: Juxtaposed correlation matrix heatmaps for real and synthetic data.
+- `CORRELATION_HEATMAP_JUXTAPOSITION`: Juxtaposed correlation matrix heatmaps for real and synthetic data.
 - `PCA_JUXTAPOSITION`: Visual PCA projection comparison between real and synthetic data.
 - `TRUNCATED_SVD_JUXTAPOSITION`: Visual truncated SVD projection comparison between real and synthetic data.
 - `TSNE_JUXTAPOSITION`: Visual t-SNE projection comparison between real and synthetic data.
