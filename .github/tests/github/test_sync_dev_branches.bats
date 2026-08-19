@@ -111,22 +111,25 @@ remote_sha() {
 
     [ "$status" -eq 1 ]
     [[ "$output" == *"cannot be fast-forwarded"* ]]
+    [[ "$output" == *"Diverged branches left untouched: dev-core."* ]]
     # The diverged branch must be left untouched
     [ "$(remote_sha dev-core)" = "$DIVERGED_SHA" ]
 }
 
-@test "sync_dev_branches.sh: divergence aborts before touching later branches" {
-    # dev-core (checked first by the script) diverges; the others must stay put
+@test "sync_dev_branches.sh: divergence does not block syncing healthy branches" {
+    # dev-core diverges; the other two must still be fast-forwarded to main
     git checkout --quiet -b dev-core origin/dev-core
     make_commit "stray commit on dev-core"
     git push --quiet origin dev-core
+    DIVERGED_SHA="$(remote_sha dev-core)"
     git checkout --quiet main
-    OLD_EXPERIMENT_SHA="$(remote_sha dev-experiment)"
-    OLD_TORCH_SHA="$(remote_sha dev-torch)"
+    MAIN_SHA="$(remote_sha main)"
 
     run bash "$SCRIPT_PATH" "all"
 
     [ "$status" -eq 1 ]
-    [ "$(remote_sha dev-experiment)" = "$OLD_EXPERIMENT_SHA" ]
-    [ "$(remote_sha dev-torch)" = "$OLD_TORCH_SHA" ]
+    [ "$(remote_sha dev-core)" = "$DIVERGED_SHA" ]
+    [ "$(remote_sha dev-experiment)" = "$MAIN_SHA" ]
+    [ "$(remote_sha dev-torch)" = "$MAIN_SHA" ]
+    [[ "$output" == *"Diverged branches left untouched: dev-core."* ]]
 }
