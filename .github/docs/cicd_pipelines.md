@@ -78,21 +78,25 @@ All Github Actions workflows follow the naming convention:
 - `ci_pr_dev_core.yml` (workflow name: CI_PR[DEV_CORE]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-core` (pre-merge gating). **Skips CI if `artifact-core/` has no changes** (uses `check_component_changed.sh`),
 - `enforce_branch_naming_pr_dev_core.yml` (workflow name: ENFORCE_BRANCH_NAMING_PR[DEV_CORE]): ensures that branches being PR'd to `dev-core` follow the naming convention: `feature-core/<descriptive_name>`, `fix-core/<descriptive_name>`,
 - `enforce_change_dirs_pr_dev_core.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_CORE]): ensures PRs to `dev-core` only modify files in their corresponding directories,
+- `enforce_no_merge_commits_pr_dev_core.yml` (workflow name: ENFORCE_NO_MERGE_COMMITS_PR[DEV_CORE]): ensures PR head branches contain no merge commits (stale branches must be rebased, not back-merged),
 
 ##### dev-experiment
 - `ci_pr_dev_experiment.yml` (workflow name: CI_PR[DEV_EXPERIMENT]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-experiment` (pre-merge gating). **Skips CI if `artifact-experiment/` has no changes** (uses `check_component_changed.sh`),
 - `enforce_branch_naming_pr_dev_experiment.yml` (workflow name: ENFORCE_BRANCH_NAMING_PR[DEV_EXPERIMENT]): ensures that branches being PR'd to `dev-experiment` follow the naming convention: `feature-experiment/<descriptive_name>`, `fix-experiment/<descriptive_name>`,
 - `enforce_change_dirs_pr_dev_experiment.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_EXPERIMENT]): ensures PRs to `dev-experiment` only modify files in their corresponding directories,
+- `enforce_no_merge_commits_pr_dev_experiment.yml` (workflow name: ENFORCE_NO_MERGE_COMMITS_PR[DEV_EXPERIMENT]): ensures PR head branches contain no merge commits (stale branches must be rebased, not back-merged),
 
 ##### dev-torch
 - `ci_pr_dev_torch.yml` (workflow name: CI_PR[DEV_TORCH]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `dev-torch` (pre-merge gating). **Skips CI if `artifact-torch/` has no changes** (uses `check_component_changed.sh`),
 - `enforce_branch_naming_pr_dev_torch.yml` (workflow name: ENFORCE_BRANCH_NAMING_PR[DEV_TORCH]): ensures that branches being PR'd to `dev-torch` follow the naming convention: `feature-torch/<descriptive_name>`, `fix-torch/<descriptive_name>`,
 - `enforce_change_dirs_pr_dev_torch.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[DEV_TORCH]): ensures PRs to `dev-torch` only modify files in their corresponding directories,
+- `enforce_no_merge_commits_pr_dev_torch.yml` (workflow name: ENFORCE_NO_MERGE_COMMITS_PR[DEV_TORCH]): ensures PR head branches contain no merge commits (stale branches must be rebased, not back-merged),
 
 ##### main
 - `ci_pr_main.yml` (workflow name: CI_PR[MAIN]): runs full CI (lint, test with coverage, Codecov, SonarCloud, build) for PRs targeting `main` (pre-merge gating). **Skips CI for components that have no changes** (uses `check_component_changed.sh` to detect),
 - `lint_title_pr_main.yml` (workflow name: LINT_TITLE_PR[MAIN]): ensures PR titles to `main` follow the appropriate semantic versioning prefix convention (see *Versioning and PRs to `main`*),
 - `enforce_branch_naming_pr_main.yml` (workflow name: ENFORCE_BRANCH_NAMING_PR[MAIN]): ensures that branches being PR'd to `main` follow the naming convention: `dev-<component>`, `hotfix-<component>/*`, or `setup-<component>/*`
+- `enforce_no_merge_commits_pr_main.yml` (workflow name: ENFORCE_NO_MERGE_COMMITS_PR[MAIN]): ensures PR head branches contain no merge commits (stale branches must be rebased, not back-merged). PRs from `dev-*` branches are exempt: dev integration branches legitimately contain the merge commits of feature/fix PRs,
 - `enforce_change_dirs_pr_main.yml` (workflow name: ENFORCE_CHANGE_DIRS_PR[MAIN]) - Ensures:
   - PRs from `dev-core` to `main` only modify files in the `artifact-core` directory
   - PRs from `dev-experiment` to `main` only modify files in the `artifact-experiment` directory
@@ -225,6 +229,12 @@ This approach aligns with GitHub Actions' standard execution context, where work
   - **Outcome:**
     - **Success (`exit 0`)** → prints the parsed JSON to **stdout** (e.g. `{"branch_type":"dev","component_name":"core"}`)
     - **Failure (`exit 1`)** → prints guidance (allowed components/types and example shapes) to **stderr**.
+
+- `enforce_no_merge_commits.sh`:
+  - **Given:** `<head_ref>` (PR source branch) and `<base_ref>` (PR target branch).
+  - **Does:** exempts `dev-*` head branches (their history legitimately contains feature/fix PR merge commits); otherwise fetches `origin/<head_ref>` and `origin/<base_ref>` and scans the range `origin/<base_ref>..origin/<head_ref>` for merge commits (deliberately avoiding `HEAD`, since pull_request checkouts use GitHub's synthetic merge ref, which would false-positive).
+  - **Outcome:** exits `0` when the branch contains no merge commits on top of the base (or is exempt); exits `1` listing the offending merge commits with guidance to rebase (e.g., after GitHub's default *Update branch* button merged the base back into the branch). This keeps PR branch history linear---see *Branch Hygiene and Merge Cadence* in `devops_processes.md`.
+  - **Usage:** used by `ENFORCE_NO_MERGE_COMMITS_PR[MAIN]` and `ENFORCE_NO_MERGE_COMMITS_PR[DEV_*]` workflows.
 
 - `lint_pr_title.sh`:
    - **Given:** `"PR Title"` and optionally `[branch_name]`.
