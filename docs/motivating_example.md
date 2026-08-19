@@ -323,8 +323,8 @@ class MyArtifactPlan(TableComparisonPlan):
 **Artifact Validation Routine** - Reusable validation plan executor (built declaratively):
 
 ```python
-# Works with any tabular synthesizer fulfilling the
-# generation hyperparams contract (contravariant).
+# Reusable: works with any tabular synthesizer
+# that accepts these generation hyperparams.
 
 class MyArtifactRoutine(
     TableComparisonRoutine[
@@ -354,9 +354,8 @@ class MyArtifactRoutine(
 **Data Loader Routine** - Reusable callback executor (built declaratively):
 
 ```python
-# Works with any neural network fulfilling the IO contract.
-# The input contract is contravariant.
-# The output contract is covariant.
+# Reusable: works with any neural network
+# whose inputs and outputs match the IO contract.
 
 class MyModelIOPlan(
     ModelIOPlan[
@@ -389,9 +388,8 @@ class MyDataLoaderRoutine(
 **Trainer Configuration** - Reusable training loop (built declaratively):
 
 ```python
-# Works with any tabular synthesizer fulfilling the IO contract.
-# The input contract is contravariant.
-# The output contract is covariant.
+# Reusable: works with any tabular synthesizer
+# whose inputs and outputs match the IO contract.
 
 class MyTrainer(
     Trainer[
