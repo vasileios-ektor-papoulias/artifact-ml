@@ -34,19 +34,15 @@ It stands alongside:
 
 ## 🚀 Installation
 
-Clone the [**Artifact-ML monorepo**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) by running:
+Install the latest release from [PyPI](https://pypi.org/project/artifact-experiment/) by running:
 
 ```bash
-git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
+pip install artifact-experiment
 ```
 
-Install the `artifact-experiment` package by running:
+This pulls in [`artifact-core`](https://pypi.org/project/artifact-core/) automatically.
 
-```bash
-cd artifact-ml/artifact-experiment
-
-poetry install
-```
+To install from source (e.g. for development), consult the [getting started guide](https://artifact-ml.readthedocs.io/en/latest/artifact-experiment/getting_started/).
 
 ## 📚 Documentation
 
@@ -60,4 +56,4 @@ Please consult our [**contribution guidelines document**](https://artifact-ml.re
 
 ## 📄 License
 
-This project is licensed under the [MIT License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-ml).
+This project is licensed under the [MIT License](https://github.com/vasileios-ektor-papoulias/artifact-ml/blob/main/LICENSE).
