@@ -65,6 +65,20 @@ The project is correspondingly partitioned in the following *components* (provid
   <img src="../assets/branch_taxonomy.svg" width="1500" alt="Branch Taxonomy">
 </p>
 
+## Branch Hygiene and Merge Cadence
+
+The following conventions keep the repository history clean and the release automation reliable:
+
+- **Always merge PRs to `main` with a merge commit** (never squash or rebase merges): the version bump automation parses the `Merge pull request #N from <user>/<branch>` subject on `main` to determine the affected component. This is enforced by the repository rulesets, which only allow the merge-commit method.
+
+- **Cut short-lived branches from the current tip of `main`.** When several PRs are prepared in parallel from the same old tip, their branches render as long parallel lanes in the history graph. Where the merge order is known upfront, branch (or rebase) each PR off the freshly updated `main` so merges stack on top of one another (semi-linear history).
+
+- **Rebase stale branches; never merge `main` back into them.** If `main` moves while a PR is open, rebase the branch onto `origin/main` and force-push the branch (safe pre-merge on single-author branches). Avoid GitHub's *Update branch* button in its default mode---it merges `main` into the branch, polluting history with reverse merge commits. If using the button, select *Update with rebase*.
+
+- **Space out merges to `main`.** The main push workflow uses a concurrency group with `cancel-in-progress`: merging a second PR while the previous merge's `CI_PUSH[MAIN]` run is still in flight **cancels that run, silently skipping its version bump and release**. Wait for the current run to complete (or recover via the manual `BUMP_COMPONENT` and `PUBLISH[PYPI]` workflows) before merging the next PR.
+
+- **Dev branches are fast-forward mirrors between cycles.** After each push to `main`, the `SYNC[DEV_BRANCHES]` workflow fast-forwards `dev-core`/`dev-experiment`/`dev-torch` to `main`'s tip (it can also be dispatched manually with an optional component filter). Dev branches must never accumulate commits outside the PR flow: a diverged dev branch is skipped by the sync and flagged for manual reconciliation.
+
 ## Versioning and PRs to `main`
 In line with semantic versioniing, we adopt the following version bump types (bump types for short):
 

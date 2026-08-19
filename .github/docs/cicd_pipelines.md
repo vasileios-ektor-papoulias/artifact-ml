@@ -54,6 +54,15 @@ All Github Actions workflows follow the naming convention:
   3. **`bump-version`** (needs: ci-component, validate-and-extract): calls `job.sh` directly with the extracted component and bump type to update `pyproject.toml` and push version tag (format: `<component>-v<version>`, e.g., `core-v1.2.3`). Skipped if component is root or bump type is no-bump.
   4. **`publish`** (needs: bump-version, validate-and-extract): triggers `PUBLISH[PYPI]` via `gh workflow run` with the component name after bump completes successfully. The publish workflow reads the current version from the component's `pyproject.toml` and creates a GitHub Release for the version tag that was pushed by bump-version.
 
+#### Workflow Run Triggers
+
+##### Dev Branch Synchronization
+- `sync_dev_branches.yml` (workflow name: SYNC[DEV_BRANCHES]): fast-forwards the dev integration branches (`dev-core`, `dev-experiment`, `dev-torch`) to the current tip of `main` via `sync_dev_branches.sh`. Two triggers:
+  - **`workflow_run`** on completion of `CI_PUSH[MAIN]` (successful runs only): ensures dev branches track `main` after every merge, *including* the `Bump version to ... [skip ci]` commit pushed during that run (a plain `push` trigger would miss it, since `[skip ci]` suppresses push-triggered workflows). **Note:** the `workflows` filter is glob-matched, so the square brackets in `CI_PUSH[MAIN]` are escaped (`CI_PUSH\[MAIN\]`); unescaped, `[MAIN]` would parse as a character class and never match.
+  - **`workflow_dispatch`** with a `target` input (`all` | `core` | `experiment` | `torch`) for manual/selective syncing.
+
+  Pushes authenticate via `PAT_TOKEN` (the same identity as the version bump automation), so the workflow operates under that account's ruleset bypass. Syncs are idempotent no-ops when the dev branches are already at `main`'s tip; diverged dev branches are skipped and reported (see `sync_dev_branches.sh`).
+
 #### Manual Workflows (workflow_dispatch only)
 
 ##### Version Bumping
@@ -297,6 +306,12 @@ This approach aligns with GitHub Actions' standard execution context, where work
   - **Outcome:** prints `true` to stdout if an open PR exists, `false` otherwise; exits `0` on success, `1` on missing arguments or if `GH_TOKEN` is not set.
   - **Environment:** requires `GH_TOKEN` environment variable for API access.
   - **Usage:** used by `CI_PUSH[CORE/EXPERIMENT/TORCH]` workflows to skip CI when a PR is open (to avoid duplicate runs with `CI_PR[DEV_*]`).
+
+- `sync_dev_branches.sh`:
+  - **Given:** optional `[target]` (`all` (default) | `core` | `experiment` | `torch`).
+  - **Does:** for each requested component, fetches `origin/dev-<component>` and compares it to `origin/main`: branches already at `main`'s tip are skipped (idempotent no-op); branches that are strict ancestors of `main` are fast-forwarded by pushing `origin/main` to the dev branch ref (never creating merge commits or rewriting history); branches holding commits **not** reachable from `main` (diverged) are left untouched and collected for reporting.
+  - **Outcome:** exits `0` when all requested branches are at (or were fast-forwarded to) `main`; exits `1` on an invalid target or if any branch was diverged---after still syncing all healthy branches---listing the diverged branches in `::error::` diagnostics.
+  - **Usage:** used by `SYNC[DEV_BRANCHES]` (automatically after `CI_PUSH[MAIN]` completes, or via manual dispatch).
 
 #### Version Bump Scripts (`.github/scripts/version_bump/`)
 
