@@ -1,6 +1,6 @@
 [project]
 name = "artifact-torch"
-version = "0.1.4"
+version = "0.1.5"
 description = "Artifact-ML PyTorch integration: declarative builder toolkit for reusable deep learning workflows."
 authors = [
     {name = "Vasileios Ektor Papoulias",email = "hector.papoulias@gmail.com"}
