@@ -25,7 +25,7 @@
 
 `artifact-torch` provides PyTorch integration for [Artifact-ML](https://github.com/vasileios-ektor-papoulias/artifact-ml).
 
-It offers the tools to build reusable deep learning workflows declaratiely.
+It offers the tools to build reusable deep learning workflows declaratively.
 
 It stands alongside:
 
@@ -34,19 +34,13 @@ It stands alongside:
 
 ## 🚀 Installation
 
-Clone the [**Artifact-ML monorepo**](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) by running:
+Install the latest release from [PyPI](https://pypi.org/project/artifact-torch/) by running:
 
 ```bash
-git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
+pip install artifact-torch
 ```
 
-Install the `artifact-torch` package by running:
-
-```bash
-cd artifact-ml/artifact-torch
-
-poetry install
-```
+To install from source (e.g. for development, or to run the bundled demos), consult the [getting started guide](https://artifact-ml.readthedocs.io/en/latest/artifact-torch/getting_started/).
 
 ## 📚 Documentation
 
@@ -60,4 +54,4 @@ Please consult our [**contribution guidelines document**](https://artifact-ml.re
 
 ## 📄 License
 
-This project is licensed under the [MIT License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-ml).
+This project is licensed under the [MIT License](https://github.com/vasileios-ektor-papoulias/artifact-ml/blob/main/LICENSE).
