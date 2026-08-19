@@ -4,16 +4,26 @@
   <img src="../assets/artifact_ml_logo.svg" width="200" alt="Artifact-ML Logo">
 </p>  
 
-Clone the [Artifact-ML monorepo](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) by running:  
+## Installation
+
+Install the latest [`artifact-experiment`](https://pypi.org/project/artifact-experiment/) release from PyPI by running:
+
+```bash
+pip install artifact-experiment
+```
+
+## Installing from Source (Development)
+
+To work on `artifact-experiment` itself, clone the [Artifact-ML monorepo](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) by running:
 
 ```bash
 git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
 ```
 
-Install [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment) by running:  
+Then install the package (with dev dependencies) using [Poetry](https://python-poetry.org/):
 
 ```bash
 cd artifact-ml/artifact-experiment
 
-poetry install
+poetry install --with dev
 ```
