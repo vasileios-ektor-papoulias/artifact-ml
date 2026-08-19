@@ -38,7 +38,9 @@ The project is correspondingly partitioned in the following *components* (provid
 
 - **Development Branches**: `dev-<component_name>`
    - Role: Component-specific development branches used as buffers for recent changes.
-   - Update: Updated by merging in `feature`/ `fix` branches through pull request.
+   - Update:
+      - Updated by merging in `feature`/ `fix` branches through pull request.
+      - Fast-forwarded to `main`'s tip by the `SYNC[DEV_BRANCHES]` workflow after each push to `main` (see *Branch Hygiene and Merge Cadence* below).
    - Examples: `dev-core`, `dev-experiment`, `dev-torch`.
 
 - **Feature/Bug Fix Branches**: `feature-<component_name>/<descriptive_name>`, `fix-<component_name>/<descriptive_name>`
