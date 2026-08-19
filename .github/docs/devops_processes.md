@@ -69,7 +69,7 @@ The project is correspondingly partitioned in the following *components* (provid
 
 The following conventions keep the repository history clean and the release automation reliable:
 
-- **Always merge PRs to `main` with a merge commit** (never squash or rebase merges): the version bump automation parses the `Merge pull request #N from <user>/<branch>` subject on `main` to determine the affected component.
+- **Always merge PRs to `main` with a merge commit** (never squash or rebase merges): the version bump automation parses the `Merge pull request #N from <user>/<branch>` subject on `main` to determine the affected component. This is enforced by the repository rulesets, which only allow the merge-commit method.
 
 - **Cut short-lived branches from the current tip of `main`.** When several PRs are prepared in parallel from the same old tip, their branches render as long parallel lanes in the history graph. Where the merge order is known upfront, branch (or rebase) each PR off the freshly updated `main` so merges stack on top of one another (semi-linear history).
 
