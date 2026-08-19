@@ -323,8 +323,8 @@ class MyArtifactPlan(TableComparisonPlan):
 **Artifact Validation Routine** - Reusable validation plan executor (built declaratively):
 
 ```python
-# Reusable: works with any tabular synthesizer
-# that accepts these generation hyperparams.
+# Reusable: works with any tabular synthesizer that accepts
+# the generation hyperparams declared below (GenerationParams).
 
 class MyArtifactRoutine(
     TableComparisonRoutine[
