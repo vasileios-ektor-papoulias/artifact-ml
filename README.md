@@ -39,41 +39,25 @@ The project comprises three packages:
 
 ## 🚀 Quick Start
 
-Clone the **Artifact-ML** monorepo by running:
+All three packages are published on PyPI: [`artifact-core`](https://pypi.org/project/artifact-core/), [`artifact-experiment`](https://pypi.org/project/artifact-experiment/), and [`artifact-torch`](https://pypi.org/project/artifact-torch/).
 
 ```bash
-git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
+pip install artifact-core
+
+pip install artifact-experiment
+
+pip install artifact-torch
 ```
 
-### To install [`artifact-core`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-core) run:
+Each package pulls in the ones it builds on: `artifact-experiment` depends on `artifact-core`, and `artifact-torch` depends on both.
 
-```bash
-cd artifact-ml/artifact-core
-
-poetry install
-```
-
-### To install [`artifact-experiment`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-experiment) run:
-
-```bash
-cd artifact-ml/artifact-experiment
-
-poetry install
-```
-
-### To install [`artifact-torch`](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main/artifact-torch) run:
-
-```bash
-cd artifact-ml/artifact-torch
-
-poetry install
-```
+To install from source (e.g. for development), consult our [getting started guide](https://artifact-ml.readthedocs.io/en/latest/getting_started/).
 
 ## 📚 Documentation
 
 Documentation for Artifact-ML is available at [**Artifact-ML Docs**](https://artifact-ml.readthedocs.io/en/latest/).
 
-Package-specfic docs are available at:
+Package-specific docs are available at:
 
 - [artifact-core docs](https://artifact-ml.readthedocs.io/en/latest/artifact-core)
 - [artifact-experiment docs](https://artifact-ml.readthedocs.io/en/latest/artifact-experiment)
@@ -89,4 +73,4 @@ Please consult our [**contribution guidelines document**](https://artifact-ml.re
 
 ## 📄 License
 
-This project is licensed under the [MIT License](https://img.shields.io/github/license/vasileios-ektor-papoulias/artifact-ml).
+This project is licensed under the [MIT License](https://github.com/vasileios-ektor-papoulias/artifact-ml/blob/main/LICENSE).
