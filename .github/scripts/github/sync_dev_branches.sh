@@ -14,8 +14,9 @@
 #
 # Exit Codes:
 #   0 - All requested dev branches are at (or were fast-forwarded to) main.
-#   1 - Invalid target, or a dev branch has diverged from main (holds commits
-#       not reachable from main) and requires manual reconciliation.
+#   1 - Invalid target, or at least one dev branch has diverged from main
+#       (holds commits not reachable from main) and requires manual
+#       reconciliation.
 #
 # Behaviour:
 #   - For each requested component, verifies that origin/dev-<component> is an
@@ -23,9 +24,11 @@
 #   - If the branch is already at main's tip, does nothing.
 #   - Otherwise pushes origin/main to the dev branch ref. No merge commits or
 #     history rewrites are ever produced.
-#   - Divergence aborts the entire run with an error: dev branches are expected
-#     to only ever receive component work that flows to main via PRs, so unique
-#     commits on a dev branch indicate something needs human attention.
+#   - Diverged branches are skipped (left untouched) while all healthy branches
+#     are still synced; the run then exits 1 listing the diverged branches.
+#     Dev branches are expected to only ever receive component work that flows
+#     to main via PRs, so unique commits on a dev branch indicate something
+#     needs human attention.
 #
 # Examples:
 #   sync_dev_branches.sh            # sync all three dev branches
@@ -53,6 +56,8 @@ git fetch origin main
 MAIN_SHA=$(git rev-parse origin/main)
 echo "main is at: $MAIN_SHA"
 
+DIVERGED_BRANCHES=""
+
 for COMPONENT in $COMPONENTS; do
     BRANCH="dev-$COMPONENT"
     git fetch origin "$BRANCH"
@@ -65,13 +70,19 @@ for COMPONENT in $COMPONENTS; do
 
     if ! git merge-base --is-ancestor "origin/$BRANCH" origin/main; then
         echo "::error::$BRANCH ($BRANCH_SHA) has commits not on main and cannot be fast-forwarded." >&2
-        echo "::error::Merge or land the outstanding $BRANCH work via PR before syncing." >&2
-        exit 1
+        DIVERGED_BRANCHES="$DIVERGED_BRANCHES $BRANCH"
+        continue
     fi
 
     echo "Fast-forwarding $BRANCH: $BRANCH_SHA -> $MAIN_SHA"
     git push origin "origin/main:refs/heads/$BRANCH"
     echo "✅ $BRANCH synced to main."
 done
+
+if [ -n "$DIVERGED_BRANCHES" ]; then
+    echo "::error::Diverged branches left untouched:$DIVERGED_BRANCHES." >&2
+    echo "::error::Merge or land the outstanding work via PR, then re-run the sync." >&2
+    exit 1
+fi
 
 echo "✅ Dev branch sync complete."
