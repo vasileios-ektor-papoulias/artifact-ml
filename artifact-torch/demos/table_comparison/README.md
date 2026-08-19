@@ -26,67 +26,93 @@ Ensure you have the `artifact-ml` workspace properly set up:
 ```bash
 git clone https://github.com/vasileios-ektor-papoulias/artifact-ml.git
 cd artifact-ml/artifact-torch
-poetry install
+poetry install --with dev
 ```
 
 ### Execution: Script
 
-The following code segment launches the tabular synthesizer training workflow.
+The following code segment (run from the `artifact-torch` directory) launches the tabular synthesizer training workflow.
 
 ```python
 import pandas as pd
-import seaborn as sns
 from artifact_core.table_comparison import TabularDataSpec
-from artifact_experiment.tracking import FilesystemTrackingClient
-from matplotlib import pyplot as plt
+from artifact_experiment.tracking import DataSplit, FilesystemTrackingClient
 
 from demos.table_comparison.config.constants import (
     EXPERIMENT_ID,
     LS_CAT_FEATURES,
     LS_CTS_FEATURES,
+    N_BINS_CTS,
     TRAINING_DATASET_PATH,
 )
-from demos.table_comparison.tabular_vae import TabularVAE
+from demos.table_comparison.data.utils import DemoDataUtils
+from demos.table_comparison.experiment.experiment import DemoTabularSynthesisExperiment
+from demos.table_comparison.libs.transformers.discretizer import Discretizer
+from demos.table_comparison.libs.transformers.encoder import Encoder
+from demos.table_comparison.model.synthesizer import TabularVAESynthesizer
 
-# Load the dataset
+# Load the dataset and describe it with a spec
 df_real = pd.read_csv(TRAINING_DATASET_PATH)
-
-# Create data specification
-data_spec = TabularDataSpec.from_df(
-    df=df_real,
-    ls_cts_features=LS_CTS_FEATURES,
-    ls_cat_features=LS_CAT_FEATURES,
+raw_data_spec = TabularDataSpec.from_df(
+    df=df_real, cts_features=LS_CTS_FEATURES, cat_features=LS_CAT_FEATURES
 )
 
-# Initialize tracking
-filesystem_tracker = FilesystemTrackingClient.build(experiment_id="demo")
+# Fit the preprocessing transformers (discretize, then one-hot encode)
+discretizer = Discretizer(n_bins=N_BINS_CTS, ls_cts_features=raw_data_spec.cts_features)
+discretizer.fit(df=df_real)
+df_discretized = discretizer.transform(df=df_real)
 
-# Build and train the VAE
-model = TabularVAE.build(data_spec=data_spec)
-epoch_scores = model.fit(
-    df=df_real, 
-    data_spec=data_spec, 
-    tracking_client=filesystem_tracker
+encoder = Encoder()
+encoder.fit(df=df_discretized, ls_cat_features=list(df_discretized.columns))
+df_encoded = encoder.transform(df=df_discretized)
+encoded_data_spec = TabularDataSpec.from_df(df=df_encoded, cat_features=list(df_encoded.columns))
+
+# Assemble the experiment inputs
+data_loaders = {
+    DataSplit.TRAIN: DemoDataUtils.build_data_loader(
+        df=df_real, discretizer=discretizer, encoder=encoder
+    )
+}
+artifact_routine_data = {
+    DataSplit.TRAIN: DemoDataUtils.build_artifact_routine_data(df_real=df_real)
+}
+model = TabularVAESynthesizer.build(
+    data_spec=encoded_data_spec, discretizer=discretizer, encoder=encoder
 )
+tracking_client = FilesystemTrackingClient.build(experiment_id=EXPERIMENT_ID)
+
+# Build and run the experiment
+experiment = DemoTabularSynthesisExperiment.build(
+    model=model,
+    data_loaders=data_loaders,
+    artifact_routine_data=artifact_routine_data,
+    artifact_routine_data_spec=raw_data_spec,
+    tracking_client=tracking_client,
+)
+experiment.run()
+
+experiment.epoch_scores
 ```
 
 To generate synthetic data run:
 
 ```python
-df_synthetic = model.generate(n_records=1000)
+from demos.table_comparison.contracts.model import TabularVAEGenerationParams
+
+df_synthetic = model.generate(params=TabularVAEGenerationParams(n_records=1000, temperature=1.0))
 ```
 
 ### Execution: Notebook
 
-We've packaged the full workflow in a Juyter notebook for convenience.
+We've packaged the full workflow in a Jupyter notebook for convenience.
 
-1. **Start Jupyter**: Launch Jupyter in the artifact-torch directory
-2. **Open the notebook**: Navigate to `artifact_torch/demos/table_comparison/demo.ipynb`
+1. **Start Jupyter**: Launch Jupyter in the `artifact-torch` directory
+2. **Open the notebook**: Navigate to `demos/table_comparison/demo.ipynb`
 3. **Run all cells**: Execute the cells in sequence to see the complete workflow
 
 ### Configuration
 
-The demo is configurable through `artifact_torch/demos/table_comparison/config/config.json`:
+The demo is configurable through `demos/table_comparison/config/config.json`:
 
 ```json
 {
@@ -118,14 +144,13 @@ The demo is configurable through `artifact_torch/demos/table_comparison/config/c
         "batch_size": 512,
         "drop_last": false,
         "shuffle": true,
-        "checkpoint_period": 5,
-        "batch_loss_period": 1
+        "checkpoint_period": 5
     },
     "validation": {
-        "train_loader_callback_period": 1,
-        "validation_plan_callback_period": 5,
+        "batch_routine_period": 1,
+        "train_loader_routine_period": 5,
+        "artifact_routine_period": 5,
         "generation_n_records": 1000,
-        "generation_use_mean": false,
         "generation_temperature": 1
     },
     "tracking":{
@@ -136,20 +161,13 @@ The demo is configurable through `artifact_torch/demos/table_comparison/config/c
 
 ### Export Directory
 
-The `FilesystemTrackingClient` saves all results to `~/artifact_ml/demo/<run_id>/` with this structure:
+The `FilesystemTrackingClient` saves all results (validation artifacts, generated data, and model checkpoints) under `~/artifact_ml/<experiment_id>/<run_id>/`.
 
-```
-~/artifact_ml/demo/<run_id>/
-├── artifacts/              # Validation plots, metrics, and statistics
-├── tabular_data/          # Generated synthetic datasets  
-└── torch_checkpoints/     # Model checkpoints
-```
-
-When you start training, the client prints the exact directory path where results are being saved
+When you start training, the client prints the exact directory path where results are being saved.
 
 ## 📊 Dataset
 
-The demo uses the **Heart Disease dataset** (`artifact_torch/assets/real.csv`) with:
+The demo uses the **Heart Disease dataset** (`artifact-torch/assets/real.csv`) with:
 
 **Continuous Features:**
 - `Age`: Patient age.
