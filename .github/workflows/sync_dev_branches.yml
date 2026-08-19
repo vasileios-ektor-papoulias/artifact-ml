@@ -1,0 +1,47 @@
+name: SYNC[DEV_BRANCHES]
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Dev branch to sync'
+        required: true
+        type: choice
+        default: all
+        options:
+          - all
+          - core
+          - experiment
+          - torch
+  # Runs after CI_PUSH[MAIN] completes rather than on push to main directly:
+  # the version-bump commit lands with [skip ci] *during* CI_PUSH[MAIN], so a
+  # plain push trigger would sync the dev branches one commit short of main.
+  workflow_run:
+    workflows: ["CI_PUSH[MAIN]"]
+    types: [completed]
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  sync-dev-branches:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          fetch-depth: 0
+
+      - name: Sync dev branches to main
+        run: |
+          chmod +x .github/scripts/github/sync_dev_branches.sh
+          .github/scripts/github/sync_dev_branches.sh "${{ github.event.inputs.target || 'all' }}"
