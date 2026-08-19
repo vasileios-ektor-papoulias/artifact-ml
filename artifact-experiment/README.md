@@ -40,8 +40,6 @@ Install the latest release from [PyPI](https://pypi.org/project/artifact-experim
 pip install artifact-experiment
 ```
 
-This pulls in [`artifact-core`](https://pypi.org/project/artifact-core/) automatically.
-
 To install from source (e.g. for development), consult the [getting started guide](https://artifact-ml.readthedocs.io/en/latest/artifact-experiment/getting_started/).
 
 ## 📚 Documentation

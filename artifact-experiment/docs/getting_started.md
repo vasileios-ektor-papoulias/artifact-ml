@@ -12,8 +12,6 @@ Install the latest [`artifact-experiment`](https://pypi.org/project/artifact-exp
 pip install artifact-experiment
 ```
 
-This pulls in [`artifact-core`](https://pypi.org/project/artifact-core/) automatically.
-
 ## Installing from Source (Development)
 
 To work on `artifact-experiment` itself, clone the [Artifact-ML monorepo](https://github.com/vasileios-ektor-papoulias/artifact-ml/tree/main) by running:
