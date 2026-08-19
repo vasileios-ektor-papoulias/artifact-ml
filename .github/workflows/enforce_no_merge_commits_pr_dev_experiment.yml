@@ -1,0 +1,27 @@
+name: ENFORCE_NO_MERGE_COMMITS_PR[DEV_EXPERIMENT]
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - dev-experiment
+
+jobs:
+  enforce-no-merge-commits:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ensure scripts are executable
+        run: chmod +x .github/scripts/linting/*.sh
+
+      - name: Check branch contains no merge commits
+        run: |
+          .github/scripts/linting/enforce_no_merge_commits.sh \
+            "${{ github.head_ref }}" \
+            "${{ github.base_ref }}"
